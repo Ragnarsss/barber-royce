@@ -166,9 +166,9 @@ Private & Confidential - All Rights Reserved
 
 ## Contact
 
-Project Maintainer - [@zunig](https://github.com/zunig)
+Project Maintainer - [@Ragnarsss](https://github.com/Ragnarsss)
 
-Project Link: [https://github.com/zunig/barber-royce](https://github.com/zunig/barber-royce)
+Project Link: [https://github.com/zunig/barber-royce](https://github.com/Ragnarsss/barber-royce)
 
 ---
 
