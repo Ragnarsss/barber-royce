@@ -1,0 +1,27 @@
+/* ============================================
+   DESIGN TOKENS - INDEX
+   ============================================ */
+
+/*
+ * Este archivo importa todos los tokens del design system.
+ * Los tokens son los valores base que se usan en toda la aplicación.
+ *
+ * Orden de importación:
+ * 1. Colors - Base de la identidad visual
+ * 2. Typography - Tipografía y escalas de texto
+ * 3. Spacing - Sistema de espaciado
+ * 4. Shadows - Elevaciones y profundidad
+ * 5. Radius - Bordes redondeados
+ * 6. Transitions - Animaciones y timing
+ * 7. Breakpoints - Sistema responsive
+ * 8. Z-index - Capas de apilamiento
+ */
+
+@import "./colors.css";
+@import "./typography.css";
+@import "./spacing.css";
+@import "./shadows.css";
+@import "./radius.css";
+@import "./transitions.css";
+@import "./breakpoints.css";
+@import "./z-index.css";

@@ -1,0 +1,22 @@
+/* ============================================
+   Z-INDEX TOKENS
+   ============================================ */
+
+:root {
+  /* 
+   * Z-index scale - Define capas de apilamiento
+   * 
+   * Mantener un sistema organizado previene bugs donde
+   * elementos se ocultan debajo de otros incorrectamente.
+   */
+
+  --z-index-base: 0; /* Contenido normal */
+  --z-index-dropdown: 1000; /* Dropdowns, tooltips */
+  --z-index-sticky: 1100; /* Elementos sticky (navbar) */
+  --z-index-fixed: 1200; /* Elementos fixed */
+  --z-index-overlay: 1300; /* Overlays (backdrop de modales) */
+  --z-index-modal: 1400; /* Modales, dialogs */
+  --z-index-popover: 1500; /* Popovers sobre modales */
+  --z-index-toast: 1600; /* Notificaciones toast */
+  --z-index-tooltip: 1700; /* Tooltips sobre todo */
+}

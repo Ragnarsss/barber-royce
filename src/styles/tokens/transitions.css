@@ -1,0 +1,39 @@
+/* ============================================
+   TRANSITION & ANIMATION TOKENS
+   ============================================ */
+
+:root {
+  /* Durations */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 350ms;
+  --duration-slower: 500ms;
+
+  /* Timing functions (easing) */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Ease más natural para UI */
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Bounce para efectos playful */
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Combinaciones comunes */
+  --transition-fast: var(--duration-fast) var(--ease-in-out);
+  --transition-base: var(--duration-base) var(--ease-in-out);
+  --transition-slow: var(--duration-slow) var(--ease-in-out);
+
+  /* Transiciones específicas */
+  --transition-colors: color var(--transition-base),
+    background-color var(--transition-base), border-color var(--transition-base);
+
+  --transition-transform: transform var(--transition-base);
+
+  --transition-opacity: opacity var(--transition-base);
+
+  --transition-all: all var(--transition-base);
+}

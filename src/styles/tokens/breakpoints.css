@@ -1,0 +1,35 @@
+/* ============================================
+   BREAKPOINT TOKENS
+   ============================================ */
+
+:root {
+  /* Breakpoints para media queries */
+  --breakpoint-xs: 320px; /* Móviles muy pequeños */
+  --breakpoint-sm: 640px; /* Móviles grandes */
+  --breakpoint-md: 768px; /* Tablets */
+  --breakpoint-lg: 1024px; /* Laptops pequeñas */
+  --breakpoint-xl: 1280px; /* Desktops */
+  --breakpoint-2xl: 1536px; /* Pantallas grandes */
+
+  /* Container max-widths por breakpoint */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1200px;
+  --container-2xl: 1400px;
+
+  /* Padding horizontal del container por breakpoint */
+  --container-padding-mobile: var(--spacing-4); /* 16px */
+  --container-padding-tablet: var(--spacing-6); /* 24px */
+  --container-padding-desktop: var(--spacing-8); /* 32px */
+}
+
+/* 
+ * Nota: Los breakpoints aquí son solo para referencia.
+ * En CSS, úsalos directamente en media queries:
+ * 
+ * @media (min-width: 768px) { ... }
+ * 
+ * No se pueden usar custom properties en media queries
+ * porque se evalúan antes de que el CSS procese las variables.
+ */
