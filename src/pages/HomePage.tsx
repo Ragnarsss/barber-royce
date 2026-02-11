@@ -12,9 +12,9 @@ export const HomePage = () => {
       <SocialProof id="social-proof-1" />
       <CTA
         id="cta-1"
-        title="¿Listo para tu Transformación?"
-        subtitle="Agenda tu cita hoy y experimenta el mejor servicio de barbería"
-        buttonText="Reservar Ahora"
+        title="Reserva tu Experiencia Premium Hoy."
+        subtitle="¿Listo para un cambio que te defina? Agenda tu cita en nuestra barbería de elección para quienes buscan lo mejor."
+        buttonText="Agendar Ahora"
       />
       <Benefits />
       <Reviews />
@@ -22,9 +22,9 @@ export const HomePage = () => {
       <SocialProof id="social-proof-2" />
       <CTA
         id="cta-2"
-        title="Únete a Nuestra Comunidad"
-        subtitle="Miles de clientes satisfechos confían en nosotros"
-        buttonText="Programa tu Visita"
+        title="Únete a los Mejores"
+        subtitle="Miles de hombres que buscan calidad y estilo confían en nosotros"
+        buttonText="Agendar Ahora"
       />
     </>
   );

@@ -28,7 +28,8 @@ export const Navbar = () => {
     <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
-          Barber Royce
+          <span className={styles.logoIcon}>BR</span>
+          <span className={styles.logoText}>ROYCE</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -47,7 +48,9 @@ export const Navbar = () => {
         </div>
 
         <div className={styles.actions}>
-          <Button size="medium">Reservar Cita</Button>
+          <Button variant="secondary" size="medium">
+            Agendar Ahora
+          </Button>
         </div>
 
         {/* Mobile Menu Button */}

@@ -4,7 +4,7 @@ import styles from "./Button.module.css";
 /**
  * Props del componente Button
  *
- * @param variant - Estilo visual del botón: primary (default), secondary, outline, ghost
+ * @param variant - Estilo visual del botón: primary (default), secondary, accent, outline, ghost
  * @param size - Tamaño del botón: small, medium (default), large
  * @param fullWidth - Si el botón ocupa todo el ancho disponible
  * @param loading - Muestra estado de carga con spinner
@@ -12,7 +12,7 @@ import styles from "./Button.module.css";
  * @param rightIcon - Ícono a la derecha del texto
  */
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost";
+  variant?: "primary" | "secondary" | "accent" | "outline" | "ghost";
   size?: "small" | "medium" | "large";
   fullWidth?: boolean;
   loading?: boolean;

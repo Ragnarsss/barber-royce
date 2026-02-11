@@ -15,6 +15,18 @@
   --color-primary-800: #0a0a0a;
   --color-primary-900: #000000;
 
+  /* Accent Colors - Paleta oficial de la marca */
+  --color-accent-50: #fef2f2;
+  --color-accent-100: #fee2e2;
+  --color-accent-200: #fecaca;
+  --color-accent-300: #fe0000; /* Rojo brillante */
+  --color-accent-400: #d52323; /* Rojo principal */
+  --color-accent-500: #d52323; /* Rojo principal de la marca */
+  --color-accent-600: #aa3939; /* Rojo oscuro */
+  --color-accent-700: #804040; /* Marrón rojizo */
+  --color-accent-800: #553939; /* Marrón muy oscuro */
+  --color-accent-900: #332b2b; /* Casi negro/marrón */
+
   /* Neutral Colors - Grises para UI */
   --color-neutral-50: #fafafa;
   --color-neutral-100: #f5f5f5;

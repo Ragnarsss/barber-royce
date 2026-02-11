@@ -14,7 +14,9 @@ export const CTA = ({ id, title, subtitle, buttonText }: CTAProps) => {
       <div className={styles.container}>
         <h2 className={styles.title}>{title}</h2>
         <p className={styles.subtitle}>{subtitle}</p>
-        <Button size="large">{buttonText}</Button>
+        <Button variant="accent" size="large" leftIcon="📅"}>
+          {buttonText}
+        </Button>
       </div>
     </section>
   );
