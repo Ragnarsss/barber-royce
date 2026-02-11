@@ -1,0 +1,84 @@
+.services {
+  padding: 100px 0;
+  background-color: var(--color-white, #ffffff);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--color-text, #1a1a1a);
+  margin: 0 0 16px 0;
+}
+
+.subtitle {
+  font-size: 18px;
+  color: var(--color-text-secondary, #666);
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.card {
+  padding: 32px;
+  border: 2px solid var(--color-border, #e0e0e0);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  border-color: var(--color-primary, #1a1a1a);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.cardContent {
+  margin-bottom: 20px;
+}
+
+.serviceName {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: var(--color-text, #1a1a1a);
+}
+
+.serviceDescription {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-text-secondary, #666);
+  margin: 0;
+}
+
+.price {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-primary, #1a1a1a);
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 32px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
