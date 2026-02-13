@@ -1,7 +1,12 @@
+import { motion } from "framer-motion";
 import styles from "./Features.module.css";
 import { featuresList } from "@/data/featuresData";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { fadeInUp, scaleIn, staggerContainer } from "@/lib/animations";
 
 export const Features = () => {
+  const { ref, controls } = useScrollAnimation();
+
   const features = featuresList.map((feature) => ({
     icon: <feature.icon size={36} />,
     title: feature.title,
@@ -9,24 +14,36 @@ export const Features = () => {
   }));
 
   return (
-    <section id="features" className={styles.features}>
+    <section id="features" className={styles.features} ref={ref}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>Innovación y Calidad en Cada Detalle.</h2>
+        <motion.div
+          className={styles.header}
+          initial="hidden"
+          animate={controls}
+          variants={fadeInUp}
+        >
+          <h2 className={styles.title}>
+            Innovación y Calidad en Cada Detalle.
+          </h2>
           <p className={styles.subtitle}>
             Combinamos la tradición con la vanguardia para ofrecerte:
           </p>
-        </div>
+        </motion.div>
 
-        <div className={styles.grid}>
+        <motion.div
+          className={styles.grid}
+          initial="hidden"
+          animate={controls}
+          variants={staggerContainer}
+        >
           {features.map((feature, index) => (
-            <div key={index} className={styles.card}>
+            <motion.div key={index} className={styles.card} variants={scaleIn}>
               <div className={styles.cardIcon}>{feature.icon}</div>
               <h3 className={styles.cardTitle}>{feature.title}</h3>
               <p className={styles.cardDescription}>{feature.description}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

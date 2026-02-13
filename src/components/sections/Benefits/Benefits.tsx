@@ -1,8 +1,13 @@
+import { motion } from "framer-motion";
 import { Droplet } from "lucide-react";
 import styles from "./Benefits.module.css";
 import { benefitsList } from "@/data/benefitsData";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { fadeInUp, scaleIn, staggerContainer } from "@/lib/animations";
 
 export const Benefits = () => {
+  const { ref, controls } = useScrollAnimation();
+
   const benefits = benefitsList.map((benefit) => ({
     icon: <benefit.icon size={32} />,
     title: benefit.title,
@@ -10,10 +15,15 @@ export const Benefits = () => {
   }));
 
   return (
-    <section id="benefits" className={styles.benefits}>
+    <section id="benefits" className={styles.benefits} ref={ref}>
       <div className={styles.container}>
         <div className={styles.content}>
-          <div className={styles.header}>
+          <motion.div
+            className={styles.header}
+            initial="hidden"
+            animate={controls}
+            variants={fadeInUp}
+          >
             <h2 className={styles.title}>
               Estilo que te acompaña,
               <br />
@@ -23,25 +33,39 @@ export const Benefits = () => {
               En Royce Barbería ofrecemos una experiencia para realzar tu
               estilo. Nos enfocamos en la calidad y la exclusividad, ofreciendo
             </p>
-          </div>
+          </motion.div>
 
-          <div className={styles.grid}>
+          <motion.div
+            className={styles.grid}
+            initial="hidden"
+            animate={controls}
+            variants={staggerContainer}
+          >
             {benefits.map((benefit, index) => (
-              <div key={index} className={styles.card}>
+              <motion.div
+                key={index}
+                className={styles.card}
+                variants={scaleIn}
+              >
                 <h3 className={styles.cardTitle}>{benefit.title}</h3>
                 <div className={styles.cardIcon}>{benefit.icon}</div>
                 <div className={styles.accent}></div>
                 <p className={styles.cardDescription}>{benefit.description}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
 
-        <div className={styles.imageWrapper}>
+        <motion.div
+          className={styles.imageWrapper}
+          initial="hidden"
+          animate={controls}
+          variants={fadeInUp}
+        >
           <div className={styles.imagePlaceholder}>
             <Droplet size={64} strokeWidth={1.5} />
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
