@@ -9,9 +9,9 @@
 @import "./reset.css";
 @import "./mixins.css";
 
-/* Smooth scroll behavior */
+/* Lenis smooth scroll se encarga del scroll behavior */
 html {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; - Removido, ahora usa Lenis */
 }
 
 /* Configuración base del body */

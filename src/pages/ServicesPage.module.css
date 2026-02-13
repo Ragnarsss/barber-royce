@@ -32,44 +32,59 @@
 }
 
 .category {
-  margin-bottom: 60px;
+  margin-bottom: 80px;
+  overflow: hidden; /* Importante para el scroll horizontal */
 }
 
 .categoryTitle {
   font-size: 32px;
   font-weight: 700;
-  margin: 0 0 32px 0;
+  margin: 0 0 40px 0;
   color: var(--color-text, #1a1a1a);
 }
 
+/* Contenedor para scroll horizontal */
+.horizontalScrollContainer {
+  overflow: visible;
+  padding: 20px 0;
+}
+
 .items {
-  display: grid;
-  gap: 16px;
+  display: flex;
+  gap: 24px;
+  padding: 0 20px;
+  will-change: transform;
 }
 
 .serviceCard {
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  padding: 24px;
+  min-width: 320px;
+  max-width: 320px;
+  padding: 32px 24px;
   background-color: var(--color-bg-alt, #f9f9f9);
+  border: 2px solid transparent;
   border-radius: 12px;
   transition: all 0.3s ease;
+  will-change: transform, opacity;
 }
 
 .serviceCard:hover {
-  transform: translateX(8px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-primary, #1a1a1a);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .serviceInfo {
   flex: 1;
+  margin-bottom: 20px;
 }
 
 .serviceName {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
-  margin: 0 0 4px 0;
+  margin: 0 0 8px 0;
   color: var(--color-text, #1a1a1a);
 }
 
@@ -80,7 +95,7 @@
 }
 
 .price {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: 700;
   color: var(--color-primary, #1a1a1a);
 }
@@ -91,6 +106,27 @@
   }
 
   .categoryTitle {
+    font-size: 24px;
+  }
+
+  /* En móvil, volver a layout vertical */
+  .items {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .serviceCard {
+    min-width: 100%;
+    max-width: 100%;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .serviceInfo {
+    margin-bottom: 0;
+  }
+
+  .price {
     font-size: 24px;
   }
 }

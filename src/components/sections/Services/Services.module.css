@@ -1,10 +1,11 @@
 .services {
   padding: 100px 0;
   background-color: var(--color-white, #ffffff);
+  overflow: hidden; /* Importante para el scroll horizontal */
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -27,13 +28,22 @@
   margin: 0;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;
+/* Contenedor para scroll horizontal */
+.horizontalScrollContainer {
+  overflow: visible;
+  padding: 20px 0;
+}
+
+.horizontalScroll {
+  display: flex;
+  gap: 32px;
+  padding: 0 20px;
+  will-change: transform;
 }
 
 .card {
+  min-width: 320px;
+  max-width: 320px;
   padding: 32px;
   border: 2px solid var(--color-border, #e0e0e0);
   border-radius: 12px;
@@ -41,6 +51,8 @@
   flex-direction: column;
   justify-content: space-between;
   transition: all 0.3s ease;
+  background: #ffffff;
+  will-change: transform, opacity;
 }
 
 .card:hover {
@@ -78,7 +90,14 @@
     font-size: 32px;
   }
 
-  .grid {
-    grid-template-columns: 1fr;
+  /* En móvil, volver a grid vertical */
+  .horizontalScroll {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .card {
+    min-width: 100%;
+    max-width: 100%;
   }
 }

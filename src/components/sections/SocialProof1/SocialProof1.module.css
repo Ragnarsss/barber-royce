@@ -1,8 +1,9 @@
 .socialProof {
-  height: 100vh;
+  min-height: 100vh;
   background-color: #332b2b;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+  padding-bottom: 80px;
 }
 
 .container {

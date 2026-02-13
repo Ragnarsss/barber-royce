@@ -36,9 +36,8 @@ export const Navbar = () => {
         {/* Desktop Navigation */}
         <div className={styles.navLinks}>
           {navLinks.map((link, index) => (
-            <>
+            <div key={link.to} style={{ display: "contents" }}>
               <NavLink
-                key={link.to}
                 to={link.to}
                 className={({ isActive }) =>
                   `${styles.navLink} ${isActive ? styles.active : ""}`
@@ -49,7 +48,7 @@ export const Navbar = () => {
               {index < navLinks.length - 1 && (
                 <span className={styles.separator}>|</span>
               )}
-            </>
+            </div>
           ))}
         </div>
 

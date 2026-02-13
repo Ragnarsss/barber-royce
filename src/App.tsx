@@ -5,10 +5,14 @@ import { LocationPage } from "./pages/LocationPage";
 import { ProductsPage } from "./pages/ProductsPage";
 import { ServicesPage } from "./pages/ServicesPage";
 import { TeamPage } from "./pages/TeamPage";
+import { useLenis } from "./hooks/useLenis";
 import "./styles/global.css";
 import "./styles/variables.css";
 
 function App() {
+  // Inicializar Lenis smooth scroll globalmente
+  useLenis();
+
   return (
     <BrowserRouter>
       <Routes>
