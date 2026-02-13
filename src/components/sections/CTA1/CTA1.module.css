@@ -87,8 +87,38 @@
   background-position: right bottom;
   background-repeat: no-repeat;
   z-index: 1;
+  will-change: transform;
 }
 
+/* ===== CAPAS DE HEXÁGONOS PARALLAX ===== */
+
+/* Capa de fondo - hexágonos semi-transparentes más grandes */
+.textHexagonBackground {
+  position: absolute;
+  top: -5%;
+  left: -3%;
+  background: rgba(213, 35, 35, 0.25);
+  clip-path: polygon(45% 0%, 85% 15%, 95% 65%, 65% 100%, 15% 85%, 5% 35%);
+  width: 45vw;
+  height: 90vh;
+  rotate: 20deg;
+  z-index: 0;
+  will-change: transform;
+}
+
+.imageHexagonBackground {
+  position: absolute;
+  right: -3%;
+  bottom: -5%;
+  background: rgba(255, 255, 255, 0.15);
+  clip-path: polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 55%);
+  width: 55vw;
+  height: 105vh;
+  z-index: 0;
+  will-change: transform;
+}
+
+/* Capa principal - hexágonos principales */
 .textHexagon {
   position: absolute;
   top: 0;
@@ -100,7 +130,10 @@
   width: 40vw;
   height: 80vh;
   rotate: 15deg;
+  z-index: 1;
+  will-change: transform;
 }
+
 .imageHexagon {
   position: absolute;
   right: 0;
@@ -109,6 +142,36 @@
   clip-path: polygon(30% 0, 100% 0, 100% 100%, 30% 100%, 0 50%);
   width: 50vw;
   height: 100vh;
+  z-index: 1;
+  will-change: transform;
+}
+
+/* Capa frontal - pequeños hexágonos decorativos con opacidad */
+.textHexagonForeground {
+  position: absolute;
+  top: 15%;
+  left: 8%;
+  background: rgba(170, 57, 57, 0.5);
+  clip-path: polygon(45% 5%, 85% 20%, 90% 65%, 60% 95%, 20% 75%, 15% 35%);
+  width: 30vw;
+  height: 60vh;
+  rotate: 10deg;
+  z-index: 1;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.imageHexagonForeground {
+  position: absolute;
+  right: 8%;
+  bottom: 15%;
+  background: rgba(254, 0, 0, 0.3);
+  clip-path: polygon(35% 5%, 95% 5%, 95% 95%, 35% 95%, 5% 50%);
+  width: 35vw;
+  height: 70vh;
+  z-index: 1;
+  will-change: transform;
+  pointer-events: none;
 }
 
 /* ───── Responsive ───── */
@@ -123,6 +186,16 @@
 }
 
 @media (max-width: 768px) {
+  /* Ocultar todas las capas de hexágonos en mobile para mejor performance */
+  .textHexagon,
+  .imageHexagon,
+  .textHexagonBackground,
+  .imageHexagonBackground,
+  .textHexagonForeground,
+  .imageHexagonForeground {
+    display: none;
+  }
+
   .cta {
     min-height: auto;
   }

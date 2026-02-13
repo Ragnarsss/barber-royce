@@ -104,6 +104,34 @@
   z-index: 1;
 }
 
+/* ===== CAPAS DE TRIÁNGULOS PARALLAX ===== */
+
+/* Capa de fondo - triángulos semi-transparentes más grandes */
+.leftTriangleBackground {
+  position: absolute;
+  top: -10%;
+  left: -5%;
+  background: rgba(213, 35, 35, 0.3);
+  clip-path: polygon(0 0, 95% 5%, 5% 95%);
+  width: 55vw;
+  height: 110vh;
+  z-index: 0;
+  will-change: transform;
+}
+
+.rightTriangleBackground {
+  position: absolute;
+  right: -5%;
+  bottom: -10%;
+  background: rgba(213, 35, 35, 0.35);
+  clip-path: polygon(95% 5%, 100% 100%, 5% 95%);
+  width: 55vw;
+  height: 110vh;
+  z-index: 0;
+  will-change: transform;
+}
+
+/* Capa principal - triángulos principales */
 .leftTriangle {
   position: absolute;
   top: 0;
@@ -114,7 +142,10 @@
   clip-path: polygon(0 0, 100% 0, 0 100%);
   width: 50vw;
   height: 100vh;
+  z-index: 1;
+  will-change: transform;
 }
+
 .rightTriangle {
   position: absolute;
   right: 0;
@@ -123,6 +154,35 @@
   clip-path: polygon(100% 0, 100% 100%, 0 100%);
   width: 50vw;
   height: 100vh;
+  z-index: 1;
+  will-change: transform;
+}
+
+/* Capa frontal - pequeños triángulos decorativos con opacidad */
+.leftTriangleForeground {
+  position: absolute;
+  top: 10%;
+  left: 5%;
+  background: rgba(170, 57, 57, 0.6);
+  clip-path: polygon(0 0, 100% 10%, 10% 100%);
+  width: 35vw;
+  height: 70vh;
+  z-index: 1;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.rightTriangleForeground {
+  position: absolute;
+  right: 5%;
+  bottom: 10%;
+  background: rgba(254, 0, 0, 0.4);
+  clip-path: polygon(90% 0, 100% 100%, 0 90%);
+  width: 40vw;
+  height: 65vh;
+  z-index: 1;
+  will-change: transform;
+  pointer-events: none;
 }
 
 @media (max-width: 1024px) {
@@ -143,8 +203,13 @@
 }
 
 @media (max-width: 768px) {
+  /* Ocultar todas las capas de triángulos en mobile */
   .leftTriangle,
-  .rightTriangle {
+  .rightTriangle,
+  .leftTriangleBackground,
+  .rightTriangleBackground,
+  .leftTriangleForeground,
+  .rightTriangleForeground {
     display: none;
   }
 
