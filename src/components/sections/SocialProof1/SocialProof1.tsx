@@ -1,15 +1,110 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import styles from "./SocialProof1.module.css";
 import socialProofImage from "@/assets/social_proof_1.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { fadeInUp, fadeInLeft, fadeInRight } from "@/lib/animations";
+import {
+  fadeInUp,
+  fadeInLeft,
+  fadeInRight,
+  parallaxLayers,
+} from "@/lib/animations";
 
 export const SocialProof1 = () => {
   const { ref, controls } = useScrollAnimation();
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Configurar parallax scroll
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  // Transforms para hexágonos decorativos (diferentes velocidades)
+  const bgHexY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    parallaxLayers.background.y,
+  );
+  const bgHexScale = useTransform(
+    scrollYProgress,
+    [0, 1],
+    parallaxLayers.background.scale,
+  );
+
+  const middleHexY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    parallaxLayers.middle.y,
+  );
+  const middleHexRotate = useTransform(
+    scrollYProgress,
+    [0, 1],
+    parallaxLayers.middle.rotate,
+  );
+
+  const fgHexY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    parallaxLayers.foreground.y,
+  );
+
+  // Hexágonos pequeños (movimiento rápido)
+  const smallHexY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    parallaxLayers.fast.y,
+  );
+  const smallHexX = useTransform(
+    scrollYProgress,
+    [0, 1],
+    parallaxLayers.fast.x,
+  );
+
+  // Transforms para imagen y testimonial
+  const imageY = useTransform(scrollYProgress, [0, 1], parallaxLayers.slow.y);
+  const testimonialY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
 
   return (
-    <section id="social-proof-1" className={styles.socialProof} ref={ref}>
-      <div className={styles.container}>
+    <section
+      id="social-proof-1"
+      className={styles.socialProof}
+      ref={sectionRef}
+    >
+      {/* Hexágonos decorativos con parallax - Capa de fondo */}
+      <motion.div
+        className={styles.hexagonBackground1}
+        style={{ y: bgHexY, scale: bgHexScale }}
+      />
+      <motion.div
+        className={styles.hexagonBackground2}
+        style={{ y: bgHexY, scale: bgHexScale }}
+      />
+
+      {/* Hexágonos decorativos - Capa media */}
+      <motion.div
+        className={styles.hexagonMiddle1}
+        style={{ y: middleHexY, rotate: middleHexRotate }}
+      />
+      <motion.div
+        className={styles.hexagonMiddle2}
+        style={{ y: middleHexY, rotate: middleHexRotate }}
+      />
+
+      {/* Hexágono decorativo - Capa frontal */}
+      <motion.div className={styles.hexagonForeground1} style={{ y: fgHexY }} />
+
+      {/* Hexágonos pequeños adicionales */}
+      <motion.div
+        className={styles.hexagonSmall1}
+        style={{ y: smallHexY, x: smallHexX }}
+      />
+      <motion.div
+        className={styles.hexagonSmall2}
+        style={{ y: smallHexY, x: smallHexX }}
+      />
+
+      <div className={styles.container} ref={ref}>
         <motion.div
           className={styles.header}
           initial="hidden"
@@ -31,6 +126,7 @@ export const SocialProof1 = () => {
             initial="hidden"
             animate={controls}
             variants={fadeInLeft}
+            style={{ y: imageY }}
           >
             <div className={styles.imageFrame}>
               <img src={`${socialProofImage}`} className={styles.image}></img>
@@ -42,6 +138,7 @@ export const SocialProof1 = () => {
             initial="hidden"
             animate={controls}
             variants={fadeInRight}
+            style={{ y: testimonialY }}
           >
             <div className={styles.testimonialContent}>
               <p className={styles.testimonialText}>
