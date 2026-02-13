@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Button } from "../../common/Button";
 import styles from "./Navbar.module.css";
+import { Button } from "@/components/ui/button";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -17,39 +17,45 @@ export const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { to: "/", label: "Inicio" },
-    { to: "/servicios", label: "Servicios" },
-    { to: "/productos", label: "Productos" },
-    { to: "/equipo", label: "Equipo" },
-    { to: "/ubicacion", label: "Ubicación" },
+    { to: "/equipo", label: "TEAM" },
+    { to: "/productos", label: "PRODUCTOS" },
+    { to: "/servicios", label: "SERVICIOS" },
+    { to: "/ubicacion", label: "UBICACIÓN Y HORARIOS" },
   ];
 
   return (
     <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
       <div className={styles.container}>
         <Link to="/" className={styles.logo}>
-          <span className={styles.logoIcon}>BR</span>
-          <span className={styles.logoText}>ROYCE</span>
+          <div className={styles.logoIcon}>
+            <span className={styles.logoR}>R</span>
+            <span className={styles.logoR}>R</span>
+          </div>
         </Link>
 
         {/* Desktop Navigation */}
         <div className={styles.navLinks}>
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-                `${styles.navLink} ${isActive ? styles.active : ""}`
-              }
-            >
-              {link.label}
-            </NavLink>
+          {navLinks.map((link, index) => (
+            <>
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={({ isActive }) =>
+                  `${styles.navLink} ${isActive ? styles.active : ""}`
+                }
+              >
+                {link.label}
+              </NavLink>
+              {index < navLinks.length - 1 && (
+                <span className={styles.separator}>|</span>
+              )}
+            </>
           ))}
         </div>
 
         <div className={styles.actions}>
-          <Button variant="secondary" size="medium">
-            Agendar Ahora
+          <Button className={styles.ctaButton} size="lg">
+            Agendar Sesión
           </Button>
         </div>
 
@@ -81,8 +87,8 @@ export const Navbar = () => {
             {link.label}
           </NavLink>
         ))}
-        <Button fullWidth size="large">
-          Reservar Cita
+        <Button className={styles.ctaButton} size="lg">
+          Agendar Sesión
         </Button>
       </div>
     </nav>

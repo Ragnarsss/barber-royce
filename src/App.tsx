@@ -1,12 +1,12 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Layout } from "./components/layout/Layout";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Layout } from "./components/layout/Layout/Layout";
 import { HomePage } from "./pages/HomePage";
-import { ServicesPage } from "./pages/ServicesPage";
-import { ProductsPage } from "./pages/ProductsPage";
-import { TeamPage } from "./pages/TeamPage";
 import { LocationPage } from "./pages/LocationPage";
-import "./styles/variables.css";
+import { ProductsPage } from "./pages/ProductsPage";
+import { ServicesPage } from "./pages/ServicesPage";
+import { TeamPage } from "./pages/TeamPage";
 import "./styles/global.css";
+import "./styles/variables.css";
 
 function App() {
   return (
