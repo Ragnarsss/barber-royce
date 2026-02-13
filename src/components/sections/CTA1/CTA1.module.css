@@ -1,0 +1,170 @@
+.cta {
+  height: 100vh;
+  padding: 0;
+  background: #332a2b;
+  position: relative;
+  overflow: hidden;
+  min-height: 500px;
+  display: flex;
+  align-items: stretch;
+}
+
+/* ───── Contenedor principal: 2 columnas ───── */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+/* ───── Columna izquierda: hexágono rojo con texto ───── */
+.content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 60px 40px;
+  z-index: 2;
+}
+
+.textContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 420px;
+  padding-left: 40px;
+}
+
+.title {
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 800;
+  line-height: 1.1;
+  color: #ffffff;
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.ctaButton {
+  align-self: flex-start;
+  margin-top: 8px;
+  gap: 8px;
+  background: #ffffff;
+  color: #1a1a1a;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 12px 24px;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.ctaImage {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50%;
+  height: 100%;
+  background-size: contain;
+  background-position: right bottom;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.textHexagon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 50%;
+  bottom: 0;
+  background: #d52323;
+  clip-path: polygon(50% 0%, 90% 20%, 100% 70%, 70% 100%, 20% 80%, 10% 30%);
+  width: 40vw;
+  height: 80vh;
+  rotate: 15deg;
+}
+.imageHexagon {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  clip-path: polygon(30% 0, 100% 0, 100% 100%, 30% 100%, 0 50%);
+  width: 50vw;
+  height: 100vh;
+}
+
+/* ───── Responsive ───── */
+@media (max-width: 1024px) {
+  .content::before {
+    left: -15%;
+  }
+
+  .textContent {
+    padding-left: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cta {
+    min-height: auto;
+  }
+
+  .container {
+    grid-template-columns: 1fr;
+  }
+
+  .content {
+    padding: 60px 24px;
+    justify-content: center;
+  }
+
+  .content::before {
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(320px, 80vw, 500px);
+    height: clamp(320px, 80vw, 500px);
+  }
+
+  .textContent {
+    padding-left: 0;
+    align-items: center;
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .ctaButton {
+    align-self: center;
+  }
+
+  .imageWrapper {
+    min-height: 350px;
+    background-position: center bottom;
+  }
+
+  .imageWrapper::before {
+    display: none;
+  }
+
+  .imageWrapper::after {
+    width: 80px;
+    height: 80px;
+  }
+}

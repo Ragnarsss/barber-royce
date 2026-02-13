@@ -1,23 +1,21 @@
 import styles from "./Hero.module.css";
+import { heroBenefits } from "@/data/heroData";
+import backgroundImage from "@/assets/hero_model_left_profile.png";
 
-export const Hero = () => {
-  const benefits = [
-    {
-      icon: "⚙️",
-      text: "Cortes de cabello que marcan tendencia, con un profesionalismo inigualable.",
-    },
-    {
-      icon: "💎",
-      text: "Una experiencia sorprendente y premium, diseñada para que te sientas exclusivo.",
-    },
-    {
-      icon: "🤝",
-      text: "Atención personalizada que te asegura un resultado impecable, sin prisas.",
-    },
-  ];
+export function Hero() {
+  const benefits = heroBenefits.map((benefit) => ({
+    icon: <benefit.icon size={24} />,
+    text: benefit.text,
+  }));
 
   return (
     <section id="hero" className={styles.hero}>
+      <div className={styles.leftTriangle}></div>
+      <div className={styles.rightTriangle}></div>
+      <div
+        className={styles.heroImage}
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      ></div>
       <div className={styles.container}>
         <div className={styles.content}>
           <h1 className={styles.title}>
@@ -40,13 +38,7 @@ export const Hero = () => {
             ))}
           </div>
         </div>
-        <div className={styles.imageWrapper}>
-          <div className={styles.imagePlaceholder}>
-            {/* Placeholder para imagen del cliente */}
-            <span>📸</span>
-          </div>
-        </div>
       </div>
     </section>
   );
-};
+}
