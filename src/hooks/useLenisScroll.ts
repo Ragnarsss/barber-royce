@@ -71,7 +71,7 @@ export const useLenisScroll = () => {
  * Hook para detectar cuando un elemento entra en el viewport
  * con información adicional de Lenis
  */
-export const useLenisInView = (threshold = 0.2) => {
+export const useLenisInView = () => {
   const [isInView, setIsInView] = useState(false);
   const scrollData = useLenisScroll();
 

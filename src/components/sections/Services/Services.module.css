@@ -1,7 +1,7 @@
 .services {
   padding: 100px 0;
-  background-color: var(--color-white, #ffffff);
-  overflow: hidden; /* Importante para el scroll horizontal */
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  overflow: hidden;
 }
 
 .container {
@@ -18,86 +18,167 @@
 .title {
   font-size: 40px;
   font-weight: 700;
-  color: var(--color-text, #1a1a1a);
+  color: #ffffff;
   margin: 0 0 16px 0;
 }
 
 .subtitle {
   font-size: 18px;
-  color: var(--color-text-secondary, #666);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0;
 }
 
-/* Contenedor para scroll horizontal */
-.horizontalScrollContainer {
-  overflow: visible;
+/* Scroll horizontal wrapper */
+.scrollWrapper {
+  width: 100%;
+  overflow: hidden;
   padding: 20px 0;
+  /* Limitar el ancho para crear el efecto "peek" */
+  max-width: calc(100vw - 48px);
+  margin: 0 auto;
 }
 
-.horizontalScroll {
+.scrollContainer {
   display: flex;
-  gap: 32px;
-  padding: 0 20px;
-  will-change: transform;
+  gap: 24px;
+  overflow-x: auto;
+  overflow-y: visible;
+  scroll-behavior: smooth;
+  padding: 20px 24px 40px 24px;
+  /* Ocultar scrollbar pero mantener funcionalidad */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  /* Snap de scroll para mejor UX */
+  scroll-snap-type: x mandatory;
 }
 
-.card {
-  min-width: 320px;
-  max-width: 320px;
-  padding: 32px;
-  border: 2px solid var(--color-border, #e0e0e0);
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.3s ease;
-  background: #ffffff;
-  will-change: transform, opacity;
+.scrollContainer::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
-.card:hover {
-  border-color: var(--color-primary, #1a1a1a);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+/* Service Card */
+.serviceCard {
+  min-width: 380px;
+  max-width: 380px;
+  background: #2a2a2a;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
+  transition: transform 0.3s ease;
+  border: 2px solid transparent;
+  scroll-snap-align: start;
 }
 
+.serviceCard:hover {
+  transform: translateY(-8px);
+  border-color: #d52323;
+}
+
+.imageContainer {
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+  background: #1a1a1a;
+  position: relative;
+}
+
+.serviceImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.serviceCard:hover .serviceImage {
+  transform: scale(1.05);
+}
+
+/* Card Content */
 .cardContent {
-  margin-bottom: 20px;
+  padding: 28px;
 }
 
 .serviceName {
   font-size: 22px;
+  font-weight: 700;
+  color: #d52323;
+  margin: 0 0 20px 0;
+  letter-spacing: 0.5px;
+}
+
+/* Info Items (Valor, Duración, Incluye) */
+.serviceInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(213, 35, 35, 0.1);
+  border-radius: 8px;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.infoLabel {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 2px;
+}
+
+.infoValue {
+  font-size: 16px;
   font-weight: 600;
-  margin: 0 0 12px 0;
-  color: var(--color-text, #1a1a1a);
+  color: #ffffff;
 }
 
 .serviceDescription {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.6;
-  color: var(--color-text-secondary, #666);
+  color: rgba(255, 255, 255, 0.8);
   margin: 0;
 }
 
-.price {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--color-primary, #1a1a1a);
-}
-
+/* Responsive */
 @media (max-width: 768px) {
+  .services {
+    padding: 60px 0;
+  }
+
   .title {
     font-size: 32px;
   }
 
-  /* En móvil, volver a grid vertical */
-  .horizontalScroll {
-    flex-direction: column;
-    gap: 20px;
+  .subtitle {
+    font-size: 16px;
   }
 
-  .card {
-    min-width: 100%;
+  .serviceCard {
+    min-width: 320px;
+    max-width: 320px;
+  }
+
+  .cardContent {
+    padding: 24px;
+  }
+
+  .serviceName {
+    font-size: 20px;
+  }
+}
     max-width: 100%;
   }
 }

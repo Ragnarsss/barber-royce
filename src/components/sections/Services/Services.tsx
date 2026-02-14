@@ -1,30 +1,16 @@
-import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import styles from "./Services.module.css";
 import { servicesList } from "@/data/servicesData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/animations";
 
 export const Services = () => {
   const { ref, controls } = useScrollAnimation();
-  const sectionRef = useRef<HTMLElement>(null);
-  const services = servicesList;
-
-  // Configurar scroll horizontal
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  // Movimiento horizontal basado en scroll vertical
-  const x = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ["5%", `-${(services.length - 3) * 25}%`],
-  );
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section id="services" className={styles.services} ref={sectionRef}>
+    <section id="services" className={styles.services}>
       <div className={styles.container} ref={ref}>
         <motion.div
           className={styles.header}
@@ -38,37 +24,122 @@ export const Services = () => {
           </p>
         </motion.div>
 
-        {/* Contenedor de scroll horizontal */}
-        <div className={styles.horizontalScrollContainer}>
-          <motion.div className={styles.horizontalScroll} style={{ x }}>
-            {services.map((service, index) => {
-              // Cada card aparece con delay incremental (Técnica 8: Stagger)
-              const cardProgress = useTransform(
-                scrollYProgress,
-                [index * 0.08, (index + 1) * 0.1],
-                [0, 1],
-              );
-              const opacity = useTransform(cardProgress, [0, 1], [0, 1]);
-              const scale = useTransform(cardProgress, [0, 1], [0.85, 1]);
-              const y = useTransform(cardProgress, [0, 1], [40, 0]);
+        {/* Scroll horizontal */}
+        <div className={styles.scrollWrapper}>
+          <div className={styles.scrollContainer} ref={scrollRef}>
+            {servicesList.map((service, index) => (
+              <motion.div
+                key={index}
+                className={styles.serviceCard}
+                initial={{ opacity: 0, y: 30 }}
+                animate={controls}
+                transition={{ delay: index * 0.1 }}
+              >
+                <div className={styles.imageContainer}>
+                  <img
+                    src={service.image}
+                    alt={service.name}
+                    className={styles.serviceImage}
+                  />
+                </div>
 
-              return (
-                <motion.div
-                  key={index}
-                  className={styles.card}
-                  style={{ opacity, scale, y }}
-                >
-                  <div className={styles.cardContent}>
-                    <h3 className={styles.serviceName}>{service.name}</h3>
-                    <p className={styles.serviceDescription}>
-                      {service.description}
-                    </p>
+                <div className={styles.cardContent}>
+                  <h3 className={styles.serviceName}>{service.name}</h3>
+
+                  <div className={styles.serviceInfo}>
+                    <div className={styles.infoItem}>
+                      <div className={styles.icon}>
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <rect
+                            x="2"
+                            y="6"
+                            width="20"
+                            height="16"
+                            rx="2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <path
+                            d="M8 2v4M16 2v4M2 10h20"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className={styles.infoLabel}>Valor</div>
+                        <div className={styles.infoValue}>{service.price}</div>
+                      </div>
+                    </div>
+
+                    <div className={styles.infoItem}>
+                      <div className={styles.icon}>
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <circle
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          />
+                          <path
+                            d="M12 6v6l4 2"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className={styles.infoLabel}>Duración</div>
+                        <div className={styles.infoValue}>
+                          {service.duration}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={styles.infoItem}>
+                      <div className={styles.icon}>
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            d="M20 6L9 17l-5-5"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <div className={styles.infoLabel}>Incluye</div>
+                        <div className={styles.infoValue}>
+                          {service.includes}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className={styles.price}>{service.price}</div>
-                </motion.div>
-              );
-            })}
-          </motion.div>
+
+                  <p className={styles.serviceDescription}>
+                    {service.description}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
