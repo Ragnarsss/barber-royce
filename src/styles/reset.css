@@ -19,14 +19,14 @@
   margin: 0;
 }
 
-/* HTML y body ocupan todo el viewport */
-html,
-body {
+/* HTML con altura completa, body se expande según contenido */
+html {
   height: 100%;
 }
 
 /* Configuración del body */
 body {
+  min-height: 100%;
   line-height: var(--line-height-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
