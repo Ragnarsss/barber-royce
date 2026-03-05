@@ -1,11 +1,30 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import styles from "./Features.module.css";
 import { featuresList } from "@/data/featuresData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { fadeInUp, scaleIn, staggerContainer } from "@/lib/animations";
+import {
+  fadeInUp,
+  scaleIn,
+  staggerContainer,
+  parallaxLayers,
+} from "@/lib/animations";
 
 export const Features = () => {
   const { ref, controls } = useScrollAnimation();
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Parallax effect con zoom
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const containerY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    parallaxLayers.slow.y,
+  );
 
   const features = featuresList.map((feature) => ({
     icon: <feature.icon size={36} />,
@@ -14,8 +33,12 @@ export const Features = () => {
   }));
 
   return (
-    <section id="features" className={styles.features} ref={ref}>
-      <div className={styles.container}>
+    <section id="features" className={styles.features} ref={sectionRef}>
+      <motion.div
+        className={styles.container}
+        style={{ y: containerY }}
+        ref={ref}
+      >
         <motion.div
           className={styles.header}
           initial="hidden"
@@ -44,7 +67,7 @@ export const Features = () => {
             </motion.div>
           ))}
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 };

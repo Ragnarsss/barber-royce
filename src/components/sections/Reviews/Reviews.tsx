@@ -1,16 +1,39 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import styles from "./Reviews.module.css";
 import { reviewsList } from "@/data/reviewsData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { fadeInUp, scaleIn, staggerContainer } from "@/lib/animations";
+import {
+  fadeInUp,
+  scaleIn,
+  staggerContainer,
+  parallaxLayers,
+} from "@/lib/animations";
 
 export const Reviews = () => {
   const { ref, controls } = useScrollAnimation();
+  const sectionRef = useRef<HTMLElement>(null);
   const reviews = reviewsList;
 
+  // Parallax effect con zoom
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const containerY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    parallaxLayers.slow.y,
+  );
+
   return (
-    <section id="reviews" className={styles.reviews} ref={ref}>
-      <div className={styles.container}>
+    <section id="reviews" className={styles.reviews} ref={sectionRef}>
+      <motion.div
+        className={styles.container}
+        style={{ y: containerY }}
+        ref={ref}
+      >
         <motion.div
           className={styles.header}
           initial="hidden"
@@ -37,7 +60,7 @@ export const Reviews = () => {
             </motion.div>
           ))}
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 };

@@ -1,12 +1,31 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 import { Droplet } from "lucide-react";
 import styles from "./Benefits.module.css";
 import { benefitsList } from "@/data/benefitsData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { fadeInUp, scaleIn, staggerContainer } from "@/lib/animations";
+import {
+  fadeInUp,
+  scaleIn,
+  staggerContainer,
+  parallaxLayers,
+} from "@/lib/animations";
 
 export const Benefits = () => {
   const { ref, controls } = useScrollAnimation();
+  const sectionRef = useRef<HTMLElement>(null);
+
+  // Parallax effect con zoom
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"],
+  });
+
+  const containerY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    parallaxLayers.slow.y,
+  );
 
   const benefits = benefitsList.map((benefit) => ({
     icon: <benefit.icon size={32} />,
@@ -15,8 +34,12 @@ export const Benefits = () => {
   }));
 
   return (
-    <section id="benefits" className={styles.benefits} ref={ref}>
-      <div className={styles.container}>
+    <section id="benefits" className={styles.benefits} ref={sectionRef}>
+      <motion.div
+        className={styles.container}
+        style={{ y: containerY }}
+        ref={ref}
+      >
         <div className={styles.content}>
           <motion.div
             className={styles.header}
@@ -66,7 +89,7 @@ export const Benefits = () => {
             <Droplet size={64} strokeWidth={1.5} />
           </div>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 };
