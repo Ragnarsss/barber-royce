@@ -51,8 +51,6 @@
   -ms-overflow-style: none; /* IE and Edge */
   /* Habilitar scroll touch en móviles */
   -webkit-overflow-scrolling: touch;
-  /* Prevenir que Lenis intercepte este elemento */
-  overscroll-behavior: contain;
 }
 
 .scrollContainer:active {

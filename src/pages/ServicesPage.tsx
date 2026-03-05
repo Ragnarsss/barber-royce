@@ -44,6 +44,13 @@ export const ServicesPage = () => {
     } else {
       lenis.start();
     }
+
+    // Cleanup: asegurarse de que Lenis esté activo al desmontar
+    return () => {
+      if (lenis) {
+        lenis.start();
+      }
+    };
   }, [isHovering]);
 
   return (
@@ -69,7 +76,6 @@ export const ServicesPage = () => {
             className={styles.scrollContainer}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
-            data-lenis-prevent
           >
             <div className={styles.scrollContent}>
               {servicesList.map((service, idx) => (

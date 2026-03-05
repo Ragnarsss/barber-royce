@@ -191,7 +191,7 @@ export const LocationPage = () => {
 
       <div className={styles.content}>
         <div className={styles.container}>
-          <Tabs defaultValue="centro" className={styles.tabs}>
+          <Tabs defaultValue="centro" className={styles.tabs} orientation="horizontal">
             <TabsList className={styles.tabsList}>
               <TabsTrigger value="centro" className={styles.tabTrigger}>
                 Centro
