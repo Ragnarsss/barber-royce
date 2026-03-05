@@ -1,5 +1,6 @@
 .page {
   min-height: 100vh;
+  background-color: #1a1a1a;
 }
 
 .hero {
@@ -28,76 +29,185 @@
 }
 
 .content {
-  padding: 80px 0;
+  padding: 60px 0;
+  position: relative;
 }
 
-.category {
-  margin-bottom: 80px;
-  overflow: hidden; /* Importante para el scroll horizontal */
+/* Wrapper para contener scroll + fade gradients */
+.scrollWrapper {
+  position: relative;
+  width: 100%;
 }
 
-.categoryTitle {
-  font-size: 32px;
-  font-weight: 700;
-  margin: 0 0 40px 0;
-  color: var(--color-text, #1a1a1a);
-}
-
-/* Contenedor para scroll horizontal */
-.horizontalScrollContainer {
-  overflow: visible;
+/* Contenedor de scroll horizontal */
+.scrollContainer {
+  overflow-x: auto;
+  overflow-y: hidden;
   padding: 20px 0;
+  margin: 0 auto;
+  cursor: grab;
+  /* Ocultar scrollbar pero mantener funcionalidad */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  /* Habilitar scroll touch en móviles */
+  -webkit-overflow-scrolling: touch;
+  /* Prevenir que Lenis intercepte este elemento */
+  overscroll-behavior: contain;
 }
 
-.items {
+.scrollContainer:active {
+  cursor: grabbing;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Fade gradients para indicar más contenido */
+.fadeLeft,
+.fadeRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 120px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.fadeLeft {
+  left: 0;
+  background: linear-gradient(
+    to right,
+    #1a1a1a 0%,
+    rgba(26, 26, 26, 0) 100%
+  );
+}
+
+.fadeRight {
+  right: 0;
+  background: linear-gradient(
+    to left,
+    #1a1a1a 0%,
+    rgba(26, 26, 26, 0) 100%
+  );
+}
+
+.scrollContent {
   display: flex;
   gap: 24px;
-  padding: 0 20px;
-  will-change: transform;
+  padding: 0 24px;
+  width: max-content;
 }
 
+/* Tarjeta de servicio con imagen de fondo */
 .serviceCard {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-width: 320px;
-  max-width: 320px;
-  padding: 32px 24px;
-  background-color: var(--color-bg-alt, #f9f9f9);
-  border: 2px solid transparent;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  will-change: transform, opacity;
+  position: relative;
+  min-width: 340px;
+  max-width: 340px;
+  height: 480px;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .serviceCard:hover {
-  border-color: var(--color-primary, #1a1a1a);
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
 }
 
-.serviceInfo {
-  flex: 1;
-  margin-bottom: 20px;
+/* Imagen de fondo */
+.cardBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.3s ease;
+}
+
+.serviceCard:hover .cardBackground {
+  transform: scale(1.05);
+}
+
+/* Overlay oscuro */
+.cardOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.7) 50%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+}
+
+/* Contenido de la tarjeta */
+.cardContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+  color: white;
 }
 
 .serviceName {
-  font-size: 22px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  color: var(--color-text, #1a1a1a);
-}
-
-.duration {
-  font-size: 14px;
-  color: var(--color-text-secondary, #666);
-  margin: 0;
-}
-
-.price {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
-  color: var(--color-primary, #1a1a1a);
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+/* Contenedor de iconos */
+.serviceIcons {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.iconItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 80px;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  color: white;
+  stroke-width: 2;
+}
+
+.iconLabel {
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Descripción del servicio */
+.serviceDescription {
+  margin-top: auto;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0;
 }
 
 @media (max-width: 768px) {
@@ -105,28 +215,25 @@
     font-size: 36px;
   }
 
-  .categoryTitle {
-    font-size: 24px;
-  }
-
-  /* En móvil, volver a layout vertical */
-  .items {
-    flex-direction: column;
-    gap: 16px;
+  .scrollContent {
+    padding: 0 16px;
   }
 
   .serviceCard {
-    min-width: 100%;
-    max-width: 100%;
-    flex-direction: row;
-    align-items: center;
+    min-width: 300px;
+    max-width: 300px;
+    height: 450px;
   }
 
-  .serviceInfo {
-    margin-bottom: 0;
+  .cardContent {
+    padding: 20px;
   }
 
-  .price {
-    font-size: 24px;
+  .serviceName {
+    font-size: 20px;
+  }
+
+  .serviceDescription {
+    font-size: 13px;
   }
 }
