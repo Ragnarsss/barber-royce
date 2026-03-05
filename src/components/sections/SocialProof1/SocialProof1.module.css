@@ -180,11 +180,142 @@
   }
 }
 
-/* ===== HEXÁGONOS DECORATIVOS PARALLAX ===== */
+/* ═════════════════════════════════════════════════════════════
+   RAYOS LÁSER DIAGONALES CRUZADOS - Tipo / y \
+═════════════════════════════════════════════════════════════ */
+
+.diagonalLaser1,
+.diagonalLaser2,
+.diagonalLaser3,
+.diagonalLaser4,
+.diagonalLaser5 {
+  position: absolute;
+  width: 200vw;
+  height: 3px;
+  pointer-events: none;
+  will-change: transform;
+  z-index: 0;
+  transform-origin: center;
+}
+
+/* ───────────────────────────────────────────────────────────
+   RAYOS TIPO "/" - Diagonales ascendentes ↗
+────────────────────────────────────────────────────────────── */
+
+/* Rayo Diagonal 1: / primario */
+.diagonalLaser1 {
+  left: 0;
+  top: 50%;
+  transform: rotate(-45deg); /* Inclinación tipo "/" */
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(254, 0, 0, 0.4) 15%,
+    rgba(213, 35, 35, 0.95) 50%,
+    rgba(254, 0, 0, 0.4) 85%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 15px rgba(254, 0, 0, 0.9),
+    0 0 30px rgba(213, 35, 35, 0.7),
+    0 0 45px rgba(254, 0, 0, 0.5);
+  filter: blur(0.5px);
+}
+
+/* Rayo Diagonal 3: / secundario */
+.diagonalLaser3 {
+  left: 0;
+  top: 20%;
+  height: 2.5px;
+  transform: rotate(-50deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(254, 0, 0, 0.35) 20%,
+    rgba(213, 35, 35, 0.85) 50%,
+    rgba(254, 0, 0, 0.35) 80%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 12px rgba(254, 0, 0, 0.8),
+    0 0 25px rgba(213, 35, 35, 0.6);
+  filter: blur(0.5px);
+}
+
+/* Rayo Diagonal 5: / terciario */
+.diagonalLaser5 {
+  left: 0;
+  top: 80%;
+  height: 2px;
+  transform: rotate(-40deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(213, 35, 35, 0.3) 25%,
+    rgba(254, 0, 0, 0.75) 50%,
+    rgba(213, 35, 35, 0.3) 75%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 10px rgba(254, 0, 0, 0.7),
+    0 0 20px rgba(213, 35, 35, 0.5);
+  filter: blur(0.5px);
+}
+
+/* ───────────────────────────────────────────────────────────
+   RAYOS TIPO "\" - Diagonales descendentes ↘
+────────────────────────────────────────────────────────────── */
+
+/* Rayo Diagonal 2: \ primario */
+.diagonalLaser2 {
+  left: 0;
+  top: 30%;
+  transform: rotate(45deg); /* Inclinación tipo "\" */
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(254, 0, 0, 0.4) 15%,
+    rgba(213, 35, 35, 0.9) 50%,
+    rgba(254, 0, 0, 0.4) 85%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 15px rgba(254, 0, 0, 0.85),
+    0 0 30px rgba(213, 35, 35, 0.65),
+    0 0 45px rgba(254, 0, 0, 0.45);
+  filter: blur(0.5px);
+  height: 2.5px;
+}
+
+/* Rayo Diagonal 4: \ secundario */
+.diagonalLaser4 {
+  left: 0;
+  top: 60%;
+  height: 2px;
+  transform: rotate(40deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(254, 0, 0, 0.35) 20%,
+    rgba(213, 35, 35, 0.8) 50%,
+    rgba(254, 0, 0, 0.35) 80%,
+    transparent 100%
+  );
+  box-shadow:
+    0 0 12px rgba(254, 0, 0, 0.75),
+    0 0 24px rgba(213, 35, 35, 0.55);
+  filter: blur(0.5px);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   HEXÁGONOS DECORATIVOS PARALLAX
+═════════════════════════════════════════════════════════════ */
 
 /* Hexágonos de fondo (sutiles con gradiente) */
 .hexagonBackground1,
-.hexagonBackground2 {
+.hexagonBackground2,
+.hexagonBackground3,
+.hexagonBackground4 {
   position: absolute;
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   background: linear-gradient(
@@ -217,9 +348,29 @@
   transform: rotate(-8deg);
 }
 
+.hexagonBackground3 {
+  width: 280px;
+  height: 280px;
+  top: 50%;
+  left: 8%;
+  opacity: 0.4;
+  transform: rotate(35deg);
+}
+
+.hexagonBackground4 {
+  width: 240px;
+  height: 240px;
+  bottom: 20%;
+  right: 12%;
+  opacity: 0.38;
+  transform: rotate(-25deg);
+}
+
 /* Hexágonos de capa media (más visibles con glow) */
 .hexagonMiddle1,
-.hexagonMiddle2 {
+.hexagonMiddle2,
+.hexagonMiddle3,
+.hexagonMiddle4 {
   position: absolute;
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   background: linear-gradient(
@@ -231,6 +382,7 @@
   box-shadow: 0 0 30px rgba(213, 35, 35, 0.2);
   pointer-events: none;
   will-change: transform;
+  transition: opacity 0.3s ease-out;
   z-index: 0;
 }
 
@@ -252,8 +404,27 @@
   transform: rotate(-15deg);
 }
 
+.hexagonMiddle3 {
+  width: 180px;
+  height: 180px;
+  bottom: 25%;
+  right: 8%;
+  opacity: 0.58;
+  transform: rotate(40deg);
+}
+
+.hexagonMiddle4 {
+  width: 160px;
+  height: 160px;
+  top: 55%;
+  left: 5%;
+  opacity: 0.52;
+  transform: rotate(-35deg);
+}
+
 /* Hexágono de frente (destacado con glow fuerte) */
-.hexagonForeground1 {
+.hexagonForeground1,
+.hexagonForeground2 {
   position: absolute;
   width: 140px;
   height: 140px;
@@ -267,18 +438,33 @@
   box-shadow:
     0 0 40px rgba(213, 35, 35, 0.3),
     inset 0 0 20px rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  will-change: transform;
+  transition: transform 0.1s ease-out;
+  z-index: 2;
+}
+
+.hexagonForeground1 {
   top: 62%;
   right: 10%;
   opacity: 0.7;
-  pointer-events: none;
-  will-change: transform;
-  z-index: 2;
   transform: rotate(30deg);
+}
+
+.hexagonForeground2 {
+  width: 120px;
+  height: 120px;
+  top: 18%;
+  right: 35%;
+  opacity: 0.65;
+  transform: rotate(-40deg);
 }
 
 /* Hexágonos pequeños adicionales (detalles sutiles) */
 .hexagonSmall1,
-.hexagonSmall2 {
+.hexagonSmall2,
+.hexagonSmall3,
+.hexagonSmall4 {
   position: absolute;
   width: 80px;
   height: 80px;
@@ -304,14 +490,45 @@
   transform: rotate(-30deg);
 }
 
+.hexagonSmall3 {
+  width: 70px;
+  height: 70px;
+  top: 75%;
+  right: 25%;
+  opacity: 0.42;
+  transform: rotate(60deg);
+}
+
+.hexagonSmall4 {
+  width: 65px;
+  height: 65px;
+  top: 12%;
+  left: 40%;
+  opacity: 0.38;
+  transform: rotate(-50deg);
+}
+
 @media (max-width: 1024px) {
+  /* Ocultar decoración en tablets */
+  .diagonalLaser1,
+  .diagonalLaser2,
+  .diagonalLaser3,
+  .diagonalLaser4,
+  .diagonalLaser5,
   .hexagonBackground1,
   .hexagonBackground2,
+  .hexagonBackground3,
+  .hexagonBackground4,
   .hexagonMiddle1,
   .hexagonMiddle2,
+  .hexagonMiddle3,
+  .hexagonMiddle4,
   .hexagonForeground1,
+  .hexagonForeground2,
   .hexagonSmall1,
-  .hexagonSmall2 {
+  .hexagonSmall2,
+  .hexagonSmall3,
+  .hexagonSmall4 {
     display: none;
   }
 }

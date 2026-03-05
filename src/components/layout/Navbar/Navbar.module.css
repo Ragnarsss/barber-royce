@@ -33,6 +33,16 @@
   text-decoration: none;
 }
 
+.logoImage {
+  height: 50px;
+  width: auto;
+  transition: transform 0.3s ease;
+}
+
+.logoImage:hover {
+  transform: scale(1.05);
+}
+
 .logoIcon {
   display: flex;
   align-items: flex-start;

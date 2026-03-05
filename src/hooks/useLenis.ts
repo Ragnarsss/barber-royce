@@ -27,7 +27,6 @@ export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
       gestureOrientation: "vertical",
       smoothWheel: true, // Suavizar el scroll con la rueda del mouse
       wheelMultiplier: 1, // Multiplicador de velocidad de la rueda
-      smoothTouch: false, // No suavizar en touch (mejor UX en móviles)
       touchMultiplier: 2, // Multiplicador de velocidad en touch
       infinite: false, // No hacer scroll infinito
       ...options,
