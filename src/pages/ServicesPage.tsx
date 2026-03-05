@@ -16,7 +16,7 @@ export const ServicesPage = () => {
         // Prevenir el scroll de la página
         e.preventDefault();
         e.stopPropagation();
-        
+
         // Convertir el scroll vertical en horizontal
         const scrollAmount = e.deltaY;
         scrollContainer.scrollLeft += scrollAmount;
@@ -24,9 +24,9 @@ export const ServicesPage = () => {
     };
 
     // Agregar el event listener en la fase de captura para interceptar antes
-    scrollContainer.addEventListener("wheel", handleWheel, { 
+    scrollContainer.addEventListener("wheel", handleWheel, {
       passive: false,
-      capture: true 
+      capture: true
     });
 
     return () => {
@@ -62,93 +62,93 @@ export const ServicesPage = () => {
         <div className={styles.scrollWrapper}>
           {/* Fade gradient izquierdo */}
           <div className={styles.fadeLeft} />
-          
+
           {/* Scroll horizontal container */}
-          <div 
-            ref={scrollContainerRef} 
+          <div
+            ref={scrollContainerRef}
             className={styles.scrollContainer}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
             data-lenis-prevent
           >
             <div className={styles.scrollContent}>
-            {servicesList.map((service, idx) => (
-              <motion.div
-                key={idx}
-                className={styles.serviceCard}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                viewport={{ once: true, margin: "-100px" }}
-              >
-                {/* Imagen de fondo */}
-                <div
-                  className={styles.cardBackground}
-                  style={{ backgroundImage: `url(${service.image})` }}
-                />
+              {servicesList.map((service, idx) => (
+                <motion.div
+                  key={idx}
+                  className={styles.serviceCard}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                >
+                  {/* Imagen de fondo */}
+                  <div
+                    className={styles.cardBackground}
+                    style={{ backgroundImage: `url(${service.image})` }}
+                  />
 
-                {/* Overlay oscuro */}
-                <div className={styles.cardOverlay} />
+                  {/* Overlay oscuro */}
+                  <div className={styles.cardOverlay} />
 
-                {/* Contenido de la tarjeta */}
-                <div className={styles.cardContent}>
-                  <h3 className={styles.serviceName}>{service.name}</h3>
+                  {/* Contenido de la tarjeta */}
+                  <div className={styles.cardContent}>
+                    <h3 className={styles.serviceName}>{service.name}</h3>
 
-                  {/* Iconos con información */}
-                  <div className={styles.serviceIcons}>
-                    <div className={styles.iconItem}>
-                      <svg
-                        className={styles.icon}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                        <line x1="3" y1="9" x2="21" y2="9" />
-                        <line x1="9" y1="21" x2="9" y2="9" />
-                      </svg>
-                      <span className={styles.iconLabel}>{service.price}</span>
+                    {/* Iconos con información */}
+                    <div className={styles.serviceIcons}>
+                      <div className={styles.iconItem}>
+                        <svg
+                          className={styles.icon}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <rect x="3" y="3" width="18" height="18" rx="2" />
+                          <line x1="3" y1="9" x2="21" y2="9" />
+                          <line x1="9" y1="21" x2="9" y2="9" />
+                        </svg>
+                        <span className={styles.iconLabel}>{service.price}</span>
+                      </div>
+
+                      <div className={styles.iconItem}>
+                        <svg
+                          className={styles.icon}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <circle cx="12" cy="12" r="10" />
+                          <polyline points="12 6 12 12 16 14" />
+                        </svg>
+                        <span className={styles.iconLabel}>{service.duration}</span>
+                      </div>
+
+                      <div className={styles.iconItem}>
+                        <svg
+                          className={styles.icon}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <path d="M20 6L9 17l-5-5" />
+                        </svg>
+                        <span className={styles.iconLabel}>{service.includes}</span>
+                      </div>
                     </div>
 
-                    <div className={styles.iconItem}>
-                      <svg
-                        className={styles.icon}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <circle cx="12" cy="12" r="10" />
-                        <polyline points="12 6 12 12 16 14" />
-                      </svg>
-                      <span className={styles.iconLabel}>{service.duration}</span>
-                    </div>
-
-                    <div className={styles.iconItem}>
-                      <svg
-                        className={styles.icon}
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M20 6L9 17l-5-5" />
-                      </svg>
-                      <span className={styles.iconLabel}>{service.includes}</span>
-                    </div>
+                    {/* Descripción */}
+                    <p className={styles.serviceDescription}>{service.description}</p>
                   </div>
-
-                  {/* Descripción */}
-                  <p className={styles.serviceDescription}>{service.description}</p>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-        
-        {/* Fade gradient derecho */}
-        <div className={styles.fadeRight} />
+
+          {/* Fade gradient derecho */}
+          <div className={styles.fadeRight} />
         </div>
       </div>
     </div>

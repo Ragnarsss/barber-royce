@@ -51,7 +51,7 @@ export const ProductsPage = () => {
     <div className={styles.page}>
       <div className={styles.hero}>
         <div className={styles.container}>
-          <motion.h1 
+          <motion.h1
             className={styles.title}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -59,7 +59,7 @@ export const ProductsPage = () => {
           >
             Productos Premium
           </motion.h1>
-          <motion.p 
+          <motion.p
             className={styles.subtitle}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -74,8 +74,8 @@ export const ProductsPage = () => {
         <div className={styles.container}>
           <div className={styles.grid}>
             {products.map((product, index) => (
-              <motion.div 
-                key={index} 
+              <motion.div
+                key={index}
                 className={styles.card}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -84,16 +84,16 @@ export const ProductsPage = () => {
               >
                 {/* Etiqueta de categoría */}
                 <div className={styles.categoryBadge}>{product.category}</div>
-                
+
                 {/* Imagen del producto */}
                 <div className={styles.imageContainer}>
-                  <img 
-                    src={product.image} 
+                  <img
+                    src={product.image}
                     alt={product.name}
                     className={styles.productImage}
                   />
                 </div>
-                
+
                 <div className={styles.cardContent}>
                   <h3 className={styles.productName}>{product.name}</h3>
                   <p className={styles.description}>{product.description}</p>
@@ -101,9 +101,9 @@ export const ProductsPage = () => {
                     <span className={styles.price}>{product.price}</span>
                     <button className={styles.button}>
                       <svg className={styles.cartIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="9" cy="21" r="1"/>
-                        <circle cx="20" cy="21" r="1"/>
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        <circle cx="9" cy="21" r="1" />
+                        <circle cx="20" cy="21" r="1" />
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                       </svg>
                       Comprar
                     </button>

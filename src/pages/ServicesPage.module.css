@@ -76,20 +76,12 @@
 
 .fadeLeft {
   left: 0;
-  background: linear-gradient(
-    to right,
-    #1a1a1a 0%,
-    rgba(26, 26, 26, 0) 100%
-  );
+  background: linear-gradient(to right, #1a1a1a 0%, rgba(26, 26, 26, 0) 100%);
 }
 
 .fadeRight {
   right: 0;
-  background: linear-gradient(
-    to left,
-    #1a1a1a 0%,
-    rgba(26, 26, 26, 0) 100%
-  );
+  background: linear-gradient(to left, #1a1a1a 0%, rgba(26, 26, 26, 0) 100%);
 }
 
 .scrollContent {
