@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import styles from "./Features.module.css";
 import { featuresList } from "@/data/featuresData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -60,10 +61,14 @@ export const Features = () => {
           variants={staggerContainer}
         >
           {features.map((feature, index) => (
-            <motion.div key={index} className={styles.card} variants={scaleIn}>
-              <div className={styles.cardIcon}>{feature.icon}</div>
-              <h3 className={styles.cardTitle}>{feature.title}</h3>
-              <p className={styles.cardDescription}>{feature.description}</p>
+            <motion.div key={index} variants={scaleIn}>
+              <Card className={styles.card}>
+                <CardHeader>
+                  <div className={styles.cardIcon}>{feature.icon}</div>
+                  <CardTitle className={styles.cardTitle}>{feature.title}</CardTitle>
+                  <CardDescription className={styles.cardDescription}>{feature.description}</CardDescription>
+                </CardHeader>
+              </Card>
             </motion.div>
           ))}
         </motion.div>

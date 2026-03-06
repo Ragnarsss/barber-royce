@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
 import styles from "./ProductsPage.module.css";
 
 export const ProductsPage = () => {
@@ -76,39 +77,40 @@ export const ProductsPage = () => {
             {products.map((product, index) => (
               <motion.div
                 key={index}
-                className={styles.card}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true, margin: "-50px" }}
               >
-                {/* Etiqueta de categoría */}
-                <div className={styles.categoryBadge}>{product.category}</div>
+                <Card className={styles.card}>
+                  {/* Etiqueta de categoría */}
+                  <div className={styles.categoryBadge}>{product.category}</div>
 
-                {/* Imagen del producto */}
-                <div className={styles.imageContainer}>
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className={styles.productImage}
-                  />
-                </div>
-
-                <div className={styles.cardContent}>
-                  <h3 className={styles.productName}>{product.name}</h3>
-                  <p className={styles.description}>{product.description}</p>
-                  <div className={styles.footer}>
-                    <span className={styles.price}>{product.price}</span>
-                    <button className={styles.button}>
-                      <svg className={styles.cartIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <circle cx="9" cy="21" r="1" />
-                        <circle cx="20" cy="21" r="1" />
-                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                      </svg>
-                      Comprar
-                    </button>
+                  {/* Imagen del producto */}
+                  <div className={styles.imageContainer}>
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className={styles.productImage}
+                    />
                   </div>
-                </div>
+
+                  <CardContent className={styles.cardContent}>
+                    <h3 className={styles.productName}>{product.name}</h3>
+                    <p className={styles.description}>{product.description}</p>
+                    <div className={styles.footer}>
+                      <span className={styles.price}>{product.price}</span>
+                      <button className={styles.button}>
+                        <svg className={styles.cartIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <circle cx="9" cy="21" r="1" />
+                          <circle cx="20" cy="21" r="1" />
+                          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                        </svg>
+                        Comprar
+                      </button>
+                    </div>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </div>

@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 import { Droplet } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import styles from "./Benefits.module.css";
 import { benefitsList } from "@/data/benefitsData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -67,13 +68,18 @@ export const Benefits = () => {
             {benefits.map((benefit, index) => (
               <motion.div
                 key={index}
-                className={styles.card}
                 variants={scaleIn}
               >
-                <h3 className={styles.cardTitle}>{benefit.title}</h3>
-                <div className={styles.cardIcon}>{benefit.icon}</div>
-                <div className={styles.accent}></div>
-                <p className={styles.cardDescription}>{benefit.description}</p>
+                <Card className={styles.card}>
+                  <CardHeader>
+                    <CardTitle className={styles.cardTitle}>{benefit.title}</CardTitle>
+                    <div className={styles.cardIcon}>{benefit.icon}</div>
+                  </CardHeader>
+                  <div className={styles.accent}></div>
+                  <CardContent>
+                    <CardDescription className={styles.cardDescription}>{benefit.description}</CardDescription>
+                  </CardContent>
+                </Card>
               </motion.div>
             ))}
           </motion.div>

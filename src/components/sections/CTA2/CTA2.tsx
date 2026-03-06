@@ -11,7 +11,7 @@ import { scaleIn, parallaxLayers } from "@/lib/animations";
 export const CTA2 = () => {
   const { ref, controls } = useScrollAnimation();
   const sectionRef = useRef<HTMLElement>(null);
-  const { direction, velocity } = useLenisScroll();
+  const { direction } = useLenisScroll();
 
   // Parallax effect con zoom
   const { scrollYProgress } = useScroll({

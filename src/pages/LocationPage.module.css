@@ -1,59 +1,118 @@
 .page {
   min-height: 100vh;
-  background-color: #f9f9f9;
+  background-color: #1a1a1a;
+  background-image: 
+    radial-gradient(circle at 20% 30%, rgba(51, 51, 51, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(51, 51, 51, 0.2) 0%, transparent 50%);
 }
 
 .hero {
-  background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0a0a0a 100%);
   color: var(--color-white, #ffffff);
-  padding: 80px 0 60px;
+  padding: 100px 0 60px;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.02) 50%, transparent 100%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
+  position: relative;
+  z-index: 1;
 }
 
 .title {
-  font-size: 48px;
-  font-weight: 700;
-  margin: 0 0 16px 0;
+  font-size: 56px;
+  font-weight: 800;
+  margin: 0 0 20px 0;
+  letter-spacing: -1px;
+  color: #ffffff;
+  text-transform: uppercase;
 }
 
 .subtitle {
-  font-size: 20px;
+  font-size: 18px;
   margin: 0;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+  letter-spacing: 1px;
 }
 
 .content {
-  padding: 60px 0 80px;
+  padding: 60px 0 100px;
 }
 
 /* Tabs styling */
 .tabs {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .tabsList {
-  width: 100%;
-  display: flex;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 40px;
-  background-color: white;
+  gap: 0;
+  margin: 0 auto 50px;
+  background: rgba(255, 255, 255, 0.05);
   padding: 6px;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 50px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .tabTrigger {
-  flex: 1;
-  max-width: 200px;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  padding: 14px 40px;
+  font-size: 15px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+  background-color: transparent;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.tabTrigger:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tabTrigger[data-state="active"] {
+  background: #ffffff;
+  color: #1a1a1a;
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .tabContent {
@@ -74,25 +133,43 @@
 /* Location content layout */
 .locationContent {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 32px;
   align-items: start;
-  background-color: white;
-  padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 32px;
+  border-radius: 24px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  backdrop-filter: blur(20px);
+}
+
+.locationContent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
 }
 
 .info {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 28px;
 }
+
+
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 /* Icon headers */
@@ -100,117 +177,267 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.iconHeader::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 50px;
+  height: 2px;
+  background: #ffffff;
 }
 
 .icon {
-  width: 28px;
-  height: 28px;
-  color: #1a1a1a;
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+  flex-shrink: 0;
+  stroke-width: 2.5;
 }
 
 .sectionTitle {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
   margin: 0;
-  color: var(--color-text, #1a1a1a);
+  color: #ffffff;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-size: 16px;
 }
 
 .text {
-  font-size: 16px;
-  line-height: 1.8;
-  color: var(--color-text-secondary, #666);
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
   margin: 0;
-  padding-left: 40px;
+  padding-left: 36px;
+  font-weight: 400;
 }
 
 /* Schedule */
 .schedule {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-left: 40px;
+  gap: 8px;
+  padding-left: 36px;
 }
 
 .scheduleRow {
   display: flex;
   justify-content: space-between;
-  padding: 12px 16px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  font-size: 16px;
-  color: var(--color-text, #1a1a1a);
-  transition: background-color 0.2s ease;
+  align-items: center;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.scheduleRow::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #ffffff;
+  transform: translateX(-3px);
+  transition: transform 0.3s ease;
+}
+
+.scheduleRow:hover::before {
+  transform: translateX(0);
 }
 
 .scheduleRow:hover {
-  background-color: #f0f0f0;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .scheduleRow span:first-child {
-  font-weight: 600;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.scheduleRow span:last-child {
+  font-weight: 500;
 }
 
 /* Contact info */
 .contactInfo {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-left: 40px;
+  gap: 8px;
+  padding-left: 36px;
 }
 
 .contactLink {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  color: var(--color-text, #1a1a1a);
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
-  font-size: 15px;
-  transition: all 0.2s ease;
+  font-size: 13px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+}
+
+.contactLink::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #ffffff;
+  transform: translateX(-3px);
+  transition: transform 0.3s ease;
+}
+
+.contactLink:hover::before {
+  transform: translateX(0);
 }
 
 .contactLink:hover {
-  background-color: #1a1a1a;
-  color: white;
-  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .smallIcon {
   width: 20px;
   height: 20px;
   flex-shrink: 0;
+  stroke-width: 2;
 }
 
 /* Map */
 .mapContainer {
-  position: sticky;
-  top: 100px;
-  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  height: 100%;
+  min-height: 500px;
+}
+
+.mapWrapper {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
+}
+
+.mapLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 50px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(0, 0, 0, 0.15);
+  color: #1a1a1a;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.mapLink:hover {
+  background: #ffffff;
+  transform: translateY(-3px);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mapIcon {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2.5;
 }
 
 .map {
   width: 100%;
-  height: 500px;
+  height: 100%;
+  min-height: 500px;
   border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 @media (max-width: 968px) {
+  .hero {
+    padding: 80px 0 50px;
+  }
+
+  .title {
+    font-size: 44px;
+  }
+
+  .subtitle {
+    font-size: 17px;
+  }
+
+  .content {
+    padding: 50px 0 80px;
+  }
+
+  .tabsList {
+    gap: 0;
+    padding: 6px;
+  }
+
+  .tabTrigger {
+    padding: 12px 28px;
+    font-size: 13px;
+  }
+
   .locationContent {
     grid-template-columns: 1fr;
-    gap: 40px;
-    padding: 30px;
+    gap: 32px;
+    padding: 32px 24px;
+  }
+
+  .info {
+    gap: 24px;
   }
 
   .mapContainer {
-    position: static;
+    min-height: 400px;
   }
 
   .map {
-    height: 400px;
+    min-height: 400px;
+    max-height: 400px;
   }
 
   .text,
@@ -221,33 +448,107 @@
 }
 
 @media (max-width: 768px) {
+  .hero {
+    padding: 70px 0 40px;
+  }
+
   .title {
-    font-size: 36px;
+    font-size: 38px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .content {
+    padding: 40px 0 60px;
   }
 
   .tabsList {
-    flex-direction: column;
     width: 100%;
+    padding: 6px;
+    margin-bottom: 40px;
   }
 
   .tabTrigger {
-    max-width: 100%;
+    padding: 12px 20px;
+    font-size: 12px;
+    flex: 1;
   }
 
   .locationContent {
-    padding: 20px;
+    padding: 32px 24px;
+    gap: 32px;
+    border-radius: 20px;
+  }
+
+  .info {
+    gap: 20px;
+  }
+
+  .section {
+    gap: 10px;
   }
 
   .icon {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
   }
 
   .sectionTitle {
-    font-size: 20px;
+    font-size: 15px;
+  }
+
+  .iconHeader {
+    padding-bottom: 12px;
+    border-bottom-width: 2px;
+  }
+
+  .iconHeader::after {
+    width: 40px;
+    height: 2px;
+  }
+
+  .text {
+    font-size: 14px;
+    padding-left: 36px;
+  }
+
+  .schedule,
+  .contactInfo {
+    gap: 8px;
+    padding-left: 36px;
+  }
+
+  .scheduleRow,
+  .contactLink {
+    padding: 12px 18px;
+    font-size: 13px;
+  }
+
+  .smallIcon {
+    width: 18px;
+    height: 18px;
   }
 
   .map {
-    height: 350px;
+    min-height: 350px;
+    max-height: 350px;
+    border-radius: 16px;
+  }
+
+  .mapWrapper {
+    top: 16px;
+    right: 16px;
+  }
+
+  .mapLink {
+    padding: 10px 18px;
+    font-size: 12px;
+  }
+
+  .mapIcon {
+    width: 14px;
+    height: 14px;
   }
 }

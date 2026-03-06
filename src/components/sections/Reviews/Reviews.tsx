@@ -1,5 +1,6 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import styles from "./Reviews.module.css";
 import { reviewsList } from "@/data/reviewsData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -53,10 +54,14 @@ export const Reviews = () => {
           variants={staggerContainer}
         >
           {reviews.map((review, index) => (
-            <motion.div key={index} className={styles.card} variants={scaleIn}>
-              <div className={styles.rating}>{"★".repeat(review.rating)}</div>
-              <p className={styles.comment}>"{review.comment}"</p>
-              <div className={styles.author}>{review.name}</div>
+            <motion.div key={index} variants={scaleIn}>
+              <Card className={styles.card}>
+                <CardContent className={styles.cardContent}>
+                  <div className={styles.rating}>{"★".repeat(review.rating)}</div>
+                  <p className={styles.comment}>"{review.comment}"</p>
+                  <div className={styles.author}>{review.name}</div>
+                </CardContent>
+              </Card>
             </motion.div>
           ))}
         </motion.div>

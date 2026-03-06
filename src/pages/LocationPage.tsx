@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
 import styles from "./LocationPage.module.css";
 
 interface Location {
@@ -62,7 +63,7 @@ const locations: Location[] = [
 ];
 
 const LocationCard = ({ location }: { location: Location }) => (
-  <div className={styles.locationContent}>
+  <Card className={styles.locationContent}>
     <div className={styles.info}>
       {/* Dirección */}
       <motion.div
@@ -153,6 +154,21 @@ const LocationCard = ({ location }: { location: Location }) => (
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.3 }}
     >
+      <div className={styles.mapWrapper}>
+        <a
+          href={location.mapUrl.replace('/embed', '')}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.mapLink}
+        >
+          <svg className={styles.mapIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+          Abrir en Maps
+        </a>
+      </div>
       <iframe
         src={location.mapUrl}
         className={styles.map}
@@ -162,7 +178,7 @@ const LocationCard = ({ location }: { location: Location }) => (
         title={`Mapa de ${location.name}`}
       />
     </motion.div>
-  </div>
+  </Card>
 );
 
 export const LocationPage = () => {
