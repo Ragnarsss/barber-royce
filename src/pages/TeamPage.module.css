@@ -1,12 +1,61 @@
 .page {
   min-height: 100vh;
+  background-color: #1a1a1a;
+  background-image:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(213, 35, 35, 0.03) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(213, 35, 35, 0.03) 0%,
+      transparent 50%
+    );
 }
 
 .hero {
-  background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+  background: #332b2b;
   color: var(--color-white, #ffffff);
-  padding: 80px 0 60px;
+  padding: 100px 0 60px;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shapes decorativas */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -15%;
+  left: 15%;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(
+    circle,
+    rgba(213, 35, 35, 0.15) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: -10%;
+  right: 20%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle,
+    rgba(213, 35, 35, 0.12) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .container {
@@ -16,80 +65,313 @@
 }
 
 .title {
-  font-size: 48px;
-  font-weight: 700;
-  margin: 0 0 16px 0;
+  font-size: 56px;
+  font-weight: 800;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, #ffffff 0%, #d52323 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .subtitle {
   font-size: 20px;
   margin: 0;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
+  position: relative;
+  z-index: 1;
 }
 
 .content {
-  padding: 80px 0;
+  padding: 60px 0 80px;
+  position: relative;
+  overflow: hidden;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 32px;
+/* Shapes decorativas triangulares */
+.content::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: -5%;
+  width: 300px;
+  height: 600px;
+  background: #d52323;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  opacity: 0.15;
+  z-index: 0;
 }
 
-.card {
-  text-align: center;
-  padding: 32px;
-  background-color: var(--color-bg-alt, #f9f9f9);
-  border-radius: 12px;
+.content::after {
+  content: "";
+  position: absolute;
+  bottom: -10%;
+  right: -5%;
+  width: 400px;
+  height: 500px;
+  background: #d52323;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  opacity: 0.15;
+  z-index: 0;
+}
+
+/* Honeycomb Grid Layout usando shape-outside */
+.hexGrid {
+  --hex-size: 180px;
+  --hex-margin: 8px;
+  --offset: calc(1.732 * var(--hex-size) + 4 * var(--hex-margin) - 1px);
+
+  font-size: 0;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.hexGrid::before {
+  content: "";
+  width: calc(var(--hex-size) / 2 + var(--hex-margin));
+  float: left;
+  height: 120%;
+  shape-outside: repeating-linear-gradient(
+    transparent 0 calc(var(--offset) - 3px),
+    #000 0 var(--offset)
+  );
+}
+
+.hexWrapper {
+  width: var(--hex-size);
+  height: calc(var(--hex-size) * 1.1547);
+  display: inline-block;
+  font-size: initial;
+  margin: var(--hex-margin);
+  margin-bottom: calc(var(--hex-margin) - var(--hex-size) * 0.2885);
+  position: relative;
   transition: all 0.3s ease;
 }
 
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+/* Master Barber - Hexágono más grande */
+.hexWrapper.leadHex {
+  --hex-size: 260px;
+  width: var(--hex-size);
+  height: calc(var(--hex-size) * 1.1547);
 }
 
-.photo {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
-  margin: 0 auto 20px;
+.hexCard {
+  background: transparent !important;
+  border: none !important;
+  text-align: center;
+  padding: 0 !important;
+  height: 100%;
+  width: 100%;
+}
+
+/* Forma hexagonal */
+.hexShape {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  background: rgba(255, 255, 255, 0.05);
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  transition: all 0.4s ease;
+  overflow: hidden;
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+.leadHex .hexShape {
+  border: 4px solid #d52323;
+  box-shadow:
+    0 0 40px rgba(213, 35, 35, 0.5),
+    inset 0 0 30px rgba(213, 35, 35, 0.1);
+}
+
+.hexWrapper:hover .hexShape {
+  border-color: rgba(213, 35, 35, 0.9);
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(213, 35, 35, 0.6);
+}
+
+.leadHex:hover .hexShape {
+  transform: scale(1.03);
+  box-shadow: 0 0 50px rgba(213, 35, 35, 0.8);
+}
+
+.hexImageContainer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hexImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.hexWrapper:hover .hexImage {
+  transform: scale(1.15);
+}
+
+.hexOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  color: var(--color-white, #ffffff);
-  font-size: 48px;
-  font-weight: 700;
+  align-items: center;
+  padding: 20px;
+  text-align: center;
+}
+
+.hexWrapper:hover .hexOverlay {
+  opacity: 1;
 }
 
 .name {
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 700;
   margin: 0 0 8px 0;
-  color: var(--color-text, #1a1a1a);
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.leadHex .name {
+  font-size: 24px;
+  margin-bottom: 12px;
 }
 
 .role {
+  font-size: 13px;
+  font-weight: 600;
+  color: #d52323;
+  margin: 0 0 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+}
+
+.leadHex .role {
   font-size: 16px;
-  font-weight: 500;
-  color: var(--color-primary, #1a1a1a);
-  margin: 0 0 4px 0;
+  margin-bottom: 8px;
 }
 
 .experience {
-  font-size: 14px;
-  color: var(--color-text-secondary, #666);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.9);
   margin: 0;
+  font-weight: 400;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.leadHex .experience {
+  font-size: 14px;
+}
+
+@media (max-width: 968px) {
+  .title {
+    font-size: 44px;
+  }
+
+  .hero {
+    padding: 80px 0 50px;
+  }
+
+  .hexGrid {
+    --hex-size: 160px;
+  }
+
+  .hexWrapper.leadHex {
+    --hex-size: 220px;
+  }
+
+  .name {
+    font-size: 16px;
+  }
+
+  .leadHex .name {
+    font-size: 21px;
+  }
+
+  .role {
+    font-size: 12px;
+  }
+
+  .leadHex .role {
+    font-size: 15px;
+  }
+
+  .experience {
+    font-size: 11px;
+  }
+
+  .leadHex .experience {
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 768px) {
   .title {
-    font-size: 36px;
+    font-size: 38px;
   }
 
-  .grid {
-    grid-template-columns: 1fr;
+  .subtitle {
+    font-size: 18px;
+  }
+
+  .hero {
+    padding: 70px 0 40px;
+  }
+
+  .hexGrid {
+    --hex-size: 140px;
+    max-width: 400px;
+  }
+
+  .hexWrapper.leadHex {
+    --hex-size: 200px;
+  }
+
+  .name {
+    font-size: 14px;
+  }
+
+  .leadHex .name {
+    font-size: 19px;
+  }
+
+  .role {
+    font-size: 11px;
+  }
+
+  .leadHex .role {
+    font-size: 14px;
+  }
+
+  .experience {
+    font-size: 10px;
+  }
+
+  .leadHex .experience {
+    font-size: 12px;
   }
 }

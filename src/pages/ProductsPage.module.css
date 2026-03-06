@@ -1,13 +1,61 @@
 .page {
   min-height: 100vh;
-  background-color: #f9f9f9;
+  background-color: #1a1a1a;
+  background-image:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(213, 35, 35, 0.03) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(213, 35, 35, 0.03) 0%,
+      transparent 50%
+    );
 }
 
 .hero {
-  background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+  background: #332b2b;
+  position: relative;
+  overflow: hidden;
   color: var(--color-white, #ffffff);
-  padding: 80px 0 60px;
+  padding: 100px 0 60px;
   text-align: center;
+}
+
+/* Shapes decorativas */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(
+    circle,
+    rgba(213, 35, 35, 0.15) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  bottom: -15%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(213, 35, 35, 0.12) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .container {
@@ -17,15 +65,132 @@
 }
 
 .title {
-  font-size: 48px;
-  font-weight: 700;
-  margin: 0 0 16px 0;
+  font-size: 56px;
+  font-weight: 800;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(135deg, #ffffff 0%, #d52323 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .subtitle {
   font-size: 20px;
   margin: 0;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Sección de filtros */
+.filtersSection {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 32px 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+}
+
+.filtersContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Barra de búsqueda */
+.searchBar {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.searchInput {
+  width: 100%;
+  height: 48px;
+  padding-left: 52px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 50px !important;
+  color: #ffffff !important;
+  font-size: 15px;
+}
+
+.searchInput::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.searchInput:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05) !important;
+  ring: 0 !important;
+}
+
+/* Filtros de categoría */
+.categoryFilters {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.categoryButton {
+  padding: 10px 24px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 50px !important;
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  height: auto !important;
+}
+
+.categoryButton:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.categoryButton[data-variant="default"] {
+  background: #ffffff !important;
+  border-color: #ffffff !important;
+  color: #1a1a1a !important;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+.content {
+  padding: 60px 0 80px;
+}
+
+/* Sin resultados */
+.noResults {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 18px;
 }
 
 .content {
@@ -40,16 +205,19 @@
 
 .card {
   position: relative;
-  background-color: var(--color-white, #ffffff);
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Badge de categoría */
@@ -57,7 +225,9 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  background-color: rgba(0, 0, 0, 0.7);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
   padding: 6px 12px;
   border-radius: 20px;
@@ -73,7 +243,7 @@
   position: relative;
   aspect-ratio: 1;
   overflow: hidden;
-  background-color: #f5f5f5;
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .productImage {
@@ -95,12 +265,13 @@
   font-size: 22px;
   font-weight: 700;
   margin: 0 0 12px 0;
-  color: var(--color-text, #1a1a1a);
+  color: #ffffff;
+  letter-spacing: 0.3px;
 }
 
 .description {
   font-size: 14px;
-  color: var(--color-text-secondary, #666);
+  color: rgba(255, 255, 255, 0.7);
   margin: 0 0 24px 0;
   line-height: 1.6;
   min-height: 60px;
@@ -116,29 +287,32 @@
 .price {
   font-size: 28px;
   font-weight: 700;
-  color: var(--color-primary, #1a1a1a);
+  color: #ffffff;
 }
 
 .button {
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 8px;
-  padding: 12px 24px;
-  background-color: var(--color-primary, #1a1a1a);
-  color: var(--color-white, #ffffff);
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 14px;
+  padding: 12px 24px !important;
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  height: auto !important;
 }
 
 .button:hover {
-  background-color: #000;
+  background: rgba(255, 255, 255, 0.9) !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
 
 .cartIcon {
@@ -146,9 +320,62 @@
   height: 18px;
 }
 
+@media (max-width: 968px) {
+  .title {
+    font-size: 44px;
+  }
+
+  .hero {
+    padding: 80px 0 50px;
+  }
+
+  .filtersSection {
+    padding: 24px 0;
+  }
+
+  .searchBar {
+    max-width: 100%;
+  }
+
+  .categoryFilters {
+    gap: 8px;
+  }
+
+  .categoryButton {
+    padding: 8px 18px !important;
+    font-size: 13px !important;
+  }
+}
+
 @media (max-width: 768px) {
   .title {
-    font-size: 36px;
+    font-size: 38px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+  }
+
+  .hero {
+    padding: 70px 0 40px;
+  }
+
+  .filtersSection {
+    padding: 20px 0;
+  }
+
+  .filtersContainer {
+    gap: 16px;
+  }
+
+  .searchInput {
+    padding: 12px 16px 12px 48px !important;
+    font-size: 14px;
+  }
+
+  .categoryButton {
+    padding: 8px 16px !important;
+    font-size: 12px !important;
   }
 
   .grid {
@@ -165,6 +392,7 @@
   }
 
   .button {
-    padding: 10px 20px;
+    padding: 10px 20px !important;
+    font-size: 13px !important;
   }
 }

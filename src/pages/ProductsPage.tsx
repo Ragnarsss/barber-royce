@@ -1,8 +1,16 @@
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import styles from "./ProductsPage.module.css";
 
 export const ProductsPage = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("Todos");
+
+  const categories = ["Todos", "Styling", "Barba", "Cuidado", "Kits"];
+
   const products = [
     {
       name: "Pomada Premium",
@@ -48,6 +56,14 @@ export const ProductsPage = () => {
     },
   ];
 
+  // Filtrar productos
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "Todos" || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <div className={styles.page}>
       <div className={styles.hero}>
@@ -71,49 +87,100 @@ export const ProductsPage = () => {
         </div>
       </div>
 
+      {/* Sección de filtros y búsqueda */}
+      <div className={styles.filtersSection}>
+        <div className={styles.container}>
+          <motion.div
+            className={styles.filtersContainer}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            {/* Barra de búsqueda */}
+            <div className={styles.searchBar}>
+              <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+              <Input
+                type="text"
+                placeholder="Buscar productos..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={styles.searchInput}
+              />
+            </div>
+
+            {/* Filtros de categoría */}
+            <div className={styles.categoryFilters}>
+              {categories.map((category) => (
+                <Button
+                  key={category}
+                  variant={selectedCategory === category ? "default" : "outline"}
+                  className={styles.categoryButton}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  {category}
+                </Button>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
       <div className={styles.content}>
         <div className={styles.container}>
-          <div className={styles.grid}>
-            {products.map((product, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true, margin: "-50px" }}
-              >
-                <Card className={styles.card}>
-                  {/* Etiqueta de categoría */}
-                  <div className={styles.categoryBadge}>{product.category}</div>
+          {filteredProducts.length === 0 ? (
+            <motion.div
+              className={styles.noResults}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <p>No se encontraron productos que coincidan con tu búsqueda.</p>
+            </motion.div>
+          ) : (
+            <div className={styles.grid}>
+              {filteredProducts.map((product, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                >
+                  <Card className={styles.card}>
+                    {/* Etiqueta de categoría */}
+                    <div className={styles.categoryBadge}>{product.category}</div>
 
-                  {/* Imagen del producto */}
-                  <div className={styles.imageContainer}>
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className={styles.productImage}
-                    />
-                  </div>
-
-                  <CardContent className={styles.cardContent}>
-                    <h3 className={styles.productName}>{product.name}</h3>
-                    <p className={styles.description}>{product.description}</p>
-                    <div className={styles.footer}>
-                      <span className={styles.price}>{product.price}</span>
-                      <button className={styles.button}>
-                        <svg className={styles.cartIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <circle cx="9" cy="21" r="1" />
-                          <circle cx="20" cy="21" r="1" />
-                          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                        </svg>
-                        Comprar
-                      </button>
+                    {/* Imagen del producto */}
+                    <div className={styles.imageContainer}>
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        className={styles.productImage}
+                      />
                     </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+
+                    <CardContent className={styles.cardContent}>
+                      <h3 className={styles.productName}>{product.name}</h3>
+                      <p className={styles.description}>{product.description}</p>
+                      <div className={styles.footer}>
+                        <span className={styles.price}>{product.price}</span>
+                        <Button className={styles.button}>
+                          <svg className={styles.cartIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="9" cy="21" r="1" />
+                            <circle cx="20" cy="21" r="1" />
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                          </svg>
+                          Comprar
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
