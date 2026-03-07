@@ -1,0 +1,12 @@
+# robots.txt para Royce Barbería
+# Permite que todos los motores de búsqueda indexen el sitio completo
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://roycebarber.com/sitemap.xml
+
+# Opcional: Bloquear directorios no públicos si los hubiera
+# Disallow: /admin/
+# Disallow: /api/

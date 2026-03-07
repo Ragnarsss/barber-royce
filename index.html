@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link
@@ -8,13 +8,126 @@
       href="/src/assets/royce-barber-logo.png"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
+
+    <!-- SEO: Primary Meta Tags -->
+    <title>
+      Royce Barbería - Cortes Premium y Estilo para el Hombre Moderno
+    </title>
+    <meta
+      name="title"
+      content="Royce Barbería - Cortes Premium y Estilo para el Hombre Moderno"
     />
-    <title>Royce Barbería</title>
+    <meta
+      name="description"
+      content="Barbería premium con más de 10 años de experiencia. Cortes expertos, ambiente exclusivo y atención personalizada. Agenda tu cita hoy y descubre tu mejor estilo."
+    />
+    <meta
+      name="keywords"
+      content="barbería, cortes de cabello hombre, barbería premium, corte masculino, afeitado clásico, estilo hombre, barbería profesional"
+    />
+    <link rel="canonical" href="https://roycebarber.com/" />
+
+    <!-- SEO: Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://roycebarber.com/" />
+    <meta
+      property="og:title"
+      content="Royce Barbería - Cortes Premium para el Hombre Moderno"
+    />
+    <meta
+      property="og:description"
+      content="Más de 10 años creando los mejores looks. Barbería premium con cortes expertos y atención personalizada."
+    />
+    <meta property="og:image" content="https://roycebarber.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:site_name" content="Royce Barbería" />
+
+    <!-- SEO: Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://roycebarber.com/" />
+    <meta
+      name="twitter:title"
+      content="Royce Barbería - Cortes Premium para el Hombre Moderno"
+    />
+    <meta
+      name="twitter:description"
+      content="Más de 10 años creando los mejores looks. Agenda tu cita hoy."
+    />
+    <meta
+      name="twitter:image"
+      content="https://roycebarber.com/twitter-card.jpg"
+    />
+
+    <!-- SEO: Structured Data (JSON-LD) for Rich Snippets -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "HairSalon",
+        "name": "Royce Barbería",
+        "image": "https://roycebarber.com/royce-barber-logo.png",
+        "description": "Barbería premium con más de 10 años de experiencia. Cortes expertos, ambiente exclusivo y atención personalizada.",
+        "telephone": "+1234567890",
+        "email": "info@roycebarber.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Dirección de la barbería",
+          "addressLocality": "Ciudad",
+          "addressRegion": "Región",
+          "postalCode": "00000",
+          "addressCountry": "ES"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "0.0000000",
+          "longitude": "0.0000000"
+        },
+        "url": "https://roycebarber.com",
+        "priceRange": "$$",
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday"
+            ],
+            "opens": "10:00",
+            "closes": "20:00"
+          },
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": "Saturday",
+            "opens": "10:00",
+            "closes": "18:00"
+          }
+        ],
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "4.8",
+          "reviewCount": "127"
+        },
+        "sameAs": [
+          "https://www.facebook.com/roycebarber",
+          "https://www.instagram.com/roycebarber",
+          "https://www.tiktok.com/@roycebarber"
+        ]
+      }
+    </script>
+
+    <!-- Performance: Fonts self-hosted, Google Fonts removido -->
+
+    <!-- Performance: Preload critical assets para mejorar LCP -->
+    <!-- Hero image - Above the fold, máxima prioridad -->
+    <link
+      rel="preload"
+      href="/src/assets/hero_model_left_profile.png"
+      as="image"
+      type="image/png"
+    />
   </head>
   <body>
     <div id="root"></div>
