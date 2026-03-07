@@ -21,13 +21,16 @@ export function CTA2() {
 
   return (
     <section id="cta-2" ref={sectionRef} className={styles.cta}>
-      {/* Imagen de fondo animada */}
-      <motion.div
-        className={styles.background}
+      {/* Imagen de fondo - <img> tag para SEO */}
+      <motion.img
+        src={backgroundImage}
+        alt="Equipo profesional de barberos de Royce Barbería trabajando en un ambiente moderno y exclusivo"
+        className={styles.backgroundImage}
+        loading="lazy"
+        width="1920"
+        height="1080"
         style={{
-          backgroundImage: `url(${backgroundImage})`,
           scale: imageScale,
-          // Efecto adicional según dirección
           filter: direction === 1 ? "brightness(1)" : "brightness(0.95)",
         }}
       />

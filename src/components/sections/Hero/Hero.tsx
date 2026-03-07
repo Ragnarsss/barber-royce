@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import styles from "./Hero.module.css";
-import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData";
+import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData.tsx";
 import backgroundImage from "@/assets/hero_model_left_profile.png";
 import {
   fadeInUp,
@@ -54,22 +54,26 @@ export function Hero() {
         style={{ y: layers.fast.y, x: layers.fast.x }}
       ></motion.div>
 
-      {/* Imagen del modelo con parallax */}
-      <motion.div
-        className={styles.heroImage}
+      {/* Imagen del modelo - <img> tag para SEO con parallax */}
+      <motion.img
+        src={backgroundImage}
+        alt="Barbero profesional mostrando corte moderno premium en Royce Barbería"
+        className={styles.heroImageSEO}
+        loading="eager"
+        width="800"
+        height="1200"
         style={{
-          backgroundImage: `url(${backgroundImage})`,
           y: layers.foreground.y,
           scale: layers.foreground.scale,
         }}
-      ></motion.div>
+      />
 
       <div className={styles.container}>
         <div className={styles.content}>
           <motion.h1 className={styles.title} variants={fadeInUp}>
-            Tu Estilo,
+            Barbería Premium
             <br />
-            Nuestra Pasión
+            Tu Estilo, Nuestra Pasión
           </motion.h1>
           <motion.p className={styles.subtitle} variants={fadeInUp}>
             En nuestra Barbería, transformamos tu corte en una expresión

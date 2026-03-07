@@ -104,6 +104,18 @@
   z-index: 1;
 }
 
+/* ✅ SEO: Nueva clase para <img> tag con alt text */
+.heroImageSEO {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50%;
+  height: 100%;
+  object-fit: contain;
+  object-position: right bottom;
+  z-index: 1;
+}
+
 /* ===== CAPAS DE TRIÁNGULOS PARALLAX ===== */
 
 /* Capa de fondo - triángulos semi-transparentes más grandes */

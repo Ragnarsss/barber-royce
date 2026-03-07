@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import styles from "./Features.module.css";
-import { FEATURES_VIEW_DATA } from "@/data/featuresData";
+import { FEATURES_VIEW_DATA } from "@/data/featuresData.tsx";
 import { AnimatedGridSection } from "@/components/common/AnimatedGridSection/AnimatedGridSection";
 
 // ✅ React 19: memo() eliminado - bailout automático mejorado

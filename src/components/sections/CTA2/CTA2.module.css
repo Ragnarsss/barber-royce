@@ -24,6 +24,20 @@
   transition: filter 0.3s ease-out;
 }
 
+/* ✅ SEO: Nueva clase para <img> tag con alt text */
+.backgroundImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  z-index: 0;
+  will-change: transform, filter;
+  transition: filter 0.3s ease-out;
+}
+
 .overlay {
   position: absolute;
   top: 0;

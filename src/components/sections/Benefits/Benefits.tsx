@@ -1,11 +1,9 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import styles from "./Benefits.module.css";
-import { BENEFITS_VIEW_DATA } from "@/data/benefitsData";
+import { BENEFITS_VIEW_DATA } from "@/data/benefitsData.tsx";
 import { AnimatedGridSection } from "@/components/common/AnimatedGridSection/AnimatedGridSection";
 
-// ✅ React 19: memo() eliminado - bailout automático mejorado
 export function Benefits() {
-  // ✅ React 19: useMemo eliminado - datos pre-transformados en import
   return (
     <AnimatedGridSection
       id="benefits"

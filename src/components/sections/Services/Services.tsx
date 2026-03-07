@@ -39,8 +39,9 @@ export const Services = () => {
                   <div className={styles.imageContainer}>
                     <img
                       src={service.image}
-                      alt={service.name}
+                      alt={`${service.name.toLowerCase()} - barbería profesional premium en Royce`}
                       className={styles.serviceImage}
+                      loading="lazy"
                     />
                   </div>
 
