@@ -1,4 +1,10 @@
-export const reviewsList = [
+export interface Review {
+  name: string;
+  rating: number;
+  comment: string;
+}
+
+export const reviewsList: Review[] = [
   {
     name: "Carlos M.",
     rating: 5,

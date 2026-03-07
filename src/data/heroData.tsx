@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { Scissors, Gem, Handshake } from "lucide-react";
 
 export const heroBenefits = [
@@ -14,3 +15,12 @@ export const heroBenefits = [
     text: "Atención personalizada que te asegura un resultado impecable, sin prisas.",
   },
 ];
+
+// ✅ React 19 Optimization: Datos pre-transformados fuera del componente
+export const HERO_BENEFITS_VIEW_DATA: Array<{
+  icon: ReactElement;
+  text: string;
+}> = heroBenefits.map((benefit) => ({
+  icon: <benefit.icon size={24} />,
+  text: benefit.text,
+}));
