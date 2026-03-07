@@ -2,14 +2,14 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    
-    <!-- ✅ Favicons: Complete package for all devices -->
+
+    <!-- Favicons: Complete package for all devices -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- SEO: Primary Meta Tags -->
@@ -75,10 +75,10 @@
         "email": "info@roycebarber.com",
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "Dirección de la barbería",
-          "addressLocality": "Ciudad",
-          "addressRegion": "Región",
-          "postalCode": "00000",
+          "streetAddress": "Presidente Alessandri 1871",
+          "addressLocality": "Coquimbo",
+          "addressRegion": "Coquimbo",
+          "postalCode": "Coquimbo",
           "addressCountry": "ES"
         },
         "geo": {
@@ -96,7 +96,8 @@
               "Tuesday",
               "Wednesday",
               "Thursday",
-              "Friday"
+              "Friday",
+              "Saturday"
             ],
             "opens": "10:00",
             "closes": "20:00"
@@ -110,13 +111,176 @@
         ],
         "aggregateRating": {
           "@type": "AggregateRating",
-          "ratingValue": "4.8",
-          "reviewCount": "127"
+          "ratingValue": "4.6",
+          "reviewCount": "15"
         },
         "sameAs": [
           "https://www.facebook.com/roycebarber",
-          "https://www.instagram.com/roycebarber",
+          "https://www.instagram.com/barberia.royce",
           "https://www.tiktok.com/@roycebarber"
+        ],
+        "potentialAction": [
+          {
+            "@type": "ReserveAction",
+            "target": {
+              "@type": "EntryPoint",
+              "urlTemplate": "https://roycebarber.com/#reservar",
+              "inLanguage": "es",
+              "actionPlatform": [
+                "http://schema.org/DesktopWebPlatform",
+                "http://schema.org/MobileWebPlatform",
+                "http://schema.org/IOSPlatform",
+                "http://schema.org/AndroidPlatform"
+              ]
+            },
+            "result": {
+              "@type": "Reservation",
+              "name": "Reserva de Cita en Royce Barbería"
+            }
+          }
+        ]
+      }
+    </script>
+
+    <!-- SEO: Service Catalog Schema for Rich Snippets -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": [
+          {
+            "@type": "Service",
+            "name": "Corte de Cabello Premium",
+            "description": "El clásico corte a nuestro estilo. Incluye asesoramiento completo, perfilado de cejas y diseños simples, finalizado con lavado de cabello y aplicación de productos.",
+            "provider": {
+              "@type": "HairSalon",
+              "name": "Royce Barbería"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "4000",
+              "priceCurrency": "CLP",
+              "availability": "https://schema.org/InStock"
+            }
+          },
+          {
+            "@type": "Service",
+            "name": "Corte + Barba",
+            "description": "Servicio completo de corte y arreglo de barba profesional. Incluye perfilado, diseño y acabado impecable con productos premium.",
+            "provider": {
+              "@type": "HairSalon",
+              "name": "Royce Barbería"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "6000",
+              "priceCurrency": "CLP",
+              "availability": "https://schema.org/InStock"
+            }
+          },
+          {
+            "@type": "Service",
+            "name": "Afeitado Premium",
+            "description": "Experiencia de afeitado con toallas calientes, productos de alta calidad y técnicas tradicionales para un acabado perfecto.",
+            "provider": {
+              "@type": "HairSalon",
+              "name": "Royce Barbería"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "5000",
+              "priceCurrency": "CLP",
+              "availability": "https://schema.org/InStock"
+            }
+          },
+          {
+            "@type": "Service",
+            "name": "Diseño de Barba",
+            "description": "Perfilado y diseño personalizado de barba según tu estilo. Incluye recorte, delineado y aplicación de productos.",
+            "provider": {
+              "@type": "HairSalon",
+              "name": "Royce Barbería"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "3500",
+              "priceCurrency": "CLP",
+              "availability": "https://schema.org/InStock"
+            }
+          },
+          {
+            "@type": "Service",
+            "name": "Corte Fade",
+            "description": "Degradado profesional con transiciones perfectas. Estilo moderno y fresco que realza tus rasgos con técnicas avanzadas de barbería.",
+            "provider": {
+              "@type": "HairSalon",
+              "name": "Royce Barbería"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "4500",
+              "priceCurrency": "CLP",
+              "availability": "https://schema.org/InStock"
+            }
+          }
+        ]
+      }
+    </script>
+
+    <!-- SEO: FAQ Schema for Rich Snippets -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "¿Cuánto cuesta un corte de cabello en Royce Barbería?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "El corte de cabello clásico tiene un precio de $4.000 CLP e incluye asesoramiento completo, perfilado de cejas, diseños simples, lavado de cabello y aplicación de productos. Ofrecemos distintos servicios desde $2.500 hasta $8.000 CLP."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Necesito reservar cita o puedo llegar directamente?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Recomendamos reservar cita para garantizar tu atención en el horario que prefieras. También aceptamos clientes sin cita previa según disponibilidad. Puedes reservar llamando al teléfono de la barbería o mediante WhatsApp."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Dónde está ubicada Royce Barbería?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Estamos ubicados en Presidente Alessandri 1871, Coquimbo. Abrimos de lunes a sábado de 10:00 a 20:00 horas (sábados hasta las 18:00). Contamos con estacionamiento cercano y fácil acceso."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Qué servicios ofrece Royce Barbería?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Ofrecemos cortes de cabello clásicos y modernos, diseño y arreglo de barba, afeitado premium con toallas calientes, corte fade, tratamientos capilares, tintura y color, depilación facial, y masajes capilares. Todos nuestros servicios incluyen productos premium y atención personalizada."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Cuánto tiempo dura un servicio de corte + barba?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "El servicio completo de corte + barba tiene una duración aproximada de 60 minutos. Incluye perfilado, diseño y acabado impecable con productos premium. Un corte de cabello solo dura aproximadamente 45 minutos."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "¿Royce Barbería acepta pagos con tarjeta?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sí, aceptamos todas las formas de pago: efectivo, tarjetas de crédito, débito y transferencias. Tu comodidad es nuestra prioridad."
+            }
+          }
         ]
       }
     </script>
@@ -130,6 +294,7 @@
       href="/src/assets/hero_model_left_profile.png"
       as="image"
       type="image/png"
+      fetchpriority="high"
     />
   </head>
   <body>

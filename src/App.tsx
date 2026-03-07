@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { Layout } from "./components/layout/Layout/Layout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import { HomePage } from "./pages/HomePage";
@@ -26,13 +27,14 @@ function App() {
     // Captura errores catastróficos (Lenis, Router, core libraries)
     // Último recurso si ningún otro boundary los captura
     <ErrorBoundary fallback={<CatastrophicError />}>
-      <LenisProvider lenis={lenis}>
-        <BrowserRouter>
-          <ScrollToTop />
-          <Routes>
-            <Route path="/" element={<Layout />}>
-              {/* HomePage: Sin boundary (data estática, bajo riesgo) */}
-              <Route index element={<HomePage />} />
+      <HelmetProvider>
+        <LenisProvider lenis={lenis}>
+          <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                {/* HomePage: Sin boundary (data estática, bajo riesgo) */}
+                <Route index element={<HomePage />} />
 
               {/* 🛡️ NIVEL 2: Boundaries por ruta lazy */}
               {/* Captura errores de chunk loading y componentes de página */}
@@ -84,6 +86,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </LenisProvider>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 }

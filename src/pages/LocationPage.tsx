@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import styles from "./LocationPage.module.css";
@@ -110,6 +111,14 @@ const LocationCard = ({ location }: { location: Location }) => (
 export const LocationPage = () => {
   return (
     <div className={styles.page}>
+      <Helmet>
+        <title>Ubicación y Horarios - Encuéntranos en Coquimbo | Royce Barbería</title>
+        <meta name="description" content="Visítanos en Presidente Alessandri 1871, Coquimbo. Abierto de lunes a sábado. Descubre cómo llegar, horarios de atención y contáctanos para reservar tu cita." />
+        <link rel="canonical" href="https://roycebarber.com/ubicacion" />
+        <meta property="og:title" content="Ubicación y Horarios | Royce Barbería Coquimbo" />
+        <meta property="og:description" content="Encuéntranos en Presidente Alessandri 1871, Coquimbo. Agenda tu cita hoy." />
+        <meta property="og:url" content="https://roycebarber.com/ubicacion" />
+      </Helmet>
       <div className={styles.hero}>
         <div className={styles.container}>
           <motion.h1

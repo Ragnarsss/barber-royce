@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import { Card, CardContent } from "@/components/ui/card";
 import styles from "./ServicesPage.module.css";
 import { servicesList } from "../data/servicesData";
@@ -13,6 +14,14 @@ export const ServicesPage = () => {
 
   return (
     <div className={styles.page}>
+      <Helmet>
+        <title>Servicios Premium - Cortes, Afeitados y Tratamientos | Royce Barbería</title>
+        <meta name="description" content="Descubre nuestros servicios de barbería premium: cortes clásicos y modernos, afeitado tradicional con toalla caliente, tratamientos capilares. Calidad y estilo garantizados en Coquimbo." />
+        <link rel="canonical" href="https://roycebarber.com/servicios" />
+        <meta property="og:title" content="Servicios Premium de Barbería | Royce Barbería" />
+        <meta property="og:description" content="Cortes expertos, afeitado tradicional y tratamientos capilares premium." />
+        <meta property="og:url" content="https://roycebarber.com/servicios" />
+      </Helmet>
       <div className={styles.hero}>
         <div className={styles.container}>
           <h1 className={styles.title}>Nuestros Servicios</h1>

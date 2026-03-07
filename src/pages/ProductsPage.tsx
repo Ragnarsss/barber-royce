@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState, useTransition } from "react";
+import { Helmet } from "react-helmet-async";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,14 @@ export function ProductsPage() {
 
   return (
     <div className={styles.page}>
+      <Helmet>
+        <title>Productos Premium para el Cuidado del Cabello | Royce Barbería</title>
+        <meta name="description" content="Descubre nuestra selección de productos premium para el cuidado del cabello y barba. Pomadas, ceras, aceites y más productos profesionales de las mejores marcas." />
+        <link rel="canonical" href="https://roycebarber.com/productos" />
+        <meta property="og:title" content="Productos Premium de Barbería | Royce Barbería" />
+        <meta property="og:description" content="Productos profesionales para el cuidado del cabello y barba." />
+        <meta property="og:url" content="https://roycebarber.com/productos" />
+      </Helmet>
       <div className={styles.hero}>
         <div className={styles.container}>
           <motion.h1

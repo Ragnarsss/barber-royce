@@ -28,12 +28,14 @@
 ```
 
 ### Colores:
+
 - **Fondo:** Negro #000000 o gris oscuro #332b2b
 - **Título:** Dorado #B8860B o Rojo #D52323
 - **Subtítulo:** Blanco #FFFFFF
 - **URL:** Gris claro #CCCCCC
 
 ### Elementos visuales:
+
 ✅ Logo BR (esquina superior izquierda)
 ✅ Foto profesional del equipo o corte
 ✅ Texto legible en móvil (no muy pequeño)
@@ -44,6 +46,7 @@
 ## 🐦 Twitter Card
 
 **Puedes usar la MISMA imagen que OG Image**
+
 - Twitter acepta 1200x630px
 - Copia `og-image.jpg` como `twitter-card.jpg`
 - O usa directamente `og-image.jpg` para ambos
@@ -86,6 +89,7 @@
    - Ubicación: `public/android-chrome-512x512.png`
 
 ### Favicon Design:
+
 - Usar logo BR simplificado
 - Solo las letras "BR" en rojo
 - Fondo transparente o negro
@@ -97,16 +101,19 @@
 
 **Opción 1: RealFaviconGenerator (Recomendado)**
 https://realfavicongenerator.net/
+
 - Sube tu logo en alta calidad (512x512 PNG)
 - Genera TODOS los tamaños automáticamente
 - Descarga el zip con todos los archivos
 
 **Opción 2: Favicon.io**
 https://favicon.io/favicon-converter/
+
 - Sube imagen PNG cuadrada
 - Genera favicon.ico + PNGs
 
 **Opción 3: Canva Export**
+
 - Diseña logo 512x512 en Canva
 - Exporta PNG transparente
 - Usa RealFaviconGenerator
@@ -116,6 +123,7 @@ https://favicon.io/favicon-converter/
 ## ✅ Checklist Final
 
 ### Archivos a crear:
+
 - [ ] og-image.jpg (1200x630)
 - [ ] twitter-card.jpg (o reusar og-image.jpg)
 - [ ] favicon.ico
@@ -126,6 +134,7 @@ https://favicon.io/favicon-converter/
 - [ ] android-chrome-512x512.png
 
 ### Guardar en:
+
 ```
 public/
   ├── og-image.jpg

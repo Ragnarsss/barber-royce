@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import { Card } from "@/components/ui/card";
 import styles from "./TeamPage.module.css";
 import { teamMembersList } from "@/data/teamData";
@@ -8,6 +9,14 @@ export const TeamPage = () => {
 
   return (
     <div className={styles.page}>
+      <Helmet>
+        <title>Nuestro Equipo de Barberos Profesionales | Royce Barbería</title>
+        <meta name="description" content="Conoce a nuestro equipo de barberos expertos. Profesionales apasionados con años de experiencia en cortes clásicos y modernos, dedicados a tu mejor estilo." />
+        <link rel="canonical" href="https://roycebarber.com/equipo" />
+        <meta property="og:title" content="Equipo de Barberos Profesionales | Royce Barbería" />
+        <meta property="og:description" content="Conoce a nuestros barberos expertos, apasionados por su oficio." />
+        <meta property="og:url" content="https://roycebarber.com/equipo" />
+      </Helmet>
       <div className={styles.hero}>
         <div className={styles.container}>
           <motion.h1

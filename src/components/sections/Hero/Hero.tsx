@@ -60,6 +60,7 @@ export function Hero() {
         alt="Barbero profesional mostrando corte moderno premium en Royce Barbería"
         className={styles.heroImageSEO}
         loading="eager"
+        fetchPriority="high"
         width="800"
         height="1200"
         style={{
