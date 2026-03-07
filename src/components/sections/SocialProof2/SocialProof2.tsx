@@ -11,7 +11,8 @@ import {
   parallaxLayers,
 } from "@/lib/animations";
 
-export const SocialProof2 = () => {
+// ✅ React 19: Eliminado memo() - bailout automático
+export function SocialProof2() {
   const { ref, controls } = useScrollAnimation();
   const sectionRef = useRef<HTMLElement>(null);
   const { direction, velocity } = useLenisScroll();
@@ -240,4 +241,4 @@ export const SocialProof2 = () => {
       </motion.div>
     </section>
   );
-};
+}

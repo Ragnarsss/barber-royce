@@ -1,101 +1,35 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
-import { Droplet } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import styles from "./Benefits.module.css";
-import { benefitsList } from "@/data/benefitsData";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import {
-  fadeInUp,
-  scaleIn,
-  staggerContainer,
-  parallaxLayers,
-} from "@/lib/animations";
+import { BENEFITS_VIEW_DATA } from "@/data/benefitsData";
+import { AnimatedGridSection } from "@/components/common/AnimatedGridSection/AnimatedGridSection";
 
-export const Benefits = () => {
-  const { ref, controls } = useScrollAnimation();
-  const sectionRef = useRef<HTMLElement>(null);
-
-  // Parallax effect con zoom
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const containerY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.slow.y,
-  );
-
-  const benefits = benefitsList.map((benefit) => ({
-    icon: <benefit.icon size={32} />,
-    title: benefit.title,
-    description: benefit.description,
-  }));
-
+// ✅ React 19: memo() eliminado - bailout automático mejorado
+export function Benefits() {
+  // ✅ React 19: useMemo eliminado - datos pre-transformados en import
   return (
-    <section id="benefits" className={styles.benefits} ref={sectionRef}>
-      <motion.div
-        className={styles.container}
-        style={{ y: containerY }}
-        ref={ref}
-      >
-        <div className={styles.content}>
-          <motion.div
-            className={styles.header}
-            initial="hidden"
-            animate={controls}
-            variants={fadeInUp}
-          >
-            <h2 className={styles.title}>
-              Estilo que te acompaña,
-              <br />
-              donde sea que vayas
-            </h2>
-            <p className={styles.subtitle}>
-              En Royce Barbería ofrecemos una experiencia para realzar tu
-              estilo. Nos enfocamos en la calidad y la exclusividad, ofreciendo
-            </p>
-          </motion.div>
-
-          <motion.div
-            className={styles.grid}
-            initial="hidden"
-            animate={controls}
-            variants={staggerContainer}
-          >
-            {benefits.map((benefit, index) => (
-              <motion.div
-                key={index}
-                variants={scaleIn}
-              >
-                <Card className={styles.card}>
-                  <CardHeader>
-                    <CardTitle className={styles.cardTitle}>{benefit.title}</CardTitle>
-                    <div className={styles.cardIcon}>{benefit.icon}</div>
-                  </CardHeader>
-                  <div className={styles.accent}></div>
-                  <CardContent>
-                    <CardDescription className={styles.cardDescription}>{benefit.description}</CardDescription>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-
-        <motion.div
-          className={styles.imageWrapper}
-          initial="hidden"
-          animate={controls}
-          variants={fadeInUp}
-        >
-          <div className={styles.imagePlaceholder}>
-            <Droplet size={64} strokeWidth={1.5} />
-          </div>
-        </motion.div>
-      </motion.div>
-    </section>
+    <AnimatedGridSection
+      id="benefits"
+      className={styles.benefits}
+      containerClassName={styles.container}
+      headerClassName={styles.header}
+      titleClassName={styles.title}
+      subtitleClassName={styles.subtitle}
+      gridClassName={styles.grid}
+      title="Estilo que te acompaña, donde sea que vayas"
+      subtitle="En Royce Barbería ofrecemos una experiencia para realzar tu estilo. Nos enfocamos en la calidad y la exclusividad, ofreciendo"
+      items={BENEFITS_VIEW_DATA}
+      renderItem={(benefit) => (
+        <Card className={styles.card}>
+          <CardHeader>
+            <CardTitle className={styles.cardTitle}>{benefit.title}</CardTitle>
+            <div className={styles.cardIcon}>{benefit.icon}</div>
+          </CardHeader>
+          <div className={styles.accent}></div>
+          <CardContent>
+            <CardDescription className={styles.cardDescription}>{benefit.description}</CardDescription>
+          </CardContent>
+        </Card>
+      )}
+    />
   );
-};
+}

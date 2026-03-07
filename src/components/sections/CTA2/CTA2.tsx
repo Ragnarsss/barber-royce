@@ -1,28 +1,23 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useTransform } from "framer-motion";
 import { Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import styles from "./CTA2.module.css";
 import backgroundImage from "@/assets/cta2_crew.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useLenisScroll } from "@/hooks/useLenisScroll";
-import { scaleIn, parallaxLayers } from "@/lib/animations";
+import { scaleIn } from "@/lib/animations";
+import { useParallaxLayers } from "@/hooks/useParallaxLayers";
 
-export const CTA2 = () => {
+// ✅ React 19: memo() eliminado - bailout automático mejorado
+export function CTA2() {
   const { ref, controls } = useScrollAnimation();
-  const sectionRef = useRef<HTMLElement>(null);
   const { direction } = useLenisScroll();
 
-  // Parallax effect con zoom
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
-
-  const contentY = useTransform(scrollYProgress, [0, 1], parallaxLayers.slow.y);
+  // Hook de parallax centralizado
+  const { ref: sectionRef, layers } = useParallaxLayers();
 
   // Escala de imagen basada en dirección del scroll
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.15, 1.3]);
+  const imageScale = useTransform(layers.scrollYProgress, [0, 0.5, 1], [1, 1.15, 1.3]);
 
   return (
     <section id="cta-2" ref={sectionRef} className={styles.cta}>
@@ -43,7 +38,7 @@ export const CTA2 = () => {
         initial="hidden"
         animate={controls}
         variants={scaleIn}
-        style={{ y: contentY }}
+        style={{ y: layers.slow.y }}
       >
         <h2 className={styles.title}>
           ¿Ya te decidiste a brillar con el flow?
@@ -60,4 +55,4 @@ export const CTA2 = () => {
       </motion.div>
     </section>
   );
-};
+}

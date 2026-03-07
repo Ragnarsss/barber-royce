@@ -2,7 +2,7 @@
  * Hook personalizado para integrar Lenis smooth scroll con React
  */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Lenis from "lenis";
 
 // Extender el tipo Window para incluir la instancia de Lenis
@@ -15,9 +15,11 @@ declare global {
 /**
  * Configuración del smooth scroll usando Lenis
  * @param options - Opciones de configuración de Lenis
- * @returns Instancia de Lenis
+ * @returns Instancia de Lenis o null
  */
 export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
+  const [lenisInstance, setLenisInstance] = useState<Lenis | null>(null);
+
   useEffect(() => {
     // Crear instancia de Lenis con configuración personalizada
     const lenis = new Lenis({
@@ -32,8 +34,9 @@ export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
       ...options,
     });
 
-    // Exponer instancia globalmente para otros hooks
+    // Exponer instancia globalmente para otros hooks (backward compatibility)
     window.lenis = lenis;
+    setLenisInstance(lenis);
 
     // Función de animación que se ejecuta en cada frame
     function raf(time: number) {
@@ -48,6 +51,9 @@ export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
     return () => {
       lenis.destroy();
       window.lenis = undefined;
+      setLenisInstance(null);
     };
   }, [options]);
+
+  return lenisInstance;
 };

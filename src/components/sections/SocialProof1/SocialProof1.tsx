@@ -11,7 +11,8 @@ import {
   parallaxLayers,
 } from "@/lib/animations";
 
-export const SocialProof1 = () => {
+// ✅ React 19: Eliminado memo() - bailout automático
+export function SocialProof1() {
   const { ref, controls } = useScrollAnimation();
   const sectionRef = useRef<HTMLElement>(null);
   const { direction, velocity } = useLenisScroll();
@@ -221,7 +222,14 @@ export const SocialProof1 = () => {
             style={{ y: imageY }}
           >
             <div className={styles.imageFrame}>
-              <img src={`${socialProofImage}`} className={styles.image}></img>
+              <img
+                src={`${socialProofImage}`}
+                className={styles.image}
+                loading="lazy"
+                alt="Cliente satisfecho en Royce Barbería"
+                width="600"
+                height="800"
+              />
             </div>
           </motion.div>
 
@@ -251,4 +259,4 @@ export const SocialProof1 = () => {
       </div>
     </section>
   );
-};
+}

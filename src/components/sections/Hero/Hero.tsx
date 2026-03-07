@@ -1,68 +1,19 @@
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import styles from "./Hero.module.css";
-import { heroBenefits } from "@/data/heroData";
+import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData";
 import backgroundImage from "@/assets/hero_model_left_profile.png";
 import {
   fadeInUp,
   fadeInLeft,
   staggerContainer,
-  parallaxLayers,
 } from "@/lib/animations";
+import { useParallaxLayers } from "@/hooks/useParallaxLayers";
 
 export function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-
-  // Parallax effect para múltiples capas
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
+  // Hook de parallax centralizado
+  const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>(undefined, {
     offset: ["start start", "end start"],
   });
-
-  // Imagen principal - capa frontal
-  const imageY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.foreground.y,
-  );
-  const imageScale = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.foreground.scale,
-  );
-
-  // Triángulos principales - capa media
-  const trianglesY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.middle.y,
-  );
-  const trianglesRotate = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.middle.rotate,
-  );
-
-  // Capas decorativas de fondo - más lentas
-  const bgLayerY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.background.y,
-  );
-  const bgLayerScale = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.background.scale,
-  );
-
-  // Capa superior - más rápida
-  const fgLayerY = useTransform(scrollYProgress, [0, 1], parallaxLayers.fast.y);
-  const fgLayerX = useTransform(scrollYProgress, [0, 1], parallaxLayers.fast.x);
-
-  const benefits = heroBenefits.map((benefit) => ({
-    icon: <benefit.icon size={24} />,
-    text: benefit.text,
-  }));
 
   return (
     <motion.section
@@ -76,31 +27,31 @@ export function Hero() {
       {/* Capa de fondo - triángulos con opacidad reducida */}
       <motion.div
         className={styles.leftTriangleBackground}
-        style={{ y: bgLayerY, scale: bgLayerScale }}
+        style={{ y: layers.background.y, scale: layers.background.scale }}
       ></motion.div>
       <motion.div
         className={styles.rightTriangleBackground}
-        style={{ y: bgLayerY, scale: bgLayerScale }}
+        style={{ y: layers.background.y, scale: layers.background.scale }}
       ></motion.div>
 
       {/* Capa principal - triángulos principales */}
       <motion.div
         className={styles.leftTriangle}
-        style={{ y: trianglesY, rotate: trianglesRotate }}
+        style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
       ></motion.div>
       <motion.div
         className={styles.rightTriangle}
-        style={{ y: trianglesY, rotate: trianglesRotate }}
+        style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
       ></motion.div>
 
       {/* Capa frontal - pequeños triángulos decorativos */}
       <motion.div
         className={styles.leftTriangleForeground}
-        style={{ y: fgLayerY, x: fgLayerX }}
+        style={{ y: layers.fast.y, x: layers.fast.x }}
       ></motion.div>
       <motion.div
         className={styles.rightTriangleForeground}
-        style={{ y: fgLayerY, x: fgLayerX }}
+        style={{ y: layers.fast.y, x: layers.fast.x }}
       ></motion.div>
 
       {/* Imagen del modelo con parallax */}
@@ -108,8 +59,8 @@ export function Hero() {
         className={styles.heroImage}
         style={{
           backgroundImage: `url(${backgroundImage})`,
-          y: imageY,
-          scale: imageScale,
+          y: layers.foreground.y,
+          scale: layers.foreground.scale,
         }}
       ></motion.div>
 
@@ -127,7 +78,7 @@ export function Hero() {
           </motion.p>
 
           <motion.div className={styles.benefits} variants={staggerContainer}>
-            {benefits.map((benefit, index) => (
+            {HERO_BENEFITS_VIEW_DATA.map((benefit, index) => (
               <motion.div
                 key={index}
                 className={styles.benefit}
