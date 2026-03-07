@@ -1,31 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/royce-barber-logo.png";
+import { useNavbarScroll } from "@/hooks/useNavbarScroll";
+import { useLenisInstance } from "@/contexts/LenisContext";
 
 export const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const { isScrolled } = useNavbarScroll();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const lenis = useLenisInstance();
 
   const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
 
     // Si ya estamos en el home, solo hacer scroll to top
     if (location.pathname === "/") {
-      if (window.lenis) {
-        window.lenis.scrollTo(0, { duration: 1.5, immediate: false });
+      if (lenis) {
+        lenis.scrollTo(0, { duration: 1.5, immediate: false });
       } else {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -33,8 +27,8 @@ export const Navbar = () => {
       // Si estamos en otra página, navegar al home y luego scroll to top
       navigate("/");
       setTimeout(() => {
-        if (window.lenis) {
-          window.lenis.scrollTo(0, { duration: 1.5, immediate: false });
+        if (lenis) {
+          lenis.scrollTo(0, { duration: 1.5, immediate: false });
         } else {
           window.scrollTo({ top: 0, behavior: "smooth" });
         }
@@ -50,9 +44,13 @@ export const Navbar = () => {
   ];
 
   return (
-    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
+    <nav
+      className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}
+      role="navigation"
+      aria-label="Navegación principal"
+    >
       <div className={styles.container}>
-        <Link to="/" className={styles.logo} onClick={handleLogoClick}>
+        <Link to="/" className={styles.logo} onClick={handleLogoClick} aria-label="Ir a la página de inicio">
           <img src={logo} alt="Barber Royce" className={styles.logoImage} />
         </Link>
 
@@ -85,7 +83,9 @@ export const Navbar = () => {
         <button
           className={styles.mobileMenuButton}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
+          aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-navigation"
         >
           <span className={styles.hamburger}></span>
         </button>
@@ -93,9 +93,11 @@ export const Navbar = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`${styles.mobileMenu} ${
-          isMobileMenuOpen ? styles.open : ""
-        }`}
+        id="mobile-navigation"
+        className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ""
+          }`}
+        role="menu"
+        aria-label="Menú de navegación móvil"
       >
         {navLinks.map((link) => (
           <NavLink
