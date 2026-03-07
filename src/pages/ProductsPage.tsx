@@ -1,68 +1,43 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import styles from "./ProductsPage.module.css";
+import { productsList, productCategories } from "@/data/productsData";
+import { SearchIcon } from "@/components/icons";
 
-export const ProductsPage = () => {
+export function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
 
-  const categories = ["Todos", "Styling", "Barba", "Cuidado", "Kits"];
-
-  const products = [
-    {
-      name: "Pomada Premium",
-      description: "Hold fuerte, acabado mate. Perfecta para estilos estructurados que duran todo el día.",
-      price: "$25",
-      image: "https://images.unsplash.com/photo-1598661516337-0c6f02e93d4b?w=400&h=400&fit=crop",
-      category: "Styling",
-    },
-    {
-      name: "Cera Modeladora",
-      description: "Control y flexibilidad. Ideal para estilos naturales con movimiento y textura.",
-      price: "$22",
-      image: "https://images.unsplash.com/photo-1621607512025-2ae6f13f30a3?w=400&h=400&fit=crop",
-      category: "Styling",
-    },
-    {
-      name: "Aceite para Barba",
-      description: "Hidratación y brillo natural. Mantén tu barba suave, saludable y con aroma excepcional.",
-      price: "$18",
-      image: "https://images.unsplash.com/photo-1602900639260-e53828c1f5c6?w=400&h=400&fit=crop",
-      category: "Barba",
-    },
-    {
-      name: "Shampoo Fortificante",
-      description: "Limpieza profunda y fortalecimiento. Fórmula especial para cabello y cuero cabelludo.",
-      price: "$20",
-      image: "https://images.unsplash.com/photo-1617897903246-719242758050?w=400&h=400&fit=crop",
-      category: "Cuidado",
-    },
-    {
-      name: "Bálsamo para Barba",
-      description: "Suavidad y acondicionamiento. Control ligero con nutrición profunda para tu barba.",
-      price: "$16",
-      image: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400&h=400&fit=crop",
-      category: "Barba",
-    },
-    {
-      name: "Kit Completo",
-      description: "Todos los esenciales para tu cuidado. El regalo perfecto o tu arsenal completo.",
-      price: "$75",
-      image: "https://images.unsplash.com/photo-1585155967594-63d48b6b0f39?w=400&h=400&fit=crop",
-      category: "Kits",
-    },
-  ];
+  // ✅ React 19: useTransition para filtrado no bloqueante
+  // Mantiene input responsive durante filtrado pesado (INP optimization)
+  const [isPending, startTransition] = useTransition();
 
   // Filtrar productos
-  const filteredProducts = products.filter((product) => {
+  const filteredProducts = productsList.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "Todos" || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  // ✅ React 19: Actualización en transición para búsqueda
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Actualización inmediata del input (no bloqueante)
+    startTransition(() => {
+      setSearchTerm(value);
+    });
+  };
+
+  // ✅ React 19: Actualización en transición para categoría
+  const handleCategoryChange = (category: string) => {
+    startTransition(() => {
+      setSelectedCategory(category);
+    });
+  };
 
   return (
     <div className={styles.page}>
@@ -95,30 +70,28 @@ export const ProductsPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
+            style={{ opacity: isPending ? 0.6 : 1 }}
           >
             {/* Barra de búsqueda */}
             <div className={styles.searchBar}>
-              <svg className={styles.searchIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
+              <SearchIcon className={styles.searchIcon} />
               <Input
                 type="text"
                 placeholder="Buscar productos..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
                 className={styles.searchInput}
               />
             </div>
 
             {/* Filtros de categoría */}
             <div className={styles.categoryFilters}>
-              {categories.map((category) => (
+              {productCategories.map((category) => (
                 <Button
                   key={category}
                   variant={selectedCategory === category ? "default" : "outline"}
                   className={styles.categoryButton}
-                  onClick={() => setSelectedCategory(category)}
+                  onClick={() => handleCategoryChange(category)}
                 >
                   {category}
                 </Button>
@@ -129,7 +102,7 @@ export const ProductsPage = () => {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.container}>
+        <div className={styles.container} style={{ opacity: isPending ? 0.6 : 1, transition: 'opacity 0.2s' }}>
           {filteredProducts.length === 0 ? (
             <motion.div
               className={styles.noResults}
@@ -185,4 +158,4 @@ export const ProductsPage = () => {
       </div>
     </div>
   );
-};
+}

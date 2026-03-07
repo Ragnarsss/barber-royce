@@ -1,58 +1,15 @@
 import { motion } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import styles from "./ServicesPage.module.css";
 import { servicesList } from "../data/servicesData";
+import { useScrollContainer } from "@/hooks/useScrollContainer";
 
 export const ServicesPage = () => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isHovering, setIsHovering] = useState(false);
-
-  useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
-    if (!scrollContainer) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (isHovering) {
-        // Prevenir el scroll de la página
-        e.preventDefault();
-        e.stopPropagation();
-
-        // Convertir el scroll vertical en horizontal
-        const scrollAmount = e.deltaY;
-        scrollContainer.scrollLeft += scrollAmount;
-      }
-    };
-
-    // Agregar el event listener en la fase de captura para interceptar antes
-    scrollContainer.addEventListener("wheel", handleWheel, {
-      passive: false,
-      capture: true
-    });
-
-    return () => {
-      scrollContainer.removeEventListener("wheel", handleWheel, true);
-    };
-  }, [isHovering]);
-
-  // Pausar/reanudar Lenis cuando se hace hover
-  useEffect(() => {
-    const lenis = (window as any).lenis;
-    if (!lenis) return;
-
-    if (isHovering) {
-      lenis.stop();
-    } else {
-      lenis.start();
-    }
-
-    // Cleanup: asegurarse de que Lenis esté activo al desmontar
-    return () => {
-      if (lenis) {
-        lenis.start();
-      }
-    };
-  }, [isHovering]);
+  const {
+    scrollContainerRef,
+    handleMouseEnter,
+    handleMouseLeave,
+  } = useScrollContainer();
 
   return (
     <div className={styles.page}>
@@ -75,8 +32,8 @@ export const ServicesPage = () => {
           <div
             ref={scrollContainerRef}
             className={styles.scrollContainer}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
             <div className={styles.scrollContent}>
               {servicesList.map((service, idx) => (
