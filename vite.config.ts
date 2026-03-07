@@ -2,10 +2,33 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
+import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    // ✅ Performance: Optimización automática de imágenes en build
+    ViteImageOptimizer({
+      // PNG optimization
+      png: {
+        quality: 80, // Compresión moderada (balance calidad/tamaño)
+      },
+      // JPEG optimization (si hay JPG en el futuro)
+      jpeg: {
+        quality: 85,
+      },
+      // WebP generation (formato moderno, -60-80% tamaño)
+      webp: {
+        lossless: false,
+        quality: 80, // Buena calidad con gran compresión
+      },
+      // Cache para acelerar rebuilds
+      cache: true,
+      cacheLocation: '.cache/image-optimizer',
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
