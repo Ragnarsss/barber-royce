@@ -1,8 +1,9 @@
 /**
- * Hook personalizado para integrar Lenis smooth scroll con React
+ * Hook profesional para integrar Lenis smooth scroll con React
+ * Incluye ResizeObserver para sincronización automática con contenido dinámico
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Lenis from "lenis";
 
 // Extender el tipo Window para incluir la instancia de Lenis
@@ -19,36 +20,84 @@ declare global {
  */
 export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
   const [lenisInstance, setLenisInstance] = useState<Lenis | null>(null);
+  const rafIdRef = useRef<number | null>(null);
 
   useEffect(() => {
     // Crear instancia de Lenis con configuración personalizada
     const lenis = new Lenis({
-      duration: 1.2, // Duración de la animación en segundos (más alto = más suave y lento)
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Easing personalizado (easeOutExpo)
-      orientation: "vertical", // Dirección del scroll
+      duration: 1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: "vertical",
       gestureOrientation: "vertical",
-      smoothWheel: true, // Suavizar el scroll con la rueda del mouse
-      wheelMultiplier: 1, // Multiplicador de velocidad de la rueda
-      touchMultiplier: 2, // Multiplicador de velocidad en touch
-      infinite: false, // No hacer scroll infinito
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+      infinite: false,
+      autoResize: true, // Activar auto-resize nativo de Lenis
       ...options,
     });
 
-    // Exponer instancia globalmente para otros hooks (backward compatibility)
+    // Exponer instancia globalmente
     window.lenis = lenis;
-    setLenisInstance(lenis);
 
-    // Función de animación que se ejecuta en cada frame
+    // Función de animación RAF
     function raf(time: number) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafIdRef.current = requestAnimationFrame(raf);
     }
 
-    // Iniciar el loop de animación
-    requestAnimationFrame(raf);
+    // Iniciar loop de animación
+    rafIdRef.current = requestAnimationFrame(raf);
 
-    // Cleanup: destruir la instancia cuando el componente se desmonte
+    // ✅ SOLUCIÓN PROFESIONAL: ResizeObserver para detectar cambios de contenido
+    const resizeObserver = new ResizeObserver(() => {
+      // Recalcular dimensiones cuando el contenido cambia
+      lenis.resize();
+    });
+
+    // Observar el body (contiene todo el contenido)
+    resizeObserver.observe(document.body);
+
+    // MutationObserver para detectar cambios en el DOM (imágenes que cargan)
+    const mutationObserver = new MutationObserver(() => {
+      lenis.resize();
+    });
+
+    mutationObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class'],
+    });
+
+    // Esperar a que el DOM esté listo antes de exponer la instancia
+    requestAnimationFrame(() => {
+      lenis.resize();
+      lenis.scrollTo(0, { immediate: true });
+      setLenisInstance(lenis);
+    });
+
+    // Listener de resize de ventana
+    const handleResize = () => {
+      lenis.resize();
+    };
+    window.addEventListener('resize', handleResize);
+
+    // Listener de carga de imágenes (para recalcular cuando cargan)
+    const handleImageLoad = () => {
+      lenis.resize();
+    };
+    window.addEventListener('load', handleImageLoad);
+
+    // Cleanup
     return () => {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('load', handleImageLoad);
       lenis.destroy();
       window.lenis = undefined;
       setLenisInstance(null);
