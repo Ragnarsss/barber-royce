@@ -1,10 +1,4 @@
-export interface TeamMember {
-    name: string;
-    role: string;
-    experience: string;
-    image: string;
-    isLead: boolean;
-}
+import type { TeamMember } from "@/types/team.types";
 
 export const teamMembersList: TeamMember[] = [
     {

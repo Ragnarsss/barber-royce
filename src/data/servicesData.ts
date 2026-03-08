@@ -1,11 +1,7 @@
-export interface Service {
-  name: string;
-  description: string;
-  price: string;
-  duration: string;
-  includes: string;
-  image: string;
-}
+import type { Service } from "@/types/service.types";
+import { SERVICE_CATEGORIES } from "@/types/service.types";
+
+export const serviceCategories = SERVICE_CATEGORIES;
 
 export const servicesList: Service[] = [
   {
@@ -15,6 +11,7 @@ export const servicesList: Service[] = [
     price: "$4.000",
     duration: "45 min",
     includes: "Cortesia",
+    category: "Corte de Cabello",
     image:
       "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&h=300&fit=crop",
   },
@@ -25,6 +22,7 @@ export const servicesList: Service[] = [
     price: "$6.000",
     duration: "60 min",
     includes: "Cortesia",
+    category: "Barba",
     image:
       "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&h=300&fit=crop",
   },
@@ -35,6 +33,7 @@ export const servicesList: Service[] = [
     price: "$5.000",
     duration: "40 min",
     includes: "Cortesia",
+    category: "Barba",
     image:
       "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=300&fit=crop",
   },
@@ -45,6 +44,7 @@ export const servicesList: Service[] = [
     price: "$3.500",
     duration: "30 min",
     includes: "Cortesia",
+    category: "Barba",
     image:
       "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=400&h=300&fit=crop",
   },
@@ -55,6 +55,7 @@ export const servicesList: Service[] = [
     price: "$4.500",
     duration: "50 min",
     includes: "Cortesia",
+    category: "Corte de Cabello",
     image:
       "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&h=300&fit=crop",
   },
@@ -65,6 +66,7 @@ export const servicesList: Service[] = [
     price: "$7.000",
     duration: "55 min",
     includes: "Cortesia",
+    category: "Otros",
     image:
       "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=400&h=300&fit=crop",
   },
@@ -75,6 +77,7 @@ export const servicesList: Service[] = [
     price: "$8.000",
     duration: "90 min",
     includes: "Cortesia",
+    category: "Colorimetría",
     image:
       "https://images.unsplash.com/photo-1534438097545-9c89c82d5f7a?w=400&h=300&fit=crop",
   },
@@ -85,6 +88,7 @@ export const servicesList: Service[] = [
     price: "$3.000",
     duration: "25 min",
     includes: "Cortesia",
+    category: "Otros",
     image:
       "https://images.unsplash.com/photo-1599351431653-4c7ff2f9f8b7?w=400&h=300&fit=crop",
   },
@@ -95,6 +99,7 @@ export const servicesList: Service[] = [
     price: "$2.500",
     duration: "20 min",
     includes: "Cortesia",
+    category: "Otros",
     image:
       "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=400&h=300&fit=crop",
   },
@@ -105,6 +110,7 @@ export const servicesList: Service[] = [
     price: "$12.000",
     duration: "120 min",
     includes: "Cortesia",
+    category: "Otros",
     image:
       "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=300&fit=crop",
   },
@@ -115,6 +121,7 @@ export const servicesList: Service[] = [
     price: "$3.000",
     duration: "30 min",
     includes: "Cortesia",
+    category: "Corte de Cabello",
     image:
       "https://images.unsplash.com/photo-1621605815854-b7e2c0e0b0f8?w=400&h=300&fit=crop",
   },
@@ -125,6 +132,7 @@ export const servicesList: Service[] = [
     price: "$2.000",
     duration: "15 min",
     includes: "Cortesia",
+    category: "Otros",
     image:
       "https://images.unsplash.com/photo-1622287162716-f311baa16138?w=400&h=300&fit=crop",
   },
@@ -135,6 +143,7 @@ export const servicesList: Service[] = [
     price: "$6.500",
     duration: "70 min",
     includes: "Cortesia",
+    category: "Colorimetría",
     image:
       "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&h=300&fit=crop",
   },
@@ -145,6 +154,7 @@ export const servicesList: Service[] = [
     price: "$4.500",
     duration: "35 min",
     includes: "Cortesia",
+    category: "Barba",
     image:
       "https://images.unsplash.com/photo-1621607510918-6c2e45f0c23f?w=400&h=300&fit=crop",
   },
@@ -155,6 +165,7 @@ export const servicesList: Service[] = [
     price: "$2.500",
     duration: "20 min",
     includes: "Cortesia",
+    category: "Otros",
     image:
       "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&h=300&fit=crop",
   },

@@ -1,12 +1,7 @@
-export interface Product {
-    name: string;
-    description: string;
-    price: string;
-    image: string;
-    category: string;
-}
+import type { Product } from "@/types/product.types";
+import { PRODUCT_CATEGORIES } from "@/types/product.types";
 
-export const productCategories = ["Todos", "Styling", "Barba", "Cuidado", "Kits"];
+export const productCategories = PRODUCT_CATEGORIES;
 
 export const productsList: Product[] = [
     {
