@@ -3,32 +3,34 @@
   background-color: #332b2b;
   position: relative;
   overflow: visible;
-  padding-bottom: 80px;
+  padding: clamp(4rem, 10vh, 6rem) 0 clamp(3rem, 8vh, 5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 1.5rem;
   position: relative;
   z-index: 1;
 }
 
 .header {
-  padding-top: 5vh;
-  margin-bottom: 0px; /* Control de espacio inferior del heading */
+  margin-bottom: clamp(2.5rem, 8vh, 5rem);
 }
 
 .title {
-  font-size: 42px;
+  font-size: clamp(1.75rem, 4vw, 2.625rem);
   font-weight: 700;
   color: #ffffff;
-  margin: 0 0 16px 0;
+  margin: 0 0 1rem 0;
   text-align: left;
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: clamp(0.8rem, 1.2vw, 0.875rem);
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.85);
   margin: 0;
@@ -40,6 +42,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
+  gap: clamp(1rem, 3vw, 2rem);
   position: relative;
 }
 
@@ -55,7 +58,7 @@
 .imageFrame {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: clamp(24rem, 45vw, 35rem);
 }
 
 /* Marco rojo: mismo tamaño que la imagen, rotado 6deg */
@@ -84,7 +87,6 @@
 
 .testimonialCard {
   background: #ffffff;
-  /* Forma del SVG convertida a clip-path */
   clip-path: polygon(
     37.4% 0%,
     87.38% 14.18%,
@@ -98,10 +100,10 @@
   align-items: center;
   justify-content: center;
   aspect-ratio: 577 / 583;
-  width: 400px;
-  padding: 60px 80px 60px 70px;
-  /* Solapar considerablemente con la imagen */
-  margin-left: -130px;
+  width: clamp(22rem, 40vw, 30rem);
+  padding: clamp(2.5rem, 7vw, 4.5rem) clamp(3.5rem, 9vw, 6rem)
+    clamp(2.5rem, 7vw, 4.5rem) clamp(3rem, 8vw, 5rem);
+  margin-left: clamp(-5rem, -12vw, -8.125rem);
   position: relative;
   z-index: 1;
 }
@@ -111,7 +113,7 @@
 }
 
 .testimonialText {
-  font-size: 14px;
+  font-size: clamp(0.9rem, 1.4vw, 1rem);
   line-height: normal;
   color: #1a1a1a;
   font-style: italic;
@@ -122,61 +124,91 @@
 .author {
   display: flex;
   flex-direction: column;
-  gap: 0px;
+  gap: 0;
   align-items: flex-start;
 }
 
 .author strong {
-  font-size: 17px;
+  font-size: clamp(1.05rem, 1.7vw, 1.25rem);
   font-weight: 700;
   color: #1a1a1a;
 }
 
 .author span {
-  font-size: 14px;
+  font-size: clamp(0.9rem, 1.4vw, 1rem);
   color: #666666;
 }
 
 .clientBadge {
-  font-size: 13px;
+  font-size: clamp(0.85rem, 1.2vw, 0.95rem);
   color: #999999;
   font-style: italic;
 }
 
 @media (max-width: 1024px) {
   .content {
-    grid-template-columns: 1fr;
-    gap: 50px;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0 0.5rem;
+  }
+
+  .imageFrame {
+    max-width: clamp(14rem, 40vw, 20rem);
   }
 
   .testimonialCard {
-    clip-path: none;
-    margin-left: 0;
-    padding: 40px 32px;
-    width: 100%;
+    width: clamp(14rem, 38vw, 20rem);
+    padding: clamp(1.5rem, 5vw, 2.5rem) clamp(2rem, 6vw, 3.5rem)
+      clamp(1.5rem, 5vw, 2.5rem) clamp(1.75rem, 5.5vw, 3rem);
+    margin-left: clamp(-3rem, -10vw, -5rem);
   }
 }
 
 @media (max-width: 768px) {
-  .title {
-    font-size: 28px;
-    margin-bottom: 12px;
-  }
-
-  .subtitle {
-    font-size: 13px;
+  .socialProof {
+    padding: clamp(3rem, 8vh, 4rem) 0;
   }
 
   .header {
-    margin-bottom: 40px;
+    margin-bottom: 2rem;
   }
 
-  .socialProof {
-    padding: 60px 0;
+  .content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+
+  .imageFrame {
+    max-width: clamp(16rem, 70vw, 22rem);
+    margin: 0 auto;
   }
 
   .testimonialCard {
-    padding: 32px 24px;
+    clip-path: none;
+    border-radius: 1.25rem;
+    width: 100%;
+    max-width: clamp(18rem, 85vw, 24rem);
+    margin: 0 auto;
+    padding: 2rem 1.75rem;
+    aspect-ratio: auto;
+  }
+
+  .testimonialText {
+    font-size: clamp(0.85rem, 3.5vw, 0.95rem);
+    line-height: 1.6;
+  }
+
+  .author strong {
+    font-size: clamp(0.95rem, 4vw, 1.1rem);
+  }
+
+  .author span {
+    font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+  }
+
+  .clientBadge {
+    font-size: clamp(0.75rem, 3vw, 0.85rem);
   }
 }
 

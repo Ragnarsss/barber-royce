@@ -1,8 +1,12 @@
 .socialProof {
-  padding: 100px 0;
+  min-height: 100vh;
+  padding: clamp(4rem, 10vh, 6.25rem) 0;
   background-color: #332a2b;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -170,9 +174,9 @@
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 3rem;
   position: relative;
   z-index: 2;
 }
@@ -180,18 +184,18 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 2.5rem;
 }
 
 .textContent {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
   max-width: 650px;
 }
 
 .title {
-  font-size: 44px;
+  font-size: clamp(2rem, 4.5vw, 2.75rem);
   font-weight: 700;
   color: #ffffff;
   margin: 0;
@@ -199,7 +203,7 @@
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: clamp(0.8rem, 1.2vw, 0.875rem);
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.9);
   margin: 0;
@@ -210,13 +214,13 @@
 .bentoGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 180px 180px;
-  gap: 16px;
+  grid-template-rows: 11.25rem 11.25rem;
+  gap: 1rem;
 }
 
 .bentoItem {
   background: #e0e0e0;
-  border-radius: 16px;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -242,13 +246,13 @@
 .bentoTall {
   grid-column: 3;
   grid-row: 1 / 3;
-  border-radius: 16px;
+  border-radius: 1rem;
 }
 
 @media (max-width: 1024px) {
   .bentoGrid {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 160px 160px 200px;
+    grid-template-rows: 10rem 10rem 12.5rem;
   }
 
   .bentoTall {
@@ -256,7 +260,6 @@
     grid-row: 3;
   }
 
-  /* Ocultar algunos hexágonos en tablets */
   .hexagonBg2,
   .hexagonMiddle3,
   .hexagonFast3,
@@ -266,28 +269,13 @@
 }
 
 @media (max-width: 768px) {
-  .title {
-    font-size: 32px;
-  }
-
-  .subtitle {
-    font-size: 13px;
-  }
-
   .socialProof {
-    padding: 60px 0;
+    padding: clamp(3rem, 8vh, 4rem) 0;
   }
 
   .bentoGrid {
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 150px 150px 180px;
-  }
-
-  /* En móviles, mantener solo los hexágonos principales */
-  .hexagon {
-    width: 600px;
-    height: 600px;
-    top: -200px;
+    grid-template-rows: 9.375rem 9.375rem 11.25rem;
   }
 
   .hexagonBg1,

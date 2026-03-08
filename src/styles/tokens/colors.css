@@ -48,6 +48,31 @@
   --color-error: #ef4444;
   --color-error-dark: #dc2626;
 
+  /* Brand Colors - Aliases semánticos para uso en componentes */
+  --color-brand-primary: var(--color-accent-500); /* #d52323 - Rojo principal */
+  --color-brand-primary-hover: var(
+    --color-accent-300
+  ); /* #fe0000 - Rojo hover */
+  --color-brand-background: var(
+    --color-primary-500
+  ); /* #1a1a1a - Fondo principal */
+  --color-brand-section-bg: var(
+    --color-accent-900
+  ); /* #332b2b - Fondo secciones */
+  --color-brand-white: #ffffff;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    var(--color-brand-primary) 100%
+  );
+  --gradient-radial-primary: radial-gradient(
+    circle,
+    rgba(213, 35, 35, 0.15) 0%,
+    transparent 70%
+  );
+
   --color-warning-light: #fef3c7;
   --color-warning: #f59e0b;
   --color-warning-dark: #d97706;

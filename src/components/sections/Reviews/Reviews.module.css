@@ -1,17 +1,21 @@
 .reviews {
-  padding: 100px 0;
-  background-color: #332A2B;
+  min-height: 100vh;
+  padding: clamp(4rem, 10vh, 6.25rem) 0;
+  background-color: #332a2b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 3rem;
 }
 
 .header {
   text-align: left;
-  margin-bottom: 60px;
+  margin-bottom: clamp(2.5rem, 6vh, 3.75rem);
 }
 
 .title {
@@ -22,7 +26,7 @@
 }
 
 .subtitle {
-  font-size: 14px;
+  font-size: clamp(0.8rem, 1.2vw, 0.875rem);
   line-height: 1.7;
   color: rgba(255, 255, 255, 0.7);
   margin: 0;
@@ -30,18 +34,18 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 1.5rem;
 }
 
 .card {
-  padding: 32px;
+  padding: 2rem;
   background-color: #ffffff;
-  border-radius: 16px;
+  border-radius: 1rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
   transition: transform 0.3s ease;
 }
 
@@ -56,7 +60,7 @@
 }
 
 .comment {
-  font-size: 14px;
+  font-size: clamp(0.8rem, 1.2vw, 0.875rem);
   line-height: 1.8;
   color: #1a1a1a;
   font-style: italic;
@@ -68,15 +72,19 @@
 .author {
   font-weight: 700;
   color: #1a1a1a;
-  font-size: 16px;
+  font-size: clamp(0.9rem, 1.2vw, 1rem);
 }
 
 @media (max-width: 768px) {
   .reviews {
-    padding: 60px 0;
+    padding: clamp(3rem, 8vh, 4rem) 0;
   }
 
   .grid {
     grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 1.75rem 1.5rem;
   }
 }

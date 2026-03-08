@@ -1,6 +1,6 @@
 .cta {
-  padding: 120px 0;
-  min-height: 600px;
+  padding: 10vh 0;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,7 +67,7 @@
 }
 
 .title {
-  font-size: 48px;
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 700;
   line-height: 1.2;
   color: #d52323;
@@ -75,25 +75,34 @@
 }
 
 .subtitle {
-  font-size: 16px;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
   line-height: 1.6;
   color: rgba(0, 0, 0, 0.95);
   margin: 0;
   max-width: 600px;
 }
 
+.ctaButtons {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 .ctaButton {
   background-color: #d52323;
   color: #ffffff;
   font-weight: 600;
-  padding: 16px 32px;
-  font-size: 16px;
+  padding: 1.2rem 4rem;
+  font-size: 1rem;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   transition: all 0.3s ease;
-  margin-top: 8px;
+  min-width: 220px;
+  justify-content: center;
 }
 
 .ctaButton svg {
@@ -107,22 +116,81 @@
   box-shadow: 0 8px 24px rgba(213, 35, 35, 0.5);
 }
 
+.ctaButtonGhost {
+  background: transparent;
+  color: #d52323;
+  border: 2px solid #d52323;
+  font-weight: 600;
+  padding: 14px 30px;
+  font-size: 16px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.ctaButtonGhost svg {
+  flex-shrink: 0;
+  stroke: currentColor;
+}
+
+.ctaButtonGhost:hover {
+  background: rgba(213, 35, 35, 0.1);
+  border-color: #fe0000;
+  color: #fe0000;
+  transform: translateY(-2px);
+}
+
+.ctaButtonServices {
+  background: transparent;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  font-weight: 600;
+  padding: 1rem 3rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+}
+
+.ctaButtonServices:hover {
+  background: rgba(213, 35, 35, 0.15);
+  border-color: rgba(213, 35, 35, 0.4);
+  color: #d52323;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(213, 35, 35, 0.2);
+}
+
 @media (max-width: 768px) {
   .cta {
-    padding: 80px 0;
-    min-height: 500px;
+    padding: 8vh 0;
+    min-height: 90vh;
   }
 
   .title {
-    font-size: 32px;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
   }
 
   .subtitle {
-    font-size: 15px;
+    font-size: clamp(0.85rem, 1.2vw, 0.95rem);
   }
 
-  .ctaButton {
-    padding: 14px 28px;
-    font-size: 15px;
+  .ctaButtons {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .ctaButton,
+  .ctaButtonGhost {
+    width: 100%;
+    padding: 1rem 2rem;
+    min-width: unset;
   }
 }
