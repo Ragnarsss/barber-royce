@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/royce-barber-logo.png";
 import { useNavbarScroll } from "@/hooks/useNavbarScroll";
 import { useLenisInstance } from "@/contexts/LenisContext";
+import { getNavRoutes } from "@/config/routes";
 
 export const Navbar = () => {
   const { isScrolled } = useNavbarScroll();
@@ -13,7 +14,24 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const lenis = useLenisInstance();
 
-  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  // Cerrar menú móvil automáticamente cuando se cambia a resolución desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768 && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMobileMenuOpen]);
+
+  // Cerrar menú móvil cuando se cambia de ruta
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  function handleLogoClick(e: React.MouseEvent<HTMLAnchorElement>) {
     e.preventDefault();
 
     // Si ya estamos en el home, solo hacer scroll to top
@@ -34,14 +52,9 @@ export const Navbar = () => {
         }
       }, 100);
     }
-  };
+  }
 
-  const navLinks = [
-    { to: "/equipo", label: "TEAM" },
-    { to: "/productos", label: "PRODUCTOS" },
-    { to: "/servicios", label: "SERVICIOS" },
-    { to: "/ubicacion", label: "UBICACIÓN Y HORARIOS" },
-  ];
+  const navLinks = getNavRoutes();
 
   return (
     <nav
@@ -57,9 +70,9 @@ export const Navbar = () => {
         {/* Desktop Navigation */}
         <div className={styles.navLinks}>
           {navLinks.map((link, index) => (
-            <div key={link.to} style={{ display: "contents" }}>
+            <div key={link.path} style={{ display: "contents" }}>
               <NavLink
-                to={link.to}
+                to={link.path}
                 className={({ isActive }) =>
                   `${styles.navLink} ${isActive ? styles.active : ""}`
                 }
@@ -101,8 +114,8 @@ export const Navbar = () => {
       >
         {navLinks.map((link) => (
           <NavLink
-            key={link.to}
-            to={link.to}
+            key={link.path}
+            to={link.path}
             className={({ isActive }) =>
               `${styles.mobileNavLink} ${isActive ? styles.active : ""}`
             }

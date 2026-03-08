@@ -9,8 +9,12 @@ import {
   TikTokIcon,
   WhatsAppIcon,
 } from "@/components/icons";
+import { getFooterRoutes } from "@/config/routes";
+import { CONTACT, SCHEDULE, SOCIAL_MEDIA } from "@/config/constants";
 
 export const Footer = () => {
+  const footerRoutes = getFooterRoutes();
+
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -30,21 +34,11 @@ export const Footer = () => {
           <div className={styles.column}>
             <h4 className={styles.columnTitle}>Navegación</h4>
             <ul className={styles.links}>
-              <li>
-                <Link to="/">Inicio</Link>
-              </li>
-              <li>
-                <Link to="/servicios">Servicios</Link>
-              </li>
-              <li>
-                <Link to="/productos">Productos</Link>
-              </li>
-              <li>
-                <Link to="/equipo">Equipo</Link>
-              </li>
-              <li>
-                <Link to="/ubicacion">Ubicación</Link>
-              </li>
+              {footerRoutes.map((route) => (
+                <li key={route.path}>
+                  <Link to={route.path}>{route.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -54,15 +48,15 @@ export const Footer = () => {
             <ul className={styles.contact}>
               <li className={styles.contactItem}>
                 <PhoneIcon className={styles.contactIcon} />
-                <a href="tel:+1234567890">(123) 456-7890</a>
+                <a href={CONTACT.phone.link}>{CONTACT.phone.display}</a>
               </li>
               <li className={styles.contactItem}>
                 <EmailIcon className={styles.contactIcon} />
-                <a href="mailto:info@barberroyce.com">info@barberroyce.com</a>
+                <a href={CONTACT.email.link}>{CONTACT.email.display}</a>
               </li>
               <li className={styles.contactItem}>
                 <ClockIcon className={styles.contactIcon} />
-                <span>Lun - Sáb: 9:00 - 20:00</span>
+                <span>{SCHEDULE.display}</span>
               </li>
             </ul>
           </div>
@@ -72,34 +66,34 @@ export const Footer = () => {
             <h4 className={styles.columnTitle}>Síguenos</h4>
             <div className={styles.social}>
               <a
-                href="https://instagram.com/barberroyce"
+                href={SOCIAL_MEDIA.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Instagram"
+                aria-label={SOCIAL_MEDIA.instagram.label}
                 className={styles.socialLink}
               >
                 <InstagramIcon />
               </a>
               <a
-                href="https://facebook.com/barberroyce"
+                href={SOCIAL_MEDIA.facebook.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="Facebook"
+                aria-label={SOCIAL_MEDIA.facebook.label}
                 className={styles.socialLink}
               >
                 <FacebookIcon />
               </a>
               <a
-                href="https://tiktok.com/@barberroyce"
+                href={SOCIAL_MEDIA.tiktok.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="TikTok"
+                aria-label={SOCIAL_MEDIA.tiktok.label}
                 className={styles.socialLink}
               >
                 <TikTokIcon />
               </a>
               <a
-                href="https://wa.me/1234567890"
+                href={CONTACT.whatsapp.link}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
