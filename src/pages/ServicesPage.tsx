@@ -1,9 +1,14 @@
 import { motion } from "framer-motion";
-import { Helmet } from "react-helmet-async";
+import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
 import { Card, CardContent } from "@/components/ui/card";
+import { PageHero } from "@/components/common/PageHero/PageHero";
+import { ROUTES } from "@/config/routes";
 import styles from "./ServicesPage.module.css";
-import { servicesList } from "../data/servicesData";
+import { servicesList, serviceCategories } from "@/data/servicesData";
+import type { ServiceCategory } from "@/types/service.types";
 import { useScrollContainer } from "@/hooks/useScrollContainer";
+import { useState } from "react";
+import { staggerFast, cardAnimation } from "@/config/animations.config";
 
 export const ServicesPage = () => {
   const {
@@ -12,26 +17,43 @@ export const ServicesPage = () => {
     handleMouseLeave,
   } = useScrollContainer();
 
+  const [selectedCategory, setSelectedCategory] = useState<ServiceCategory>("Todos");
+  const route = ROUTES.services;
+
+  const filteredServices = selectedCategory === "Todos"
+    ? servicesList
+    : servicesList.filter(service => service.category === selectedCategory);
+
   return (
     <div className={styles.page}>
-      <Helmet>
-        <title>Servicios Premium - Cortes, Afeitados y Tratamientos | Royce Barbería</title>
-        <meta name="description" content="Descubre nuestros servicios de barbería premium: cortes clásicos y modernos, afeitado tradicional con toalla caliente, tratamientos capilares. Calidad y estilo garantizados en Coquimbo." />
-        <link rel="canonical" href="https://roycebarber.com/servicios" />
-        <meta property="og:title" content="Servicios Premium de Barbería | Royce Barbería" />
-        <meta property="og:description" content="Cortes expertos, afeitado tradicional y tratamientos capilares premium." />
-        <meta property="og:url" content="https://roycebarber.com/servicios" />
-      </Helmet>
-      <div className={styles.hero}>
-        <div className={styles.container}>
-          <h1 className={styles.title}>Nuestros Servicios</h1>
-          <p className={styles.subtitle}>
-            Calidad premium y atención personalizada en cada detalle
-          </p>
-        </div>
-      </div>
+      <SEOHelmet route={route} />
+
+      <PageHero
+        title="Nuestros Servicios"
+        subtitle="Calidad premium y atención personalizada en cada detalle"
+        animated={false}
+      />
 
       <div className={styles.content}>
+        {/* Filtros de categorías */}
+        <div className={styles.filtersContainer}>
+          <div className={styles.filters}>
+            {serviceCategories.map((category) => (
+              <motion.button
+                key={category}
+                className={`${styles.filterButton} ${selectedCategory === category ? styles.filterButtonActive : ''}`}
+                onClick={() => setSelectedCategory(category)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
+              >
+                {category}
+              </motion.button>
+            ))}
+          </div>
+          <div className={styles.filterSeparator} />
+        </div>
+
         {/* Wrapper con fade gradient */}
         <div className={styles.scrollWrapper}>
           {/* Fade gradient izquierdo */}
@@ -44,14 +66,17 @@ export const ServicesPage = () => {
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
           >
-            <div className={styles.scrollContent}>
-              {servicesList.map((service, idx) => (
+            <motion.div
+              className={styles.scrollContent}
+              key={selectedCategory}
+              variants={staggerFast}
+              initial="hidden"
+              animate="visible"
+            >
+              {filteredServices.map((service, idx) => (
                 <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  viewport={{ once: true, margin: "-100px" }}
+                  key={`${selectedCategory}-${service.name}-${idx}`}
+                  variants={cardAnimation}
                 >
                   <Card className={styles.serviceCard}>
                     {/* Imagen de fondo */}
@@ -118,7 +143,7 @@ export const ServicesPage = () => {
                   </Card>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
 
           {/* Fade gradient derecho */}

@@ -4,13 +4,17 @@ import { Helmet } from "react-helmet-async";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { PageHero } from "@/components/common/PageHero/PageHero";
+import { ROUTES } from "@/config/routes";
 import styles from "./ProductsPage.module.css";
 import { productsList, productCategories } from "@/data/productsData";
 import { SearchIcon } from "@/components/icons";
+import { fadeInUpShort, staggerFast, cardAnimation } from "@/config/animations.config";
 
 export function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
+  const route = ROUTES.products;
 
   // ✅ React 19: useTransition para filtrado no bloqueante
   // Mantiene input responsive durante filtrado pesado (INP optimization)
@@ -43,42 +47,27 @@ export function ProductsPage() {
   return (
     <div className={styles.page}>
       <Helmet>
-        <title>Productos Premium para el Cuidado del Cabello | Royce Barbería</title>
-        <meta name="description" content="Descubre nuestra selección de productos premium para el cuidado del cabello y barba. Pomadas, ceras, aceites y más productos profesionales de las mejores marcas." />
-        <link rel="canonical" href="https://roycebarber.com/productos" />
-        <meta property="og:title" content="Productos Premium de Barbería | Royce Barbería" />
-        <meta property="og:description" content="Productos profesionales para el cuidado del cabello y barba." />
-        <meta property="og:url" content="https://roycebarber.com/productos" />
+        <title>{route.title}</title>
+        <meta name="description" content={route.description} />
+        <link rel="canonical" href={`https://roycebarber.com${route.path}`} />
+        <meta property="og:title" content={route.title} />
+        <meta property="og:description" content={route.description} />
+        <meta property="og:url" content={`https://roycebarber.com${route.path}`} />
       </Helmet>
-      <div className={styles.hero}>
-        <div className={styles.container}>
-          <motion.h1
-            className={styles.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Productos Premium
-          </motion.h1>
-          <motion.p
-            className={styles.subtitle}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Las mejores marcas para tu cuidado diario
-          </motion.p>
-        </div>
-      </div>
+
+      <PageHero
+        title="Productos Premium"
+        subtitle="Las mejores marcas para tu cuidado diario"
+      />
 
       {/* Sección de filtros y búsqueda */}
       <div className={styles.filtersSection}>
         <div className={styles.container}>
           <motion.div
             className={styles.filtersContainer}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            variants={fadeInUpShort}
+            initial="hidden"
+            animate="visible"
             style={{ opacity: isPending ? 0.6 : 1 }}
           >
             {/* Barra de búsqueda */}
@@ -96,16 +85,21 @@ export function ProductsPage() {
             {/* Filtros de categoría */}
             <div className={styles.categoryFilters}>
               {productCategories.map((category) => (
-                <Button
+                <motion.button
                   key={category}
-                  variant={selectedCategory === category ? "default" : "outline"}
-                  className={styles.categoryButton}
+                  className={`${styles.filterButton} ${selectedCategory === category ? styles.filterButtonActive : ''}`}
                   onClick={() => handleCategoryChange(category)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
                 >
                   {category}
-                </Button>
+                </motion.button>
               ))}
             </div>
+
+            {/* Separador con gradiente */}
+            <div className={styles.filterSeparator} />
           </motion.div>
         </div>
       </div>
@@ -121,14 +115,17 @@ export function ProductsPage() {
               <p>No se encontraron productos que coincidan con tu búsqueda.</p>
             </motion.div>
           ) : (
-            <div className={styles.grid}>
+            <motion.div
+              className={styles.grid}
+              key={`${selectedCategory}-${searchTerm}`}
+              variants={staggerFast}
+              initial="hidden"
+              animate="visible"
+            >
               {filteredProducts.map((product, index) => (
                 <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true, margin: "-50px" }}
+                  key={`${selectedCategory}-${product.name}-${index}`}
+                  variants={cardAnimation}
                 >
                   <Card className={styles.card}>
                     {/* Etiqueta de categoría */}
@@ -161,7 +158,7 @@ export function ProductsPage() {
                   </Card>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       </div>

@@ -1,94 +1,56 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion, useTransform } from "framer-motion";
+import { useMemo } from "react";
 import styles from "./SocialProof1.module.css";
 import socialProofImage from "@/assets/social_proof_1.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useParallaxLayers } from "@/hooks/useParallaxLayers";
 import { useLenisScroll } from "@/hooks/useLenisScroll";
-import {
-  fadeInUp,
-  fadeInLeft,
-  fadeInRight,
-  parallaxLayers,
-} from "@/lib/animations";
+import { useRefreshLenis } from "@/contexts/LenisContext";
+import { fadeInUp, fadeInLeft, fadeInRight } from "@/config/animations.config";
 
-// ✅ React 19: Eliminado memo() - bailout automático
 export function SocialProof1() {
   const { ref, controls } = useScrollAnimation();
-  const sectionRef = useRef<HTMLElement>(null);
   const { direction, velocity } = useLenisScroll();
+  const refreshLenis = useRefreshLenis();
 
-  // Configurar parallax scroll
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"],
-  });
+  // Usar hook optimizado para parallax
+  const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>();
 
-  // Transforms para hexágonos decorativos (diferentes velocidades)
-  const bgHexY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.background.y,
-  );
-  const bgHexScale = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.background.scale,
-  );
+  // Rayos láser diagonales - configuraciones centralizadas
+  const diagonal1 = {
+    x: useTransform(layers.scrollYProgress, [0, 1], ["-100%", "100%"]),
+    y: useTransform(layers.scrollYProgress, [0, 1], ["100%", "-100%"]),
+  };
+  const diagonal2 = {
+    x: useTransform(layers.scrollYProgress, [0, 1], ["-80%", "120%"]),
+    y: useTransform(layers.scrollYProgress, [0, 1], ["-80%", "120%"]),
+  };
+  const diagonal3 = {
+    x: useTransform(layers.scrollYProgress, [0, 1], ["120%", "-120%"]),
+    y: useTransform(layers.scrollYProgress, [0, 1], ["120%", "-120%"]),
+  };
+  const diagonal4 = {
+    x: useTransform(layers.scrollYProgress, [0, 1], ["-60%", "140%"]),
+    y: useTransform(layers.scrollYProgress, [0, 1], ["-60%", "140%"]),
+  };
+  const diagonal5 = {
+    x: useTransform(layers.scrollYProgress, [0, 1], ["100%", "-100%"]),
+    y: useTransform(layers.scrollYProgress, [0, 1], ["150%", "-150%"]),
+  };
 
-  const middleHexY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.middle.y,
-  );
-  const middleHexRotate = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.middle.rotate,
-  );
+  // Movimiento personalizado para testimonial
+  const testimonialY = useTransform(layers.scrollYProgress, [0, 1], ["0%", "8%"]);
 
-  const fgHexY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.foreground.y,
-  );
-
-  // Hexágonos pequeños (movimiento rápido)
-  const smallHexY = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.fast.y,
-  );
-  const smallHexX = useTransform(
-    scrollYProgress,
-    [0, 1],
-    parallaxLayers.fast.x,
+  // Memoizar estilos condicionales para optimizar performance
+  const hexMiddle2Style = useMemo(
+    () => ({ opacity: direction === 1 ? 0.6 : 0.5 }),
+    [direction]
   );
 
-  // Transforms para imagen y testimonial
-  const imageY = useTransform(scrollYProgress, [0, 1], parallaxLayers.slow.y);
-  const testimonialY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
-
-  // Rayos láser diagonales - movimiento combinado X e Y
-
-  // RAYO DIAGONAL 1: Tipo "/" - de abajo-izquierda a arriba-derecha
-  const diagonal1X = useTransform(scrollYProgress, [0, 1], ["-100%", "100%"]);
-  const diagonal1Y = useTransform(scrollYProgress, [0, 1], ["100%", "-100%"]);
-
-  // RAYO DIAGONAL 2: Tipo "\" - de arriba-izquierda a abajo-derecha
-  const diagonal2X = useTransform(scrollYProgress, [0, 1], ["-80%", "120%"]);
-  const diagonal2Y = useTransform(scrollYProgress, [0, 1], ["-80%", "120%"]);
-
-  // RAYO DIAGONAL 3: Tipo "/" - más lento
-  const diagonal3X = useTransform(scrollYProgress, [0, 1], ["120%", "-120%"]);
-  const diagonal3Y = useTransform(scrollYProgress, [0, 1], ["120%", "-120%"]);
-
-  // RAYO DIAGONAL 4: Tipo "\" - desde centro
-  const diagonal4X = useTransform(scrollYProgress, [0, 1], ["-60%", "140%"]);
-  const diagonal4Y = useTransform(scrollYProgress, [0, 1], ["-60%", "140%"]);
-
-  // RAYO DIAGONAL 5: Tipo "/" - rápido
-  const diagonal5X = useTransform(scrollYProgress, [0, 1], ["100%", "-100%"]);
-  const diagonal5Y = useTransform(scrollYProgress, [0, 1], ["150%", "-150%"]);
+  const hexFg1Style = useMemo(
+    () => ({ scale: velocity > 1 ? 1.1 : 1 }),
+    [velocity]
+  );
 
   return (
     <section
@@ -103,25 +65,25 @@ export function SocialProof1() {
       {/* Rayos tipo "/" - ascendentes de izquierda a derecha */}
       <motion.div
         className={styles.diagonalLaser1}
-        style={{ x: diagonal1X, y: diagonal1Y }}
+        style={{ x: diagonal1.x, y: diagonal1.y }}
       />
       <motion.div
         className={styles.diagonalLaser3}
-        style={{ x: diagonal3X, y: diagonal3Y }}
+        style={{ x: diagonal3.x, y: diagonal3.y }}
       />
       <motion.div
         className={styles.diagonalLaser5}
-        style={{ x: diagonal5X, y: diagonal5Y }}
+        style={{ x: diagonal5.x, y: diagonal5.y }}
       />
 
       {/* Rayos tipo "\" - descendentes de izquierda a derecha */}
       <motion.div
         className={styles.diagonalLaser2}
-        style={{ x: diagonal2X, y: diagonal2Y }}
+        style={{ x: diagonal2.x, y: diagonal2.y }}
       />
       <motion.div
         className={styles.diagonalLaser4}
-        style={{ x: diagonal4X, y: diagonal4Y }}
+        style={{ x: diagonal4.x, y: diagonal4.y }}
       />
 
       {/* ═══════════════════════════════════════════════
@@ -129,19 +91,19 @@ export function SocialProof1() {
       ═══════════════════════════════════════════════ */}
       <motion.div
         className={styles.hexagonBackground1}
-        style={{ y: bgHexY, scale: bgHexScale }}
+        style={{ y: layers.background.y, scale: layers.background.scale }}
       />
       <motion.div
         className={styles.hexagonBackground2}
-        style={{ y: bgHexY, scale: bgHexScale }}
+        style={{ y: layers.background.y, scale: layers.background.scale }}
       />
       <motion.div
         className={styles.hexagonBackground3}
-        style={{ y: bgHexY, scale: bgHexScale }}
+        style={{ y: layers.background.y, scale: layers.background.scale }}
       />
       <motion.div
         className={styles.hexagonBackground4}
-        style={{ y: bgHexY, scale: bgHexScale }}
+        style={{ y: layers.background.y, scale: layers.background.scale }}
       />
 
       {/* ═══════════════════════════════════════════════
@@ -149,23 +111,23 @@ export function SocialProof1() {
       ═══════════════════════════════════════════════ */}
       <motion.div
         className={styles.hexagonMiddle1}
-        style={{ y: middleHexY, rotate: middleHexRotate }}
+        style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
       />
       <motion.div
         className={styles.hexagonMiddle2}
         style={{
-          y: middleHexY,
-          rotate: middleHexRotate,
-          opacity: direction === 1 ? 0.6 : 0.5,
+          y: layers.middle.y,
+          rotate: layers.middle.rotate,
+          ...hexMiddle2Style,
         }}
       />
       <motion.div
         className={styles.hexagonMiddle3}
-        style={{ y: middleHexY, rotate: middleHexRotate }}
+        style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
       />
       <motion.div
         className={styles.hexagonMiddle4}
-        style={{ y: middleHexY, rotate: middleHexRotate }}
+        style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
       />
 
       {/* ═══════════════════════════════════════════════
@@ -173,28 +135,31 @@ export function SocialProof1() {
       ═══════════════════════════════════════════════ */}
       <motion.div
         className={styles.hexagonForeground1}
-        style={{ y: fgHexY, scale: velocity > 1 ? 1.1 : 1 }}
+        style={{ y: layers.foreground.y, ...hexFg1Style }}
       />
-      <motion.div className={styles.hexagonForeground2} style={{ y: fgHexY }} />
+      <motion.div
+        className={styles.hexagonForeground2}
+        style={{ y: layers.foreground.y }}
+      />
 
       {/* ═══════════════════════════════════════════════
           CAPA RÁPIDA - Hexágonos pequeños dinámicos
       ═══════════════════════════════════════════════ */}
       <motion.div
         className={styles.hexagonSmall1}
-        style={{ y: smallHexY, x: smallHexX }}
+        style={{ y: layers.fast.y, x: layers.fast.x }}
       />
       <motion.div
         className={styles.hexagonSmall2}
-        style={{ y: smallHexY, x: smallHexX }}
+        style={{ y: layers.fast.y, x: layers.fast.x }}
       />
       <motion.div
         className={styles.hexagonSmall3}
-        style={{ y: smallHexY, x: smallHexX }}
+        style={{ y: layers.fast.y, x: layers.fast.x }}
       />
       <motion.div
         className={styles.hexagonSmall4}
-        style={{ y: smallHexY, x: smallHexX }}
+        style={{ y: layers.fast.y, x: layers.fast.x }}
       />
 
       <div className={styles.container} ref={ref}>
@@ -219,7 +184,7 @@ export function SocialProof1() {
             initial="hidden"
             animate={controls}
             variants={fadeInLeft}
-            style={{ y: imageY }}
+            style={{ y: layers.slow.y }}
           >
             <div className={styles.imageFrame}>
               <img
@@ -229,6 +194,7 @@ export function SocialProof1() {
                 alt="Cliente satisfecho en Royce Barbería"
                 width="600"
                 height="800"
+                onLoad={refreshLenis}
               />
             </div>
           </motion.div>

@@ -1,9 +1,9 @@
 import { useRef, type RefObject } from 'react';
-import { useScroll, useTransform, type MotionValue } from 'framer-motion';
-import { parallaxLayers } from '@/lib/animations';
+import { useScroll, useTransform, type MotionValue, type UseScrollOptions } from 'framer-motion';
+import { parallaxLayers } from '@/config/animations.config';
 
 export interface ParallaxOptions {
-    offset?: [string, string];
+    offset?: UseScrollOptions['offset'];
 }
 
 export interface ParallaxLayers {
@@ -65,35 +65,36 @@ export const useParallaxLayers = <T extends HTMLElement = HTMLElement>(
     const internalRef = useRef<T>(null);
     const targetRef = sectionRef || internalRef;
 
-    const { offset = ['start end', 'end start'] } = options;
+    const defaultOffset = ['start end', 'end start'] as const;
+    const { offset = defaultOffset } = options;
 
     // Configurar scroll tracking
     const { scrollYProgress } = useScroll({
         target: targetRef as RefObject<HTMLElement | null>,
-        offset: offset as any,
+        offset: offset as UseScrollOptions['offset'],
     });
 
     // Crear transformaciones para capa de fondo
-    const bgY = useTransform(scrollYProgress, [0, 1], parallaxLayers.background.y);
-    const bgScale = useTransform(scrollYProgress, [0, 1], parallaxLayers.background.scale);
+    const bgY = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.background.y]);
+    const bgScale = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.background.scale]);
 
     // Crear transformaciones para capa media
-    const middleY = useTransform(scrollYProgress, [0, 1], parallaxLayers.middle.y);
-    const middleScale = useTransform(scrollYProgress, [0, 1], parallaxLayers.middle.scale);
-    const middleRotate = useTransform(scrollYProgress, [0, 1], parallaxLayers.middle.rotate);
+    const middleY = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.middle.y]);
+    const middleScale = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.middle.scale]);
+    const middleRotate = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.middle.rotate]);
 
     // Crear transformaciones para capa frontal
-    const foregroundY = useTransform(scrollYProgress, [0, 1], parallaxLayers.foreground.y);
-    const foregroundScale = useTransform(scrollYProgress, [0, 1], parallaxLayers.foreground.scale);
-    const foregroundRotate = useTransform(scrollYProgress, [0, 1], parallaxLayers.foreground.rotate);
+    const foregroundY = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.foreground.y]);
+    const foregroundScale = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.foreground.scale]);
+    const foregroundRotate = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.foreground.rotate]);
 
     // Crear transformaciones lentas
-    const slowY = useTransform(scrollYProgress, [0, 1], parallaxLayers.slow.y);
-    const slowX = useTransform(scrollYProgress, [0, 1], parallaxLayers.slow.x);
+    const slowY = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.slow.y]);
+    const slowX = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.slow.x]);
 
     // Crear transformaciones rápidas
-    const fastY = useTransform(scrollYProgress, [0, 1], parallaxLayers.fast.y);
-    const fastX = useTransform(scrollYProgress, [0, 1], parallaxLayers.fast.x);
+    const fastY = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.fast.y]);
+    const fastX = useTransform(scrollYProgress, [0, 1], [...parallaxLayers.fast.x]);
 
     return {
         ref: targetRef,

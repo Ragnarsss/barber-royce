@@ -4,7 +4,7 @@ import styles from "./Services.module.css";
 import { servicesList } from "@/data/servicesData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { motion } from "framer-motion";
-import { fadeInUp } from "@/lib/animations";
+import { fadeInUp } from "@/config/animations.config";
 
 export const Services = () => {
   const { ref, controls } = useScrollAnimation();

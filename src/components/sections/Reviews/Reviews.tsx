@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import styles from "./Reviews.module.css";
-import { reviewsList, type Review } from "@/data/reviewsData";
+import { reviewsList } from "@/data/reviewsData";
+import type { Review } from "@/types/review.types";
 import { AnimatedGridSection } from "@/components/common/AnimatedGridSection/AnimatedGridSection";
 
 // ✅ React 19: memo() eliminado - bailout automático mejorado

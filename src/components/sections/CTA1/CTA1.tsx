@@ -1,17 +1,15 @@
 import { motion } from "framer-motion";
-import { Calendar } from "lucide-react";
+import { Calendar, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import styles from "./CTA1.module.css";
 import ctaImage from "@/assets/cta1_model.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { fadeInLeft, fadeInRight } from "@/lib/animations";
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
+import { fadeInLeft, fadeInRight } from "@/config/animations.config";
 
-// ✅ React 19: memo() eliminado - bailout automático mejorado
 export function CTA1() {
   const { ref, controls } = useScrollAnimation();
 
-  // Hook de parallax centralizado
   const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>(undefined, {
     offset: ["start end", "end start"],
   });
@@ -67,10 +65,19 @@ export function CTA1() {
               ¿Listo para un cambio que te defina? Agenda tu cita y descubre por
               qué somos la barbería de elección para quienes buscan lo mejor.
             </p>
-            <Button className={styles.ctaButton} size="lg">
-              <Calendar size={20} />
-              Agendar Ahora
-            </Button>
+            <div className={styles.ctaButtons}>
+              <Button className={styles.ctaButton} size="lg">
+                <Calendar size={20} />
+                Agendar Ahora
+              </Button>
+              <a
+                href="#services"
+                className={styles.ctaButtonGhost}
+              >
+                Conocer Servicios
+                <ArrowRight size={18} />
+              </a>
+            </div>
           </div>
         </motion.div>
         <motion.img

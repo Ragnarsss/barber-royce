@@ -1,19 +1,45 @@
 import { motion } from "framer-motion";
+import { useMemo, useCallback } from "react";
 import styles from "./Hero.module.css";
 import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData.tsx";
 import backgroundImage from "@/assets/hero_model_left_profile.png";
-import {
-  fadeInUp,
-  fadeInLeft,
-  staggerContainer,
-} from "@/lib/animations";
+
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
+import { useLenisReady, useRefreshLenis } from "@/contexts/LenisContext";
+import { staggerContainer, fadeInUp, fadeInLeft } from "@/config/animations.config";
 
 export function Hero() {
-  // Hook de parallax centralizado
+  const isReady = useLenisReady();
+  const refreshLenis = useRefreshLenis();
+
   const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>(undefined, {
     offset: ["start start", "end start"],
   });
+
+  const handleImageLoad = useCallback(() => {
+    refreshLenis();
+  }, [refreshLenis]);
+
+  // Memoizar estilos para evitar recreación en cada render
+  const bgTriangleStyle = useMemo(
+    () => (isReady ? { y: layers.background.y, scale: layers.background.scale } : {}),
+    [isReady, layers.background.y, layers.background.scale]
+  );
+
+  const middleTriangleStyle = useMemo(
+    () => (isReady ? { y: layers.middle.y, rotate: layers.middle.rotate } : {}),
+    [isReady, layers.middle.y, layers.middle.rotate]
+  );
+
+  const fastTriangleStyle = useMemo(
+    () => (isReady ? { y: layers.fast.y, x: layers.fast.x } : {}),
+    [isReady, layers.fast.y, layers.fast.x]
+  );
+
+  const imageStyle = useMemo(
+    () => (isReady ? { y: layers.foreground.y, scale: layers.foreground.scale } : {}),
+    [isReady, layers.foreground.y, layers.foreground.scale]
+  );
 
   return (
     <motion.section
@@ -21,37 +47,37 @@ export function Hero() {
       ref={sectionRef}
       className={styles.hero}
       initial="hidden"
-      animate="visible"
+      animate={isReady ? "visible" : "hidden"}
       variants={staggerContainer}
     >
       {/* Capa de fondo - triángulos con opacidad reducida */}
       <motion.div
         className={styles.leftTriangleBackground}
-        style={{ y: layers.background.y, scale: layers.background.scale }}
+        style={bgTriangleStyle}
       ></motion.div>
       <motion.div
         className={styles.rightTriangleBackground}
-        style={{ y: layers.background.y, scale: layers.background.scale }}
+        style={bgTriangleStyle}
       ></motion.div>
 
       {/* Capa principal - triángulos principales */}
       <motion.div
         className={styles.leftTriangle}
-        style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
+        style={middleTriangleStyle}
       ></motion.div>
       <motion.div
         className={styles.rightTriangle}
-        style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
+        style={middleTriangleStyle}
       ></motion.div>
 
       {/* Capa frontal - pequeños triángulos decorativos */}
       <motion.div
         className={styles.leftTriangleForeground}
-        style={{ y: layers.fast.y, x: layers.fast.x }}
+        style={fastTriangleStyle}
       ></motion.div>
       <motion.div
         className={styles.rightTriangleForeground}
-        style={{ y: layers.fast.y, x: layers.fast.x }}
+        style={fastTriangleStyle}
       ></motion.div>
 
       {/* Imagen del modelo - <img> tag para SEO con parallax */}
@@ -63,23 +89,19 @@ export function Hero() {
         fetchPriority="high"
         width="800"
         height="1200"
-        style={{
-          y: layers.foreground.y,
-          scale: layers.foreground.scale,
-        }}
+        onLoad={handleImageLoad}
+        style={imageStyle}
       />
 
       <div className={styles.container}>
         <div className={styles.content}>
           <motion.h1 className={styles.title} variants={fadeInUp}>
-            Barbería Premium
+            Barbería Royce,
             <br />
-            Tu Estilo, Nuestra Pasión
+            profesionalismo, pasión y arte.
           </motion.h1>
           <motion.p className={styles.subtitle} variants={fadeInUp}>
-            En nuestra Barbería, transformamos tu corte en una expresión
-            personal. Disfruta de un servicio premium y exclusivo donde la
-            calidad se la roba.
+            donde el estilo se encuentra con la excelencia. Un servicio dedicado, detallista y a tu altura. ¡Descubre una experiencia única en cada visita!
           </motion.p>
 
           <motion.div className={styles.benefits} variants={staggerContainer}>

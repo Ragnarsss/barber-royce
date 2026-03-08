@@ -1,6 +1,7 @@
+/* Usa PageHero component - hero styles eliminados */
 .page {
   min-height: 100vh;
-  background-color: #1a1a1a;
+  background-color: var(--color-brand-background);
   background-image:
     radial-gradient(
       circle at 20% 50%,
@@ -14,80 +15,77 @@
     );
 }
 
-.hero {
-  background: #332b2b;
-  color: var(--color-white, #ffffff);
-  padding: 100px 0 60px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Shapes decorativas */
-.hero::before {
-  content: "";
-  position: absolute;
-  top: -20%;
-  right: -10%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(
-    circle,
-    rgba(213, 35, 35, 0.15) 0%,
-    transparent 70%
-  );
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.hero::after {
-  content: "";
-  position: absolute;
-  bottom: -15%;
-  left: -10%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(
-    circle,
-    rgba(213, 35, 35, 0.12) 0%,
-    transparent 70%
-  );
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-}
-
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
 }
 
-.title {
-  font-size: 56px;
-  font-weight: 800;
-  margin: 0 0 20px 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  position: relative;
-  z-index: 1;
-  background: linear-gradient(135deg, #ffffff 0%, #d52323 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Contenedor de filtros */
+.filtersContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  margin-bottom: 20px;
 }
 
-.subtitle {
-  font-size: 20px;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
-  position: relative;
-  z-index: 1;
+.filters {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.filterButton {
+  padding: 10px 24px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.filterButton:hover {
+  background: rgba(213, 35, 35, 0.15);
+  border-color: rgba(213, 35, 35, 0.4);
+  color: var(--color-brand-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(213, 35, 35, 0.2);
+}
+
+.filterButtonActive {
+  background: rgba(213, 35, 35, 0.2);
+  border-color: var(--color-brand-primary);
+  color: var(--color-brand-primary);
+  box-shadow: 0 4px 12px rgba(213, 35, 35, 0.3);
+}
+
+.filterButtonActive:hover {
+  background: rgba(213, 35, 35, 0.25);
+}
+
+.filterSeparator {
+  margin-top: 20px;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(213, 35, 35, 0.3) 20%,
+    rgba(213, 35, 35, 0.5) 50%,
+    rgba(213, 35, 35, 0.3) 80%,
+    transparent 100%
+  );
 }
 
 .content {
-  padding: 60px 0;
+  padding: 40px 0;
   position: relative;
 }
 
@@ -259,8 +257,28 @@
 }
 
 @media (max-width: 768px) {
+  .hero {
+    padding: 60px 0 30px;
+  }
+
   .title {
-    font-size: 36px;
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .filters {
+    gap: 8px;
+    justify-content: flex-start;
+  }
+
+  .filterButton {
+    padding: 8px 14px;
+    font-size: 11px;
+    white-space: nowrap;
   }
 
   .scrollContent {
@@ -268,9 +286,9 @@
   }
 
   .serviceCard {
-    min-width: 300px;
-    max-width: 300px;
-    height: 450px;
+    min-width: 280px;
+    max-width: 280px;
+    height: 420px;
   }
 
   .cardContent {
