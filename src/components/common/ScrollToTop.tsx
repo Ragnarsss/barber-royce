@@ -4,16 +4,32 @@ import { useLenisInstance } from "@/contexts/LenisContext";
 
 /**
  * Componente que hace scroll al top cuando cambia la ruta
+ * y refresca las dimensiones de Lenis para el nuevo contenido
  */
 export const ScrollToTop = () => {
     const { pathname } = useLocation();
     const lenis = useLenisInstance();
 
     useEffect(() => {
-        // Usar Lenis si está disponible, sino usar scrollTo nativo
         if (lenis) {
-            // Usar Lenis para scroll suave al top
+            // Scroll inmediato al top
             lenis.scrollTo(0, { immediate: true });
+
+            // Refrescar dimensiones después de que el nuevo contenido se monte
+            // Múltiples checks para asegurar sincronización
+            requestAnimationFrame(() => {
+                lenis.resize();
+
+                // Check adicional después de imágenes/layout
+                setTimeout(() => {
+                    lenis.resize();
+                }, 100);
+
+                // Check final para contenido lazy
+                setTimeout(() => {
+                    lenis.resize();
+                }, 500);
+            });
         } else {
             // Fallback a scroll nativo
             window.scrollTo(0, 0);

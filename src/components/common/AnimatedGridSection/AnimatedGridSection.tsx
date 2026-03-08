@@ -2,11 +2,8 @@ import { motion } from "framer-motion";
 import { type ReactNode } from "react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
-import {
-    fadeInUp,
-    scaleIn,
-    staggerContainer,
-} from "@/lib/animations";
+import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
+
 
 interface AnimatedGridSectionProps<T> {
     id: string;
@@ -23,7 +20,6 @@ interface AnimatedGridSectionProps<T> {
     enableParallax?: boolean;
 }
 
-// ✅ React 19: memo() eliminado - componente genérico ya optimizado
 export function AnimatedGridSection<T>({
     id,
     className,
