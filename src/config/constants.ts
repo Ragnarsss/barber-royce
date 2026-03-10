@@ -11,7 +11,7 @@ export const CONTACT = {
     },
     whatsapp: {
         display: "+56 9 1234 5678",
-        link: "https://wa.me/56912345678",
+        link: "https://api.whatsapp.com/send/?phone=56931094222&text=%C2%A1Hola%21+vi+tu+p%C3%A1gina+de+AgendaPro+y+me+gustar%C3%ADa+resolver+algunas+dudas&type=phone_number&app_absent=0",
     },
     email: {
         display: "info@barberroyce.com",
@@ -30,7 +30,7 @@ export const SCHEDULE = {
 // Redes sociales
 export const SOCIAL_MEDIA = {
     instagram: {
-        url: "https://instagram.com/barberroyce",
+        url: "https://www.instagram.com/barberia.royce/",
         label: "Instagram",
     },
     facebook: {
@@ -38,7 +38,7 @@ export const SOCIAL_MEDIA = {
         label: "Facebook",
     },
     tiktok: {
-        url: "https://tiktok.com/@barberroyce",
+        url: "https://www.tiktok.com/@barber.roycee",
         label: "TikTok",
     },
 } as const;

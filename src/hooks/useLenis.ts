@@ -1,5 +1,5 @@
 /**
- * Hook profesional para integrar Lenis smooth scroll con React
+ * Hook para integrar Lenis smooth scroll con React
  * Incluye ResizeObserver para sincronización automática con contenido dinámico
  */
 
@@ -49,7 +49,7 @@ export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
     // Iniciar loop de animación
     rafIdRef.current = requestAnimationFrame(raf);
 
-    // ✅ SOLUCIÓN PROFESIONAL: ResizeObserver para detectar cambios de contenido
+    // ResizeObserver para detectar cambios de contenido
     const resizeObserver = new ResizeObserver(() => {
       // Recalcular dimensiones cuando el contenido cambia
       lenis.resize();

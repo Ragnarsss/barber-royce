@@ -6,6 +6,7 @@ import ctaImage from "@/assets/cta1_model.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
 import { fadeInLeft, fadeInRight } from "@/config/animations.config";
+import { Link } from "react-router-dom";
 
 export function CTA1() {
   const { ref, controls } = useScrollAnimation();
@@ -66,12 +67,12 @@ export function CTA1() {
               qué somos la barbería de elección para quienes buscan lo mejor.
             </p>
             <div className={styles.ctaButtons}>
-              <Button className={styles.ctaButton} size="lg">
+              <Link className={styles.ctaButton} to="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965" target="_blank">
                 <Calendar size={20} />
                 Agendar Ahora
-              </Button>
+              </Link>
               <a
-                href="#services"
+                href="/servicios"
                 className={styles.ctaButtonGhost}
               >
                 Conocer Servicios

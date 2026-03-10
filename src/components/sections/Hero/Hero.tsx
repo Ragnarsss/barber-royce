@@ -101,7 +101,7 @@ export function Hero() {
             profesionalismo, pasión y arte.
           </motion.h1>
           <motion.p className={styles.subtitle} variants={fadeInUp}>
-            donde el estilo se encuentra con la excelencia. Un servicio dedicado, detallista y a tu altura. ¡Descubre una experiencia única en cada visita!
+            Donde el estilo se encuentra con la excelencia. <strong>Un servicio dedicado, detallista y a tu altura.</strong> ¡Descubre una experiencia única en cada visita!
           </motion.p>
 
           <motion.div className={styles.benefits} variants={staggerContainer}>

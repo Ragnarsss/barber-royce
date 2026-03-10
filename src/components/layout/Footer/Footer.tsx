@@ -11,6 +11,7 @@ import {
 } from "@/components/icons";
 import { getFooterRoutes } from "@/config/routes";
 import { CONTACT, SCHEDULE, SOCIAL_MEDIA } from "@/config/constants";
+import logo from "@/assets/royce-barber-logo.png";
 
 export const Footer = () => {
   const footerRoutes = getFooterRoutes();
@@ -23,7 +24,7 @@ export const Footer = () => {
           <div className={styles.column}>
             <div className={styles.brand}>
               <h3 className={styles.title}>Barber Royce</h3>
-              <div className={styles.logoIcon}>BR</div>
+              <img src={logo} alt="Logo" className={styles.logoIcon} />
             </div>
             <p className={styles.description}>
               Estilo y elegancia para el hombre moderno. Más de 10 años de experiencia creando los mejores looks.

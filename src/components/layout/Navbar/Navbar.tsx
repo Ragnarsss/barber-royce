@@ -87,9 +87,9 @@ export const Navbar = () => {
         </div>
 
         <div className={styles.actions}>
-          <Button className={styles.ctaButton} size="lg">
+          <Link className={styles.ctaButton} to="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965" target="_blank">
             Agendar Sesión
-          </Button>
+          </Link>
         </div>
 
         {/* Mobile Menu Button */}
@@ -128,6 +128,6 @@ export const Navbar = () => {
           Agendar Sesión
         </Button>
       </div>
-    </nav>
+    </nav >
   );
 };

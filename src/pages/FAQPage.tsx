@@ -114,7 +114,8 @@ export const FAQPage = () => {
                                 </p>
                                 <div className={styles.contactButtons}>
                                     <a href={CONTACT.whatsapp.link} className={styles.contactButton} target="_blank" rel="noopener noreferrer">
-                                        <MessageCircle size={20} /> WhatsApp
+                                        <MessageCircle size={20} />
+                                        Hablemos por WhatsApp
                                     </a>
                                 </div>
                             </CardContent>
