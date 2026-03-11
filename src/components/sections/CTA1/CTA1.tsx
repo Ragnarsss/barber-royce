@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import styles from "./CTA1.module.css";
 import ctaImage from "@/assets/cta1_model.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";

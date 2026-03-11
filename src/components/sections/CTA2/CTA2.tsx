@@ -1,6 +1,5 @@
 import { motion, useTransform } from "framer-motion";
 import { Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import styles from "./CTA2.module.css";
 import backgroundImage from "@/assets/cta2_crew.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
