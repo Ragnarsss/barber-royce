@@ -30,11 +30,6 @@ export function SocialProof2() {
     [direction]
   );
 
-  const hexMainStyle = useMemo(
-    () => ({ scale: direction === -1 ? 1.05 : 1 }),
-    [direction]
-  );
-
   return (
     <section
       id="social-proof-2"
@@ -118,8 +113,8 @@ export function SocialProof2() {
       <motion.div
         className={styles.hexagon}
         style={{
+          y: layers.slow.y,
           rotate: layers.middle.rotate,
-          ...hexMainStyle,
         }}
       />
 
