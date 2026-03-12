@@ -1,6 +1,9 @@
 import { motion, useTransform } from "framer-motion";
-import { useMemo } from "react";
 import styles from "./SocialProof1.module.css";
+import socialProof560w from "@/assets/optimized/social_proof_560w.webp";
+import socialProof1120w from "@/assets/optimized/social_proof_1120w.webp";
+import socialProof1680w from "@/assets/optimized/social_proof_1680w.webp";
+import socialProofAvif from "@/assets/optimized/social_proof_560w.avif";
 import socialProofImage from "@/assets/social_proof_1.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
@@ -41,16 +44,9 @@ export function SocialProof1() {
   // Movimiento personalizado para testimonial
   const testimonialY = useTransform(layers.scrollYProgress, [0, 1], ["0%", "8%"]);
 
-  // Memoizar estilos condicionales para optimizar performance
-  const hexMiddle2Style = useMemo(
-    () => ({ opacity: direction === 1 ? 0.6 : 0.5 }),
-    [direction]
-  );
-
-  const hexFg1Style = useMemo(
-    () => ({ scale: velocity > 1 ? 1.1 : 1 }),
-    [velocity]
-  );
+  // React 19: Estilos condicionales optimizados automáticamente por el compiler
+  const hexMiddle2Style = { opacity: direction === 1 ? 0.6 : 0.5 };
+  const hexFg1Style = { scale: velocity > 1 ? 1.1 : 1 };
 
   return (
     <section
@@ -187,15 +183,26 @@ export function SocialProof1() {
             style={{ y: layers.slow.y }}
           >
             <div className={styles.imageFrame}>
-              <img
-                src={`${socialProofImage}`}
-                className={styles.image}
-                loading="lazy"
-                alt="Cliente satisfecho en Royce Barbería"
-                width="600"
-                height="800"
-                onLoad={refreshLenis}
-              />
+              <picture>
+                <source
+                  srcSet={`${socialProof560w} 560w, ${socialProof1120w} 1120w, ${socialProof1680w} 1680w`}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px"
+                  type="image/webp"
+                />
+                <source
+                  srcSet={socialProofAvif}
+                  type="image/avif"
+                />
+                <img
+                  src={socialProofImage}
+                  className={styles.image}
+                  loading="lazy"
+                  alt="Cliente satisfecho en Royce Barbería"
+                  width="560"
+                  height="330"
+                  onLoad={refreshLenis}
+                />
+              </picture>
             </div>
           </motion.div>
 

@@ -2,6 +2,11 @@
   padding: clamp(4rem, 10vh, 6.25rem) 0;
   background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
   overflow: hidden;
+
+  /* Performance optimizations */
+  contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: 100vh;
 }
 
 .container {

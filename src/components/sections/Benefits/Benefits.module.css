@@ -6,6 +6,11 @@
   overflow: hidden;
   display: flex;
   align-items: center;
+
+  /* Performance optimizations */
+  contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: 100vh;
 }
 
 /* Imagen de fondo pegada a la derecha */

@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { useMemo } from "react";
 import { Camera } from "lucide-react";
 import styles from "./SocialProof2.module.css";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -14,21 +13,10 @@ export function SocialProof2() {
   // Usar hook optimizado para parallax en lugar de recrear transforms manualmente
   const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>();
 
-  // Memoizar estilos condicionales para optimizar performance
-  const hexMiddle2Style = useMemo(
-    () => ({ opacity: direction === 1 ? 0.6 : 0.4 }),
-    [direction]
-  );
-
-  const hexFast1Style = useMemo(
-    () => ({ scale: velocity > 2 ? 1.1 : 1 }),
-    [velocity]
-  );
-
-  const hexFg2Style = useMemo(
-    () => ({ x: direction === 1 ? "10px" : "-10px" }),
-    [direction]
-  );
+  // React 19: Estilos condicionales optimizados automáticamente por el compiler
+  const hexMiddle2Style = { opacity: direction === 1 ? 0.6 : 0.4 };
+  const hexFast1Style = { scale: velocity > 2 ? 1.1 : 1 };
+  const hexFg2Style = { x: direction === 1 ? "10px" : "-10px" };
 
   return (
     <section

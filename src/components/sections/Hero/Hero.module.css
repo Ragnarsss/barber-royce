@@ -146,7 +146,6 @@
   width: 50vw;
   height: 110vh;
   z-index: 0;
-  will-change: transform;
 }
 
 .rightTriangleBackground {
@@ -158,7 +157,6 @@
   width: 50vw;
   height: 110vh;
   z-index: 0;
-  will-change: transform;
 }
 
 /* Capa principal - triángulos principales */
@@ -173,8 +171,9 @@
   width: 50vw;
   height: 100vh;
   z-index: 1;
-  will-change: transform;
 }
+
+/* dynamic will-change via .isAnimating class from performance.css */
 
 .rightTriangle {
   position: absolute;
@@ -185,7 +184,6 @@
   width: 50vw;
   height: 100vh;
   z-index: 1;
-  will-change: transform;
 }
 
 /* Capa frontal - pequeños triángulos decorativos con opacidad */
@@ -199,9 +197,10 @@
   height: 70vh;
   max-width: 650px;
   z-index: 1;
-  will-change: transform;
   pointer-events: none;
 }
+
+/* dynamic will-change via .isAnimating class from performance.css */
 
 .rightTriangleForeground {
   position: absolute;
@@ -213,7 +212,6 @@
   height: 65vh;
   max-width: 700px;
   z-index: 1;
-  will-change: transform;
   pointer-events: none;
 }
 
