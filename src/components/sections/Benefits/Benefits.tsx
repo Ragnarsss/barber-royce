@@ -1,17 +1,34 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import styles from "./Benefits.module.css";
 import { BENEFITS_VIEW_DATA } from "@/data/benefitsData.tsx";
+import barberBack954w from "@/assets/optimized/barber_background_954w.webp";
+import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
+import barberBackAvif from "@/assets/optimized/barber_background_954w.avif";
 import barberBackImage from "@/assets/barber_back.png";
 
 export function Benefits() {
   return (
     <section id="benefits" className={styles.benefits}>
       <div className={styles.imageBackground}>
-        <img
-          src={barberBackImage}
-          alt="Barbero profesional trabajando"
-          className={styles.backgroundImage}
-        />
+        <picture>
+          <source
+            srcSet={`${barberBack954w} 954w, ${barberBack1908w} 1908w`}
+            sizes="(max-width: 1400px) 100vw, 954px"
+            type="image/webp"
+          />
+          <source
+            srcSet={barberBackAvif}
+            type="image/avif"
+          />
+          <img
+            src={barberBackImage}
+            alt="Barbero profesional trabajando"
+            className={styles.backgroundImage}
+            loading="lazy"
+            width="954"
+            height="1304"
+          />
+        </picture>
       </div>
       <div className={styles.container}>
         <div className={styles.content}>

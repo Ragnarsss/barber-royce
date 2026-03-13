@@ -8,6 +8,7 @@
 @import "./tokens/index.css";
 @import "./reset.css";
 @import "./mixins.css";
+@import "./performance.css"; /* Performance optimizations */
 
 /* Lenis smooth scroll se encarga del scroll behavior */
 html {

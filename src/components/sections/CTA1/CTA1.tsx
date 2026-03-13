@@ -1,7 +1,9 @@
 import { motion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import styles from "./CTA1.module.css";
+import cta700w from "@/assets/optimized/cta1_model_700w.webp";
+import cta1400w from "@/assets/optimized/cta1_model_1400w.webp";
+import ctaAvif from "@/assets/optimized/cta1_model_700w.avif";
 import ctaImage from "@/assets/cta1_model.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
@@ -81,18 +83,31 @@ export function CTA1() {
             </div>
           </div>
         </motion.div>
-        <motion.img
-          src={ctaImage}
-          alt="Modelo con corte premium de Royce Barbería"
+        <motion.picture
           className={styles.ctaImage}
-          loading="lazy"
-          width="500"
-          height="700"
           initial="hidden"
           animate={controls}
           variants={fadeInRight}
           style={{ y: layers.foreground.y, scale: layers.foreground.scale }}
-        />
+        >
+          <source
+            srcSet={`${cta700w} 700w, ${cta1400w} 1400w`}
+            sizes="(max-width: 768px) 100vw, 700px"
+            type="image/webp"
+          />
+          <source
+            srcSet={ctaAvif}
+            type="image/avif"
+          />
+          <img
+            src={ctaImage}
+            alt="Modelo con corte premium de Royce Barbería"
+            loading="lazy"
+            width="700"
+            height="925"
+            style={{ width: "100%", height: "auto" }}
+          />
+        </motion.picture>
       </div>
     </section>
   );

@@ -1,15 +1,44 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
+
+/**
+ * Plugin para cargar CSS de forma asíncrona y eliminar render blocking
+ * Usa el media="print" onload trick para diferir CSS no-crítico
+ */
+function asyncCSSPlugin(): Plugin {
+  return {
+    name: 'async-css',
+    enforce: 'post',
+    apply: 'build',
+    transformIndexHtml(html) {
+      // Convertir <link rel="stylesheet"> a async loading
+      return html.replace(
+        /<link([^>]*?)rel="stylesheet"([^>]*?)>/gi,
+        (match) => {
+          // Extraer href
+          const hrefMatch = match.match(/href="([^"]+)"/);
+          if (!hrefMatch) return match;
+
+          const href = hrefMatch[1];
+
+          // Async CSS load pattern con media print trick
+          return `<link rel="preload" href="${href}" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="${href}"></noscript>`;
+        }
+      );
+    }
+  };
+}
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    // ✅ Performance: Optimización automática de imágenes en build
+    asyncCSSPlugin(), // Async CSS loading
+    // Optimización automática de imágenes en build
     ViteImageOptimizer({
       // PNG optimization
       png: {

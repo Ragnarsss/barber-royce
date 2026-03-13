@@ -1,11 +1,17 @@
 /**
  * TÉCNICA 4: Smooth Parallax con Spring Physics
  * Parallax con física realista usando useSpring
+ * 
+ * OPTIMIZACIÓN FASE 3:
+ * - Reutiliza scrollYProgress del contexto global si está disponible
+ * - Reduce múltiples useScroll calls a uno solo
+ * - Fallback a useScroll local si no hay contexto
  */
 
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { useRef } from "react";
 import type { ReactNode, CSSProperties } from "react";
+import { useScrollProgressOptional } from "@/contexts/useScrollProgressHooks";
 
 interface SmoothParallaxProps {
   children: ReactNode;
@@ -46,6 +52,8 @@ interface SmoothParallaxProps {
 
 /**
  * Componente de parallax suave con física de spring
+ * 
+ * OPTIMIZADO: Reutiliza scrollYProgress del contexto si está disponible
  *
  * @example
  * <SmoothParallax speed={-30} stiffness={100} damping={30}>
@@ -64,10 +72,17 @@ export const SmoothParallax = ({
 }: SmoothParallaxProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const { scrollYProgress } = useScroll({
+  // OPTIMIZACIÓN: Intentar usar scrollYProgress global del contexto
+  const globalScrollProgress = useScrollProgressOptional();
+
+  // Crear scrollYProgress local solo si no hay contexto global
+  const { scrollYProgress: localScrollProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
+
+  // Usar global si está disponible, sino usar local
+  const scrollYProgress = globalScrollProgress || localScrollProgress;
 
   // Transformaciones base
   const yRaw = useTransform(scrollYProgress, [0, 1], [0, speed]);

@@ -1,16 +1,24 @@
 import { motion } from "framer-motion";
-import { useMemo, useCallback } from "react";
+import { useCallback } from "react";
 import styles from "./Hero.module.css";
 import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData.tsx";
+import heroImage842w from "@/assets/optimized/hero_model_left_profile_842w.webp";
+import heroImage1060w from "@/assets/optimized/hero_model_left_profile_1060w.webp";
+import heroImage1684w from "@/assets/optimized/hero_model_left_profile_1684w.webp";
+import heroImageAvif from "@/assets/optimized/hero_model_left_profile_842w.avif";
 import backgroundImage from "@/assets/hero_model_left_profile.png";
 
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
 import { useLenisReady, useRefreshLenis } from "@/contexts/LenisContext";
+import { useLenisScrollActive } from "@/hooks/useScrollActive";
 import { staggerContainer, fadeInUp, fadeInLeft } from "@/config/animations.config";
 
 export function Hero() {
   const isReady = useLenisReady();
   const refreshLenis = useRefreshLenis();
+
+  // OPTIMIZACIÓN FASE 3: will-change dinámico (solo durante scroll activo)
+  const isScrolling = useLenisScrollActive();
 
   const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>(undefined, {
     offset: ["start start", "end start"],
@@ -19,27 +27,6 @@ export function Hero() {
   const handleImageLoad = useCallback(() => {
     refreshLenis();
   }, [refreshLenis]);
-
-  // Memoizar estilos para evitar recreación en cada render
-  const bgTriangleStyle = useMemo(
-    () => (isReady ? { y: layers.background.y, scale: layers.background.scale } : {}),
-    [isReady, layers.background.y, layers.background.scale]
-  );
-
-  const middleTriangleStyle = useMemo(
-    () => (isReady ? { y: layers.middle.y, rotate: layers.middle.rotate } : {}),
-    [isReady, layers.middle.y, layers.middle.rotate]
-  );
-
-  const fastTriangleStyle = useMemo(
-    () => (isReady ? { y: layers.fast.y, x: layers.fast.x } : {}),
-    [isReady, layers.fast.y, layers.fast.x]
-  );
-
-  const imageStyle = useMemo(
-    () => (isReady ? { y: layers.foreground.y, scale: layers.foreground.scale } : {}),
-    [isReady, layers.foreground.y, layers.foreground.scale]
-  );
 
   return (
     <motion.section
@@ -52,46 +39,59 @@ export function Hero() {
     >
       {/* Capa de fondo - triángulos con opacidad reducida */}
       <motion.div
-        className={styles.leftTriangleBackground}
-        style={bgTriangleStyle}
+        className={`${styles.leftTriangleBackground} ${isScrolling ? 'isAnimating' : ''}`}
+        style={isReady ? { y: layers.background.y, scale: layers.background.scale } : {}}
       ></motion.div>
       <motion.div
-        className={styles.rightTriangleBackground}
-        style={bgTriangleStyle}
+        className={`${styles.rightTriangleBackground} ${isScrolling ? 'isAnimating' : ''}`}
+        style={isReady ? { y: layers.background.y, scale: layers.background.scale } : {}}
       ></motion.div>
 
       {/* Capa principal - triángulos principales */}
       <motion.div
-        className={styles.leftTriangle}
-        style={middleTriangleStyle}
+        className={`${styles.leftTriangle} ${isScrolling ? 'isAnimating' : ''}`}
+        style={isReady ? { y: layers.middle.y, rotate: layers.middle.rotate } : {}}
       ></motion.div>
       <motion.div
-        className={styles.rightTriangle}
-        style={middleTriangleStyle}
+        className={`${styles.rightTriangle} ${isScrolling ? 'isAnimating' : ''}`}
+        style={isReady ? { y: layers.middle.y, rotate: layers.middle.rotate } : {}}
       ></motion.div>
 
       {/* Capa frontal - pequeños triángulos decorativos */}
       <motion.div
-        className={styles.leftTriangleForeground}
-        style={fastTriangleStyle}
+        className={`${styles.leftTriangleForeground} ${isScrolling ? 'isAnimating' : ''}`}
+        style={isReady ? { y: layers.fast.y, x: layers.fast.x } : {}}
       ></motion.div>
       <motion.div
-        className={styles.rightTriangleForeground}
-        style={fastTriangleStyle}
+        className={`${styles.rightTriangleForeground} ${isScrolling ? 'isAnimating' : ''}`}
+        style={isReady ? { y: layers.fast.y, x: layers.fast.x } : {}}
       ></motion.div>
 
-      {/* Imagen del modelo - <img> tag para SEO con parallax */}
-      <motion.img
-        src={backgroundImage}
-        alt="Barbero profesional mostrando corte moderno premium en Royce Barbería"
+      {/* Imagen del modelo - <picture> tag para SEO con parallax y responsive images */}
+      <motion.picture
         className={styles.heroImageSEO}
-        loading="eager"
-        fetchPriority="high"
-        width="800"
-        height="1200"
-        onLoad={handleImageLoad}
-        style={imageStyle}
-      />
+        style={isReady ? { y: layers.foreground.y, scale: layers.foreground.scale } : {}}
+      >
+        <source
+          srcSet={`${heroImage842w} 842w, ${heroImage1060w} 1060w, ${heroImage1684w} 1684w`}
+          sizes="(max-width: 768px) 100vw, (max-width: 1400px) 50vw, 842px"
+          type="image/webp"
+        />
+        <source
+          srcSet={heroImageAvif}
+          type="image/avif"
+        />
+        <motion.img
+          src={backgroundImage}
+          alt="Barbero profesional mostrando corte moderno premium en Royce Barbería"
+          loading="eager"
+          fetchPriority="high"
+          width="842"
+          height="925"
+          onLoad={handleImageLoad}
+          style={{ width: "100%", height: "auto" }}
+        />
+      </motion.picture>
 
       <div className={styles.container}>
         <div className={styles.content}>

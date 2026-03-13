@@ -2,11 +2,16 @@
   min-height: 100vh;
   background-color: #332b2b;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   padding: clamp(4rem, 10vh, 6rem) 0 clamp(3rem, 8vh, 5rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  /* Performance optimizations */
+  contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: 100vh;
 }
 
 .container {
@@ -222,12 +227,14 @@
 .diagonalLaser4,
 .diagonalLaser5 {
   position: absolute;
-  width: 200vw;
+  width: 150%;
   height: 3px;
   pointer-events: none;
   will-change: transform;
   z-index: 0;
   transform-origin: center;
+  left: 50%;
+  margin-left: -75%;
 }
 
 /* ───────────────────────────────────────────────────────────
@@ -236,7 +243,6 @@
 
 /* Rayo Diagonal 1: / primario */
 .diagonalLaser1 {
-  left: 0;
   top: 50%;
   transform: rotate(-45deg); /* Inclinación tipo "/" */
   background: linear-gradient(
@@ -256,7 +262,6 @@
 
 /* Rayo Diagonal 3: / secundario */
 .diagonalLaser3 {
-  left: 0;
   top: 20%;
   height: 2.5px;
   transform: rotate(-50deg);
@@ -276,7 +281,6 @@
 
 /* Rayo Diagonal 5: / terciario */
 .diagonalLaser5 {
-  left: 0;
   top: 80%;
   height: 2px;
   transform: rotate(-40deg);
@@ -300,7 +304,6 @@
 
 /* Rayo Diagonal 2: \ primario */
 .diagonalLaser2 {
-  left: 0;
   top: 30%;
   transform: rotate(45deg); /* Inclinación tipo "\" */
   background: linear-gradient(
@@ -321,7 +324,6 @@
 
 /* Rayo Diagonal 4: \ secundario */
 .diagonalLaser4 {
-  left: 0;
   top: 60%;
   height: 2px;
   transform: rotate(40deg);

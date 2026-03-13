@@ -1,0 +1,178 @@
+/**
+ * Estilos de performance para animaciones
+ * Contiene optimizaciones CSS para mejorar FPS y reducir reflows
+ */
+
+/* ═══════════════════════════════════════════════════════════════
+   WILL-CHANGE DINÁMICO
+   Clases .isAnimating para aplicar will-change solo cuando necesario
+════════════════════════════════════════════════════════════════ */
+
+/**
+ * Aplicar will-change solo a elementos que están actualmente animando
+ * Reducido de 20+ permanentes a 3-5 dinámicos
+ */
+.isAnimating {
+  will-change: transform;
+}
+
+/* Para elementos que animan múltiples propiedades */
+.isAnimating--multi {
+  will-change: transform, opacity;
+}
+
+.isAnimating--filter {
+  will-change: transform, filter;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CSS CONTAINMENT
+   Optimiza el rendering limitando el alcance de recalculations
+════════════════════════════════════════════════════════════════ */
+
+/**
+ * Containment para secciones independientes
+ * Previene que cambios en una sección afecten el layout de otras
+ */
+.section-container {
+  contain: layout style paint;
+}
+
+/**
+ * Containment estricto para componentes complejos
+ * Aísla completamente el rendering (requiere dimensiones explícitas)
+ */
+.section-container--strict {
+  contain: strict;
+}
+
+/**
+ * Content visibility para lazy rendering
+ * El navegador puede skipear rendering de contenido offscreen
+ */
+.section-lazy {
+  content-visibility: auto;
+  contain-intrinsic-size: 100vh; /* Altura estimada para calcular scroll */
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TRANSFORM PERFORMANCE
+   Optimizaciones específicas para animaciones de transform
+════════════════════════════════════════════════════════════════ */
+
+/**
+ * Force GPU acceleration
+ * Solo usar en elementos que realmente necesitan animaciones suaves
+ */
+.gpu-accelerate {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/**
+ * Smooth scrolling con GPU
+ */
+.smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LAYER OPTIMIZATION
+   Promueve elementos a su propia capa compuesta
+════════════════════════════════════════════════════════════════ */
+
+/**
+ * Crear capa compuesta para elementos que se renderizará frecuentemente
+ * Reduce el área de repaint
+ */
+.composite-layer {
+  transform: translateZ(0);
+  isolation: isolate;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ANIMATION UTILITIES
+   Helpers para animaciones performantes
+════════════════════════════════════════════════════════════════ */
+
+/**
+ * Reducir motion per user preference
+ */
+@media (prefers-reduced-motion: reduce) {
+  .isAnimating,
+  .isAnimating--multi,
+  .isAnimating--filter {
+    will-change: auto;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .gpu-accelerate {
+    transform: none;
+  }
+}
+
+/**
+ * Debug: Highlight composited layers
+ * Descomentar temporalmente para visualizar capas
+ */
+/*
+.composite-layer,
+.gpu-accelerate,
+.isAnimating {
+  outline: 2px dashed rgba(255, 0, 0, 0.5) !important;
+}
+*/
+
+/* ═══════════════════════════════════════════════════════════════
+   FONT RENDERING OPTIMIZATION
+════════════════════════════════════════════════════════════════ */
+
+/**
+ * Optimized font rendering
+ * Aplica a elementos con texto que se transforman
+ */
+.text-optimized {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/**
+ * Durante transform, sacrificar calidad por performance
+ */
+.text-optimized.isAnimating {
+  text-rendering: optimizeSpeed;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE PERFORMANCE
+   Optimizaciones específicas por device
+════════════════════════════════════════════════════════════════ */
+
+/**
+ * En mobile, reducir complejidad de animaciones
+ */
+@media (max-width: 768px) {
+  .isAnimating--filter {
+    will-change: transform; /* Remover filter en mobile */
+    filter: none !important;
+  }
+
+  .section-container--strict {
+    contain: layout paint; /* Remover style containment en mobile */
+  }
+}
+
+/**
+ * En dispositivos de baja performance, remover will-change
+ */
+@media (prefers-reduced-motion: reduce), (hover: none) and (pointer: coarse) {
+  .gpu-accelerate {
+    transform: none;
+    backface-visibility: visible;
+    perspective: none;
+  }
+}
