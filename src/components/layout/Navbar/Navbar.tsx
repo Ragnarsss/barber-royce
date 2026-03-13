@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import { Button } from "@/components/ui/button";
+import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
+import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
+import logoAvif from "@/assets/optimized/royce-barber-logo_46w.avif";
 import logo from "@/assets/royce-barber-logo.png";
 import { useNavbarScroll } from "@/hooks/useNavbarScroll";
 import { useLenisInstance } from "@/contexts/LenisContext";
@@ -64,7 +67,17 @@ export const Navbar = () => {
     >
       <div className={styles.container}>
         <Link to="/" className={styles.logo} onClick={handleLogoClick} aria-label="Ir a la página de inicio">
-          <img src={logo} alt="Barber Royce" className={styles.logoImage} />
+          <picture>
+            <source
+              srcSet={`${logo46w} 1x, ${logo92w} 2x`}
+              type="image/webp"
+            />
+            <source
+              srcSet={logoAvif}
+              type="image/avif"
+            />
+            <img src={logo} alt="Barber Royce" className={styles.logoImage} width="46" height="56" />
+          </picture>
         </Link>
 
         {/* Desktop Navigation */}
