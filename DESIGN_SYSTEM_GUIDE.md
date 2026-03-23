@@ -194,7 +194,7 @@ Usa una escala basada en múltiplos de un valor base (típicamente 4px u 8px).
 **Base: 4px**
 
 ```css
---spacing-0: 0;
+--spacing-0: 0; /* 0 × 4 */
 --spacing-1: 4px; /* 1 × 4 */
 --spacing-2: 8px; /* 2 × 4 */
 --spacing-3: 12px; /* 3 × 4 */

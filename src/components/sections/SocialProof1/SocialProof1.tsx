@@ -42,7 +42,11 @@ export function SocialProof1() {
   };
 
   // Movimiento personalizado para testimonial
-  const testimonialY = useTransform(layers.scrollYProgress, [0, 1], ["0%", "8%"]);
+  const testimonialY = useTransform(
+    layers.scrollYProgress,
+    [0, 1],
+    ["0%", "8%"],
+  );
 
   // React 19: Estilos condicionales optimizados automáticamente por el compiler
   const hexMiddle2Style = { opacity: direction === 1 ? 0.6 : 0.5 };
@@ -189,10 +193,7 @@ export function SocialProof1() {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px"
                   type="image/webp"
                 />
-                <source
-                  srcSet={socialProofAvif}
-                  type="image/avif"
-                />
+                <source srcSet={socialProofAvif} type="image/avif" />
                 <img
                   src={socialProofImage}
                   className={styles.image}
@@ -223,7 +224,7 @@ export function SocialProof1() {
                 <strong>DrefQuila</strong>
                 <span>Artista Urbano Chileno</span>
                 <strong className={styles.clientBadge}>
-                  Cliente nuestro hace 5 años
+                  Cliente hace 5 años
                 </strong>
               </div>
             </div>

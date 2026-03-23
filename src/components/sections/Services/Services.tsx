@@ -1,33 +1,22 @@
-import { useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import styles from "./Services.module.css";
 import { servicesList } from "@/data/servicesData";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { motion } from "framer-motion";
-import { fadeInUp } from "@/config/animations.config";
 
+/**
+ * Seccion de servicios con tarjetas en scroll horizontal.
+ *
+ * @returns Seccion renderizada con la lista de servicios.
+ */
 export const Services = () => {
   const { ref, controls } = useScrollAnimation();
-  const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
     <section id="services" className={styles.services}>
       <div className={styles.container} ref={ref}>
-        <motion.div
-          className={styles.header}
-          initial="hidden"
-          animate={controls}
-          variants={fadeInUp}
-        >
-          <h2 className={styles.title}>Nuestros Servicios</h2>
-          <p className={styles.subtitle}>
-            Servicios profesionales para tu mejor versión
-          </p>
-        </motion.div>
-
-        {/* Scroll horizontal */}
         <div className={styles.scrollWrapper}>
-          <div className={styles.scrollContainer} ref={scrollRef}>
+          <div className={styles.scrollContainer}>
             {servicesList.map((service, index) => (
               <motion.div
                 key={index}
@@ -75,7 +64,9 @@ export const Services = () => {
                         </div>
                         <div>
                           <div className={styles.infoLabel}>Valor</div>
-                          <div className={styles.infoValue}>{service.price}</div>
+                          <div className={styles.infoValue}>
+                            {service.price}
+                          </div>
                         </div>
                       </div>
 

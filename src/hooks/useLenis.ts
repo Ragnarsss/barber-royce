@@ -25,7 +25,7 @@ export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
   useEffect(() => {
     // Crear instancia de Lenis con configuración personalizada
     const lenis = new Lenis({
-      duration: 1,
+      duration: 0.25,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       gestureOrientation: "vertical",
@@ -67,7 +67,7 @@ export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['style', 'class'],
+      attributeFilter: ["style", "class"],
     });
 
     // Esperar a que el DOM esté listo antes de exponer la instancia
@@ -81,13 +81,13 @@ export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
     const handleResize = () => {
       lenis.resize();
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // Listener de carga de imágenes (para recalcular cuando cargan)
     const handleImageLoad = () => {
       lenis.resize();
     };
-    window.addEventListener('load', handleImageLoad);
+    window.addEventListener("load", handleImageLoad);
 
     // Cleanup
     return () => {
@@ -96,8 +96,8 @@ export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
       }
       resizeObserver.disconnect();
       mutationObserver.disconnect();
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('load', handleImageLoad);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("load", handleImageLoad);
       lenis.destroy();
       window.lenis = undefined;
       setLenisInstance(null);

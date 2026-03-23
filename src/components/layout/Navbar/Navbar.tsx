@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.css";
-import { Button } from "@/components/ui/button";
 import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
 import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
 import logoAvif from "@/assets/optimized/royce-barber-logo_46w.avif";
@@ -14,46 +13,33 @@ export const Navbar = () => {
   const { isScrolled } = useNavbarScroll();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
   const lenis = useLenisInstance();
 
   // Cerrar menú móvil automáticamente cuando se cambia a resolución desktop
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768 && isMobileMenuOpen) {
+      if (window.innerWidth > 768) {
         setIsMobileMenuOpen(false);
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isMobileMenuOpen]);
-
-  // Cerrar menú móvil cuando se cambia de ruta
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [location.pathname]);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   function handleLogoClick(e: React.MouseEvent<HTMLAnchorElement>) {
-    e.preventDefault();
+    setIsMobileMenuOpen(false);
 
-    // Si ya estamos en el home, solo hacer scroll to top
+    // Solo interceptar si ya estamos en "/" para hacer scroll suave al top.
+    // Si estamos en otra página, dejamos que Link navegue normalmente
+    // y ScrollToTop se encarga del scroll (sin race condition ni setTimeout).
     if (location.pathname === "/") {
+      e.preventDefault();
       if (lenis) {
-        lenis.scrollTo(0, { duration: 1.5, immediate: false });
+        lenis.scrollTo(0, { duration: 1.5 });
       } else {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
-    } else {
-      // Si estamos en otra página, navegar al home y luego scroll to top
-      navigate("/");
-      setTimeout(() => {
-        if (lenis) {
-          lenis.scrollTo(0, { duration: 1.5, immediate: false });
-        } else {
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }
-      }, 100);
     }
   }
 
@@ -100,15 +86,20 @@ export const Navbar = () => {
         </div>
 
         <div className={styles.actions}>
-          <Link className={styles.ctaButton} to="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965" target="_blank">
+          <a
+            className={styles.ctaButton}
+            href="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Agendar Sesión
-          </Link>
+          </a>
         </div>
 
         {/* Mobile Menu Button */}
         <button
           className={styles.mobileMenuButton}
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          onClick={() => setIsMobileMenuOpen((open) => !open)}
           aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={isMobileMenuOpen}
           aria-controls="mobile-navigation"
@@ -137,9 +128,15 @@ export const Navbar = () => {
             {link.label}
           </NavLink>
         ))}
-        <Button className={styles.ctaButton} size="lg">
+        <a
+          href="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.ctaButton}
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
           Agendar Sesión
-        </Button>
+        </a>
       </div>
     </nav >
   );
