@@ -1,0 +1,176 @@
+# Catálogo de requisitos funcionales y no funcionales — barber-royce
+
+Fecha: 2026-10-12
+Estado: activo.
+
+Documento formal de requisitos. Cada requisito tiene un ID, un criterio de
+verificación concreto y trazabilidad hacia las historias de usuario
+([`historias-usuario.md`](./historias-usuario.md)), los casos de uso
+([`casos-uso.md`](./casos-uso.md)) y los tickets
+([`backlog.md`](./backlog.md)).
+
+**Origen (2026-10-12):** consolida lo que el sitio ya hace,
+`docs/archivo/WEB_REQUIREMENTS_CHECKLIST.md` y la auditoría previa al
+despliegue. Formato tomado de *Segunda Opinión de Build*.
+
+---
+
+## 1. Convenciones
+
+### 1.1 Identificadores
+
+- **RF:** `RF-<MOD>-NNN`. Módulos: `RES` (reserva y contacto), `INFO`
+  (contenido), `NAV` (navegación y errores), `SEO`, `OPS` (despliegue y
+  calidad).
+- **RNF:** `RNF-<CAT>-NNN`. Categorías en §3.1.
+- **CP:** `CP-<MOD|CAT>-NNN`, criterio de prueba. Es el caso concreto que
+  verifica el requisito. Un ticket lo cita así: "CP-RES-001 pasó en el
+  preview". Cuando un módulo de RF y una categoría de RNF comparten
+  nombre (`SEO`), el CP del RNF lleva el sufijo `-N` (`CP-SEO-001-N`).
+- Los IDs nunca se reutilizan. Un requisito retirado queda con estado
+  `Retirado` y el motivo.
+
+### 1.2 Prioridad y estado
+
+- **Prioridad:** Alta · Media · Baja (heredada de la HU).
+- **Estado:**
+  - `Propuesto`: definido; no existe en el código.
+  - `Implementado`: existe en el código; no se verificó contra el sitio
+    desplegado, o se conocen defectos (se citan sus tickets).
+  - `Verificado`: su CP pasó contra el preview o la producción de Vercel.
+    Una verificación en `npm run dev` no cuenta.
+  - `Retirado`: ya no aplica (con motivo y fecha).
+
+### 1.3 Reglas de redacción
+
+**RF:**
+
+- Una sola capacidad por requisito.
+- Sin términos ambiguos (*rápido*, *intuitivo*, *adecuado*, *moderno*).
+- Verificable con un caso concreto (el CP).
+
+**RNF:**
+
+- Lleva **métrica** y **umbral** numérico (o `0` para "nunca").
+- Dice **cómo se verifica** (herramienta, entorno y condiciones).
+- Dice a qué parte del sitio afecta.
+
+### 1.4 Entorno de verificación por defecto
+
+Salvo que el CP diga otra cosa:
+
+- **Dónde:** preview de Vercel del PR (o `npm run preview` mientras no haya
+  Vercel).
+- **Lighthouse:** modo navegación, perfil **móvil** (Moto G Power
+  emulado, 4G lenta), mediana de 3 corridas.
+- **Navegadores:** Chrome y Safari iOS actuales.
+
+---
+
+## 2. Requisitos funcionales (RF)
+
+### 2.1 Tabla
+
+| ID | Mód. | Requisito funcional | Prior. | Criterio de verificación | HU | CU | Estado |
+|---|---|---|---|---|---|---|---|
+| RF-RES-001 | RES | Todo botón "Reservar" (navbar escritorio, menú móvil y CTAs de sección) abre la URL de AgendaPro de la sucursal en una pestaña nueva; la URL se define en un solo lugar del código. | Alta | **CP-RES-001:** en cada ruta, el botón "Reservar" del navbar es visible sin scroll y abre AgendaPro en pestaña nueva con `rel="noopener noreferrer"`; una búsqueda de `agendapro.com` en `src/` devuelve una sola definición. | HU-RES-001 | CU-RES-001 | Implementado (defectos: URL repetida 4 veces, CTAs sin `rel`; `BR-005`, `BR-007`) |
+| RF-RES-002 | RES | Ofrecer contacto por WhatsApp (con mensaje prellenado) y por teléfono (`tel:`), con el número visible igual al del enlace. | Alta | **CP-RES-002:** en el celular, tocar el teléfono abre el marcador con el número real; tocar WhatsApp abre la conversación con el mismo número mostrado y el mensaje prellenado. | HU-RES-002 | CU-RES-001 | Implementado (defectos: teléfono de ejemplo, número mostrado distinto al del enlace; `BR-005`) |
+| RF-INFO-001 | INFO | Listar los servicios con nombre, descripción, precio en CLP, duración y qué incluye, filtrables por categoría. | Alta | **CP-INFO-001:** `/servicios` muestra todos los servicios de `servicesData.ts` con esos campos; elegir una categoría deja solo sus servicios; "Todos" restablece la lista. | HU-INFO-001 | CU-INFO-001 | Implementado (defecto: imágenes de Unsplash; `BR-008`) |
+| RF-INFO-002 | INFO | Listar los productos con nombre, descripción, foto y precio en CLP, filtrables por categoría y por texto. | Baja | **CP-INFO-002:** `/productos` muestra los productos de `productsData.ts`; escribir un texto filtra por nombre sin recargar; un filtro sin resultados muestra un estado vacío con acción para limpiarlo. | HU-INFO-004 | CU-INFO-001 | Implementado (defectos: precios en formato USD, botón "Comprar" sin acción, imágenes de Unsplash; `BR-008`, `BR-009`) |
+| RF-INFO-003 | INFO | Mostrar por sucursal: dirección, mapa embebido, enlace a Google Maps, horario por día y contacto, con una pestaña por sucursal. | Alta | **CP-INFO-003:** `/ubicacion` muestra La Serena y Coquimbo; cambiar de pestaña con clic o flechas del teclado actualiza los datos; con el iframe del mapa bloqueado, la dirección y el enlace a Maps siguen visibles. | HU-INFO-002 | CU-INFO-002 | Implementado |
+| RF-INFO-004 | INFO | Mostrar el equipo de barberos con foto, nombre y especialidad. | Media | **CP-INFO-004:** `/equipo` muestra cada barbero de `teamData.ts` con esos tres campos y un `alt` descriptivo en la foto. | HU-INFO-003 | — | Implementado |
+| RF-INFO-005 | INFO | Mostrar la historia y los valores de la barbería. | Media | **CP-INFO-005:** `/nosotros` muestra el contenido de `aboutData.ts`. | HU-INFO-003 | — | Implementado |
+| RF-INFO-006 | INFO | Mostrar las preguntas frecuentes agrupadas por categoría, en acordeón accesible por teclado. | Media | **CP-INFO-006:** `/preguntas-frecuentes` filtra por categoría; Enter o Espacio despliega una respuesta y `aria-expanded` cambia de valor. | HU-INFO-005 | — | Implementado |
+| RF-INFO-007 | INFO | Mostrar reseñas de clientes en la home. | Media | **CP-INFO-007:** la sección de reseñas de la home muestra las reseñas de `reviewsData.ts` con autor. | HU-INFO-003 | — | Implementado |
+| RF-NAV-001 | NAV | Navegar entre rutas desde un navbar (con menú móvil) y un footer generados desde `ROUTES`, volviendo al inicio de la página en cada cambio de ruta. | Alta | **CP-NAV-001:** los enlaces del navbar y del footer coinciden con las entradas de `ROUTES` marcadas para cada uno; al cambiar de ruta, la nueva página empieza arriba. | HU-EXP-002 | — | Implementado (gap: `<Routes>` no sale de `ROUTES`; `BR-026`) |
+| RF-NAV-002 | NAV | Mostrar una página "no encontrada" con identidad de marca, enlace al inicio y botón de reserva para cualquier ruta inexistente. | Alta | **CP-NAV-002:** `/no-existe` muestra la página 404 con ambos enlaces, `<title>` propio y `noindex`. | HU-EXP-003 | CU-EXP-001 | Propuesto (`BR-003`) |
+| RF-NAV-003 | NAV | Contener un error de render en la sección o ruta afectada con un mensaje y "Reintentar", y recargar una vez ante un chunk inexistente tras un despliegue. | Alta | **CP-NAV-003:** forzar un error en una sección deja navbar y footer operativos y muestra el fallback con "Reintentar"; simular un fallo de carga de chunk recarga la página una sola vez. | HU-EXP-003 | CU-EXP-001 | Implementado parcial (sin boundary en la home ni recuperación de chunk; `BR-019`, `BR-020`) |
+| RF-SEO-001 | SEO | Declarar por ruta: `<title>`, `meta description`, `canonical`, Open Graph y Twitter Card, tomados de `ROUTES`. | Alta | **CP-SEO-001:** cada una de las 7 rutas tiene esos metadatos, con título y descripción distintos entre rutas. | HU-SEO-001 | — | Implementado (defecto: `/productos` sin OG ni Twitter; `BR-006`) |
+| RF-SEO-002 | SEO | Publicar datos estructurados JSON-LD de las dos sucursales (`HairSalon`: nombre, dirección, país `CL`, coordenadas, teléfono, horario) y `FAQPage` generado desde `faqData.ts`. | Alta | **CP-SEO-002:** la prueba de resultados enriquecidos de Google sobre la home y `/preguntas-frecuentes` no da errores; los datos coinciden con `src/config/` y `faqData.ts`. | HU-SEO-001, HU-INFO-005 | — | Implementado (defectos: país `ES`, `geo` 0,0, imagen inexistente, rating estático, FAQ duplicado a mano; `BR-006`) |
+| RF-SEO-003 | SEO | Publicar `sitemap.xml` con todas las rutas públicas y `robots.txt` que lo referencie. | Alta | **CP-SEO-003:** las URLs de `sitemap.xml` coinciden con las rutas de `ROUTES`; `robots.txt` apunta al sitemap con el dominio de producción. | HU-SEO-001 | — | Implementado (defecto: faltan `/nosotros` y `/preguntas-frecuentes`; `BR-006`) |
+| RF-OPS-001 | OPS | Desplegar en Vercel: preview por PR, producción desde `master`, rewrite SPA, cabeceras de seguridad y caché inmutable de assets con hash. | Alta | **CP-OPS-001:** un PR genera una URL de preview; recargar `/servicios` en el preview responde 200; `curl -I` muestra las cabeceras de RNF-SEG-001 y `Cache-Control: public, max-age=31536000, immutable` en `/assets/*`. | HU-OPS-001 | CU-OPS-001 | Propuesto (`BR-002`) |
+| RF-OPS-002 | OPS | Verificar cada PR con un pipeline que corre lint, chequeo de tipos, tests y build, y bloquea el merge si un paso falla. | Alta | **CP-OPS-002:** un PR con un error de lint, de tipos, un test roto o un build roto queda con el check en rojo y no se puede integrar. | HU-OPS-001 | CU-OPS-001 | Propuesto (`BR-029`) |
+
+### 2.2 Notas de trazabilidad
+
+- La reserva en sí (elegir hora, barbero y servicio) **no** es un RF de
+  este sitio: la resuelve AgendaPro (ADR-001 de `architecture.md`).
+- `HU-EXP-001` y `HU-EXP-002` no tienen RF propio: son requisitos de
+  calidad y viven como RNF.
+
+---
+
+## 3. Requisitos no funcionales (RNF)
+
+### 3.1 Categorías
+
+- **PERF:** rendimiento percibido y peso de la página.
+- **A11Y:** accesibilidad (WCAG 2.1 AA).
+- **SEO:** visibilidad en buscadores.
+- **SEG:** seguridad del sitio y de la cadena de dependencias.
+- **CONF:** confiabilidad ante despliegues, recargas y fallos de terceros.
+- **DATOS:** consistencia de los datos del negocio.
+- **COMP:** compatibilidad de navegadores y dispositivos.
+- **MANT:** mantenibilidad y verificación automática.
+
+### 3.2 Tabla
+
+| ID | Cat | Requisito no funcional | Métrica | Umbral | Método de verificación | Afecta a | Estado |
+|---|---|---|---|---|---|---|---|
+| RNF-PERF-001 | PERF | La página principal de cada ruta pinta rápido en un celular de gama media. | LCP (Lighthouse móvil) | ≤ 2,5 s en cada ruta | **CP-PERF-001:** Lighthouse móvil contra el preview, mediana de 3 corridas, las 7 rutas. | Todas las rutas | Propuesto (LCP depende de un PNG precargado y no usado; `BR-011`) |
+| RNF-PERF-002 | PERF | El contenido no salta mientras carga. | CLS | ≤ 0,1 en cada ruta | **CP-PERF-002:** Lighthouse móvil; toda `<img>` tiene `width` y `height`. | Todas las rutas | Propuesto (`BR-012`, `BR-013`) |
+| RNF-PERF-003 | PERF | La página responde a la interacción sin bloquear el hilo principal. | TBT (Lighthouse móvil) | ≤ 200 ms en cada ruta | **CP-PERF-003:** Lighthouse móvil. | Todas las rutas | Propuesto |
+| RNF-PERF-004 | PERF | Las imágenes llegan optimizadas. | Peso transferido de la home en la primera carga; peso de cualquier imagen servida | ≤ 1,5 MB; ≤ 300 KB por imagen | **CP-PERF-004:** pestaña Network del preview con caché deshabilitada; ninguna petición a dominios de imágenes de terceros. | Imágenes de todas las rutas | Propuesto (`BR-008`, `BR-011`, `BR-012`) |
+| RNF-PERF-005 | PERF | El JavaScript inicial se mantiene acotado. | JS de la carga inicial de la home (gzip) | ≤ 200 KB | **CP-PERF-005:** `npm run build` + `vite-bundle-visualizer`; suma de los chunks que pide la home. | Home | Propuesto (sin medir) |
+| RNF-PERF-006 | PERF | El scroll es fluido. | Componentes que se re-renderizan por evento de scroll; tareas largas durante el scroll de la home | 0; 0 tareas > 50 ms atribuibles al scroll | **CP-PERF-006:** React DevTools Profiler y panel Performance (CPU 4x) mientras se hace scroll por toda la home. | Home y páginas con parallax | Propuesto (4 componentes re-renderizan por scroll; `BR-014`, `BR-015`, `BR-016`) |
+| RNF-A11Y-001 | A11Y | Cada ruta cumple las buenas prácticas de accesibilidad automatizables. | Puntuación de accesibilidad de Lighthouse | ≥ 95 en cada ruta | **CP-A11Y-001:** Lighthouse contra el preview; bloqueante en el CI (`BR-031`). | Todas las rutas | Propuesto |
+| RNF-A11Y-002 | A11Y | Sin barreras graves para teclado y lector de pantalla. | Violaciones de axe con impacto `critical` o `serious` | 0 | **CP-A11Y-002:** axe DevTools en cada ruta y en el menú móvil abierto; recorrido manual solo con teclado. | Todas las rutas | Propuesto (menú móvil, `alt` del logo, buscador sin label; `BR-033`) |
+| RNF-A11Y-003 | A11Y | Se respeta la preferencia de reducir el movimiento. | Animaciones de desplazamiento o parallax activas con `prefers-reduced-motion: reduce` | 0 | **CP-A11Y-003:** emular `prefers-reduced-motion: reduce` en DevTools y recorrer cada ruta. | Todas las rutas | Propuesto (el parallax por JS la ignora; `BR-017`) |
+| RNF-A11Y-004 | A11Y | El texto se puede leer sobre su fondo. | Contraste texto/fondo | ≥ 4,5:1 texto normal; ≥ 3:1 texto grande y componentes de UI | **CP-A11Y-004:** auditoría de contraste de Lighthouse y axe. | Todas las rutas | Propuesto |
+| RNF-SEO-001 | SEO | Cada ruta cumple las buenas prácticas de SEO automatizables. | Puntuación SEO de Lighthouse | ≥ 95 en cada ruta | **CP-SEO-001-N:** Lighthouse contra el preview. | Todas las rutas | Propuesto |
+| RNF-SEO-002 | SEO | Los datos que Google recibe del negocio son correctos y válidos. | Errores en la prueba de resultados enriquecidos; datos del JSON-LD distintos a los de `src/config/` | 0; 0 | **CP-SEO-002-N:** prueba de resultados enriquecidos de Google sobre la URL de producción; test que compara el JSON-LD con `src/config/` (`BR-006`). | Home, FAQ | Propuesto |
+| RNF-SEO-003 | SEO | Los metadatos de cada ruta son visibles sin ejecutar JavaScript. | Rutas cuyo HTML inicial trae su propio `<title>` y `description` | 7 de 7 | **CP-SEO-003-N:** `curl` a cada ruta del preview y lectura del `<head>`. | Todas las rutas | Propuesto (spike de prerender; `BR-034`) |
+| RNF-SEG-001 | SEG | El sitio se sirve con cabeceras de seguridad. | Cabeceras presentes: `Content-Security-Policy`, `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy`, `frame-ancestors` (o `X-Frame-Options`) | 6 de 6; nota A o superior en securityheaders.com | **CP-SEG-001:** `curl -I` a la producción y escaneo en securityheaders.com; la CSP no rompe el mapa embebido, las fuentes ni los enlaces externos. | Todo el sitio | Propuesto (`BR-002`) |
+| RNF-SEG-002 | SEG | Ningún secreto en el repo y ningún enlace externo inseguro. | Secretos versionados; enlaces `target="_blank"` sin `rel="noopener noreferrer"` | 0; 0 | **CP-SEG-002:** `.env*` en `.gitignore`; búsqueda de `target="_blank"` en `src/` sin `rel`. | Todo el sitio | Propuesto (`BR-007`, `BR-010`) |
+| RNF-SEG-003 | SEG | Las dependencias de producción no tienen vulnerabilidades conocidas graves. | Vulnerabilidades `high` o `critical` en `npm audit --omit=dev` | 0 | **CP-SEG-003:** `npm audit --omit=dev` antes de cada despliegue y en el CI. | Build | Propuesto |
+| RNF-CONF-001 | CONF | Cualquier ruta funciona al entrar directo o al recargar. | Rutas que responden 200 con la app al recargarlas en producción; rutas inexistentes que muestran la 404 propia | 7 de 7; 100 % | **CP-CONF-001:** recargar cada ruta y una inexistente en el preview. | Todas las rutas | Propuesto (`BR-002`, `BR-003`) |
+| RNF-CONF-002 | CONF | Un despliegue nuevo no deja pestañas abiertas en blanco. | Pantallas en blanco tras un fallo de carga de chunk; recargas automáticas por incidente | 0; ≤ 1 | **CP-CONF-002:** con el sitio abierto, desplegar una versión nueva y navegar a una ruta no visitada. | Rutas lazy | Propuesto (`BR-020`) |
+| RNF-DATOS-001 | DATOS | Los datos del negocio (sucursales, teléfono, WhatsApp, email, horario, redes, URL de reserva) tienen una sola fuente de verdad. | Definiciones literales de esos datos fuera de `src/config/` y `src/data/locationsData.ts`; diferencias entre esa fuente y `index.html`, `sitemap.xml` y el JSON-LD | 0; 0 | **CP-DATOS-001:** agente `datos-negocio-auditor` sin hallazgos y un test que compara el JSON-LD con la fuente. | Footer, ubicación, navbar, SEO | Propuesto (`BR-005`) |
+| RNF-COMP-001 | COMP | El sitio funciona en los navegadores y anchos de pantalla de la clientela. | Defectos visuales o funcionales en las 2 últimas versiones de Chrome, Safari iOS, Firefox y Edge; scroll horizontal entre 360 y 1920 px | 0; 0 | **CP-COMP-001:** recorrido manual del preview en Safari iOS y Chrome Android reales, y en escritorio con 360, 768, 1280 y 1920 px. | Todo el sitio | Propuesto |
+| RNF-MANT-001 | MANT | Ningún cambio llega a `master` sin pasar la verificación automática. | Pasos del pipeline (lint sin warnings, tipos, tests, build) en verde para integrar | 4 de 4 | **CP-MANT-001:** protección de rama en GitHub que exige el check del CI. | Todo el repo | Propuesto (`BR-004`, `BR-029`) |
+| RNF-MANT-002 | MANT | Los tests cubren la lógica del sitio. | Cobertura de líneas de `src/config`, `src/hooks` y funciones puras | Línea base medida al cerrar `BR-030`, redondeada hacia abajo; solo sube | **CP-MANT-002:** `vitest --coverage` con umbral en la configuración; bajar del umbral falla el CI. | `src/` | Propuesto (`BR-030`) |
+| RNF-MANT-003 | MANT | El repo no acumula código ni dependencias sin uso. | Exportaciones sin consumidores; dependencias declaradas sin importar | 0; 0 | **CP-MANT-003:** agente `deuda-tecnica-auditor` (chequeo de código muerto) sin hallazgos. | `src/`, `package.json` | Propuesto (`BR-025`) |
+
+### 3.3 Notas de trazabilidad RNF
+
+- Los umbrales de rendimiento son los "buenos" de Core Web Vitals. El INP
+  real solo se mide con usuarios reales; mientras no haya analítica
+  (backlog §4), el TBT de laboratorio es su sustituto.
+- `RNF-SEO-003` puede terminar en `Retirado` si el spike `BR-034` concluye
+  que el prerender no se justifica; se deja escrito el motivo.
+
+---
+
+## 4. Matriz de trazabilidad HU → RF / RNF
+
+| HU | RF | RNF |
+|---|---|---|
+| HU-RES-001 | RF-RES-001 | RNF-SEG-002, RNF-DATOS-001 |
+| HU-RES-002 | RF-RES-002 | RNF-DATOS-001 |
+| HU-INFO-001 | RF-INFO-001 | RNF-PERF-004 |
+| HU-INFO-002 | RF-INFO-003 | RNF-DATOS-001 |
+| HU-INFO-003 | RF-INFO-004, RF-INFO-005, RF-INFO-007 | RNF-PERF-004 |
+| HU-INFO-004 | RF-INFO-002 | RNF-PERF-004 |
+| HU-INFO-005 | RF-INFO-006, RF-SEO-002 | RNF-A11Y-002 |
+| HU-SEO-001 | RF-SEO-001, RF-SEO-002, RF-SEO-003 | RNF-SEO-001, RNF-SEO-002, RNF-SEO-003 |
+| HU-EXP-001 | — | RNF-PERF-001 .. RNF-PERF-006, RNF-COMP-001 |
+| HU-EXP-002 | RF-NAV-001 | RNF-A11Y-001 .. RNF-A11Y-004 |
+| HU-EXP-003 | RF-NAV-002, RF-NAV-003 | RNF-CONF-001, RNF-CONF-002 |
+| HU-OPS-001 | RF-OPS-001, RF-OPS-002 | RNF-SEG-001, RNF-SEG-003, RNF-MANT-001, RNF-MANT-002, RNF-MANT-003 |
+
+## 5. Documentos relacionados
+
+- [`historias-usuario.md`](./historias-usuario.md)
+- [`casos-uso.md`](./casos-uso.md)
+- [`backlog.md`](./backlog.md)
+- [`engineering-guidelines.md`](./engineering-guidelines.md)
