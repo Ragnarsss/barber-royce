@@ -118,7 +118,7 @@ Criterios de aceptación:
 #### BR-002 — Configurar Vercel: rewrite SPA, cabeceras de seguridad y caché
 
 - Prioridad: P0 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-002-vercel`; falta conectar el proyecto en Vercel)
 - Historia de usuario: HU-OPS-001 (CA-02, CA-03), HU-EXP-003 (CA-01)
 - RF/RNF: `RF-OPS-001`, `RNF-CONF-001`, `RNF-SEG-001`
 
@@ -140,6 +140,8 @@ Criterios de aceptación:
    (CP-SEG-001).
 3. La CSP no rompe el mapa, las fuentes ni las imágenes (consola sin
    violaciones de CSP).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-002).
 
 #### BR-003 — Página 404 con identidad de marca
 
@@ -208,6 +210,12 @@ Alcance:
 3. Navbar, CTA1, CTA2, Footer y Ubicación leen de ahí.
 4. Test que falla si aparece un literal de teléfono, email o
    `agendapro.com` fuera de `src/config/` y `locationsData.ts`.
+5. Navbar, CTA1 y CTA2 usan la constante `BOOKING` (creada en `BR-003`).
+
+> **Alcance ajustado (2026-10-12):** al revisar los orígenes para la CSP
+> (`BR-002`) apareció que el `mapUrl` de la sucursal de Coquimbo en
+> `locationsData.ts` apunta a coordenadas de Bogotá (`4.6789, -74.0719`),
+> un placeholder. Se agrega: embed real de Google Maps para cada sucursal.
 
 Criterios de aceptación:
 1. CP-DATOS-001 y CP-RES-002 pasan.
@@ -621,6 +629,8 @@ Alcance:
 1. Medir con y sin el plugin.
 2. Dejar bloqueante el CSS de la carga inicial y diferir solo el de rutas
    lazy, o retirar el plugin si no aporta.
+3. Si cambia o se retira el `onload` inline del plugin, actualizar o
+   quitar su hash en la CSP de `vercel.json` (`BR-002`).
 
 Criterios de aceptación:
 1. Sin FOUC visible en una carga con CPU 4x y 4G lenta; CP-PERF-001 y
@@ -837,7 +847,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | ID | Título | Épica | Prioridad | Esfuerzo | Estado | Depende de |
 |---|---|---|---|---|---|---|
 | BR-001 | Ordenar documentación y proceso | A | P1 | M | En curso | — |
-| BR-002 | Vercel: rewrite, cabeceras, caché | B | P0 | S | Propuesta | — |
+| BR-002 | Vercel: rewrite, cabeceras, caché | B | P0 | S | En curso | — |
 | BR-003 | Página 404 | B | P0 | S | En curso | BR-030 (test) |
 | BR-004 | Lint sin errores | B | P0 | S | En curso | BR-001 |
 | BR-005 | Datos del negocio: fuente única y reales | B | P0 | M | Bloqueada | — |

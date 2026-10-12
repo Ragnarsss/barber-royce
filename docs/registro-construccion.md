@@ -108,3 +108,46 @@ Formato de cada entrada:
 - Verificación: `eslint --max-warnings=0` y `npm run build` OK (chunk de
   0,74 KB gzip). Pendiente: revisar `/no-existe` en el navegador y en el
   preview de Vercel (`BR-002`).
+
+---
+
+<a id="br-002"></a>
+
+## BR-002 — Configurar Vercel: rewrite SPA, cabeceras de seguridad y caché
+
+**Notas de construcción (2026-10-12):**
+- `vercel.json` en la raíz:
+  - `framework: vite`, `npm run build`, salida `dist`.
+  - Rewrite `/((?!assets/).*)` → `/index.html`. Vercel sirve primero los
+    archivos que existen (`robots.txt`, `sitemap.xml`, favicons). Lo que
+    está bajo `/assets/` queda **fuera** del rewrite a propósito: un chunk
+    que ya no existe tras un redeploy responde 404 real en lugar de
+    `index.html` con tipo HTML, y eso es lo que `BR-020` necesita detectar.
+  - Cabeceras en todo el sitio: CSP, HSTS (2 años, `preload`),
+    `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` y
+    `X-Frame-Options: DENY` (junto a `frame-ancestors 'none'`, para
+    navegadores viejos).
+  - `/assets/*` con `Cache-Control: public, max-age=31536000, immutable`
+    (los nombres llevan hash).
+- CSP armada desde el inventario real de orígenes (`src/` e `index.html`):
+  - `script-src 'self' 'unsafe-hashes' 'sha256-1jAm…'`: el `asyncCSSPlugin`
+    de `vite.config.ts` agrega `onload="this.onload=null;this.rel='stylesheet'"`
+    a cada `<link>` de CSS; sin ese hash la CSP bloquearía el handler y **el
+    CSS no se aplicaría nunca**. Se evitó `'unsafe-inline'`. Acoplamiento
+    anotado en `BR-013`.
+  - `style-src 'unsafe-inline'`: framer-motion y React escriben estilos
+    inline; el riesgo de inyección de estilos es bajo en un sitio sin
+    contenido de usuarios.
+  - `img-src` incluye `images.unsplash.com` solo mientras exista
+    `BR-008`; se quita al cerrarlo.
+  - `frame-src` para el embed de Google Maps.
+  - Los bloques JSON-LD (`type="application/ld+json"`) no se ejecutan y la
+    CSP no los afecta.
+- Hallazgo: el mapa de Coquimbo apunta a Bogotá → agregado a `BR-005`.
+- Test: no aplica (configuración del hosting); se verifica con
+  CP-CONF-001 y CP-SEG-001 contra el preview.
+- Verificación local: JSON válido y patrón del rewrite probado con
+  `/servicios`, `/no-existe`, `/` (reescriben) y `/assets/js/x.js` (no
+  reescribe). **Pendiente:** conectar el repo en Vercel (lo hace el
+  usuario con su cuenta), y en el preview recargar las 7 rutas, revisar
+  `curl -I`, securityheaders.com y la consola sin violaciones de CSP.
