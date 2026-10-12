@@ -1,0 +1,47 @@
+# CI de barber-royce (BR-029, HU-OPS-001, RF-OPS-002, RNF-MANT-001).
+# Un paso por comando, para que el check diga exactamente qué se rompió.
+# El despliegue no vive aquí: lo hace Vercel (preview por PR, producción desde master).
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verificacion:
+    name: Lint, tipos, tests y build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Lint
+        run: npx eslint . --max-warnings=0
+
+      - name: Tipos
+        run: npx tsc -b
+
+      - name: Tests con cobertura
+        run: npm run test:coverage
+
+      - name: Build
+        run: npm run build
+
+      - name: Auditoría de dependencias de producción
+        run: npm audit --omit=dev --audit-level=high

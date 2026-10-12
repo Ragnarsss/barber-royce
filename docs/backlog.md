@@ -768,7 +768,7 @@ Criterios de aceptación:
 #### BR-030 — Vitest y Testing Library con los primeros tests
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: —
-- Estado: En curso (rama `test/br-030-vitest`)
+- Estado: Hecho (2026-10-12, rama `test/br-030-vitest` → master, PR #8)
 - Historia de usuario: HU-OPS-001 (CA-01)
 - RF/RNF: `RNF-MANT-002`
 
@@ -789,7 +789,7 @@ Criterios de aceptación:
 #### BR-029 — CI en GitHub Actions
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: BR-004, BR-030
-- Estado: Propuesta
+- Estado: Hecho (2026-10-12, rama `ci/br-029-github-actions` → master, PR #9)
 - Historia de usuario: HU-OPS-001 (CA-01)
 - RF/RNF: `RF-OPS-002`, `RNF-MANT-001`, `RNF-SEG-003`
 
@@ -803,6 +803,8 @@ Alcance:
 
 Criterios de aceptación:
 1. CP-OPS-002 pasa con un PR de prueba roto a propósito.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-029).
 
 #### BR-031 — Lighthouse CI con umbrales bloqueantes
 
@@ -876,8 +878,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-026 | Rutas desde `ROUTES` | H | P2 | S | Propuesta | BR-003, BR-019 |
 | BR-027 | Ordenar data, types e iconos | H | P2 | S | Propuesta | — |
 | BR-028 | Prettier y alias | H | P2 | S | Propuesta | BR-004 |
-| BR-029 | CI en GitHub Actions | H | P1 | S | Propuesta | BR-004, BR-030 |
-| BR-030 | Vitest y primeros tests | H | P1 | M | En curso | — |
+| BR-029 | CI en GitHub Actions | H | P1 | S | Hecho | BR-004, BR-030 |
+| BR-030 | Vitest y primeros tests | H | P1 | M | Hecho | — |
 | BR-031 | Lighthouse CI | H | P2 | S | Propuesta | BR-029, BR-002 |
 | BR-032 | Actualizar README | A | P2 | S | Propuesta | BR-001 |
 | BR-033 | Accesibilidad | G | P2 | S | Propuesta | — |
