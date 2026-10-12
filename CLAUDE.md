@@ -23,12 +23,15 @@ npm run dev          # servidor de desarrollo en http://localhost:8888
 npm run build        # tsc -b && vite build
 npm run preview      # sirve el build en http://localhost:4173
 npm run lint         # ESLint
+npm test             # Vitest en modo watch
+npm run test:run     # Vitest una vez
+npm run test:coverage  # Vitest con cobertura y umbral
 npm run commit       # commit guiado (Conventional Commits)
 npm run perf:lighthouse   # Lighthouse CI local
 npm run perf:bundle       # visualizador del bundle
 ```
 
-`npm test` todavía no existe (`BR-030`).
+Tests junto al archivo que prueban (`*.test.ts(x)`); helper de render en `src/test/`.
 
 ## Mapa de la documentación
 

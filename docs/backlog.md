@@ -63,7 +63,7 @@ fechado: `> **Alcance ajustado (AAAA-MM-DD, decisión del usuario):** …`.
 #### BR-001 — Ordenar la documentación y el proceso de trabajo
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: —
-- Estado: En curso
+- Estado: Hecho (2026-10-12, rama `docs/br-001-organizacion-proceso` → master, PR #3)
 - Historia de usuario: no aplica — proceso interno, sin superficie de usuario.
 - RF/RNF: no aplica — proceso interno.
 
@@ -118,7 +118,7 @@ Criterios de aceptación:
 #### BR-002 — Configurar Vercel: rewrite SPA, cabeceras de seguridad y caché
 
 - Prioridad: P0 · Esfuerzo: S · Depende de: —
-- Estado: En curso (rama `feat/br-002-vercel`; falta conectar el proyecto en Vercel)
+- Estado: Hecho (2026-10-12, rama `feat/br-002-vercel` → master, PR #7)
 - Historia de usuario: HU-OPS-001 (CA-02, CA-03), HU-EXP-003 (CA-01)
 - RF/RNF: `RF-OPS-001`, `RNF-CONF-001`, `RNF-SEG-001`
 
@@ -146,7 +146,7 @@ Criterios de aceptación:
 #### BR-003 — Página 404 con identidad de marca
 
 - Prioridad: P0 · Esfuerzo: S · Depende de: BR-030 (solo para el test)
-- Estado: En curso (rama `feat/br-003-pagina-404`, PR pendiente)
+- Estado: Hecho (2026-10-12, rama `feat/br-003-pagina-404` → master, PR #7; test en `BR-030`)
 - Historia de usuario: HU-EXP-003 (CA-02)
 - RF/RNF: `RF-NAV-002`, `RNF-CONF-001`
 
@@ -168,7 +168,7 @@ Criterios de aceptación:
 #### BR-004 — Dejar `npm run lint` sin errores
 
 - Prioridad: P0 · Esfuerzo: S · Depende de: BR-001
-- Estado: En curso (rama `fix/br-004-lint-limpio`, PR pendiente)
+- Estado: Hecho (2026-10-12, rama `fix/br-004-lint-limpio` → master, PR #7)
 - Historia de usuario: HU-OPS-001 (CA-01)
 - RF/RNF: `RNF-MANT-001`
 
@@ -768,7 +768,7 @@ Criterios de aceptación:
 #### BR-030 — Vitest y Testing Library con los primeros tests
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (rama `test/br-030-vitest`)
 - Historia de usuario: HU-OPS-001 (CA-01)
 - RF/RNF: `RNF-MANT-002`
 
@@ -783,6 +783,8 @@ Alcance:
 
 Criterios de aceptación:
 1. `npm run test:run` en verde; umbral de cobertura configurado.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-030).
 
 #### BR-029 — CI en GitHub Actions
 
@@ -846,10 +848,10 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 
 | ID | Título | Épica | Prioridad | Esfuerzo | Estado | Depende de |
 |---|---|---|---|---|---|---|
-| BR-001 | Ordenar documentación y proceso | A | P1 | M | En curso | — |
-| BR-002 | Vercel: rewrite, cabeceras, caché | B | P0 | S | En curso | — |
-| BR-003 | Página 404 | B | P0 | S | En curso | BR-030 (test) |
-| BR-004 | Lint sin errores | B | P0 | S | En curso | BR-001 |
+| BR-001 | Ordenar documentación y proceso | A | P1 | M | Hecho | — |
+| BR-002 | Vercel: rewrite, cabeceras, caché | B | P0 | S | Hecho | — |
+| BR-003 | Página 404 | B | P0 | S | Hecho | BR-030 (test) |
+| BR-004 | Lint sin errores | B | P0 | S | Hecho | BR-001 |
 | BR-005 | Datos del negocio: fuente única y reales | B | P0 | M | Bloqueada | — |
 | BR-006 | SEO técnico | B | P0 | S | Propuesta | BR-005 |
 | BR-007 | Enlaces externos seguros | B | P0 | XS | Propuesta | BR-005 |
@@ -875,7 +877,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-027 | Ordenar data, types e iconos | H | P2 | S | Propuesta | — |
 | BR-028 | Prettier y alias | H | P2 | S | Propuesta | BR-004 |
 | BR-029 | CI en GitHub Actions | H | P1 | S | Propuesta | BR-004, BR-030 |
-| BR-030 | Vitest y primeros tests | H | P1 | M | Propuesta | — |
+| BR-030 | Vitest y primeros tests | H | P1 | M | En curso | — |
 | BR-031 | Lighthouse CI | H | P2 | S | Propuesta | BR-029, BR-002 |
 | BR-032 | Actualizar README | A | P2 | S | Propuesta | BR-001 |
 | BR-033 | Accesibilidad | G | P2 | S | Propuesta | — |
