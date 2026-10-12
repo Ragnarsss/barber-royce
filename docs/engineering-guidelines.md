@@ -41,7 +41,7 @@ No es "todo test-first". La regla práctica:
 Herramientas: Vitest + Testing Library (`BR-030`). Los flujos completos
 (reserva, navegación, 404) se verifican contra el preview de Vercel.
 
-**Gap honesto:** hoy no hay ningún test ni runner configurado (`BR-030`).
+Los tests viven junto al archivo que prueban (`*.test.ts(x)`). Para renderizar una página se usa `renderWithProviders` de `src/test/` (router en memoria + Helmet). El umbral de cobertura de `vitest.config.ts` solo sube.
 
 ## 2. Separación de responsabilidades
 

@@ -151,3 +151,48 @@ Formato de cada entrada:
   reescribe). **Pendiente:** conectar el repo en Vercel (lo hace el
   usuario con su cuenta), y en el preview recargar las 7 rutas, revisar
   `curl -I`, securityheaders.com y la consola sin violaciones de CSP.
+
+**Cierre BR-001..BR-004 (2026-10-12):** integrados a `master` (PR #3 y
+PR #7; los PR #4..#6 del stack se cerraron al borrar la rama base y su
+contenido se integró sin cambios en el #7). Verificado en producción
+(`https://barber-royce.vercel.app`) con `curl`: las 7 rutas y una
+inexistente responden 200 con la app; `robots.txt` y `sitemap.xml` se
+sirven como archivos; 6 de 6 cabeceras de seguridad; `/assets/*` con
+caché inmutable; un chunk inexistente responde 404; el `onload` del CSS
+servido coincide con el hash de la CSP; el chunk de `NotFoundPage` está
+publicado. Queda a cargo del usuario la revisión visual (home, 404 y
+consola sin violaciones de CSP).
+
+---
+
+<a id="br-030"></a>
+
+## BR-030 — Vitest y Testing Library con los primeros tests
+
+**Notas de construcción (2026-10-12):**
+- Dependencias de desarrollo: `vitest` 3.2, `@vitest/coverage-v8`,
+  `jsdom`, `@testing-library/react`, `@testing-library/jest-dom`,
+  `@testing-library/user-event`. Scripts `test`, `test:run` y
+  `test:coverage`.
+- `vitest.config.ts` propio: no hereda los plugins de build de
+  `vite.config.ts` (optimización de imágenes, CSS asíncrono). Alias `@/`,
+  entorno `jsdom`, CSS Modules sin hash para poder consultar clases.
+- `src/test/setup.ts` (jest-dom + `cleanup`) y
+  `src/test/renderWithProviders.tsx` (router en memoria y un contexto de
+  Helmet nuevo por render, para que los tests no compartan `<title>`).
+- Tests iniciales:
+  - `src/pages/NotFoundPage.test.tsx`: cierra el criterio de test de
+    `BR-003` (ruta comodín, enlace al inicio, reserva con `target` y
+    `rel` seguros, y que no aparece en una ruta existente).
+  - `src/config/routes.test.ts`: paths únicos y absolutos, títulos y
+    descripciones presentes y distintos (CP-SEO-001), navbar y footer
+    desde `ROUTES`.
+  - El test de enlaces externos sin `rel` se escribe en `BR-007` y el de
+    datos del negocio en `BR-005`: hoy fallarían, y sus tickets son los
+    que los dejan en verde.
+- Cobertura: línea base 4,19 % de sentencias, 19,23 % de ramas, 16,88 % de
+  funciones. Umbral fijado en 4/19/16/4, redondeado hacia abajo; solo
+  sube (`RNF-MANT-002`).
+- `coverage/` ignorado en Git y en ESLint.
+- Verificación: 7 tests en verde, `eslint --max-warnings=0`, `tsc -b` y
+  `npm run build` OK.
