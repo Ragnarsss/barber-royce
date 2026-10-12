@@ -1,0 +1,178 @@
+# Casos de uso — barber-royce
+
+Fecha: 2026-10-12
+Estado: activo.
+
+Solo se documentan como caso de uso los flujos con **decisiones o
+caminos alternativos**. Una página que solo muestra contenido se cubre con
+su HU y sus criterios de aceptación.
+
+## Convenciones
+
+- **ID:** `CU-<MOD>-NNN`, mismo módulo que la HU que lo origina.
+- **Estado:** `Propuesto` (descrito, sin verificar) · `Verificado` (el
+  flujo, incluidos los alternativos, se probó contra el preview de
+  Vercel).
+- Flujos alternativos numerados por el paso en que se desvían: `2a.`,
+  `2b.`.
+
+## Índice
+
+| ID | Nombre | Actor | HU relacionada | Estado |
+|---|---|---|---|---|
+| CU-RES-001 | Reservar una hora | Cliente | HU-RES-001, HU-RES-002 | Propuesto |
+| CU-INFO-001 | Filtrar servicios o productos | Cliente | HU-INFO-001, HU-INFO-004 | Propuesto |
+| CU-INFO-002 | Consultar una sucursal | Cliente | HU-INFO-002 | Propuesto |
+| CU-EXP-001 | Llegar a una ruta profunda, inexistente o con error | Cliente | HU-EXP-003 | Propuesto |
+| CU-OPS-001 | Desplegar un cambio | Desarrollador | HU-OPS-001 | Propuesto |
+
+---
+
+## CU-RES-001 - Reservar una hora
+
+- Actor: Cliente
+- Historia de usuario relacionada: HU-RES-001, HU-RES-002
+- Precondición: el cliente está en cualquier página del sitio.
+
+### Flujo principal
+
+1. El cliente toca "Reservar" (navbar, menú móvil o un CTA de sección).
+2. El sistema abre la URL de AgendaPro de la sucursal en una pestaña nueva.
+3. El cliente completa la reserva en AgendaPro.
+
+### Flujos alternativos
+
+- 1a. El cliente prefiere consultar antes de reservar: toca WhatsApp o el
+  teléfono; el sistema abre la conversación con el mensaje prellenado o el
+  marcador con el número real, y termina.
+- 2a. El navegador bloquea la pestaña nueva: el enlace es un `<a>` estándar,
+  así que el navegador lo abre en la misma pestaña; el cliente sigue en
+  AgendaPro.
+- 2b. AgendaPro no responde: el cliente vuelve a la pestaña del sitio, que
+  sigue abierta, y usa el flujo 1a.
+
+### Postcondición
+
+El cliente está en AgendaPro (o en una conversación con la barbería) y el
+sitio sigue abierto en la pestaña original.
+
+---
+
+## CU-INFO-001 - Filtrar servicios o productos
+
+- Actor: Cliente
+- Historia de usuario relacionada: HU-INFO-001, HU-INFO-004
+- Precondición: el cliente está en `/servicios` o `/productos`.
+
+### Flujo principal
+
+1. El sistema muestra todos los elementos y las categorías disponibles.
+2. El cliente elige una categoría (y en productos, escribe un texto de
+   búsqueda).
+3. El sistema muestra solo los elementos que cumplen el filtro, sin
+   recargar la página.
+4. El cliente vuelve a "Todos" y el sistema muestra la lista completa.
+
+### Flujos alternativos
+
+- 3a. Ningún elemento cumple el filtro: el sistema muestra un estado vacío
+  con un texto que lo explica y una acción para limpiar el filtro.
+
+### Postcondición
+
+La lista visible coincide con el filtro elegido.
+
+---
+
+## CU-INFO-002 - Consultar una sucursal
+
+- Actor: Cliente
+- Historia de usuario relacionada: HU-INFO-002
+- Precondición: el cliente está en `/ubicacion`.
+
+### Flujo principal
+
+1. El sistema muestra las pestañas de las sucursales con la primera
+   seleccionada.
+2. El cliente elige una sucursal (clic, toque o flechas del teclado).
+3. El sistema muestra su dirección, mapa, horario por día y contacto.
+4. El cliente abre la dirección en Google Maps o toca "Reservar".
+
+### Flujos alternativos
+
+- 3a. El mapa embebido no carga: la dirección sigue visible en texto, con
+  un enlace para abrirla en Google Maps.
+
+### Postcondición
+
+El cliente tiene los datos de la sucursal que eligió.
+
+---
+
+## CU-EXP-001 - Llegar a una ruta profunda, inexistente o con error
+
+- Actor: Cliente
+- Historia de usuario relacionada: HU-EXP-003
+- Precondición: el sitio está desplegado en Vercel.
+
+### Flujo principal
+
+1. El cliente abre o recarga una ruta profunda (por ejemplo,
+   `/servicios`).
+2. Vercel responde `index.html` (rewrite SPA).
+3. El router muestra la página de esa ruta.
+
+### Flujos alternativos
+
+- 3a. La ruta no existe: el router muestra la página "no encontrada" con
+  enlace al inicio y botón de reservar.
+- 3b. La página falla al renderizar: el error boundary de la ruta muestra
+  un mensaje con "Reintentar"; navbar y footer siguen funcionando.
+- 3c. El chunk de la página ya no existe porque hubo un despliegue nuevo:
+  el sistema recarga la página una vez; si vuelve a fallar, se aplica 3b.
+
+### Postcondición
+
+El cliente ve la página pedida, la 404 o un fallback con una acción; nunca
+una pantalla en blanco.
+
+---
+
+## CU-OPS-001 - Desplegar un cambio
+
+- Actor: Desarrollador
+- Historia de usuario relacionada: HU-OPS-001
+- Precondición: el ticket tiene rama `tipo/br-nnn-...` con sus commits.
+
+### Flujo principal
+
+1. El desarrollador abre un PR contra `master` con la plantilla de PR.
+2. El CI corre lint, tipos, tests y build.
+3. Vercel publica un preview del PR.
+4. El desarrollador verifica los criterios de aceptación en el preview
+   (escritorio y móvil) y, si aplica, corre Lighthouse contra él.
+5. Se integra el PR (`--no-ff`) y se borra la rama.
+6. Vercel despliega producción desde `master`.
+7. El desarrollador revisa que la home y la ruta tocada carguen en
+   producción y marca el ticket `Hecho` (skill `cerrar-ticket`).
+
+### Flujos alternativos
+
+- 2a. Un paso del CI falla: el PR no se puede integrar; se corrige en la
+  misma rama.
+- 4a. El preview no cumple un criterio: se corrige en la rama y se vuelve
+  al paso 2.
+- 7a. Producción queda rota: se hace "Promote" del despliegue anterior en
+  Vercel y se abre un ticket de bug con la skill `nuevo-ticket`.
+
+### Postcondición
+
+`master` y producción tienen el cambio, el ticket está `Hecho` y la rama
+está borrada.
+
+---
+
+## Documentos relacionados
+
+- [`historias-usuario.md`](./historias-usuario.md)
+- [`rf-rnf-catalogo.md`](./rf-rnf-catalogo.md)

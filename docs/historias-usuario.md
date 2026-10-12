@@ -1,0 +1,516 @@
+# Historias de usuario — barber-royce
+
+Fecha: 2026-10-12
+Estado: activo. Fuente del **para qué** de cada ticket del
+[`backlog.md`](./backlog.md).
+
+**Origen (2026-10-12):** reconstruidas a partir de lo que el sitio ya hace,
+de `docs/archivo/WEB_REQUIREMENTS_CHECKLIST.md` y de la auditoría previa al
+despliegue (`BR-001`). Las HU de funcionalidades ya construidas están
+`Aprobada` y sus criterios se verifican al cerrar los tickets que las
+citan.
+
+## Convenciones
+
+- **ID:** `HU-<MOD>-NNN`. Módulos: `RES` (reserva y contacto), `INFO`
+  (contenido del negocio), `SEO` (búsqueda local), `EXP` (experiencia:
+  rendimiento, accesibilidad, errores), `OPS` (despliegue y calidad).
+- **Prioridad:** Alta · Media · Baja.
+- **Estimación:** story points de Fibonacci (1, 2, 3, 5, 8, 13).
+- **Estado:** `Propuesta` · `Aprobada` · `En desarrollo` · `Cerrada`.
+- **Criterios de aceptación:** `CA-NN` en formato Given/When/Then. Un
+  ticket los cita como `(HU-XXX CA-NN)`.
+- **Reglas de negocio:** `RN-NN`.
+- Un cambio a una HU nunca se reescribe en silencio: se agrega
+  `> Actualizada (AAAA-MM-DD): …` debajo del título.
+
+## Actores
+
+| Actor | Descripción |
+|---|---|
+| Cliente | Persona que visita el sitio, casi siempre desde el celular, para decidir si reserva y dónde. |
+| Dueño | Administra la barbería. No edita el sitio directamente: pide cambios de contenido. |
+| Desarrollador | Mantiene y despliega el sitio. |
+| Buscador | Google y otros crawlers que indexan el sitio. |
+
+## Resumen
+
+| ID | Módulo | Título corto | Prioridad | Valor (1-5) | SP | Dependencias | Estado |
+|---|---|---|---|---|---|---|---|
+| HU-RES-001 | RES | Reservar hora desde cualquier página | Alta | 5 | 3 | HU-INFO-002 | Aprobada |
+| HU-RES-002 | RES | Consultar por WhatsApp o teléfono | Alta | 4 | 2 | HU-INFO-002 | Aprobada |
+| HU-INFO-001 | INFO | Ver servicios con precio y duración | Alta | 5 | 3 | — | Aprobada |
+| HU-INFO-002 | INFO | Ver sucursales, horarios y contacto correctos | Alta | 5 | 3 | — | Aprobada |
+| HU-INFO-003 | INFO | Conocer al equipo y la barbería | Media | 3 | 2 | — | Aprobada |
+| HU-INFO-004 | INFO | Ver productos disponibles | Baja | 2 | 3 | — | Propuesta |
+| HU-INFO-005 | INFO | Resolver dudas frecuentes | Media | 3 | 2 | — | Aprobada |
+| HU-SEO-001 | SEO | Aparecer en búsquedas locales | Alta | 5 | 5 | HU-INFO-002 | Aprobada |
+| HU-EXP-001 | EXP | Sitio rápido y fluido en el celular | Alta | 5 | 8 | — | Aprobada |
+| HU-EXP-002 | EXP | Sitio accesible y respetuoso con el movimiento | Media | 4 | 5 | — | Aprobada |
+| HU-EXP-003 | EXP | Mensaje claro si algo falla o la página no existe | Alta | 4 | 3 | — | Aprobada |
+| HU-OPS-001 | OPS | Desplegar cambios verificados sin romper producción | Alta | 5 | 5 | — | Aprobada |
+
+## Épicas
+
+| Épica | Historias |
+|---|---|
+| Captación y reserva | HU-RES-001, HU-RES-002 |
+| Contenido del negocio | HU-INFO-001 .. HU-INFO-005 |
+| Visibilidad local | HU-SEO-001 |
+| Experiencia | HU-EXP-001, HU-EXP-002, HU-EXP-003 |
+| Operación | HU-OPS-001 |
+
+---
+
+## HU-RES-001 - Reservar hora desde cualquier página
+
+Como cliente, quiero un botón para reservar mi hora visible en cualquier
+página, para agendar en el momento en que me decido sin buscar cómo
+hacerlo.
+
+- Epic: Captación y reserva
+- Actor / Persona: Cliente
+- Prioridad: Alta
+- Estimación: 3 SP
+- Fuente: objetivo del sitio (captación); ADR-001 de `architecture.md`.
+- Dependencias: HU-INFO-002 (la reserva es por sucursal).
+- Riesgo: Medio — la conversión depende de un enlace externo; un enlace
+  roto o una URL desactualizada corta la captación sin que nadie se entere.
+- Decisiones cerradas (2026-10-12): la reserva se hace en AgendaPro; el
+  sitio solo deriva (ADR-001).
+- RF relacionados: RF-RES-001.
+- RNF impactados: RNF-SEG-002 (enlaces externos), RNF-DATOS-001 (URL única).
+- Casos de uso relacionados: CU-RES-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given estoy en cualquier página, When busco cómo reservar, Then
+  veo un botón "Reservar" en la barra de navegación (escritorio y menú
+  móvil) sin hacer scroll.
+- CA-02: Given hago clic en cualquier botón "Reservar", When se abre la
+  reserva, Then se abre AgendaPro en una pestaña nueva y el sitio sigue
+  abierto en la pestaña original.
+- CA-03: Given la URL de AgendaPro cambia, When el desarrollador la
+  actualiza, Then basta con editar un solo lugar del código.
+
+### Reglas de negocio asociadas:
+
+- RN-01: Todo enlace a AgendaPro abre en pestaña nueva con
+  `rel="noopener noreferrer"`.
+- RN-02: **Pregunta abierta (2026-10-12):** hay dos sucursales (La Serena y
+  Coquimbo) y una sola URL de AgendaPro (`sucursal/400965`). Falta
+  confirmar con el dueño si cada sucursal tiene su propia URL de reserva.
+
+### Datos:
+
+- Entrada: clic del cliente.
+- Salida: navegación a la URL de AgendaPro de la sucursal.
+
+---
+
+## HU-RES-002 - Consultar por WhatsApp o teléfono
+
+Como cliente, quiero escribir por WhatsApp o llamar a la barbería desde el
+sitio, para resolver una duda antes de reservar.
+
+- Epic: Captación y reserva
+- Actor / Persona: Cliente
+- Prioridad: Alta
+- Estimación: 2 SP
+- Fuente: sitio actual (footer, ubicación).
+- Dependencias: HU-INFO-002.
+- Riesgo: Alto — hoy el teléfono publicado es de ejemplo
+  (`(123) 456-7890`) y el número de WhatsApp mostrado no coincide con el
+  del enlace.
+- RF relacionados: RF-RES-002.
+- RNF impactados: RNF-DATOS-001.
+- Casos de uso relacionados: CU-RES-001 (flujo alternativo).
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given estoy en el celular, When toco el teléfono, Then se abre el
+  marcador con el número real de la sucursal.
+- CA-02: Given toco "WhatsApp", When se abre la conversación, Then el
+  número coincide con el que el sitio muestra y el mensaje viene
+  prellenado.
+- CA-03: Given cualquier página del sitio, When reviso los datos de
+  contacto, Then son idénticos en el footer, la página de ubicación y los
+  datos estructurados.
+
+### Reglas de negocio asociadas:
+
+- RN-01: El número mostrado y el del enlace salen del mismo dato.
+
+### Datos:
+
+- Entrada: clic o toque.
+- Salida: `tel:` o enlace de WhatsApp con mensaje prellenado.
+
+---
+
+## HU-INFO-001 - Ver servicios con precio y duración
+
+Como cliente, quiero ver los servicios con su precio, duración y qué
+incluyen, para decidir qué reservar antes de entrar a AgendaPro.
+
+- Epic: Contenido del negocio
+- Actor / Persona: Cliente
+- Prioridad: Alta
+- Estimación: 3 SP
+- Fuente: sitio actual (`/servicios`).
+- Dependencias: Ninguna.
+- Riesgo: Medio — un precio desactualizado genera reclamos en el local.
+- RF relacionados: RF-INFO-001.
+- RNF impactados: RNF-PERF-004 (imágenes).
+- Casos de uso relacionados: CU-INFO-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given entro a `/servicios`, When carga la página, Then veo cada
+  servicio con nombre, descripción, precio en pesos chilenos y duración.
+- CA-02: Given elijo una categoría, When filtro, Then solo veo los
+  servicios de esa categoría y puedo volver a ver todos.
+- CA-03: Given veo un servicio, When quiero reservarlo, Then tengo a mano
+  el botón de reserva (HU-RES-001).
+
+### Reglas de negocio asociadas:
+
+- RN-01: Precios en CLP con formato `$15.000`.
+- RN-02: Las imágenes son propias de la barbería o con licencia
+  verificada; no se enlazan imágenes de terceros (hoy vienen de Unsplash).
+
+### Datos:
+
+- Entrada: categoría elegida (opcional).
+- Salida: lista de servicios (`src/data/servicesData.ts`).
+
+---
+
+## HU-INFO-002 - Ver sucursales, horarios y contacto correctos
+
+Como cliente, quiero ver la dirección, el mapa, el horario y el contacto de
+cada sucursal, para llegar sin perderme y no encontrarla cerrada.
+
+- Epic: Contenido del negocio
+- Actor / Persona: Cliente
+- Prioridad: Alta
+- Estimación: 3 SP
+- Fuente: sitio actual (`/ubicacion`, footer); NAP consistency de
+  `docs/archivo/WEB_REQUIREMENTS_CHECKLIST.md` §1.3.
+- Dependencias: Ninguna.
+- Riesgo: Alto — hoy hay horarios contradictorios ("Lun-Sáb 9:00-20:00"
+  frente a "Lun-Vie 10:00-20:00"), dos emails distintos y redes que no
+  coinciden entre el sitio y los datos estructurados.
+- RF relacionados: RF-INFO-003.
+- RNF impactados: RNF-DATOS-001.
+- Casos de uso relacionados: CU-INFO-002.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given entro a `/ubicacion`, When elijo una sucursal, Then veo su
+  dirección, mapa, horario por día y contacto.
+- CA-02: Given cualquier lugar del sitio donde aparece un horario, un
+  teléfono, un email o una red social, When los comparo, Then son
+  idénticos (incluidos los datos estructurados de `index.html`).
+- CA-03: Given el mapa embebido no carga, When miro la sucursal, Then sigo
+  viendo la dirección en texto y un enlace para abrirla en Google Maps.
+
+### Reglas de negocio asociadas:
+
+- RN-01: Sucursales vigentes: Barbería Royce La Serena (Larrain Alcalde
+  3108) y Barbería Royce Coquimbo (Pdte. Alessandri 1871). Confirmar con el
+  dueño antes de desplegar.
+- RN-02: Horario en formato de 24 horas, por día.
+
+### Datos:
+
+- Entrada: sucursal elegida.
+- Salida: datos de `src/data/locationsData.ts` y `src/config/constants.ts`.
+
+---
+
+## HU-INFO-003 - Conocer al equipo y la barbería
+
+Como cliente, quiero conocer a los barberos y la historia de la barbería, y
+ver reseñas de otros clientes, para confiar antes de reservar.
+
+- Epic: Contenido del negocio
+- Actor / Persona: Cliente
+- Prioridad: Media
+- Estimación: 2 SP
+- Fuente: sitio actual (`/equipo`, `/nosotros`, reseñas en la home).
+- Dependencias: Ninguna.
+- Riesgo: Bajo.
+- RF relacionados: RF-INFO-004, RF-INFO-005, RF-INFO-007.
+- RNF impactados: RNF-PERF-004.
+- Casos de uso relacionados: —
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given entro a `/equipo`, When carga, Then veo a cada barbero con
+  foto, nombre y especialidad.
+- CA-02: Given entro a `/nosotros`, When carga, Then veo la historia y los
+  valores de la barbería.
+- CA-03: Given estoy en la home, When llego a la sección de reseñas, Then
+  veo reseñas reales con su autor.
+
+### Reglas de negocio asociadas:
+
+- RN-01: Las reseñas publicadas son reales. No se publica una calificación
+  agregada en los datos estructurados que no salga de una fuente
+  verificable (Google).
+
+### Datos:
+
+- Salida: `src/data/teamData.ts`, `aboutData.ts`, `reviewsData.ts`.
+
+---
+
+## HU-INFO-004 - Ver productos disponibles
+
+> Actualizada (2026-10-12): queda `Propuesta` hasta decidir qué hace el
+> botón "Comprar" (`BR-009`).
+
+Como cliente, quiero ver los productos que vende la barbería con su
+precio, para saber qué puedo comprar en el local.
+
+- Epic: Contenido del negocio
+- Actor / Persona: Cliente
+- Prioridad: Baja
+- Estimación: 3 SP
+- Fuente: sitio actual (`/productos`).
+- Dependencias: Ninguna.
+- Riesgo: Medio — hoy los precios están en formato de dólares (`$25`), las
+  imágenes son de Unsplash y el botón "Comprar" no hace nada.
+- RF relacionados: RF-INFO-002.
+- RNF impactados: RNF-PERF-004.
+- Casos de uso relacionados: CU-INFO-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given entro a `/productos`, When carga, Then veo cada producto con
+  nombre, descripción, foto y precio en CLP.
+- CA-02: Given filtro por categoría o busco por texto, When escribo, Then
+  la lista se actualiza sin recargar la página.
+- CA-03: Given toco la acción de un producto, When se ejecuta, Then hace lo
+  que el texto del botón promete (decisión en `BR-009`).
+
+### Reglas de negocio asociadas:
+
+- RN-01: No se muestra un botón que no hace nada.
+
+### Datos:
+
+- Entrada: categoría y texto de búsqueda.
+- Salida: `src/data/productsData.ts`.
+
+---
+
+## HU-INFO-005 - Resolver dudas frecuentes
+
+Como cliente, quiero leer las preguntas frecuentes agrupadas por tema, para
+resolver mis dudas sin tener que escribir.
+
+- Epic: Contenido del negocio
+- Actor / Persona: Cliente
+- Prioridad: Media
+- Estimación: 2 SP
+- Fuente: sitio actual (`/preguntas-frecuentes`).
+- Dependencias: Ninguna.
+- Riesgo: Bajo.
+- RF relacionados: RF-INFO-006, RF-SEO-002.
+- RNF impactados: RNF-A11Y-002.
+- Casos de uso relacionados: —
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given entro a `/preguntas-frecuentes`, When elijo una categoría,
+  Then veo solo sus preguntas.
+- CA-02: Given abro una pregunta con el teclado, When presiono Enter o
+  Espacio, Then se despliega la respuesta y el lector de pantalla anuncia
+  que está expandida.
+- CA-03: Given las preguntas de `faqData.ts`, When se generan los datos
+  estructurados `FAQPage`, Then contienen exactamente las mismas preguntas
+  y respuestas.
+
+### Datos:
+
+- Salida: `src/data/faqData.ts`.
+
+---
+
+## HU-SEO-001 - Aparecer en búsquedas locales
+
+Como dueño, quiero que la barbería aparezca con datos correctos cuando
+alguien busca "barbería en Coquimbo" o "barbería en La Serena", para
+recibir clientes nuevos.
+
+- Epic: Visibilidad local
+- Actor / Persona: Dueño (beneficiario), Buscador (actor técnico)
+- Prioridad: Alta
+- Estimación: 5 SP
+- Fuente: `docs/archivo/WEB_REQUIREMENTS_CHECKLIST.md` §1.
+- Dependencias: HU-INFO-002 (los datos tienen que ser correctos antes de
+  publicarlos a Google).
+- Riesgo: Alto — hoy el JSON-LD dice país `ES`, coordenadas `0,0`, una
+  imagen inexistente y una calificación fija; el sitemap omite dos rutas.
+  Publicar datos erróneos a Google es peor que no publicar nada.
+- RF relacionados: RF-SEO-001, RF-SEO-002, RF-SEO-003.
+- RNF impactados: RNF-SEO-001, RNF-SEO-002, RNF-SEO-003.
+- Casos de uso relacionados: —
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given cada ruta pública, When la inspecciono, Then tiene título,
+  descripción, canonical y metadatos Open Graph propios.
+- CA-02: Given los datos estructurados del sitio, When los paso por la
+  prueba de resultados enriquecidos de Google, Then no hay errores y
+  describen las dos sucursales con dirección, país `CL`, coordenadas y
+  horario reales.
+- CA-03: Given `sitemap.xml`, When lo comparo con `ROUTES`, Then contiene
+  todas las rutas públicas.
+
+### Reglas de negocio asociadas:
+
+- RN-01: Nada en los datos estructurados que no sea verificable
+  (calificaciones, acciones de reserva a URLs inexistentes).
+
+---
+
+## HU-EXP-001 - Sitio rápido y fluido en el celular
+
+Como cliente que entra desde el celular con datos móviles, quiero que el
+sitio cargue rápido y el scroll sea fluido, para no abandonarlo antes de
+ver los servicios.
+
+- Epic: Experiencia
+- Actor / Persona: Cliente
+- Prioridad: Alta
+- Estimación: 8 SP
+- Fuente: auditoría Lighthouse del 2026-03-11
+  (`docs/archivo/ANIMATION_OPTIMIZATION_PLAN.md`) y auditoría del
+  2026-10-12.
+- Dependencias: Ninguna.
+- Riesgo: Alto — el LCP depende de un PNG de ~1 MB que se precarga y no se
+  usa; cuatro componentes se re-renderizan en cada frame de scroll.
+- RF relacionados: —
+- RNF impactados: RNF-PERF-001 .. RNF-PERF-006, RNF-COMP-001.
+- Casos de uso relacionados: —
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given un celular de gama media con 4G (perfil móvil de
+  Lighthouse), When abro la home, Then el LCP es ≤ 2,5 s y el CLS ≤ 0,1.
+- CA-02: Given hago scroll por toda la home, When grabo con el panel
+  Performance, Then no hay tareas largas (> 50 ms) causadas por el scroll y
+  ningún componente se re-renderiza por cada evento de scroll.
+- CA-03: Given un ancho de 360 px, When recorro cada página, Then no hay
+  scroll horizontal ni texto cortado.
+
+---
+
+## HU-EXP-002 - Sitio accesible y respetuoso con el movimiento
+
+Como cliente que navega con teclado, lector de pantalla o que tiene
+activada la reducción de movimiento, quiero usar el sitio completo sin
+barreras ni mareos, para reservar como cualquier otra persona.
+
+- Epic: Experiencia
+- Actor / Persona: Cliente
+- Prioridad: Media
+- Estimación: 5 SP
+- Fuente: WCAG 2.1 AA; `docs/archivo/WEB_REQUIREMENTS_CHECKLIST.md` §4.
+- Dependencias: Ninguna.
+- Riesgo: Medio — el parallax por JavaScript ignora hoy
+  `prefers-reduced-motion`; el menú móvil usa `role="menu"` sin gestión de
+  foco.
+- RF relacionados: —
+- RNF impactados: RNF-A11Y-001 .. RNF-A11Y-004.
+- Casos de uso relacionados: —
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given navego solo con teclado, When recorro una página, Then puedo
+  llegar a todos los enlaces y botones, veo dónde está el foco y el primer
+  Tab ofrece "saltar al contenido".
+- CA-02: Given tengo activada la reducción de movimiento en el sistema,
+  When recorro el sitio, Then no hay parallax, scroll suave ni animaciones
+  de desplazamiento.
+- CA-03: Given abro el menú móvil, When navego con teclado, Then el foco
+  entra al menú, Escape lo cierra y el foco vuelve al botón que lo abrió.
+- CA-04: Given cada ruta, When corro Lighthouse, Then la puntuación de
+  accesibilidad es ≥ 95.
+
+---
+
+## HU-EXP-003 - Mensaje claro si algo falla o la página no existe
+
+Como cliente, si entro a una dirección que no existe o algo falla al
+cargar, quiero un mensaje claro y una forma de seguir, para no quedarme
+frente a una pantalla en blanco.
+
+- Epic: Experiencia
+- Actor / Persona: Cliente
+- Prioridad: Alta
+- Estimación: 3 SP
+- Fuente: auditoría del 2026-10-12 (no hay ruta 404 ni rewrite SPA).
+- Dependencias: HU-OPS-001 (el rewrite vive en la configuración del
+  hosting).
+- Riesgo: Alto — sin rewrite, recargar `/servicios` en producción da un 404
+  del hosting.
+- RF relacionados: RF-NAV-002, RF-NAV-003.
+- RNF impactados: RNF-CONF-001, RNF-CONF-002.
+- Casos de uso relacionados: CU-EXP-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given estoy en `/servicios` en producción, When recargo la página,
+  Then se muestra `/servicios`, no un error del hosting.
+- CA-02: Given escribo una ruta que no existe, When carga, Then veo una
+  página "no encontrada" con la identidad de la barbería, un enlace al
+  inicio y el botón de reservar.
+- CA-03: Given una sección falla al renderizar, When ocurre el error, Then
+  veo un mensaje y un botón para reintentar; el resto del sitio (navbar y
+  footer) sigue funcionando.
+- CA-04: Given tenía el sitio abierto y se desplegó una versión nueva, When
+  navego a una página que no había cargado, Then la página carga (con una
+  recarga automática como máximo), sin pantalla en blanco.
+
+---
+
+## HU-OPS-001 - Desplegar cambios verificados sin romper producción
+
+Como desarrollador, quiero que cada cambio se verifique automáticamente y
+se pueda probar en un preview antes de llegar a producción, para desplegar
+sin miedo y volver atrás rápido si algo sale mal.
+
+- Epic: Operación
+- Actor / Persona: Desarrollador
+- Prioridad: Alta
+- Estimación: 5 SP
+- Fuente: fase de despliegue (2026-10-12); ADR-003.
+- Dependencias: Ninguna.
+- Riesgo: Medio — hoy `npm run lint` falla con 20 errores y no hay CI ni
+  tests.
+- RF relacionados: RF-OPS-001, RF-OPS-002.
+- RNF impactados: RNF-MANT-001, RNF-MANT-002, RNF-SEG-001, RNF-SEG-003.
+- Casos de uso relacionados: CU-OPS-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given abro un PR, When el CI corre, Then ejecuta lint, chequeo de
+  tipos, tests y build, y un paso roto bloquea el merge.
+- CA-02: Given abro un PR, When Vercel termina, Then hay una URL de preview
+  con ese cambio.
+- CA-03: Given se integra un PR a `master`, When Vercel despliega, Then
+  producción queda con el cambio y las cabeceras de seguridad activas.
+- CA-04: Given un despliegue rompe producción, When lo detecto, Then puedo
+  volver al despliegue anterior en menos de 5 minutos.
+
+---
+
+## Documentos relacionados
+
+- [`casos-uso.md`](./casos-uso.md)
+- [`rf-rnf-catalogo.md`](./rf-rnf-catalogo.md)
+- [`backlog.md`](./backlog.md)
