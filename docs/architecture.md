@@ -125,8 +125,10 @@ No hay gestor de estado global (ADR-004).
   - Global en `App.tsx` con `CatastrophicError`, para errores fuera de
     las páginas (router, Lenis, layout).
   - Un único `reportError` registra los errores (hoy en consola).
-- **Gap:** no hay recuperación ante un chunk viejo tras un redeploy
-  (`BR-020`).
+- Recuperación de chunks (`BR-020`, `src/utils/chunkRecovery.ts`): ante
+  `vite:preloadError` recarga una vez; si vuelve a fallar en 10 s, el
+  error llega al `RouteErrorBoundary`. Depende de que `vercel.json`
+  responda 404 a los assets inexistentes (`BR-002`).
 
 ## 8. SEO
 

@@ -261,3 +261,34 @@ consola sin violaciones de CSP).
 - Cobertura: 5,91 / 23,68 / 20,77 / 5,91 → umbral 5/23/20/5.
 - Verificación local: 12 tests, lint, tipos y build OK. Pendiente: forzar
   un error en el preview para verlo en el navegador.
+
+**Cierre (2026-10-12):** integrado en el PR #11; en producción las rutas
+responden 200 y el bundle publicado contiene `PageError`.
+
+---
+
+<a id="br-020"></a>
+
+## BR-020 — Recuperación ante un chunk inexistente tras un despliegue
+
+**Notas de construcción (2026-10-12):**
+- `src/utils/chunkRecovery.ts` (carpeta nueva `utils/`, agregada a la tabla
+  de capas de la guía):
+  - `shouldReloadAfterChunkError(storage, now)`: función pura; recarga si
+    no hubo otra recarga en los últimos 10 s y anota la marca en
+    `sessionStorage`. Si el storage está bloqueado no recarga (sin la
+    marca no se puede evitar un bucle) y no lanza.
+  - `installChunkRecovery(window)`: escucha `vite:preloadError`; si
+    corresponde, `preventDefault()` y `location.reload()`. Si no, el error
+    sigue su curso y lo muestra `PageError` (`BR-019`).
+- `main.tsx` lo instala antes de montar la app.
+- Por qué funciona: `vercel.json` deja `/assets/*` fuera del rewrite
+  (`BR-002`), así que un chunk viejo responde 404 real y Vite emite el
+  evento.
+- Test-first (`chunkRecovery.test.ts`, 6 casos, con triangulación de la
+  ventana: primera vez, dentro, justo al borde y storage bloqueado; más el
+  listener con una ventana falsa).
+- Cobertura: 6,53 / 31,76 / 22,78 / 6,53 → umbral 6/31/22/6.
+- Verificación local: 18 tests, lint, tipos y build OK. CP-CONF-002 en
+  real: con el sitio abierto, desplegar otra versión y navegar a una ruta
+  no visitada (se comprueba en el próximo despliegue).
