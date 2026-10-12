@@ -18,6 +18,7 @@ const ServicesPage = lazy(() => import("./pages/ServicesPage").then(m => ({ defa
 const TeamPage = lazy(() => import("./pages/TeamPage").then(m => ({ default: m.TeamPage })));
 const AboutPage = lazy(() => import("./pages/AboutPage").then(m => ({ default: m.AboutPage })));
 const FAQPage = lazy(() => import("./pages/FAQPage").then(m => ({ default: m.FAQPage })));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
 
 function App() {
   const lenis = useLenis();
@@ -99,6 +100,18 @@ function App() {
                     <ErrorBoundary fallback={<ErrorFallback pageName="Preguntas Frecuentes" />}>
                       <Suspense fallback={<Loading />}>
                         <FAQPage />
+                      </Suspense>
+                    </ErrorBoundary>
+                  }
+                />
+
+                {/* Cualquier ruta inexistente (BR-003) */}
+                <Route
+                  path="*"
+                  element={
+                    <ErrorBoundary fallback={<ErrorFallback />}>
+                      <Suspense fallback={<Loading />}>
+                        <NotFoundPage />
                       </Suspense>
                     </ErrorBoundary>
                   }

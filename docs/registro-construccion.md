@@ -79,3 +79,32 @@ Formato de cada entrada:
 - Verificación: `npx eslint . --max-warnings=0` sin errores, `tsc -b`
   limpio y `npm run build` OK. Pendiente: recorrer la home en el preview
   (Hero depende de `useLenisReady`).
+
+---
+
+<a id="br-003"></a>
+
+## BR-003 — Página 404 con identidad de marca
+
+**Notas de construcción (2026-10-12):**
+- `src/pages/NotFoundPage.tsx` + `NotFoundPage.module.css`, cargada con
+  `lazy()` en una ruta `path="*"` dentro del `Layout` (navbar y footer
+  visibles), con su `ErrorBoundary` y `Suspense` como las demás rutas.
+- Contenido: "404" con franjas de poste de barbero (rojo de marca y
+  blanco) que se desplazan, título, texto en tuteo, "Volver al inicio"
+  (`<Link>`) y "Reservar hora" (`<a>` a AgendaPro con
+  `rel="noopener noreferrer"` y aviso de pestaña nueva para lectores de
+  pantalla). Idea adaptada del barrido de radar de la 404 de RadarOP.
+- `<title>` propio y `<meta name="robots" content="noindex">` con
+  `Helmet` directo: no usa `SEOHelmet` porque una 404 no lleva canonical.
+- Estilos solo con tokens existentes (`--color-background-inverse`,
+  `--color-white`, `--color-accent-500`, espaciado, tipografía, radio) y
+  `color-mix()`. Con `prefers-reduced-motion: reduce` no hay animaciones.
+- Nueva constante `BOOKING` en `src/config/constants.ts` con la URL de
+  AgendaPro. Por ahora solo la usa la 404; `BR-005` migra ahí los otros 4
+  CTAs.
+- Test: pendiente de `BR-030` (no hay runner). Queda como criterio
+  abierto del ticket.
+- Verificación: `eslint --max-warnings=0` y `npm run build` OK (chunk de
+  0,74 KB gzip). Pendiente: revisar `/no-existe` en el navegador y en el
+  preview de Vercel (`BR-002`).

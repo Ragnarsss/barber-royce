@@ -143,8 +143,8 @@ Criterios de aceptación:
 
 #### BR-003 — Página 404 con identidad de marca
 
-- Prioridad: P0 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Prioridad: P0 · Esfuerzo: S · Depende de: BR-030 (solo para el test)
+- Estado: En curso (rama `feat/br-003-pagina-404`, PR pendiente)
 - Historia de usuario: HU-EXP-003 (CA-02)
 - RF/RNF: `RF-NAV-002`, `RNF-CONF-001`
 
@@ -160,6 +160,8 @@ Alcance:
 Criterios de aceptación:
 1. `/no-existe` muestra la 404 con ambos enlaces (CP-NAV-002).
 2. Test de render de la ruta comodín.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-003).
 
 #### BR-004 — Dejar `npm run lint` sin errores
 
@@ -836,7 +838,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 |---|---|---|---|---|---|---|
 | BR-001 | Ordenar documentación y proceso | A | P1 | M | En curso | — |
 | BR-002 | Vercel: rewrite, cabeceras, caché | B | P0 | S | Propuesta | — |
-| BR-003 | Página 404 | B | P0 | S | Propuesta | — |
+| BR-003 | Página 404 | B | P0 | S | En curso | BR-030 (test) |
 | BR-004 | Lint sin errores | B | P0 | S | En curso | BR-001 |
 | BR-005 | Datos del negocio: fuente única y reales | B | P0 | M | Bloqueada | — |
 | BR-006 | SEO técnico | B | P0 | S | Propuesta | BR-005 |

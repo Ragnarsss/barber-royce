@@ -1,0 +1,138 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  padding: var(--spacing-24) var(--spacing-4) var(--spacing-16);
+  background: var(--color-background-inverse);
+  color: var(--color-white);
+}
+
+.content {
+  max-width: 36rem;
+  text-align: center;
+  animation: enter 0.5s ease-out both;
+}
+
+/* "404" con franjas de poste de barbero que se desplazan */
+.code {
+  margin: 0 0 var(--spacing-4);
+  font-size: clamp(5rem, 22vw, 10rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-accent-500) 0 0.35em,
+    var(--color-white) 0.35em 0.7em
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: pole 6s linear infinite;
+}
+
+.title {
+  margin: 0 0 var(--spacing-4);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+.description {
+  margin: 0 0 var(--spacing-8);
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-white) 75%, transparent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-4);
+}
+
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  min-width: 13rem;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.primaryAction {
+  background: var(--color-accent-500);
+  color: var(--color-white);
+}
+
+.primaryAction:hover {
+  background: color-mix(in srgb, var(--color-accent-500) 85%, var(--color-white));
+  transform: translateY(-2px);
+}
+
+.secondaryAction {
+  border: 2px solid var(--color-white);
+  color: var(--color-white);
+}
+
+.secondaryAction:hover {
+  background: color-mix(in srgb, var(--color-white) 12%, transparent);
+  transform: translateY(-2px);
+}
+
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible {
+  outline: 3px solid var(--color-accent-500);
+  outline-offset: 3px;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pole {
+  from {
+    background-position: 0% 0%;
+  }
+  to {
+    background-position: 100% 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .content,
+  .code {
+    animation: none;
+  }
+
+  .primaryAction:hover,
+  .secondaryAction:hover {
+    transform: none;
+  }
+}
