@@ -224,3 +224,40 @@ consola sin violaciones de CSP).
   su rama.
 - Protección de `master` (pedida por el usuario el 2026-10-12): exige el
   check "Lint, tipos, tests y build" y la rama al día para integrar.
+
+---
+
+<a id="br-019"></a>
+
+## BR-019 — Error boundaries con `react-error-boundary` y `PageError`
+
+**Notas de construcción (2026-10-12):**
+- Dependencia nueva: `react-error-boundary` (patrón de RadarOP; ADR-005).
+- `src/components/common/ErrorBoundary/`:
+  - `RouteErrorBoundary.tsx`: `ErrorBoundary` + `Suspense` con
+    `resetKeys={[pathname]}`. Va en el `Layout`, alrededor del
+    `<Outlet />`.
+  - `PageError.tsx` + `.module.css`: `role="alert"`, texto en tuteo, sin
+    el mensaje técnico, "Reintentar" (`resetErrorBoundary`, sin recargar)
+    y "Volver al inicio". Estilos con tokens; las acciones repiten las de
+    `NotFoundPage` (segundo uso observado → se unifican en un `Button`
+    base en `BR-023`).
+  - `reportError.ts`: único punto de registro (consola). Ahí se conecta un
+    monitoreo futuro.
+  - Eliminados el `ErrorBoundary` de clase, `ErrorFallback` (usaba el
+    `Button` de shadcn sin estilos) y su CSS.
+- `App.tsx`: boundary global de `react-error-boundary` con
+  `CatastrophicError`; las 8 rutas quedan como elementos simples, sin los
+  bloques repetidos de `ErrorBoundary` + `Suspense` (de ~125 a ~55
+  líneas). Ayuda a `BR-026`.
+- Decisión: un solo boundary de páginas en el `Layout` en lugar de uno
+  por ruta. Mismo aislamiento (navbar y footer quedan fuera), cubre la
+  home, que antes no tenía, y una ruta nueva queda protegida sin tener
+  que acordarse.
+- Test-first del comportamiento en `RouteErrorBoundary.test.tsx` (5
+  casos): fallback con navbar visible, sin mensaje técnico, registro del
+  error, "Reintentar" recupera la página y navegar a otra ruta limpia el
+  error.
+- Cobertura: 5,91 / 23,68 / 20,77 / 5,91 → umbral 5/23/20/5.
+- Verificación local: 12 tests, lint, tipos y build OK. Pendiente: forzar
+  un error en el preview para verlo en el navegador.

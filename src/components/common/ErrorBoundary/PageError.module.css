@@ -1,0 +1,82 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: var(--spacing-24) var(--spacing-4) var(--spacing-16);
+  background: var(--color-background-inverse);
+  color: var(--color-white);
+}
+
+.content {
+  max-width: 34rem;
+  text-align: center;
+}
+
+.icon {
+  margin-bottom: var(--spacing-6);
+  color: var(--color-accent-500);
+}
+
+.title {
+  margin: 0 0 var(--spacing-4);
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+.description {
+  margin: 0 0 var(--spacing-8);
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-white) 75%, transparent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-4);
+}
+
+/* Mismas acciones que NotFoundPage; se unifican en un Button base en BR-023. */
+.primaryAction,
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2);
+  min-width: 13rem;
+  padding: var(--spacing-3) var(--spacing-6);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.primaryAction {
+  border: 0;
+  background: var(--color-accent-500);
+  color: var(--color-white);
+}
+
+.primaryAction:hover {
+  background: color-mix(in srgb, var(--color-accent-500) 85%, var(--color-white));
+}
+
+.secondaryAction {
+  border: 2px solid var(--color-white);
+  color: var(--color-white);
+}
+
+.secondaryAction:hover {
+  background: color-mix(in srgb, var(--color-white) 12%, transparent);
+}
+
+.primaryAction:focus-visible,
+.secondaryAction:focus-visible {
+  outline: 3px solid var(--color-accent-500);
+  outline-offset: 3px;
+}

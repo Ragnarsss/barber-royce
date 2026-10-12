@@ -1,3 +1,4 @@
-export { ErrorBoundary } from "./ErrorBoundary";
-export { ErrorFallback } from "./ErrorFallback";
+export { RouteErrorBoundary } from "./RouteErrorBoundary";
+export { PageError } from "./PageError";
 export { CatastrophicError } from "./CatastrophicError";
+export { reportError } from "./reportError";
