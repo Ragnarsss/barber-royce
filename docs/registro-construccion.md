@@ -218,3 +218,9 @@ consola sin violaciones de CSP).
   que restan son de herramientas de desarrollo (Lighthouse CI, Vitest) y
   el CI no las audita.
 - El despliegue no está en el workflow: lo hace Vercel.
+- **CP-OPS-002 (2026-10-12):** un PR temporal (#10) con un error de tipos
+  dejó el check en rojo en el paso "Tipos"
+  (`src/ciRoto.ts(1,14): error TS2322`). Se cerró sin integrar y se borró
+  su rama.
+- Protección de `master` (pedida por el usuario el 2026-10-12): exige el
+  check "Lint, tipos, tests y build" y la rama al día para integrar.
