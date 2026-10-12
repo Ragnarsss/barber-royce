@@ -789,7 +789,7 @@ Criterios de aceptación:
 #### BR-029 — CI en GitHub Actions
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: BR-004, BR-030
-- Estado: Propuesta
+- Estado: En curso (rama `ci/br-029-github-actions`)
 - Historia de usuario: HU-OPS-001 (CA-01)
 - RF/RNF: `RF-OPS-002`, `RNF-MANT-001`, `RNF-SEG-003`
 
@@ -803,6 +803,8 @@ Alcance:
 
 Criterios de aceptación:
 1. CP-OPS-002 pasa con un PR de prueba roto a propósito.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-029).
 
 #### BR-031 — Lighthouse CI con umbrales bloqueantes
 
@@ -876,7 +878,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-026 | Rutas desde `ROUTES` | H | P2 | S | Propuesta | BR-003, BR-019 |
 | BR-027 | Ordenar data, types e iconos | H | P2 | S | Propuesta | — |
 | BR-028 | Prettier y alias | H | P2 | S | Propuesta | BR-004 |
-| BR-029 | CI en GitHub Actions | H | P1 | S | Propuesta | BR-004, BR-030 |
+| BR-029 | CI en GitHub Actions | H | P1 | S | En curso | BR-004, BR-030 |
 | BR-030 | Vitest y primeros tests | H | P1 | M | En curso | — |
 | BR-031 | Lighthouse CI | H | P2 | S | Propuesta | BR-029, BR-002 |
 | BR-032 | Actualizar README | A | P2 | S | Propuesta | BR-001 |

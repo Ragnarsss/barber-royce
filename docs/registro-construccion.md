@@ -196,3 +196,25 @@ consola sin violaciones de CSP).
 - `coverage/` ignorado en Git y en ESLint.
 - Verificación: 7 tests en verde, `eslint --max-warnings=0`, `tsc -b` y
   `npm run build` OK.
+
+---
+
+<a id="br-029"></a>
+
+## BR-029 — CI en GitHub Actions
+
+**Notas de construcción (2026-10-12):**
+- `.github/workflows/ci.yml`: en `push` a `master` y en todo
+  `pull_request`. Un job (`verificacion`), un paso por comando: `npm ci`,
+  `eslint --max-warnings=0`, `tsc -b`, `test:coverage` (con el umbral de
+  `BR-030`), `build` y `npm audit --omit=dev --audit-level=high`.
+  `concurrency` cancela corridas viejas de la misma rama; permisos de solo
+  lectura; `timeout-minutes: 15`.
+- `.nvmrc` con Node 24 (la versión local), usado por `setup-node`.
+- `npm audit fix` sin `--force`: Vite pasa de 7.3.1 a 7.3.7 y corrige 8
+  vulnerabilidades altas del servidor de desarrollo. Aparecían en el
+  árbol de producción porque `@tailwindcss/vite` está en `dependencies`
+  (se retira en `BR-023`). Producción queda con 0 vulnerabilidades; las
+  que restan son de herramientas de desarrollo (Lighthouse CI, Vitest) y
+  el CI no las audita.
+- El despliegue no está en el workflow: lo hace Vercel.
