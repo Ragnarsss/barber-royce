@@ -1,13 +1,13 @@
-import { lazy, Suspense } from "react";
+import { lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
+import { ErrorBoundary } from "react-error-boundary";
 import { Layout } from "./components/layout/Layout/Layout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import { HomePage } from "./pages/HomePage";
-import { Loading } from "./components/common/Loading/Loading";
 import { useLenis } from "./hooks/useLenis";
 import { LenisProvider } from "./contexts/LenisContext";
-import { ErrorBoundary, ErrorFallback, CatastrophicError } from "./components/common/ErrorBoundary";
+import { CatastrophicError, reportError } from "./components/common/ErrorBoundary";
 import "./styles/global.css";
 import "./styles/variables.css";
 
@@ -24,98 +24,24 @@ function App() {
   const lenis = useLenis();
 
   return (
-    // NIVEL 1: Error Boundary Global
-    // Captura errores catastróficos (Lenis, Router, core libraries)
-    <ErrorBoundary fallback={<CatastrophicError />}>
+    // Último recurso: errores fuera de las páginas (router, Lenis, layout).
+    // Los errores de una página los contiene RouteErrorBoundary dentro del Layout (BR-019).
+    <ErrorBoundary fallback={<CatastrophicError />} onError={reportError}>
       <HelmetProvider>
         <LenisProvider lenis={lenis}>
           <BrowserRouter>
             <ScrollToTop />
             <Routes>
               <Route path="/" element={<Layout />}>
-                {/* HomePage: Sin boundary (data estática, bajo riesgo) */}
                 <Route index element={<HomePage />} />
-
-                {/* NIVEL 2: Boundaries por ruta lazy */}
-                {/* Captura errores de chunk loading y componentes de página */}
-
-                <Route
-                  path="servicios"
-                  element={
-                    <ErrorBoundary fallback={<ErrorFallback pageName="Servicios" />}>
-                      <Suspense fallback={<Loading />}>
-                        <ServicesPage />
-                      </Suspense>
-                    </ErrorBoundary>
-                  }
-                />
-
-                <Route
-                  path="productos"
-                  element={
-                    <ErrorBoundary fallback={<ErrorFallback pageName="Productos" />}>
-                      <Suspense fallback={<Loading />}>
-                        <ProductsPage />
-                      </Suspense>
-                    </ErrorBoundary>
-                  }
-                />
-
-                <Route
-                  path="equipo"
-                  element={
-                    <ErrorBoundary fallback={<ErrorFallback pageName="Equipo" />}>
-                      <Suspense fallback={<Loading />}>
-                        <TeamPage />
-                      </Suspense>
-                    </ErrorBoundary>
-                  }
-                />
-
-                <Route
-                  path="ubicacion"
-                  element={
-                    <ErrorBoundary fallback={<ErrorFallback pageName="Ubicación" />}>
-                      <Suspense fallback={<Loading />}>
-                        <LocationPage />
-                      </Suspense>
-                    </ErrorBoundary>
-                  }
-                />
-
-                <Route
-                  path="nosotros"
-                  element={
-                    <ErrorBoundary fallback={<ErrorFallback pageName="Nosotros" />}>
-                      <Suspense fallback={<Loading />}>
-                        <AboutPage />
-                      </Suspense>
-                    </ErrorBoundary>
-                  }
-                />
-
-                <Route
-                  path="preguntas-frecuentes"
-                  element={
-                    <ErrorBoundary fallback={<ErrorFallback pageName="Preguntas Frecuentes" />}>
-                      <Suspense fallback={<Loading />}>
-                        <FAQPage />
-                      </Suspense>
-                    </ErrorBoundary>
-                  }
-                />
-
+                <Route path="servicios" element={<ServicesPage />} />
+                <Route path="productos" element={<ProductsPage />} />
+                <Route path="equipo" element={<TeamPage />} />
+                <Route path="ubicacion" element={<LocationPage />} />
+                <Route path="nosotros" element={<AboutPage />} />
+                <Route path="preguntas-frecuentes" element={<FAQPage />} />
                 {/* Cualquier ruta inexistente (BR-003) */}
-                <Route
-                  path="*"
-                  element={
-                    <ErrorBoundary fallback={<ErrorFallback />}>
-                      <Suspense fallback={<Loading />}>
-                        <NotFoundPage />
-                      </Suspense>
-                    </ErrorBoundary>
-                  }
-                />
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Routes>
           </BrowserRouter>

@@ -4,6 +4,7 @@ import { Navbar } from "../Navbar/Navbar";
 import { Footer } from "../Footer/Footer";
 import { ScrollProgressBar } from "@/components/ui/ScrollProgressBar/ScrollProgressBar";
 import { SkipLink } from "@/components/common/SkipLink/SkipLink";
+import { RouteErrorBoundary } from "@/components/common/ErrorBoundary";
 
 export const Layout = () => {
   return (
@@ -12,7 +13,9 @@ export const Layout = () => {
       <ScrollProgressBar />
       <Navbar />
       <main id="main-content" role="main" className={styles.main}>
-        <Outlet />
+        <RouteErrorBoundary>
+          <Outlet />
+        </RouteErrorBoundary>
       </main>
       <Footer />
     </div>

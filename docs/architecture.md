@@ -116,11 +116,17 @@ No hay gestor de estado global (ADR-004).
 
 ## 7. Errores
 
-- `ErrorBoundary` propio (componente de clase) en dos niveles: global
-  (`CatastrophicError`) y por ruta lazy (`ErrorFallback`).
-- **Gap:** la home y el layout no tienen boundary propio; no hay
-  recuperación ante un chunk viejo tras un redeploy; el boundary es de
-  clase (`BR-019`, `BR-020`).
+- `react-error-boundary` en dos niveles (`BR-019`):
+  - `RouteErrorBoundary` envuelve el `<Outlet />` del `Layout`: cubre
+    todas las rutas (incluida la home) con un solo boundary y un
+    `Suspense`; navbar y footer siguen funcionando si una página falla;
+    se reinicia al cambiar de ruta. Fallback: `PageError` con
+    "Reintentar" y "Volver al inicio".
+  - Global en `App.tsx` con `CatastrophicError`, para errores fuera de
+    las páginas (router, Lenis, layout).
+  - Un único `reportError` registra los errores (hoy en consola).
+- **Gap:** no hay recuperación ante un chunk viejo tras un redeploy
+  (`BR-020`).
 
 ## 8. SEO
 
