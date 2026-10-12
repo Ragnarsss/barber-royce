@@ -6,7 +6,7 @@ import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
 import logoAvif from "@/assets/optimized/royce-barber-logo_46w.avif";
 import logo from "@/assets/royce-barber-logo.png";
 import { useNavbarScroll } from "@/hooks/useNavbarScroll";
-import { useLenisInstance } from "@/contexts/LenisContext";
+import { useLenisInstance } from "@/hooks/useLenisContext";
 import { getNavRoutes } from "@/config/routes";
 
 export const Navbar = () => {

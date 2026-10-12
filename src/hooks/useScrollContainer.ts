@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { useLenisInstance } from '@/contexts/LenisContext';
+import { useLenisInstance } from '@/hooks/useLenisContext';
 
 /**
  * Hook personalizado para manejar un contenedor con scroll horizontal

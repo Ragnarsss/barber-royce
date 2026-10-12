@@ -48,3 +48,34 @@ Formato de cada entrada:
   Zustand, axios, `AppError` completo.
 - Test: no aplica (solo documentación y configuración de ESLint).
 - Pendiente para cerrar: revisión del usuario, commit y PR.
+
+---
+
+<a id="br-004"></a>
+
+## BR-004 — Dejar `npm run lint` sin errores
+
+**Notas de construcción (2026-10-12):**
+- `LenisContext` partido en tres archivos para cumplir
+  `react-refresh/only-export-components`:
+  `src/contexts/lenisContextValue.ts` (contexto y tipo),
+  `src/contexts/LenisContext.tsx` (solo `LenisProvider`) y
+  `src/hooks/useLenisContext.ts` (`useLenisInstance`, `useLenisReady`,
+  `useRefreshLenis`). Los 5 consumidores cambian solo el import.
+- `setState` síncrono en el efecto: el Provider guarda qué instancia ya
+  se inicializó (`readyLenis`) y deriva `isReady` comparándola con la
+  actual. Mismo comportamiento: `false` hasta 100 ms después de tener
+  instancia, y `false` si la instancia pasa a `null`.
+- Se elimina `useLenisContext` (lanzaba si no había instancia; sin
+  consumidores).
+- `ui/button.tsx` y `ui/tabs.tsx` dejan de exportar `buttonVariants` y
+  `tabsListVariants` (sin consumidores externos). Se retiran del todo en
+  `BR-023`.
+- Eliminados por código muerto (adelanta parte de `BR-025`):
+  `ScrollProgressContext.tsx`, `useScrollProgressHooks.ts` y
+  `SmoothParallax.tsx`, su único consumidor, que nadie importa.
+- Test: no aplica (refactor sin cambio de comportamiento; no hay runner
+  hasta `BR-030`).
+- Verificación: `npx eslint . --max-warnings=0` sin errores, `tsc -b`
+  limpio y `npm run build` OK. Pendiente: recorrer la home en el preview
+  (Hero depende de `useLenisReady`).

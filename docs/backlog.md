@@ -164,7 +164,7 @@ Criterios de aceptación:
 #### BR-004 — Dejar `npm run lint` sin errores
 
 - Prioridad: P0 · Esfuerzo: S · Depende de: BR-001
-- Estado: Propuesta
+- Estado: En curso (rama `fix/br-004-lint-limpio`, PR pendiente)
 - Historia de usuario: HU-OPS-001 (CA-01)
 - RF/RNF: `RNF-MANT-001`
 
@@ -181,6 +181,8 @@ Alcance:
 
 Criterios de aceptación:
 1. `npm run lint -- --max-warnings=0` termina sin errores ni warnings.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-004).
 
 #### BR-005 — Datos del negocio con una sola fuente de verdad y valores reales
 
@@ -835,7 +837,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-001 | Ordenar documentación y proceso | A | P1 | M | En curso | — |
 | BR-002 | Vercel: rewrite, cabeceras, caché | B | P0 | S | Propuesta | — |
 | BR-003 | Página 404 | B | P0 | S | Propuesta | — |
-| BR-004 | Lint sin errores | B | P0 | S | Propuesta | BR-001 |
+| BR-004 | Lint sin errores | B | P0 | S | En curso | BR-001 |
 | BR-005 | Datos del negocio: fuente única y reales | B | P0 | M | Bloqueada | — |
 | BR-006 | SEO técnico | B | P0 | S | Propuesta | BR-005 |
 | BR-007 | Enlaces externos seguros | B | P0 | XS | Propuesta | BR-005 |
