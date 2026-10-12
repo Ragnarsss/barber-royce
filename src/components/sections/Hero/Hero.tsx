@@ -9,7 +9,7 @@ import heroImageAvif from "@/assets/optimized/hero_model_left_profile_842w.avif"
 import backgroundImage from "@/assets/hero_model_left_profile.png";
 
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
-import { useLenisReady, useRefreshLenis } from "@/contexts/LenisContext";
+import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
 import { staggerContainer, fadeInUp, fadeInLeft } from "@/config/animations.config";
 

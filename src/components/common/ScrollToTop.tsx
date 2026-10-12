@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useLenisInstance } from "@/contexts/LenisContext";
+import { useLenisInstance } from "@/hooks/useLenisContext";
 
 /**
  * Hace scroll al top y refresca Lenis cuando cambia la ruta.

@@ -8,7 +8,7 @@ import socialProofImage from "@/assets/social_proof_1.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
 import { useLenisScroll } from "@/hooks/useLenisScroll";
-import { useRefreshLenis } from "@/contexts/LenisContext";
+import { useRefreshLenis } from "@/hooks/useLenisContext";
 import { fadeInUp, fadeInLeft, fadeInRight } from "@/config/animations.config";
 
 export function SocialProof1() {

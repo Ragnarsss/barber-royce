@@ -48,3 +48,106 @@ Formato de cada entrada:
   Zustand, axios, `AppError` completo.
 - Test: no aplica (solo documentación y configuración de ESLint).
 - Pendiente para cerrar: revisión del usuario, commit y PR.
+
+---
+
+<a id="br-004"></a>
+
+## BR-004 — Dejar `npm run lint` sin errores
+
+**Notas de construcción (2026-10-12):**
+- `LenisContext` partido en tres archivos para cumplir
+  `react-refresh/only-export-components`:
+  `src/contexts/lenisContextValue.ts` (contexto y tipo),
+  `src/contexts/LenisContext.tsx` (solo `LenisProvider`) y
+  `src/hooks/useLenisContext.ts` (`useLenisInstance`, `useLenisReady`,
+  `useRefreshLenis`). Los 5 consumidores cambian solo el import.
+- `setState` síncrono en el efecto: el Provider guarda qué instancia ya
+  se inicializó (`readyLenis`) y deriva `isReady` comparándola con la
+  actual. Mismo comportamiento: `false` hasta 100 ms después de tener
+  instancia, y `false` si la instancia pasa a `null`.
+- Se elimina `useLenisContext` (lanzaba si no había instancia; sin
+  consumidores).
+- `ui/button.tsx` y `ui/tabs.tsx` dejan de exportar `buttonVariants` y
+  `tabsListVariants` (sin consumidores externos). Se retiran del todo en
+  `BR-023`.
+- Eliminados por código muerto (adelanta parte de `BR-025`):
+  `ScrollProgressContext.tsx`, `useScrollProgressHooks.ts` y
+  `SmoothParallax.tsx`, su único consumidor, que nadie importa.
+- Test: no aplica (refactor sin cambio de comportamiento; no hay runner
+  hasta `BR-030`).
+- Verificación: `npx eslint . --max-warnings=0` sin errores, `tsc -b`
+  limpio y `npm run build` OK. Pendiente: recorrer la home en el preview
+  (Hero depende de `useLenisReady`).
+
+---
+
+<a id="br-003"></a>
+
+## BR-003 — Página 404 con identidad de marca
+
+**Notas de construcción (2026-10-12):**
+- `src/pages/NotFoundPage.tsx` + `NotFoundPage.module.css`, cargada con
+  `lazy()` en una ruta `path="*"` dentro del `Layout` (navbar y footer
+  visibles), con su `ErrorBoundary` y `Suspense` como las demás rutas.
+- Contenido: "404" con franjas de poste de barbero (rojo de marca y
+  blanco) que se desplazan, título, texto en tuteo, "Volver al inicio"
+  (`<Link>`) y "Reservar hora" (`<a>` a AgendaPro con
+  `rel="noopener noreferrer"` y aviso de pestaña nueva para lectores de
+  pantalla). Idea adaptada del barrido de radar de la 404 de RadarOP.
+- `<title>` propio y `<meta name="robots" content="noindex">` con
+  `Helmet` directo: no usa `SEOHelmet` porque una 404 no lleva canonical.
+- Estilos solo con tokens existentes (`--color-background-inverse`,
+  `--color-white`, `--color-accent-500`, espaciado, tipografía, radio) y
+  `color-mix()`. Con `prefers-reduced-motion: reduce` no hay animaciones.
+- Nueva constante `BOOKING` en `src/config/constants.ts` con la URL de
+  AgendaPro. Por ahora solo la usa la 404; `BR-005` migra ahí los otros 4
+  CTAs.
+- Test: pendiente de `BR-030` (no hay runner). Queda como criterio
+  abierto del ticket.
+- Verificación: `eslint --max-warnings=0` y `npm run build` OK (chunk de
+  0,74 KB gzip). Pendiente: revisar `/no-existe` en el navegador y en el
+  preview de Vercel (`BR-002`).
+
+---
+
+<a id="br-002"></a>
+
+## BR-002 — Configurar Vercel: rewrite SPA, cabeceras de seguridad y caché
+
+**Notas de construcción (2026-10-12):**
+- `vercel.json` en la raíz:
+  - `framework: vite`, `npm run build`, salida `dist`.
+  - Rewrite `/((?!assets/).*)` → `/index.html`. Vercel sirve primero los
+    archivos que existen (`robots.txt`, `sitemap.xml`, favicons). Lo que
+    está bajo `/assets/` queda **fuera** del rewrite a propósito: un chunk
+    que ya no existe tras un redeploy responde 404 real en lugar de
+    `index.html` con tipo HTML, y eso es lo que `BR-020` necesita detectar.
+  - Cabeceras en todo el sitio: CSP, HSTS (2 años, `preload`),
+    `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` y
+    `X-Frame-Options: DENY` (junto a `frame-ancestors 'none'`, para
+    navegadores viejos).
+  - `/assets/*` con `Cache-Control: public, max-age=31536000, immutable`
+    (los nombres llevan hash).
+- CSP armada desde el inventario real de orígenes (`src/` e `index.html`):
+  - `script-src 'self' 'unsafe-hashes' 'sha256-1jAm…'`: el `asyncCSSPlugin`
+    de `vite.config.ts` agrega `onload="this.onload=null;this.rel='stylesheet'"`
+    a cada `<link>` de CSS; sin ese hash la CSP bloquearía el handler y **el
+    CSS no se aplicaría nunca**. Se evitó `'unsafe-inline'`. Acoplamiento
+    anotado en `BR-013`.
+  - `style-src 'unsafe-inline'`: framer-motion y React escriben estilos
+    inline; el riesgo de inyección de estilos es bajo en un sitio sin
+    contenido de usuarios.
+  - `img-src` incluye `images.unsplash.com` solo mientras exista
+    `BR-008`; se quita al cerrarlo.
+  - `frame-src` para el embed de Google Maps.
+  - Los bloques JSON-LD (`type="application/ld+json"`) no se ejecutan y la
+    CSP no los afecta.
+- Hallazgo: el mapa de Coquimbo apunta a Bogotá → agregado a `BR-005`.
+- Test: no aplica (configuración del hosting); se verifica con
+  CP-CONF-001 y CP-SEG-001 contra el preview.
+- Verificación local: JSON válido y patrón del rewrite probado con
+  `/servicios`, `/no-existe`, `/` (reescriben) y `/assets/js/x.js` (no
+  reescribe). **Pendiente:** conectar el repo en Vercel (lo hace el
+  usuario con su cuenta), y en el preview recargar las 7 rutas, revisar
+  `curl -I`, securityheaders.com y la consola sin violaciones de CSP.

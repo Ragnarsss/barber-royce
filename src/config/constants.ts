@@ -19,6 +19,12 @@ export const CONTACT = {
     },
 } as const;
 
+// Reserva (AgendaPro, ADR-001). Fuente única: BR-005 migra los demás CTAs aquí.
+export const BOOKING = {
+    url: "https://barberiaroyc.site.agendapro.com/cl/sucursal/400965",
+    label: "Reservar hora",
+} as const;
+
 // Horarios
 export const SCHEDULE = {
     weekdays: "Lun - Vie: 10:00 - 20:00",
