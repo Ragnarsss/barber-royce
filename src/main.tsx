@@ -9,6 +9,10 @@ import "@fontsource/montserrat/600.css";
 import "@fontsource/montserrat/700.css";
 
 import App from "./App.tsx";
+import { installChunkRecovery } from "./utils/chunkRecovery";
+
+// Recarga una vez si un chunk ya no existe tras un despliegue (BR-020).
+installChunkRecovery();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

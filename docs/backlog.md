@@ -332,7 +332,7 @@ Criterios de aceptación:
 #### BR-019 — Error boundaries con `react-error-boundary` y `PageError`
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: —
-- Estado: En curso (rama `feat/br-019-error-boundaries`)
+- Estado: Hecho (2026-10-12, rama `feat/br-019-error-boundaries` → master, PR #11)
 - Historia de usuario: HU-EXP-003 (CA-03)
 - RF/RNF: `RF-NAV-003`
 
@@ -357,7 +357,7 @@ Criterios de aceptación:
 #### BR-020 — Recuperación ante un chunk inexistente tras un despliegue
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: BR-019
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-020-recuperacion-chunks`)
 - Historia de usuario: HU-EXP-003 (CA-04)
 - RF/RNF: `RF-NAV-003`, `RNF-CONF-002`
 
@@ -371,6 +371,8 @@ Alcance:
 
 Criterios de aceptación:
 1. CP-CONF-002 pasa en el preview.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-020).
 
 ---
 
@@ -870,8 +872,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-016 | Parallax liviano y variantes | E | P1 | M | Propuesta | BR-015 |
 | BR-017 | Reduced motion en JS | E | P1 | S | Propuesta | — |
 | BR-018 | Transiciones de página | E | P3 | S | Propuesta | BR-017 |
-| BR-019 | Error boundaries | C | P1 | S | En curso | — |
-| BR-020 | Recuperación de chunks | C | P1 | S | Propuesta | BR-019 |
+| BR-019 | Error boundaries | C | P1 | S | Hecho | — |
+| BR-020 | Recuperación de chunks | C | P1 | S | En curso | BR-019 |
 | BR-021 | Fuente única de tokens | D | P2 | M | Propuesta | — |
 | BR-022 | Hex → tokens | D | P2 | M | Propuesta | BR-021 |
 | BR-023 | Retirar Tailwind y shadcn | D | P2 | L | Propuesta | BR-021 |

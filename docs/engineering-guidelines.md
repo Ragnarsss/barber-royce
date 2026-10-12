@@ -54,6 +54,7 @@ Los tests viven junto al archivo que prueban (`*.test.ts(x)`). Para renderizar u
 | `data/` | Contenido estático del negocio (servicios, equipo, FAQ). Solo datos tipados. | `src/data/*.ts` |
 | `config/` | Constantes de configuración: rutas, datos de contacto, URLs externas, animación. **Fuente única.** | `src/config/` |
 | `types/` | Tipos e interfaces. Sin valores de runtime. | `src/types/` |
+| `utils/` | Funciones puras o de infraestructura del navegador sin JSX (por ejemplo, la recuperación de chunks). | `src/utils/` |
 | `styles/` | Tokens de diseño y CSS global. | `src/styles/` |
 
 No mezclar capas: un componente no declara una URL externa ni un teléfono
