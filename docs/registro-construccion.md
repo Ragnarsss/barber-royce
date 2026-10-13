@@ -692,3 +692,25 @@ servido con `vite preview` y Chrome real:
 - Verificación local: 78 tests, lint, tipos y build OK. Pendiente (al
   final, en el preview): que "Agendar Ahora" abra AgendaPro en pestaña
   nueva y "Conocer Servicios" navegue sin recargar.
+
+---
+
+<a id="br-010"></a>
+
+## BR-010 — Preparar variables de entorno sin secretos
+
+**Notas de construcción (2026-10-12):**
+- `.gitignore`: `.env`, `.env.*` y la excepción `!.env.example`. Se
+  comprobó con `git check-ignore`: `.env` ignorado, `.env.example` no.
+- `.env.example` documentado y sin valores: hoy el sitio no usa ninguna
+  variable (SPA estática; la configuración vive en `src/config/`). Explica
+  las reglas para cuando se agregue una, entre ellas que **toda `VITE_*`
+  es pública** y que en producción se define en Vercel.
+- El README prometía `VITE_GA_TRACKING_ID`, `VITE_GMB_LOCATION_ID` y
+  `VITE_API_URL`, que ningún archivo usa; se corrige en `BR-032`.
+- Test (`src/test/env.test.ts`, 3 casos; los de `.gitignore` fallan contra
+  el anterior): `.gitignore` excluye los `.env` y deja pasar el ejemplo,
+  `.env.example` no asigna valores y toda `VITE_*` que use el código está
+  documentada allí.
+- Verificación local: 81 tests, lint y tipos OK. Al ser un cambio de
+  configuración del repo, no tiene nada que comprobar en el preview.

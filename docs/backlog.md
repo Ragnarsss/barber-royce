@@ -324,7 +324,7 @@ Criterios de aceptación:
 #### BR-010 — Preparar variables de entorno sin secretos
 
 - Prioridad: P1 · Esfuerzo: XS · Depende de: —
-- Estado: Propuesta
+- Estado: Hecho (2026-10-12, rama `chore/br-010-variables-entorno`; se verifica en el CI, no depende del preview)
 - Historia de usuario: HU-OPS-001 (CA-03)
 - RF/RNF: `RNF-SEG-002`
 
@@ -337,6 +337,8 @@ Alcance:
 
 Criterios de aceptación:
 1. `git check-ignore .env` lo reporta como ignorado.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-010).
 
 ---
 
@@ -962,7 +964,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-007 | Enlaces externos seguros | B | P0 | XS | En curso | — |
 | BR-008 | Fotos propias en lugar de Unsplash | B | P0 | M | Bloqueada | — |
 | BR-009 | Decidir botón "Comprar" | B | P1 | XS | Propuesta | — |
-| BR-010 | Variables de entorno | B | P1 | XS | Propuesta | — |
+| BR-010 | Variables de entorno | B | P1 | XS | Hecho | — |
 | BR-011 | Ruta crítica del LCP | F | P1 | S | En curso | — |
 | BR-012 | Imágenes pendientes | F | P1 | S | En curso | BR-011 |
 | BR-035 | Separar vendors del chunk de la app | F | P1 | S | En curso | BR-011 |
