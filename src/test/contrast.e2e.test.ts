@@ -45,7 +45,7 @@ describe.skipIf(!chromePath)("texto legible en todas las rutas (BR-045, RNF-A11Y
   let cleanup: () => void;
 
   beforeAll(async () => {
-    const built = await buildToTempDir();
+    const built = await buildToTempDir({ VITE_GA_MEASUREMENT_ID: "G-TEST123" });
     cleanup = built.cleanup;
     server = await preview({ configFile: false, logLevel: "silent", build: { outDir: built.outDir }, preview: { port: 0, host: "127.0.0.1" } });
     baseUrl = server.resolvedUrls?.local[0]?.replace(/\/$/, "") ?? "";

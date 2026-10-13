@@ -9,6 +9,7 @@ import { HomePage } from "./pages/HomePage";
 import { useLenis } from "./hooks/useLenis";
 import { LenisProvider } from "./contexts/LenisContext";
 import { CatastrophicError, reportError } from "./components/common/ErrorBoundary";
+import { analyticsEnabled } from "./analytics/enabled";
 import "./styles/global.css";
 import "./styles/variables.css";
 
@@ -44,7 +45,8 @@ function App() {
                 <Route path="ubicacion" element={<LocationPage />} />
                 <Route path="nosotros" element={<AboutPage />} />
                 <Route path="preguntas-frecuentes" element={<FAQPage />} />
-                <Route path="privacidad" element={<PrivacyPage />} />
+                {/* Solo existe si hay analítica configurada: es un borrador legal por validar (BR-044) */}
+                {analyticsEnabled() && <Route path="privacidad" element={<PrivacyPage />} />}
                 {/* Cualquier ruta inexistente (BR-003) */}
                 <Route path="*" element={<NotFoundPage />} />
               </Route>

@@ -1192,3 +1192,18 @@ servido con `vite preview` y Chrome real:
   4. (opcional) crear el `deploy hook` y pegar el Apps Script;
   5. cambiar un precio, publicar y ver el resultado: es el criterio de
      aceptación del ticket y de `HU-CNT-001` CA-04.
+
+---
+
+## BR-044 — Privacidad inerte por defecto
+
+**Notas de construcción (2026-10-13):**
+- `/privacidad` es un borrador legal que el dueño aún no valida. Sin analítica
+  configurada no hay nada que explicar, así que la ruta y el enlace del footer
+  no existen (`analyticsEnabled()` en `src/analytics/enabled.ts`; ruta marcada
+  con `requiresAnalytics`).
+- Con `VITE_GA_MEASUREMENT_ID` o `VITE_VERCEL_ANALYTICS=true` vuelven a existir.
+- Tests: `enabled.test.ts`, `Footer.test.tsx`, `routes.test.ts`; el e2e de
+  contraste construye con un ID de prueba para seguir cubriendo `/privacidad`.
+- **Por confirmar (usuario):** validar el texto de `/privacidad` antes de
+  activar la analítica.

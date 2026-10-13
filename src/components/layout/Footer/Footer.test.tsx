@@ -8,10 +8,21 @@ describe("Footer: privacidad (BR-037, BR-044)", () => {
     vi.unstubAllEnvs();
   });
 
-  it("enlaza a la política de privacidad", () => {
+  it("con analítica configurada enlaza a la política de privacidad", () => {
+    vi.stubEnv("VITE_GA_MEASUREMENT_ID", "G-TEST123");
+
     renderWithProviders(<Footer />);
 
     expect(screen.getByRole("link", { name: "PRIVACIDAD" })).toHaveAttribute("href", "/privacidad");
+  });
+
+  it("sin analítica no enlaza a la política de privacidad: esa página no se publica (BR-044)", () => {
+    vi.stubEnv("VITE_GA_MEASUREMENT_ID", "");
+    vi.stubEnv("VITE_VERCEL_ANALYTICS", "");
+
+    renderWithProviders(<Footer />);
+
+    expect(screen.queryByRole("link", { name: "PRIVACIDAD" })).not.toBeInTheDocument();
   });
 
   it("sin ID de medición no ofrece «Preferencias de privacidad»: no hay nada que configurar", () => {
