@@ -3,54 +3,56 @@ import styles from "./SocialProof1.module.css";
 import socialProof560w from "@/assets/optimized/social_proof_560w.webp";
 import socialProof1120w from "@/assets/optimized/social_proof_1120w.webp";
 import socialProof1680w from "@/assets/optimized/social_proof_1680w.webp";
-import socialProofAvif from "@/assets/optimized/social_proof_560w.avif";
-import socialProofImage from "@/assets/social_proof_1.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useParallaxLayers } from "@/hooks/useParallaxLayers";
-import { useLenisScroll } from "@/hooks/useLenisScroll";
+import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
+import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
+import { SCROLL_SPEED_FAST } from "@/utils/scrollMotion";
+import { siteText } from "@/content/siteContent";
 import { useRefreshLenis } from "@/hooks/useLenisContext";
 import { fadeInUp, fadeInLeft, fadeInRight } from "@/config/animations.config";
 
 export function SocialProof1() {
   const { ref, controls } = useScrollAnimation();
-  const { direction, velocity } = useLenisScroll();
+  const direction = useScrollDirection();
+  const speed = useScrollSpeed();
   const refreshLenis = useRefreshLenis();
 
   // Usar hook optimizado para parallax
-  const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>();
+  const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>();
+  const layers = {
+    background: useBackgroundLayer(scrollYProgress),
+    middle: useMiddleLayer(scrollYProgress),
+    foreground: useForegroundLayer(scrollYProgress),
+    slow: useSlowLayer(scrollYProgress),
+    fast: useFastLayer(scrollYProgress),
+  };
 
-  // Rayos láser diagonales - configuraciones centralizadas
+  // Rayos láser diagonales. Los que se mueven igual en x e y comparten un solo transform (BR-016)
   const diagonal1 = {
-    x: useTransform(layers.scrollYProgress, [0, 1], ["-100%", "100%"]),
-    y: useTransform(layers.scrollYProgress, [0, 1], ["100%", "-100%"]),
+    x: useTransform(scrollYProgress, [0, 1], ["-100%", "100%"]),
+    y: useTransform(scrollYProgress, [0, 1], ["100%", "-100%"]),
   };
-  const diagonal2 = {
-    x: useTransform(layers.scrollYProgress, [0, 1], ["-80%", "120%"]),
-    y: useTransform(layers.scrollYProgress, [0, 1], ["-80%", "120%"]),
-  };
-  const diagonal3 = {
-    x: useTransform(layers.scrollYProgress, [0, 1], ["120%", "-120%"]),
-    y: useTransform(layers.scrollYProgress, [0, 1], ["120%", "-120%"]),
-  };
-  const diagonal4 = {
-    x: useTransform(layers.scrollYProgress, [0, 1], ["-60%", "140%"]),
-    y: useTransform(layers.scrollYProgress, [0, 1], ["-60%", "140%"]),
-  };
+  const diagonal2Offset = useTransform(scrollYProgress, [0, 1], ["-80%", "120%"]);
+  const diagonal2 = { x: diagonal2Offset, y: diagonal2Offset };
+  const diagonal3Offset = useTransform(scrollYProgress, [0, 1], ["120%", "-120%"]);
+  const diagonal3 = { x: diagonal3Offset, y: diagonal3Offset };
+  const diagonal4Offset = useTransform(scrollYProgress, [0, 1], ["-60%", "140%"]);
+  const diagonal4 = { x: diagonal4Offset, y: diagonal4Offset };
   const diagonal5 = {
-    x: useTransform(layers.scrollYProgress, [0, 1], ["100%", "-100%"]),
-    y: useTransform(layers.scrollYProgress, [0, 1], ["150%", "-150%"]),
+    x: useTransform(scrollYProgress, [0, 1], ["100%", "-100%"]),
+    y: useTransform(scrollYProgress, [0, 1], ["150%", "-150%"]),
   };
 
   // Movimiento personalizado para testimonial
   const testimonialY = useTransform(
-    layers.scrollYProgress,
+    scrollYProgress,
     [0, 1],
     ["0%", "8%"],
   );
 
-  // React 19: Estilos condicionales optimizados automáticamente por el compiler
-  const hexMiddle2Style = { opacity: direction === 1 ? 0.6 : 0.5 };
-  const hexFg1Style = { scale: velocity > 1 ? 1.1 : 1 };
+  // Derivados de MotionValue: cambian sin re-renderizar (BR-015)
+  const hexMiddle2Style = { opacity: useTransform(direction, (value) => (value === 1 ? 0.6 : 0.5)) };
+  const hexFg1Style = { scale: useTransform(speed, (value) => (value > SCROLL_SPEED_FAST ? 1.1 : 1)) };
 
   return (
     <section
@@ -169,13 +171,8 @@ export function SocialProof1() {
           animate={controls}
           variants={fadeInUp}
         >
-          <h2 className={styles.title}>Respaldados por los mejores</h2>
-          <p className={styles.subtitle}>
-            Sabemos lo importante que es el cuidado e imagen para quienes viven
-            de ella. Desde hace años somos casa de destacados Artistas musicales
-            y Deportistas, quienes nos eligen por nuestro talento y elogian la
-            calidad y profesionalismo de nuestro servicio
-          </p>
+          <h2 className={styles.title}>{siteText("socialproof1.titulo")}</h2>
+          <p className={styles.subtitle}>{siteText("socialproof1.subtitulo")}</p>
         </motion.div>
 
         <div className={styles.content}>
@@ -193,9 +190,8 @@ export function SocialProof1() {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px"
                   type="image/webp"
                 />
-                <source srcSet={socialProofAvif} type="image/avif" />
                 <img
-                  src={socialProofImage}
+                  src={socialProof560w}
                   className={styles.image}
                   loading="lazy"
                   alt="Cliente satisfecho en Royce Barbería"

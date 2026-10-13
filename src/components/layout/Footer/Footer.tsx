@@ -11,7 +11,10 @@ import {
 } from "@/components/icons";
 import { getFooterRoutes } from "@/config/routes";
 import { CONTACT, SCHEDULE, SOCIAL_MEDIA } from "@/config/constants";
-import logo from "@/assets/royce-barber-logo.png";
+import { PrivacyPreferencesButton } from "@/analytics/PrivacyPreferencesButton";
+import { trackPhone, trackWhatsApp } from "@/analytics/track";
+import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
+import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
 
 export const Footer = () => {
   const footerRoutes = getFooterRoutes();
@@ -24,7 +27,15 @@ export const Footer = () => {
           <div className={styles.column}>
             <div className={styles.brand}>
               <h3 className={styles.title}>Barber Royce</h3>
-              <img src={logo} alt="Logo" className={styles.logoIcon} />
+              <img
+                src={logo46w}
+                srcSet={`${logo46w} 1x, ${logo92w} 2x`}
+                alt="Logo de Barbería Royce"
+                className={styles.logoIcon}
+                width="48"
+                height="48"
+                loading="lazy"
+              />
             </div>
             <p className={styles.description}>
               Estilo y elegancia para el hombre moderno. Más de 10 años de experiencia creando los mejores looks.
@@ -49,7 +60,9 @@ export const Footer = () => {
             <ul className={styles.contact}>
               <li className={styles.contactItem}>
                 <PhoneIcon className={styles.contactIcon} />
-                <a href={CONTACT.phone.link}>{CONTACT.phone.display}</a>
+                <a href={CONTACT.phone.link} onClick={trackPhone("footer")}>
+                  {CONTACT.phone.display}
+                </a>
               </li>
               <li className={styles.contactItem}>
                 <EmailIcon className={styles.contactIcon} />
@@ -95,6 +108,7 @@ export const Footer = () => {
               </a>
               <a
                 href={CONTACT.whatsapp.link}
+                onClick={trackWhatsApp("footer")}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
@@ -109,6 +123,7 @@ export const Footer = () => {
 
         <div className={styles.bottom}>
           <p>&copy; 2026 Barber Royce. Todos los derechos reservados.</p>
+          {import.meta.env.VITE_GA_MEASUREMENT_ID && <PrivacyPreferencesButton className={styles.privacyButton} />}
         </div>
       </div>
     </footer>

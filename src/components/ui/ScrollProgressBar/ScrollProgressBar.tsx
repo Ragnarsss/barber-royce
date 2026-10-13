@@ -1,14 +1,13 @@
 /**
  * Barra de progreso que se llena mientras haces scroll
- * Usa Lenis para tracking del progreso
+ * El progreso es un MotionValue: no re-renderiza al hacer scroll (BR-015)
  */
 
-import { motion } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 import { useLocation } from "react-router-dom";
-import { useLenisScroll } from "@/hooks/useLenisScroll";
 
 export const ScrollProgressBar = () => {
-  const { progress } = useLenisScroll();
+  const { scrollYProgress } = useScroll();
   const location = useLocation();
 
   // Solo mostrar en el homepage
@@ -40,7 +39,7 @@ export const ScrollProgressBar = () => {
           height: "4px",
           background: "linear-gradient(90deg, #d52323 0%, #fe0000 100%)",
           transformOrigin: "0%",
-          scaleX: progress,
+          scaleX: scrollYProgress,
           zIndex: 9999,
           boxShadow: "0 0 15px rgba(213, 35, 35, 0.6)",
         }}

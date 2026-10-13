@@ -1,28 +1,36 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useCallback } from "react";
 import styles from "./Hero.module.css";
 import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData.tsx";
 import heroImage842w from "@/assets/optimized/hero_model_left_profile_842w.webp";
 import heroImage1060w from "@/assets/optimized/hero_model_left_profile_1060w.webp";
 import heroImage1684w from "@/assets/optimized/hero_model_left_profile_1684w.webp";
-import heroImageAvif from "@/assets/optimized/hero_model_left_profile_842w.avif";
-import backgroundImage from "@/assets/hero_model_left_profile.png";
 
-import { useParallaxLayers } from "@/hooks/useParallaxLayers";
+import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
 import { staggerContainer, fadeInUp, fadeInLeft } from "@/config/animations.config";
+import { siteText } from "@/content/siteContent";
 
 export function Hero() {
-  const isReady = useLenisReady();
+  const isLenisReady = useLenisReady();
+  const reducedMotion = useReducedMotion() ?? false;
+  // Con "reducir movimiento" no hay Lenis: el Hero se muestra sin esperarlo (BR-017)
+  const isReady = isLenisReady || reducedMotion;
   const refreshLenis = useRefreshLenis();
 
   // OPTIMIZACIÓN FASE 3: will-change dinámico (solo durante scroll activo)
   const isScrolling = useLenisScrollActive();
 
-  const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>(undefined, {
+  const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>(undefined, {
     offset: ["start start", "end start"],
   });
+  const layers = {
+    background: useBackgroundLayer(scrollYProgress),
+    middle: useMiddleLayer(scrollYProgress),
+    foreground: useForegroundLayer(scrollYProgress),
+    fast: useFastLayer(scrollYProgress),
+  };
 
   const handleImageLoad = useCallback(() => {
     refreshLenis();
@@ -77,12 +85,8 @@ export function Hero() {
           sizes="(max-width: 768px) 100vw, (max-width: 1400px) 50vw, 842px"
           type="image/webp"
         />
-        <source
-          srcSet={heroImageAvif}
-          type="image/avif"
-        />
         <motion.img
-          src={backgroundImage}
+          src={heroImage842w}
           alt="Barbero profesional mostrando corte moderno premium en Royce Barbería"
           loading="eager"
           fetchPriority="high"
@@ -96,9 +100,7 @@ export function Hero() {
       <div className={styles.container}>
         <div className={styles.content}>
           <motion.h1 className={styles.title} variants={fadeInUp}>
-            Barbería Royce,
-            <br />
-            profesionalismo, pasión y arte.
+            {siteText("hero.titulo")}
           </motion.h1>
           <motion.p className={styles.subtitle} variants={fadeInUp}>
             Donde el estilo se encuentra con la excelencia. <strong>Un servicio dedicado, detallista y a tu altura.</strong> ¡Descubre una experiencia única en cada visita!

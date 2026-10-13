@@ -18,11 +18,13 @@
   color: var(--color-accent-500);
 }
 
+/* Color explícito: el h1 global es oscuro y sobre este fondo no se vería (BR-045). */
 .title {
   margin: 0 0 var(--spacing-4);
   font-size: var(--font-size-4xl);
   font-weight: var(--font-weight-bold);
   line-height: 1.2;
+  color: var(--color-white);
 }
 
 .description {

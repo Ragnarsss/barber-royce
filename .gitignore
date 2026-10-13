@@ -26,3 +26,8 @@ dist-ssr
 
 # Tests
 coverage
+
+# Variables de entorno: nunca se versionan (solo .env.example)
+.env
+.env.*
+!.env.example

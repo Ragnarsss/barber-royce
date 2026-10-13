@@ -1,0 +1,65 @@
+/* Fijo abajo: no mueve el contenido (CLS 0) y no tapa el navbar ni el botón de reservar. */
+.banner {
+  position: fixed;
+  right: var(--spacing-4);
+  bottom: max(var(--spacing-4), env(safe-area-inset-bottom));
+  left: var(--spacing-4);
+  z-index: 10000;
+  max-width: 34rem;
+  margin-inline: auto;
+  padding: var(--spacing-5);
+  border: 1px solid color-mix(in srgb, var(--color-white) 25%, transparent);
+  border-radius: var(--radius-md);
+  background: var(--color-background-inverse);
+  color: var(--color-white);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* Color explícito: el h1/h2 global es oscuro y sobre este fondo no se vería. */
+.title {
+  margin: 0 0 var(--spacing-2);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+}
+
+.text {
+  margin: 0 0 var(--spacing-4);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--color-white) 85%, transparent);
+}
+
+.link {
+  color: var(--color-white);
+  text-decoration: underline;
+}
+
+.actions {
+  display: flex;
+  gap: var(--spacing-3);
+}
+
+/* Un solo estilo para los dos botones: igual prominencia (RF-MED-003). */
+.button {
+  flex: 1;
+  padding: var(--spacing-3) var(--spacing-4);
+  border: 2px solid var(--color-white);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-white);
+  font: inherit;
+  font-weight: var(--font-weight-bold);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background: color-mix(in srgb, var(--color-white) 14%, transparent);
+}
+
+.button:focus-visible,
+.link:focus-visible {
+  outline: 3px solid var(--color-accent-500);
+  outline-offset: 3px;
+}

@@ -1,43 +1,17 @@
-import { defineConfig, type Plugin } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
-
-/**
- * Plugin para cargar CSS de forma asíncrona y eliminar render blocking
- * Usa el media="print" onload trick para diferir CSS no-crítico
- */
-function asyncCSSPlugin(): Plugin {
-  return {
-    name: 'async-css',
-    enforce: 'post',
-    apply: 'build',
-    transformIndexHtml(html) {
-      // Convertir <link rel="stylesheet"> a async loading
-      return html.replace(
-        /<link([^>]*?)rel="stylesheet"([^>]*?)>/gi,
-        (match) => {
-          // Extraer href
-          const hrefMatch = match.match(/href="([^"]+)"/);
-          if (!hrefMatch) return match;
-
-          const href = hrefMatch[1];
-
-          // Async CSS load pattern con media print trick
-          return `<link rel="preload" href="${href}" as="style" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="${href}"></noscript>`;
-        }
-      );
-    }
-  };
-}
+import { siteContentPlugin } from "./vite-plugins/siteContentPlugin";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    asyncCSSPlugin(), // Async CSS loading
+    // Contenido editable desde una hoja de Google, leído al construir (BR-040, ADR-008)
+    siteContentPlugin(),
     // Optimización automática de imágenes en build
     ViteImageOptimizer({
       // PNG optimization
@@ -76,18 +50,21 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Manual chunking strategy for better caching
-        manualChunks: {
-          // Vendor chunk for React and related libraries
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          // Animation libraries chunk
-          "animation-vendor": ["framer-motion", "lenis"],
-          // UI libraries chunk
-          "ui-vendor": [
-            "lucide-react",
-            "class-variance-authority",
-            "clsx",
-            "tailwind-merge",
-          ],
+        // Los vendors van en chunks aparte para que un cambio en el código de la app
+        // no invalide el caché de React y de las librerías de animación (BR-035).
+        // Con la forma de objeto, react-dom/client quedaba en el chunk de la app.
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+          if (/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//.test(id)) {
+            return "react-vendor";
+          }
+          if (/node_modules\/(framer-motion|motion-dom|motion-utils|lenis)\//.test(id)) {
+            return "animation-vendor";
+          }
+          if (/node_modules\/(lucide-react|class-variance-authority|clsx|tailwind-merge)\//.test(id)) {
+            return "ui-vendor";
+          }
+          return undefined;
         },
         // Asset file naming
         assetFileNames: (assetInfo) => {

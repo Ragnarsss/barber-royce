@@ -3,11 +3,11 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
 import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
-import logoAvif from "@/assets/optimized/royce-barber-logo_46w.avif";
-import logo from "@/assets/royce-barber-logo.png";
 import { useNavbarScroll } from "@/hooks/useNavbarScroll";
 import { useLenisInstance } from "@/hooks/useLenisContext";
 import { getNavRoutes } from "@/config/routes";
+import { BOOKING } from "@/config/constants";
+import { trackReserve } from "@/analytics/track";
 
 export const Navbar = () => {
   const { isScrolled } = useNavbarScroll();
@@ -58,11 +58,7 @@ export const Navbar = () => {
               srcSet={`${logo46w} 1x, ${logo92w} 2x`}
               type="image/webp"
             />
-            <source
-              srcSet={logoAvif}
-              type="image/avif"
-            />
-            <img src={logo} alt="Barber Royce" className={styles.logoImage} width="46" height="56" />
+            <img src={logo46w} alt="Barber Royce" className={styles.logoImage} width="46" height="56" />
           </picture>
         </Link>
 
@@ -88,9 +84,10 @@ export const Navbar = () => {
         <div className={styles.actions}>
           <a
             className={styles.ctaButton}
-            href="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965"
+            href={BOOKING.url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={trackReserve("navbar")}
           >
             Agendar Sesión
           </a>
@@ -129,11 +126,14 @@ export const Navbar = () => {
           </NavLink>
         ))}
         <a
-          href="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965"
+          href={BOOKING.url}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.ctaButton}
-          onClick={() => setIsMobileMenuOpen(false)}
+          onClick={() => {
+            trackReserve("navbar-movil")();
+            setIsMobileMenuOpen(false);
+          }}
         >
           Agendar Sesión
         </a>

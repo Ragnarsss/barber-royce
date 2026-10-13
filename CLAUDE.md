@@ -60,6 +60,11 @@ Tests junto al archivo que prueban (`*.test.ts(x)`); helper de render en `src/te
    de AgendaPro, sucursales) solo en `src/config/` y
    `src/data/locationsData.ts`. Nunca un literal en un componente ni en
    `index.html` sin un test que lo compare (`RNF-DATOS-001`).
+   El **catálogo** (servicios, productos, equipo, preguntas) y los textos
+   editables viven en la hoja de Google, con un respaldo en el repo
+   (`ADR-008`): se leen de `src/content/siteContent.ts`, nunca de
+   `src/content/snapshot/` (el respaldo lo actualiza el desarrollador cuando
+   el dueño confirma contenido nuevo). No se editan a mano en dos lugares.
 5. **Estilos:** CSS Modules + tokens de `src/styles/tokens/`. Nada de
    colores hex en los módulos ni clases de Tailwind (ADR-002).
 6. **Animación:** nunca `setState` por evento de scroll; usar `MotionValue`.
@@ -70,7 +75,10 @@ Tests junto al archivo que prueban (`*.test.ts(x)`); helper de render en `src/te
    están descartadas por ADR-001 y ADR-002.
 8. **Enlaces externos:** `<a target="_blank" rel="noopener noreferrer">`,
    nunca `<Link>`.
-9. **Secretos:** ninguno en el repo ni en variables `VITE_*`.
+9. **Secretos:** ninguno en el repo ni en variables `VITE_*`. La analítica
+   (`VITE_VERCEL_ANALYTICS`, `VITE_GA_MEASUREMENT_ID`) es **opt-in**: sin
+   variables no se carga ni se muestra nada, y GA nunca se carga antes del
+   consentimiento (`ADR-007`).
 10. Las decisiones del usuario se registran con fecha (en la HU, el ticket
     o un ADR); no se reescribe en silencio lo ya decidido.
 

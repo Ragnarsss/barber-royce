@@ -1,0 +1,45 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-brand-background);
+}
+
+.content {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: var(--spacing-12) var(--spacing-4) var(--spacing-16);
+  /* El fondo de la página es oscuro (como el de FAQ): texto claro (BR-045). */
+  color: var(--color-white);
+  line-height: 1.7;
+}
+
+.content section + section {
+  margin-top: var(--spacing-10);
+}
+
+.content h2 {
+  margin: 0 0 var(--spacing-4);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-white);
+}
+
+.content p {
+  margin: 0 0 var(--spacing-4);
+}
+
+.content a {
+  color: var(--color-white);
+  text-decoration: underline;
+}
+
+.content a:focus-visible {
+  outline: 3px solid var(--color-accent-500);
+  outline-offset: 2px;
+}
+
+.content code {
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-white) 14%, transparent);
+  font-size: 0.9em;
+}

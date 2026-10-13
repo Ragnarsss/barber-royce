@@ -3,6 +3,8 @@
  * DRY: Única fuente de verdad para navegación y SEO
  */
 
+import { analyticsEnabled } from "@/analytics/enabled";
+
 export interface RouteConfig {
     path: string;
     label: string;
@@ -10,6 +12,10 @@ export interface RouteConfig {
     description: string; // Para meta description
     showInNav: boolean;
     showInFooter: boolean;
+    /** false = la página lleva noindex y no va en el sitemap (por defecto, true) */
+    indexable?: boolean;
+    /** true = la página solo existe (y se enlaza) si hay alguna analítica configurada (BR-044) */
+    requiresAnalytics?: boolean;
 }
 
 export const ROUTES: Record<string, RouteConfig> = {
@@ -61,6 +67,16 @@ export const ROUTES: Record<string, RouteConfig> = {
         showInNav: true,
         showInFooter: true,
     },
+    privacy: {
+        path: "/privacidad",
+        label: "PRIVACIDAD",
+        title: "Política de Privacidad y Cookies | Royce Barbería",
+        description: "Qué datos recoge este sitio, para qué se usan y cómo puedes aceptar o rechazar la medición de visitas.",
+        showInNav: false,
+        showInFooter: true,
+        indexable: false,
+        requiresAnalytics: true,
+    },
     faq: {
         path: "/preguntas-frecuentes",
         label: "FAQ",
@@ -76,7 +92,7 @@ export const getNavRoutes = () =>
     Object.values(ROUTES).filter(route => route.showInNav);
 
 export const getFooterRoutes = () =>
-    Object.values(ROUTES).filter(route => route.showInFooter);
+    Object.values(ROUTES).filter(route => route.showInFooter && (!route.requiresAnalytics || analyticsEnabled()));
 
 export const getRouteByPath = (path: string) =>
     Object.values(ROUTES).find(route => route.path === path);

@@ -211,6 +211,8 @@ Alcance:
 4. Test que falla si aparece un literal de teléfono, email o
    `agendapro.com` fuera de `src/config/` y `locationsData.ts`.
 5. Navbar, CTA1 y CTA2 usan la constante `BOOKING` (creada en `BR-003`).
+   **Hecho en `BR-007`** (2026-10-12); la URL de AgendaPro ya existe una
+   sola vez en `src/config/constants.ts`, con test.
 
 > **Alcance ajustado (2026-10-12):** al revisar los orígenes para la CSP
 > (`BR-002`) apareció que el `mapUrl` de la sucursal de Coquimbo en
@@ -227,6 +229,10 @@ Criterios de aceptación:
 - Estado: Propuesta
 - Historia de usuario: HU-SEO-001 (CA-01, CA-02, CA-03), HU-INFO-005 (CA-03)
 - RF/RNF: `RF-SEO-001`, `RF-SEO-002`, `RF-SEO-003`, `RNF-SEO-002`
+
+> **Requisito añadido (2026-10-12, desde `BR-041`):** el `FAQPage` del
+> JSON-LD debe generarse desde `siteContent.faq` (`src/content/siteContent.ts`),
+> no copiarse a mano.
 
 **Origen (2026-10-12):** JSON-LD con `addressCountry: "ES"`, `postalCode:
 "Coquimbo"`, `geo` 0,0, imagen `/royce-barber-logo.png` inexistente,
@@ -252,8 +258,8 @@ Criterios de aceptación:
 
 #### BR-007 — Enlaces externos y de reserva seguros y correctos
 
-- Prioridad: P0 · Esfuerzo: XS · Depende de: BR-005
-- Estado: Propuesta
+- Prioridad: P0 · Esfuerzo: XS · Depende de: —
+- Estado: En curso (rama `fix/br-007-enlaces-seguros`; hecho en local, falta confirmar en el preview)
 - Historia de usuario: HU-RES-001 (CA-02)
 - RF/RNF: `RF-RES-001`, `RNF-SEG-002`
 
@@ -268,6 +274,12 @@ Alcance:
 Criterios de aceptación:
 1. Ningún `target="_blank"` sin `rel` en `src/` (CP-SEG-002).
 2. Ir de la home a `/servicios` desde CTA1 no recarga la página.
+
+> **Alcance ajustado (2026-10-12):** ya no depende de `BR-005`: la URL de
+> AgendaPro ya existe como `BOOKING.url` (creada en `BR-003`), así que se
+> usa aquí. Los datos de contacto reales siguen en `BR-005`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-007).
 
 #### BR-008 — Reemplazar imágenes de Unsplash por fotos propias optimizadas
 
@@ -288,6 +300,11 @@ Alcance:
 
 Criterios de aceptación:
 1. Ninguna petición a `images.unsplash.com` en el preview (CP-PERF-004).
+
+> **Hallazgo (2026-10-12):** la foto de `CTA2` (`cta2_crew.png`) mide solo
+> 455 × 705 px y se muestra estirada como fondo a pantalla completa
+> (1280 px y más): se ve borrosa. Al pedir las fotos propias, incluir una
+> versión de al menos 1920 px de ancho para esa sección.
 
 #### BR-009 — Decidir qué hace el botón "Comprar" de productos
 
@@ -311,7 +328,7 @@ Criterios de aceptación:
 #### BR-010 — Preparar variables de entorno sin secretos
 
 - Prioridad: P1 · Esfuerzo: XS · Depende de: —
-- Estado: Propuesta
+- Estado: Hecho (2026-10-12, rama `chore/br-010-variables-entorno`; se verifica en el CI, no depende del preview)
 - Historia de usuario: HU-OPS-001 (CA-03)
 - RF/RNF: `RNF-SEG-002`
 
@@ -324,6 +341,8 @@ Alcance:
 
 Criterios de aceptación:
 1. `git check-ignore .env` lo reporta como ignorado.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-010).
 
 ---
 
@@ -357,7 +376,7 @@ Criterios de aceptación:
 #### BR-020 — Recuperación ante un chunk inexistente tras un despliegue
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: BR-019
-- Estado: En curso (rama `feat/br-020-recuperacion-chunks`)
+- Estado: Hecho (2026-10-12, rama `feat/br-020-recuperacion-chunks` → master, PR #12; CP-CONF-002 se comprueba en el próximo despliegue)
 - Historia de usuario: HU-EXP-003 (CA-04)
 - RF/RNF: `RF-NAV-003`, `RNF-CONF-002`
 
@@ -375,6 +394,45 @@ Criterios de aceptación:
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-020).
 
 ---
+
+#### BR-045 — Títulos invisibles sobre fondo oscuro (404, error de página, privacidad)
+
+- Prioridad: P0 · Esfuerzo: S · Depende de: —
+- Estado: En curso (rama `fix/br-045-titulos-ilegibles`; hecho en local; el defecto de la 404 sigue en producción hasta integrarlo)
+- Historia de usuario: HU-EXP-003 (CA-02, CA-03), HU-EXP-002
+- RF/RNF: `RF-NAV-002`, `RF-NAV-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-12):** al verificar visualmente el aviso de consentimiento
+(`BR-037`) apareció que su título no se veía. Una captura de la 404 de
+producción confirmó el mismo defecto: `h1` en `rgb(23,23,23)` sobre fondo
+`rgb(23,23,23)` (contraste 1,0). Es un error mío de `BR-003` y `BR-019`.
+
+**Causa:** `styles/global.css` fija el color de `h1`-`h6` con
+`var(--color-text-primary)` (oscuro). Los títulos de `NotFoundPage`,
+`PageError` y `ConsentBanner` viven sobre un fondo oscuro y su `.title` no
+redefinía el color. La página de privacidad (`BR-044`) tenía el mismo
+problema en el título y en los párrafos: supuse un fondo claro y es oscuro
+(`--color-brand-background`).
+
+**Arreglo:**
+1. `color: var(--color-white)` en el `.title` de `NotFoundPage`, `PageError`
+   y `ConsentBanner`.
+2. `PrivacyPage`: texto, títulos y enlaces claros sobre el fondo oscuro.
+3. Test de contraste en Chrome real, ruta por ruta (`contrast.e2e.test.ts`),
+   y guarda estática del CSS de `PageError` (no se alcanza desde ninguna
+   ruta).
+
+> **Lección:** Lighthouse **no** detectó este defecto: el audit
+> `color-contrast` de la 404 de producción dio "OK" (axe lo deja como
+> "incompleto" por la animación). El gate de accesibilidad de `BR-031` no
+> sustituye a este test.
+
+Criterios de aceptación:
+1. Ningún texto de ninguna ruta tiene contraste < 1,5 con su fondo sólido
+   (`contrast.e2e.test.ts`).
+2. Con los CSS anteriores el test falla en la 404 y en la privacidad.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-045).
 
 ### Épica D — Sistema de estilos (ADR-002)
 
@@ -473,7 +531,7 @@ Criterios de aceptación:
 #### BR-014 — Lenis sin fugas ni observadores globales
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-004
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-014-lenis-sin-fugas`; hecho en local, falta verificar en el preview)
 - Historia de usuario: HU-EXP-001 (CA-02)
 - RF/RNF: `RNF-PERF-006`
 
@@ -495,10 +553,12 @@ Criterios de aceptación:
 1. Ningún listener ni observer queda vivo tras desmontar (test del hook).
 2. Una búsqueda de `window.lenis` en `src/` no devuelve resultados.
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-014).
+
 #### BR-015 — Cero re-renders por scroll
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-014
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-015-sin-rerender-scroll`; hecho en local, falta medir en el preview)
 - Historia de usuario: HU-EXP-001 (CA-02)
 - RF/RNF: `RNF-PERF-006`
 
@@ -516,10 +576,12 @@ Criterios de aceptación:
 1. CP-PERF-006: el Profiler no registra renders de esos componentes
    mientras se hace scroll.
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-015).
+
 #### BR-016 — Parallax liviano y variantes compartidas
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-015
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-016-parallax-liviano`; parte 1 y 2 hechas en local; falta medir en el preview; parte 3 pendiente de decisión)
 - Historia de usuario: HU-EXP-001 (CA-01, CA-02)
 - RF/RNF: `RNF-PERF-003`, `RNF-PERF-006`
 
@@ -533,14 +595,20 @@ Alcance:
    con una curva común, entrada con `whileInView` + `once` (patrón de
    RadarOP) en `animations.config.ts`.
 3. Reducir los decorativos de `SocialProof1` a los que se ven.
+   **Pendiente (2026-10-12):** requiere ver la sección renderizada para
+   decidir cuáles se pueden quitar sin cambiar el diseño; no se hizo a
+   ciegas. Se redujo lo que es visualmente idéntico (transforms
+   compartidos en x e y).
 
 Criterios de aceptación:
 1. CP-PERF-003 y CP-PERF-006 pasan en la home.
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-016).
+
 #### BR-017 — Respetar `prefers-reduced-motion` en JavaScript
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-017-reduced-motion`; hecho en local, falta verificar en el preview)
 - Historia de usuario: HU-EXP-002 (CA-02)
 - RF/RNF: `RNF-A11Y-003`
 
@@ -553,6 +621,8 @@ Alcance:
 
 Criterios de aceptación:
 1. CP-A11Y-003 pasa en las 7 rutas.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-017).
 
 #### BR-018 — Transiciones de página
 
@@ -578,7 +648,7 @@ Criterios de aceptación:
 #### BR-011 — Ruta crítica del LCP
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (rama `perf/br-011-ruta-critica-lcp`; hecho en local, falta confirmar en el preview)
 - Historia de usuario: HU-EXP-001 (CA-01)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-004`
 
@@ -591,16 +661,68 @@ al PNG original.
 Alcance:
 1. Quitar ese preload; precargar la imagen que de verdad es el LCP
    (`imagesrcset` del AVIF) o confiar en `fetchpriority="high"`.
-2. Orden `<source>` AVIF → WebP; `<img>` de respaldo en WebP.
+2. ~~Orden `<source>` AVIF → WebP~~; `<img>` de respaldo en WebP.
+
+> **Alcance ajustado (2026-10-12):** el orden AVIF → WebP **no se aplica**.
+> Al medir, cada AVIF pesa entre 3 % y 28 % más que el WebP del mismo
+> tamaño (hero 104 KB frente a 101 KB; fondo de Benefits 77 KB frente a
+> 65 KB), así que ponerlo primero empeoraba la carga. Los `<source>` AVIF,
+> que ningún navegador elegía, se eliminan junto con los archivos y la
+> generación en el script.
 3. Evaluar el preload de Montserrat 400/700 (ex `P002`) con medición.
 
 Criterios de aceptación:
-1. CP-PERF-001 pasa en la home; el PNG del hero no aparece en Network.
+1. El PNG del hero no aparece en Network y el preload coincide con el
+   `<picture>` (test `lcpPreload.test.ts`).
+2. CP-PERF-001 (LCP ≤ 2,5 s) **no se alcanza con este ticket**: tras
+   quitar el PNG el LCP baja de 7,5 s a 3,7 s en Lighthouse móvil local,
+   pero el resto es retraso de render por el JavaScript inicial. Pasa a
+   `BR-035`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-011).
+
+#### BR-035 — Separar los vendors del chunk de la app
+
+- Prioridad: P1 · Esfuerzo: S · Depende de: BR-011
+- Estado: En curso (rama `perf/br-035-js-inicial-home`; hecho en local, falta confirmar en el preview)
+- Historia de usuario: HU-EXP-001 (CA-01)
+- RF/RNF: `RNF-PERF-005`
+
+**Origen (2026-10-12):** tras `BR-011`, Lighthouse móvil local mide LCP
+3,7 s con la imagen ya descargada a los 0,5 s: retraso de render
+3.277 ms. Se sospechó del JavaScript inicial de la home.
+
+> **Alcance ajustado (2026-10-12, por medición):** el ticket nació como
+> "cargar con `lazy()` las secciones bajo el pliegue". Se probó y se
+> **descartó**: las siete secciones pesan 20 KB sin minificar, el LCP no
+> se movió (3,5 s antes y después) y el TBT solo bajó ~30 ms. El análisis
+> del chunk `index` (663 KB sin minificar) mostró dónde estaba el peso:
+> **541 KB eran `react-dom`**, que `manualChunks` en forma de objeto dejaba
+> en el chunk de la app. El ticket pasa a corregir eso.
+
+Alcance:
+1. `manualChunks` como función: `react`, `react-dom`, `react-router*` y
+   `scheduler` en `react-vendor`; `framer-motion`, `motion-*` y `lenis` en
+   `animation-vendor`; iconos y utilidades de clases en `ui-vendor`.
+2. Medir la línea base de `RNF-PERF-005`.
+
+Criterios de aceptación:
+1. El chunk de la app baja de ~240 KB a ~79 KB sin minificar y `react-dom`
+   queda en `react-vendor` (test `manualChunks.test.ts`).
+2. JavaScript de la carga inicial ≤ 200 KB gzip (CP-PERF-005): 160 KB.
+3. Un cambio solo en el código de la app no cambia el hash de
+   `react-vendor` ni de `animation-vendor` (se comprueba en el segundo
+   despliegue).
+
+El LCP ≤ 2,5 s **no se resuelve aquí**: la causa es renderizar solo en el
+cliente. Ver evidencia en `BR-034`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-035).
 
 #### BR-012 — Optimizar las imágenes que quedaron fuera
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: BR-011
-- Estado: Propuesta
+- Estado: En curso (rama `perf/br-012-imagenes-pendientes`; hecho en local, falta confirmar en el preview)
 - Historia de usuario: HU-EXP-001 (CA-01)
 - RF/RNF: `RNF-PERF-002`, `RNF-PERF-004`
 
@@ -615,12 +737,17 @@ Alcance:
 3. Borrar los assets sin uso.
 
 Criterios de aceptación:
-1. CP-PERF-002 y CP-PERF-004 pasan en las 7 rutas.
+1. CP-PERF-002 y CP-PERF-004 pasan en las 7 rutas. **Salvedad:** las
+   imágenes de servicios, productos y equipo siguen viniendo de
+   Unsplash hasta `BR-008`, así que esa parte de CP-PERF-004 (ninguna
+   petición a dominios de terceros) no puede cumplirse aquí.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-012).
 
 #### BR-013 — CSS crítico sin parpadeo
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (rama `perf/br-013-css-critico`; hecho en local, falta confirmar en el preview)
 - Historia de usuario: HU-EXP-001 (CA-01)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`
 
@@ -632,13 +759,18 @@ ex `P015` (critical CSS).
 Alcance:
 1. Medir con y sin el plugin.
 2. Dejar bloqueante el CSS de la carga inicial y diferir solo el de rutas
-   lazy, o retirar el plugin si no aporta.
+   lazy, o retirar el plugin si no aporta. **Resultado: se retira** (el
+   plugin solo tocaba el CSS principal del `index.html`; los CSS de rutas
+   lazy los gestiona Vite aparte).
 3. Si cambia o se retira el `onload` inline del plugin, actualizar o
-   quitar su hash en la CSP de `vercel.json` (`BR-002`).
+   quitar su hash en la CSP de `vercel.json` (`BR-002`). **Hecho:**
+   `script-src 'self'`.
 
 Criterios de aceptación:
 1. Sin FOUC visible en una carga con CPU 4x y 4G lenta; CP-PERF-001 y
    CP-PERF-002 no empeoran.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-013).
 
 ---
 
@@ -663,9 +795,15 @@ Alcance:
 Criterios de aceptación:
 1. CP-A11Y-001 y CP-A11Y-002 pasan.
 
+> **Hallazgo (2026-10-12):** en el footer, el título "Barber Royce" se ve
+> oscuro sobre fondo oscuro (casi ilegible; incumple `RNF-A11Y-004`).
+> Corregir su color en este ticket. También el `h2` rojo "¿Ya te decidiste
+> a andar con el flow?" de `CTA2` mide contraste 2,72 sobre su fondo
+> (WCAG pide 3 para texto grande).
+
 #### BR-034 — Spike: prerender de rutas para SEO
 
-- Prioridad: P2 · Esfuerzo: M · Depende de: BR-006
+- Prioridad: P1 · Esfuerzo: M · Depende de: BR-006
 - Estado: Propuesta (spike)
 - Historia de usuario: HU-SEO-001 (CA-01)
 - RF/RNF: `RNF-SEO-003`
@@ -673,6 +811,14 @@ Criterios de aceptación:
 **Origen (2026-10-12):** es una SPA; un crawler sin JavaScript solo ve los
 metadatos de la home. Google ejecuta JS, pero otros (WhatsApp, Facebook al
 compartir un enlace) no.
+
+> **Evidencia nueva (2026-10-12) → sube a P1:** además de SEO, es la
+> palanca real del LCP. Con la imagen del hero ya descargada a los
+> 0,5 s, Lighthouse móvil mide un retraso de render de 3.277 ms hasta
+> que React monta (LCP 3,5-3,7 s; objetivo 2,5 s). Ni quitar el PNG
+> (`BR-011`), ni diferir CSS (`BR-013`), ni dividir la home (`BR-035`)
+> lo mueven; con HTML prerenderizado el hero se pinta en el primer
+> pintado.
 
 Alcance:
 1. Evaluar prerender estático de las 7 rutas en el build (plugin de
@@ -825,9 +971,294 @@ Alcance:
    en las 7 rutas, perfil móvil.
 2. Accesibilidad y SEO ≥ 0,95 bloquean; rendimiento avisa (patrón de
    RadarOP).
+   **Límite conocido (2026-10-12, `BR-045`):** el audit de contraste de
+   Lighthouse no detectó un título invisible en producción; este gate no
+   reemplaza a `contrast.e2e.test.ts`.
 
 Criterios de aceptación:
 1. Un PR que baja la accesibilidad de 0,95 queda en rojo.
+
+### Épica I — Medición y privacidad
+
+> **Origen de la épica (2026-10-12):** pedido del usuario. El ítem diferido
+> "Analítica" de la §4 tenía como disparador el primer despliegue en
+> producción, que ya ocurrió. Decisiones por defecto en `ADR-007`, **por
+> confirmar con el usuario**. Todo es opt-in por variables de entorno: sin
+> variables, el sitio no carga ni muestra nada nuevo.
+
+#### BR-036 — Vercel Analytics, activable por variable
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-010
+- Estado: En curso (rama `feat/br-036-vercel-analytics`; código hecho en local, faltan los pasos manuales del usuario)
+- Historia de usuario: HU-MED-001 (CA-01, CA-02, CA-03)
+- RF/RNF: `RF-MED-001`, `RNF-PRIV-001`, `RNF-PERF-007`, `RNF-SEG-004`
+
+**Origen (2026-10-12):** pedido del usuario: ver cuántas personas visitan
+el sitio.
+
+Alcance:
+1. Dependencia `@vercel/analytics`.
+2. Un componente que carga Analytics solo si `VITE_VERCEL_ANALYTICS` es
+   `true`, de forma diferida (después del evento `load`), para no afectar el
+   LCP. Sin la variable, el código de Analytics no entra al bundle de
+   producción.
+3. `.env.example` documenta la variable.
+
+Criterios de aceptación:
+1. Un build sin la variable no contiene `/_vercel/insights` (HU-MED-001 CA-01).
+2. Con la variable `true`, la home pide el script de insights y la visita se
+   ve en el panel (CA-02). **Manual:** habilitar Analytics en Vercel.
+3. LCP y TBT dentro de los umbrales de `RNF-PERF-007` (CA-03).
+
+**Pasos manuales (del usuario):** Vercel → proyecto → Analytics → Enable;
+definir `VITE_VERCEL_ANALYTICS=true` en Settings → Environment Variables
+(Production) y volver a desplegar.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-036).
+
+#### BR-044 — Política de privacidad (borrador)
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: —
+- Estado: En curso (rama `feat/br-044-politica-privacidad`; hecho en local; el texto está por validar)
+- Historia de usuario: HU-MED-003 (CA-05)
+- RF/RNF: `RF-MED-005`
+
+**Origen (2026-10-12):** el consentimiento de `BR-037` necesita una página
+a la que enlazar.
+
+Alcance:
+1. Página `/privacidad` con `noindex`, enlazada desde el footer: qué datos
+   se recogen (solo si GA está activo), para qué, quién los trata, cookies
+   y cómo cambiar la elección, y contacto.
+2. Los datos del responsable (razón social, correo) salen de
+   `src/config/constants.ts`.
+
+> **Pendiente de validación:** el texto es un borrador técnico, no
+> asesoría legal. Debe revisarlo el dueño o un abogado antes de activar
+> Google Analytics en producción (Ley 19.628 y su actualización, Ley
+> 21.719).
+
+Criterios de aceptación:
+1. `/privacidad` carga, tiene `noindex` y los 4 apartados (CP-MED-005).
+2. Test de render.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-044).
+
+#### BR-037 — Consentimiento y Google Analytics 4
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-044, BR-030
+- Estado: En curso (rama `feat/br-037-consentimiento-ga4`; código hecho en local, faltan los pasos manuales del usuario)
+- Historia de usuario: HU-MED-003 (CA-01, CA-02, CA-03, CA-04), HU-MED-002 (CA-01, CA-02)
+- RF/RNF: `RF-MED-002`, `RF-MED-003`, `RF-MED-005`, `RNF-PRIV-001`, `RNF-PERF-007`, `RNF-SEG-004`, `RNF-A11Y-002`
+
+**Origen (2026-10-12):** pedido del usuario: Google Analytics.
+
+Alcance:
+1. Estado de consentimiento (`aceptado` | `rechazado` | `sin decidir`) en
+   `localStorage` con degradación sin storage, expuesto con un hook y
+   `useSyncExternalStore`.
+2. Cargador de GA4: solo si existe `VITE_GA_MEASUREMENT_ID` **y** hay
+   consentimiento; Consent Mode v2 en `denied` por defecto; el script se
+   inyecta con el DOM (sin script inline) para no abrir la CSP.
+3. Aviso de consentimiento accesible, con "Aceptar" y "Rechazar" del mismo
+   peso, que no tapa el navbar ni mueve el contenido (CLS 0); solo se
+   monta si GA está configurado.
+4. "Preferencias de privacidad" en el footer; al rechazar se detiene la
+   medición y se borran las cookies `_ga*`.
+5. CSP: `script-src` suma `https://www.googletagmanager.com`;
+   `connect-src` suma `https://www.google-analytics.com` y
+   `https://*.analytics.google.com`; `img-src` suma
+   `https://www.google-analytics.com`. Sigue sin `unsafe-inline`.
+
+Criterios de aceptación:
+1. Sin ID, o sin aceptar: 0 peticiones a Google y 0 cookies `_ga*`
+   (CP-MED-002, CP-PRIV-001), con tests.
+2. El aviso tiene los dos botones iguales y se usa solo con teclado
+   (CP-MED-003).
+3. CSP sin `unsafe-inline` ni `unsafe-eval` (CP-SEG-004).
+
+**Pasos manuales (del usuario):** crear la propiedad GA4 y copiar el ID
+`G-XXXXXXXXXX`; definir `VITE_GA_MEASUREMENT_ID` en Vercel (Production);
+validar el texto de `/privacidad`; volver a desplegar.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-037).
+
+#### BR-038 — Eventos de conversión y vistas por ruta
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-037
+- Estado: En curso (rama `feat/br-038-eventos-conversion`; código hecho en local; falta ver los eventos en GA4 con un ID real)
+- Historia de usuario: HU-MED-002 (CA-02, CA-03, CA-04)
+- RF/RNF: `RF-MED-004`, `RNF-PRIV-001`
+
+**Origen (2026-10-12):** medir si la web capta clientes.
+
+Alcance:
+1. `trackEvent(nombre, params)` que no hace nada sin consentimiento.
+2. `page_view` por cada cambio de ruta (la app es una SPA y GA4 no lo
+   detecta solo).
+3. `reserve_click`, `whatsapp_click` y `phone_click` con `section` (navbar,
+   hero, cta1, cta2, footer, ubicación, 404), sin datos personales y sin
+   retrasar la navegación del enlace.
+
+Criterios de aceptación:
+1. Con consentimiento, 3 rutas = 3 `page_view`; cada clic genera su evento
+   (CP-MED-004), con tests.
+2. Sin consentimiento, 0 eventos.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-038).
+
+### Épica J — Contenido editable desde una hoja de cálculo
+
+> **Origen de la épica (2026-10-12):** pedido del usuario: actualizar la
+> información estática (catálogo de servicios y productos, títulos)
+> desde una hoja de Google. Diseño y alternativas descartadas en
+> `ADR-008`: la hoja se lee **al construir** (el sitio sigue siendo
+> estático, `ADR-001`), publicada como CSV, con un respaldo versionado.
+
+#### BR-039 — Núcleo de contenido: CSV, validación y respaldo
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-030
+- Estado: En curso (rama `feat/br-039-contenido-nucleo`; hecho en local; sin pasos manuales)
+- Historia de usuario: HU-CNT-001 (CA-02, CA-03)
+- RF/RNF: `RF-CNT-002`, `RF-CNT-003`, `RNF-CONF-003`, `RNF-DATOS-002`
+
+**Origen (2026-10-12):** base común de la épica, sin red ni Vite, para
+poder probarla entera.
+
+Alcance:
+1. Lector de CSV (comillas, comas y saltos de línea dentro de una celda).
+2. Esquemas de `servicios`, `productos`, `equipo`, `preguntas` y `textos`
+   (campos obligatorios, precio entero CLP, largos máximos, ids únicos).
+3. Función pura `resolveContent(csvPorPestaña, snapshot)` que valida cada
+   pestaña por separado, usa el respaldo de las inválidas o ausentes y
+   devuelve también los avisos (pestaña, fila, campo).
+4. Respaldo (`snapshot`) inicial con el contenido actual de `src/data`.
+
+Criterios de aceptación:
+1. Una fila sin precio rechaza solo esa pestaña y el aviso nombra pestaña,
+   fila y campo (CP-CNT-002).
+2. Con pestañas ausentes, el resultado es igual al respaldo (CP-CNT-003).
+3. El respaldo cumple el mismo esquema (CP-DATOS-002).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-039).
+
+#### BR-040 — Descarga de la hoja al construir
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-039
+- Estado: En curso (rama `feat/br-040-descarga-hoja-build`; código hecho en local; faltan los pasos manuales del usuario)
+- Historia de usuario: HU-CNT-001 (CA-01, CA-02, CA-05)
+- RF/RNF: `RF-CNT-001`, `RF-CNT-003`, `RNF-CONF-003`, `RNF-SEG-004`
+
+**Origen (2026-10-12):** conectar la hoja sin romper el build.
+
+Alcance:
+1. Plugin de Vite que, al construir, descarga cada pestaña publicada
+   (`CONTENT_SHEET_ID` y un `gid` por pestaña, **no** `VITE_*`: son de
+   build), con tiempo máximo de 10 s por pestaña.
+2. Pasa los CSV a `resolveContent` y expone el resultado como módulo
+   virtual (`virtual:site-content`) que consumen los componentes.
+3. Cualquier fallo (red, 404, timeout, hoja inválida) cae al respaldo y
+   deja el aviso en el log; el build nunca falla por la hoja. Sin las
+   variables, no hace ninguna petición.
+4. El sitio publicado no habla con Google Sheets (CA-05).
+
+Criterios de aceptación:
+1. Con la hoja caída, con una pestaña inválida y con timeout, el build
+   termina bien (CP-CONF-003), con tests del plugin y un servidor falso.
+2. Sin variables: 0 peticiones (CP-CNT-001).
+
+**Pasos manuales (del usuario):** crear la hoja con las pestañas de las
+plantillas (`BR-041`); Archivo → Compartir → Publicar en la web (cada
+pestaña en CSV); copiar el id de publicación y los `gid`; definir las
+variables en Vercel (`CONTENT_SHEET_ID`, `CONTENT_SHEET_GIDS`). Guía en
+`BR-043`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-040).
+
+#### BR-041 — Servicios, productos, equipo y preguntas desde el contenido generado
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-040
+- Estado: En curso (rama `feat/br-041-catalogo-desde-contenido`; hecho en local; sin pasos manuales)
+- Historia de usuario: HU-CNT-001 (CA-01, CA-04)
+- RF/RNF: `RF-CNT-004`, `RNF-DATOS-002`, `RNF-PERF-001`
+
+**Origen (2026-10-12):** que los componentes lean la hoja y no listas
+escritas a mano.
+
+Alcance:
+1. Servicios, productos, equipo y preguntas frecuentes leen el contenido
+   generado; `src/data` deja de tener esas listas.
+2. Formato de precio `$15.000` a partir del entero CLP (cierra el
+   formato USD de productos, `BR-009`, en su parte de formato).
+3. Plantillas CSV en `docs/contenido/` (una por pestaña) para importarlas
+   en Google Sheets.
+4. ~~El JSON-LD de preguntas sale del mismo contenido~~ → **se traslada a
+   `BR-006`** (2026-10-12): el JSON-LD vive en `index.html` y se corrige ahí
+   junto con los demás errores de SEO técnico; hacerlo aquí lo dejaría a
+   medias. Requisito para `BR-006`: el `FAQPage` debe salir de
+   `siteContent.faq`.
+
+Criterios de aceptación:
+1. Cambiar el respaldo cambia lo que muestra el sitio (CP-CNT-004).
+2. Las plantillas CSV pasan el esquema.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-041).
+
+#### BR-042 — Textos y títulos desde la pestaña `textos`
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-041
+- Estado: En curso (rama `feat/br-042-textos-desde-hoja`; hecho en local; sin pasos manuales)
+- Historia de usuario: HU-CNT-002 (CA-01, CA-02, CA-03)
+- RF/RNF: `RF-CNT-005`, `RNF-CONF-003`
+
+**Origen (2026-10-12):** "headings, etc." del pedido.
+
+Alcance:
+1. `text(clave, porDefecto)` sobre el contenido generado; largo máximo por
+   clave.
+2. Empezar con un conjunto acotado de claves (título y subtítulo de la
+   portada y títulos de sección). Los textos con saltos de línea o
+   negritas dentro del JSX quedan fuera hasta definir cómo se editan.
+
+Criterios de aceptación:
+1. Una clave en la hoja cambia el texto; una ausente deja el original; una
+   demasiado larga se rechaza con aviso (CP-CNT-005).
+
+> **Alcance ajustado (2026-10-12):** el conjunto inicial son las 13 claves
+> de la home (`src/content/texts.ts`): título del Hero, título y subtítulo
+> de `CTA1`, `SocialProof1/2`, `Reviews` y `Features`, título de
+> `Benefits` y de `CTA2`. Quedan fuera los textos con formato dentro de la
+> frase (el subtítulo del Hero y el de `CTA2`, con negritas) y el
+> subtítulo de `Benefits` (es una frase abierta que continúa en las
+> tarjetas). Los títulos de las demás páginas (`PageHero`) quedan para una
+> segunda tanda.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-042).
+
+#### BR-043 — Guía para publicar contenido desde la hoja
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-040
+- Estado: En curso (rama `docs/br-043-guia-contenido-hoja`; guía escrita; faltan los pasos manuales del usuario)
+- Historia de usuario: HU-CNT-001 (CA-04)
+- RF/RNF: no aplica — documentación de un proceso manual.
+
+**Origen (2026-10-12):** el usuario ejecuta los pasos manuales al volver.
+
+Alcance:
+1. `docs/contenido-hoja.md`: cómo crear la hoja desde las plantillas,
+   publicarla como CSV, obtener los identificadores, definir las
+   variables en Vercel y crear el `deploy hook`.
+2. Publicación automática opcional con Google Apps Script
+   (`onEdit` → `deploy hook`) con límite de frecuencia, como bloque de
+   código dentro de la guía (no se versiona como script del repo).
+3. Qué hacer cuando el log del build avisa de una fila inválida.
+
+Criterios de aceptación:
+1. Siguiendo solo la guía, el dueño cambia un precio y lo ve publicado
+   (CU-CNT-001). **Esta prueba la hace el usuario** al volver (es el cierre
+   de la épica J).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-043).
 
 ## 4. Diferido — no forma parte del despliegue
 
@@ -836,7 +1267,8 @@ Cada ítem tiene su **disparador**: la condición que obliga a revisarlo.
 | Tema | Origen | Disparador |
 |---|---|---|
 | Reserva propia (TanStack Query, Zustand, react-hook-form + zod, `AppError` completo de RadarOP, confeti de "reserva confirmada") | ADR-001 | Se decide dejar AgendaPro. |
-| Analítica (GA4 o Vercel Analytics) y Search Console | ex checklist §6 | Primer despliegue en producción; requiere decidir proveedor y aviso de cookies. |
+| Search Console y monitoreo de uso en tiempo real | ex checklist §6 | Cuando haya datos de analítica (`BR-036`..`BR-038`) que justifiquen revisar la indexación. |
+| ~~Analítica (GA4 o Vercel Analytics)~~ | ex checklist §6 | **Disparador cumplido (2026-10-12):** pasa a la épica I (`BR-036`..`BR-038`, `BR-044`). |
 | Monitoreo de errores (Sentry o similar) | ADR-005 | Primer error reportado por un cliente que no se vio en los logs. |
 | Galería de Instagram en SocialProof2 | ex `B001` | El dueño la pide y hay una cuenta con publicaciones constantes. |
 | PWA (manifest completo, service worker, offline, instalación) | ex `W001`..`W005` | Evidencia de visitas recurrentes que justifiquen la instalación. |
@@ -860,20 +1292,21 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-004 | Lint sin errores | B | P0 | S | Hecho | BR-001 |
 | BR-005 | Datos del negocio: fuente única y reales | B | P0 | M | Bloqueada | — |
 | BR-006 | SEO técnico | B | P0 | S | Propuesta | BR-005 |
-| BR-007 | Enlaces externos seguros | B | P0 | XS | Propuesta | BR-005 |
+| BR-007 | Enlaces externos seguros | B | P0 | XS | En curso | — |
 | BR-008 | Fotos propias en lugar de Unsplash | B | P0 | M | Bloqueada | — |
 | BR-009 | Decidir botón "Comprar" | B | P1 | XS | Propuesta | — |
-| BR-010 | Variables de entorno | B | P1 | XS | Propuesta | — |
-| BR-011 | Ruta crítica del LCP | F | P1 | S | Propuesta | — |
-| BR-012 | Imágenes pendientes | F | P1 | S | Propuesta | BR-011 |
-| BR-013 | CSS crítico | F | P1 | S | Propuesta | — |
-| BR-014 | Lenis sin fugas | E | P1 | M | Propuesta | BR-004 |
-| BR-015 | Cero re-renders por scroll | E | P1 | M | Propuesta | BR-014 |
-| BR-016 | Parallax liviano y variantes | E | P1 | M | Propuesta | BR-015 |
-| BR-017 | Reduced motion en JS | E | P1 | S | Propuesta | — |
+| BR-010 | Variables de entorno | B | P1 | XS | Hecho | — |
+| BR-011 | Ruta crítica del LCP | F | P1 | S | En curso | — |
+| BR-012 | Imágenes pendientes | F | P1 | S | En curso | BR-011 |
+| BR-035 | Separar vendors del chunk de la app | F | P1 | S | En curso | BR-011 |
+| BR-013 | CSS crítico | F | P1 | S | En curso | — |
+| BR-014 | Lenis sin fugas | E | P1 | M | En curso | BR-004 |
+| BR-015 | Cero re-renders por scroll | E | P1 | M | En curso | BR-014 |
+| BR-016 | Parallax liviano y variantes | E | P1 | M | En curso | BR-015 |
+| BR-017 | Reduced motion en JS | E | P1 | S | En curso | — |
 | BR-018 | Transiciones de página | E | P3 | S | Propuesta | BR-017 |
 | BR-019 | Error boundaries | C | P1 | S | Hecho | — |
-| BR-020 | Recuperación de chunks | C | P1 | S | En curso | BR-019 |
+| BR-020 | Recuperación de chunks | C | P1 | S | Hecho | BR-019 |
 | BR-021 | Fuente única de tokens | D | P2 | M | Propuesta | — |
 | BR-022 | Hex → tokens | D | P2 | M | Propuesta | BR-021 |
 | BR-023 | Retirar Tailwind y shadcn | D | P2 | L | Propuesta | BR-021 |
@@ -887,7 +1320,17 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-031 | Lighthouse CI | H | P2 | S | Propuesta | BR-029, BR-002 |
 | BR-032 | Actualizar README | A | P2 | S | Propuesta | BR-001 |
 | BR-033 | Accesibilidad | G | P2 | S | Propuesta | — |
-| BR-034 | Spike prerender | G | P2 | M | Propuesta (spike) | BR-006 |
+| BR-034 | Spike prerender | G | P1 | M | Propuesta (spike) | BR-006 |
+| BR-036 | Vercel Analytics por variable | I | P2 | S | En curso | BR-010 |
+| BR-037 | Consentimiento y Google Analytics 4 | I | P2 | M | En curso | BR-044, BR-030 |
+| BR-038 | Eventos de conversión y vistas por ruta | I | P2 | S | En curso | BR-037 |
+| BR-039 | Núcleo de contenido: CSV, validación y respaldo | J | P2 | M | En curso | BR-030 |
+| BR-040 | Descarga de la hoja al construir | J | P2 | M | En curso | BR-039 |
+| BR-041 | Catálogo desde el contenido generado | J | P2 | M | En curso | BR-040 |
+| BR-042 | Textos y títulos desde la hoja | J | P3 | M | En curso | BR-041 |
+| BR-043 | Guía para publicar desde la hoja | J | P2 | S | En curso | BR-040 |
+| BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |
+| BR-045 | Títulos invisibles sobre fondo oscuro | C | P0 | S | En curso | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

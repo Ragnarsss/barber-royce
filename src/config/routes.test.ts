@@ -23,7 +23,7 @@ describe("ROUTES (RF-SEO-001, RF-NAV-001)", () => {
 
   it("navbar y footer se arman solo con las rutas marcadas para cada uno", () => {
     expect(getNavRoutes()).toEqual(routes.filter((route) => route.showInNav));
-    expect(getFooterRoutes()).toEqual(routes.filter((route) => route.showInFooter));
+    expect(getFooterRoutes()).toEqual(routes.filter((route) => route.showInFooter && !route.requiresAnalytics));
     expect(getNavRoutes().some((route) => route.path === "/")).toBe(false);
   });
 });

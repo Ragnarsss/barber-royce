@@ -4,11 +4,11 @@ import { Card } from "@/components/ui/card";
 import { PageHero } from "@/components/common/PageHero/PageHero";
 import { ROUTES } from "@/config/routes";
 import styles from "./TeamPage.module.css";
-import { teamMembersList } from "@/data/teamData";
+import { siteContent } from "@/content/siteContent";
 import { scaleIn, defaultViewport } from "@/config/animations.config";
 
 export const TeamPage = () => {
-  const team = teamMembersList;
+  const team = siteContent.team;
   const route = ROUTES.team;
 
   return (
@@ -40,6 +40,9 @@ export const TeamPage = () => {
                         src={member.image}
                         alt={member.name}
                         className={styles.hexImage}
+                        width="400"
+                        height="400"
+                        loading="lazy"
                       />
                     </div>
                     <div className={styles.hexOverlay}>

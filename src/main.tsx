@@ -14,6 +14,13 @@ import { installChunkRecovery } from "./utils/chunkRecovery";
 // Recarga una vez si un chunk ya no existe tras un despliegue (BR-020).
 installChunkRecovery();
 
+// Analítica de Vercel, solo si se pide con la variable (BR-036). Con la variable
+// ausente, esta condición es constante en el build y el bloque entero se elimina:
+// el código de Analytics no llega al sitio.
+if (import.meta.env.VITE_VERCEL_ANALYTICS === "true") {
+  void import("./analytics/vercelAnalytics").then(({ installVercelAnalytics }) => installVercelAnalytics());
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />

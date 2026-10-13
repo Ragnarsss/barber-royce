@@ -1,22 +1,32 @@
-import { motion } from "framer-motion";
+import { motion, useTransform } from "framer-motion";
 import { Camera } from "lucide-react";
 import styles from "./SocialProof2.module.css";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useParallaxLayers } from "@/hooks/useParallaxLayers";
-import { useLenisScroll } from "@/hooks/useLenisScroll";
+import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
+import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
+import { SCROLL_SPEED_FASTER } from "@/utils/scrollMotion";
+import { siteText } from "@/content/siteContent";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
 
 export function SocialProof2() {
   const { ref, controls } = useScrollAnimation();
-  const { direction, velocity } = useLenisScroll();
+  const direction = useScrollDirection();
+  const speed = useScrollSpeed();
 
   // Usar hook optimizado para parallax en lugar de recrear transforms manualmente
-  const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>();
+  const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>();
+  const layers = {
+    background: useBackgroundLayer(scrollYProgress),
+    middle: useMiddleLayer(scrollYProgress),
+    foreground: useForegroundLayer(scrollYProgress),
+    slow: useSlowLayer(scrollYProgress),
+    fast: useFastLayer(scrollYProgress),
+  };
 
-  // React 19: Estilos condicionales optimizados automáticamente por el compiler
-  const hexMiddle2Style = { opacity: direction === 1 ? 0.6 : 0.4 };
-  const hexFast1Style = { scale: velocity > 2 ? 1.1 : 1 };
-  const hexFg2Style = { x: direction === 1 ? "10px" : "-10px" };
+  // Derivados de MotionValue: cambian sin re-renderizar (BR-015)
+  const hexMiddle2Style = { opacity: useTransform(direction, (value) => (value === 1 ? 0.6 : 0.4)) };
+  const hexFast1Style = { scale: useTransform(speed, (value) => (value > SCROLL_SPEED_FASTER ? 1.1 : 1)) };
+  const hexFg2Style = { x: useTransform(direction, (value) => (value === 1 ? "10px" : "-10px")) };
 
   return (
     <section
@@ -122,16 +132,8 @@ export function SocialProof2() {
             animate={controls}
             variants={fadeInUp}
           >
-            <h2 className={styles.title}>
-              Clientes Felices,
-              <br />
-              Estilos Impecables.
-            </h2>
-            <p className={styles.subtitle}>
-              El trabajo realizado y la felicidad en nuestros clientes es el
-              verdadero pago. Tu satisfacción es nuestra mejor carta de
-              presentación.
-            </p>
+            <h2 className={styles.title}>{siteText("socialproof2.titulo")}</h2>
+            <p className={styles.subtitle}>{siteText("socialproof2.subtitulo")}</p>
           </motion.div>
 
           <motion.div

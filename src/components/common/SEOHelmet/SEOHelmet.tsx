@@ -21,6 +21,9 @@ interface SEOHelmetProps {
 
     /** Tipo de contenido Open Graph */
     ogType?: "website" | "article" | "profile";
+
+    /** Evita que los buscadores indexen la página (por ejemplo, la política de privacidad) */
+    noindex?: boolean;
 }
 
 export const SEOHelmet = ({
@@ -29,7 +32,8 @@ export const SEOHelmet = ({
     description,
     canonicalPath,
     ogImage,
-    ogType = "website"
+    ogType = "website",
+    noindex = false
 }: SEOHelmetProps) => {
     // Usar route si está disponible, sino usar overrides
     const finalTitle = title || route?.title || SITE.name;
@@ -44,6 +48,7 @@ export const SEOHelmet = ({
             <title>{finalTitle}</title>
             <meta name="description" content={finalDescription} />
             <link rel="canonical" href={finalCanonical} />
+            {noindex && <meta name="robots" content="noindex, follow" />}
 
             {/* Open Graph Meta Tags */}
             <meta property="og:type" content={ogType} />

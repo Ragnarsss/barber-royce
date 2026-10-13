@@ -213,3 +213,20 @@
     align-items: flex-start;
   }
 }
+
+/* "Preferencias de privacidad": se ve como un enlace del footer (BR-037). */
+.privacyButton {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.privacyButton:focus-visible {
+  outline: 3px solid var(--color-accent-500);
+  outline-offset: 3px;
+}

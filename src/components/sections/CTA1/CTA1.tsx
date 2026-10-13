@@ -3,19 +3,26 @@ import { Calendar, ArrowRight } from "lucide-react";
 import styles from "./CTA1.module.css";
 import cta700w from "@/assets/optimized/cta1_model_700w.webp";
 import cta1400w from "@/assets/optimized/cta1_model_1400w.webp";
-import ctaAvif from "@/assets/optimized/cta1_model_700w.avif";
-import ctaImage from "@/assets/cta1_model.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useParallaxLayers } from "@/hooks/useParallaxLayers";
+import { useParallaxProgress, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { fadeInLeft, fadeInRight } from "@/config/animations.config";
 import { Link } from "react-router-dom";
+import { BOOKING } from "@/config/constants";
+import { trackReserve } from "@/analytics/track";
+import { siteText } from "@/content/siteContent";
 
 export function CTA1() {
   const { ref, controls } = useScrollAnimation();
 
-  const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>(undefined, {
+  const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>(undefined, {
     offset: ["start end", "end start"],
   });
+  const layers = {
+    middle: useMiddleLayer(scrollYProgress),
+    foreground: useForegroundLayer(scrollYProgress),
+    slow: useSlowLayer(scrollYProgress),
+    fast: useFastLayer(scrollYProgress),
+  };
 
   return (
     <section id="cta-1" className={styles.cta} ref={sectionRef}>
@@ -57,29 +64,17 @@ export function CTA1() {
           variants={fadeInLeft}
         >
           <div className={styles.textContent}>
-            <h2 className={styles.title}>
-              Reserva tu
-              <br />
-              Experiencia
-              <br />
-              Premium Hoy.
-            </h2>
-            <p className={styles.subtitle}>
-              ¿Listo para un cambio que te defina? Agenda tu cita y descubre por
-              qué somos la barbería de elección para quienes buscan lo mejor.
-            </p>
+            <h2 className={styles.title}>{siteText("cta1.titulo")}</h2>
+            <p className={styles.subtitle}>{siteText("cta1.subtitulo")}</p>
             <div className={styles.ctaButtons}>
-              <Link className={styles.ctaButton} to="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965" target="_blank">
+              <a className={styles.ctaButton} href={BOOKING.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta1")}>
                 <Calendar size={20} />
                 Agendar Ahora
-              </Link>
-              <a
-                href="/servicios"
-                className={styles.ctaButtonGhost}
-              >
+              </a>
+              <Link to="/servicios" className={styles.ctaButtonGhost}>
                 Conocer Servicios
                 <ArrowRight size={18} />
-              </a>
+              </Link>
             </div>
           </div>
         </motion.div>
@@ -95,12 +90,8 @@ export function CTA1() {
             sizes="(max-width: 768px) 100vw, 700px"
             type="image/webp"
           />
-          <source
-            srcSet={ctaAvif}
-            type="image/avif"
-          />
           <img
-            src={ctaImage}
+            src={cta700w}
             alt="Modelo con corte premium de Royce Barbería"
             loading="lazy"
             width="700"

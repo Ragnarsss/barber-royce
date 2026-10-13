@@ -21,7 +21,7 @@ usuario ni formularios que envíen datos.
 | Estilos | CSS Modules + tokens CSS en `src/styles/tokens/` (ADR-002) |
 | Animación y scroll | `framer-motion` 12, `lenis` |
 | Iconos y fuentes | `lucide-react`, Montserrat self-hosted (`@fontsource/montserrat`) |
-| Imágenes | `sharp` (`scripts/optimize-images.js`) + `vite-plugin-image-optimizer` |
+| Imágenes | `sharp` (`scripts/optimize-images.js`, solo WebP: el AVIF pesaba más) + `vite-plugin-image-optimizer` |
 | Calidad | ESLint 9 (flat config), commitizen. Tests y CI: `BR-029`, `BR-030` |
 | Rendimiento | `@lhci/cli` (`lighthouserc.json`), `vite-bundle-visualizer` |
 | Hosting | Vercel (ADR-003, `BR-002`) |
@@ -41,12 +41,15 @@ src/
     ui/                   ScrollProgressBar + restos de shadcn (se retiran, BR-023)
     icons/                SVG propios
   config/                 routes.ts, constants.ts, animations.config.ts
+  content/                contenido editable (BR-039): CSV, esquemas, resolveContent, respaldo
+  analytics/              Vercel Analytics, consentimiento y GA4 (ADR-007)
   contexts/               LenisContext
   hooks/                  Lenis, scroll, parallax
   data/                   contenido estático del negocio
   types/                  tipos
   styles/                 global.css, reset.css, tokens/
   assets/                 imágenes originales + optimized/ (AVIF/WebP)
+vite-plugins/             plugin de Vite que lee la hoja al construir (BR-040, ADR-008)
 public/                   favicons, og-image, robots.txt, sitemap.xml, manifest
 docs/                     documentación del proceso (ver ../CLAUDE.md)
 ```
@@ -98,12 +101,19 @@ Reglas (vinculantes desde `BR-014`..`BR-017`):
    RadarOP.
 4. `MotionConfig reducedMotion="user"` en la raíz; con
    `prefers-reduced-motion: reduce` no hay parallax ni scroll suave.
-5. Nadie lee `window.lenis`: se usa el contexto.
+5. Nadie lee `window.lenis` (ya no existe): la instancia llega por
+   `LenisContext` (`useLenisInstance`).
 
-- **Gap:** hoy `useLenisScroll` hace `setState` por scroll (re-render a
-  ~60 fps en 4 componentes), `useLenis` observa todo `document.body` con
-  un `MutationObserver`, `useParallaxLayers` crea 12 transforms por
-  sección, y el parallax ignora `prefers-reduced-motion` (`BR-014`..`BR-017`).
+- La dirección y la velocidad del scroll son `MotionValue`
+  (`useScrollDirection`, `useScrollSpeed` en `src/hooks/useScrollMotion.ts`)
+  y los estilos se derivan con `useTransform`: el scroll no re-renderiza
+  ningún componente (`BR-015`).
+- El parallax por capas se arma pidiendo solo las capas que la sección
+  usa (`useParallaxProgress` + `useBackgroundLayer`, `useMiddleLayer`,
+  `useForegroundLayer`, `useSlowLayer`, `useFastLayer`; `BR-016`).
+- Resueltos: `MutationObserver` global, `window.lenis` y fugas
+  de listeners (`BR-014`); `prefers-reduced-motion` en JavaScript
+  (`BR-017`); re-renders por scroll (`BR-015`).
 
 ## 6. Estado
 
@@ -219,6 +229,86 @@ No hay gestor de estado global (ADR-004).
 - **Origen:** proceso de *Segunda Opinión de Build*, recortado para un
   solo repo y un sitio estático.
 
+### ADR-007 — Analítica opt-in: Vercel Analytics y Google Analytics 4 con consentimiento
+
+> **Estado: decidido por defecto el 2026-10-12 con el usuario ausente; por
+> confirmar.**
+
+- **Contexto:** el dueño quiere saber cuántas personas visitan el sitio y
+  cuántas tocan "Reservar" (HU-MED-001, HU-MED-002). La reserva ocurre en
+  AgendaPro, otro dominio, así que solo se puede medir el clic. Google
+  Analytics usa cookies y envía datos a Google: en Chile aplica la Ley
+  19.628 (y su actualización, Ley 21.719).
+- **Decisión:**
+  1. **Vercel Analytics** para visitas y rutas: no usa cookies ni
+     identifica personas, no necesita aviso.
+  2. **GA4** para eventos de conversión, con **Consent Mode v2 en
+     `denied`** por defecto: el script de Google ni siquiera se descarga
+     hasta que el visitante acepta.
+  3. Ambas son **opt-in por variable de entorno** (`VITE_VERCEL_ANALYTICS`,
+     `VITE_GA_MEASUREMENT_ID`). Sin variables, el sitio no carga ni muestra
+     nada nuevo. Así el código se puede integrar y desplegar sin activar
+     nada, y activarlo es un paso manual del usuario.
+  4. El aviso de consentimiento solo existe si GA está configurado;
+     "Aceptar" y "Rechazar" con el mismo peso; elección guardada y
+     revocable desde el footer.
+  5. Eventos sin datos personales: `page_view`, `reserve_click`,
+     `whatsapp_click`, `phone_click`.
+- **Por qué:** minimiza datos y riesgo legal sin renunciar a medir
+  conversiones; el opt-in evita errores 404 en consola si Vercel Analytics
+  no está habilitado y mantiene Lighthouse limpio.
+- **Alternativas descartadas:** solo GA4 (obliga a aviso para medir
+  simples visitas); Plausible o Matomo (más privados, pero otra cuenta y
+  otro costo); GA4 sin consentimiento (riesgo legal).
+- **Consecuencia:** la CSP suma los orígenes de Google solo para GA
+  (`script-src`, `connect-src`, `img-src`), sin `unsafe-inline`. Se agrega
+  la página `/privacidad` (borrador sin validar legalmente).
+- **A confirmar con el usuario:** si quiere GA4 además de Vercel Analytics;
+  quién valida el texto de privacidad; datos del responsable.
+
+### ADR-008 — Contenido editable: hoja de Google leída al construir, con respaldo versionado
+
+> **Estado: decidido por defecto el 2026-10-12 con el usuario ausente; por
+> confirmar.**
+
+- **Contexto:** el dueño quiere actualizar servicios, productos, equipo,
+  preguntas y textos sin pedir un cambio de código (HU-CNT-001,
+  HU-CNT-002). Hoy el contenido está en `src/data/*.ts`. `ADR-001` fija un
+  sitio estático sin backend.
+- **Decisión:**
+  1. El contenido vive en una **hoja de cálculo de Google**, con una
+     pestaña por tipo (`servicios`, `productos`, `equipo`, `preguntas`,
+     `textos`), **publicada en la web como CSV**: no se usan claves ni
+     cuentas de servicio.
+  2. La hoja se lee **en el build** (plugin de Vite), no en el navegador:
+     el sitio sigue siendo estático, indexable y rápido, y un visitante
+     nunca habla con Google Sheets.
+  3. Cada pestaña se **valida** con un esquema. Una pestaña inválida, o una
+     hoja caída o sin configurar, **cae a un respaldo versionado** en el
+     repo (`snapshot`). El build nunca falla por la hoja y nunca escribe en
+     el repo.
+  4. Los cambios se **publican** disparando un `deploy hook` de Vercel
+     (manual, o automático con un Apps Script al editar).
+  5. Los identificadores de la hoja son variables **de build** (`CONTENT_*`,
+     sin prefijo `VITE_`), no llegan al navegador.
+- **Por qué:** conserva `ADR-001`, el SEO y el rendimiento; sin secretos;
+  y un error del dueño en la hoja no rompe producción.
+- **Alternativas descartadas:**
+  - *Leer la hoja desde el navegador:* contenido tardío (CLS, mal SEO), un
+    visitante depende de Google y de su cuota, y expone la hoja.
+  - *Google Sheets API con cuenta de servicio:* permitiría una hoja
+    privada, pero exige un secreto y más configuración; queda como
+    evolución si el dueño quiere la hoja privada.
+  - *Un CMS (Sanity, Contentful):* más potente, pero otra herramienta y
+    otro costo para un contenido pequeño.
+- **Consecuencia:** un cambio tarda lo que tarda un build (1-2 minutos). La
+  publicación depende de un `deploy hook`. Se agrega la regla "no editar
+  a mano el respaldo ni `src/data` del contenido de la hoja" (`CLAUDE.md`).
+- **Disparador para revisar:** hoja privada, más de ~200 filas o varios
+  editores con permisos distintos → CMS o Sheets API.
+- **A confirmar con el usuario:** pestañas y columnas, si la hoja puede
+  ser pública, y quién crea el `deploy hook`.
+
 ## 10. Deuda conocida y diferida
 
 | Tema | Estado | Ticket |
@@ -226,15 +316,19 @@ No hay gestor de estado global (ADR-004).
 | Unas 1000 líneas de código muerto (hooks de rendimiento, `ScrollProgressContext`, `SmoothParallax`, `Button` propio, `Services`) | Abierta | `BR-025` |
 | Datos del negocio inconsistentes o de ejemplo (teléfono, email, horarios, redes) | Abierta, bloqueada por datos reales | `BR-005` |
 | Imágenes de productos y servicios desde Unsplash | Abierta, bloqueada por fotos reales | `BR-008` |
-| `asyncCSSPlugin` aplica carga diferida a todo el CSS, incluido el crítico | Abierta | `BR-013` |
+| ~~`asyncCSSPlugin` difería todo el CSS, incluido el crítico~~ | Cerrada: plugin retirado, CSP sin hashes | `BR-013` |
 | Prerender / SSG | Spike | `BR-034` |
-| Analítica y monitoreo de errores | Diferida | backlog §4 |
+| Monitoreo de errores | Diferida | backlog §4 |
+| Analítica (Vercel Analytics y GA4) | Planificada, por confirmar (`ADR-007`) | `BR-036`..`BR-038`, `BR-044` |
+| Contenido editable desde una hoja | Planificada, por confirmar (`ADR-008`) | `BR-039`..`BR-043` |
 
 ## 11. Dónde ir para…
 
 | Quiero… | Voy a… |
 |---|---|
 | Cambiar teléfono, horario, redes o la URL de reserva | `src/config/constants.ts` (fuente única, `RNF-DATOS-001`) |
+| Cambiar servicios, productos, equipo o preguntas | La hoja de Google (`ADR-008`) y publicar con el `deploy hook`; mientras no esté conectada, el respaldo del repo |
+| Activar o desactivar la analítica | Variables `VITE_VERCEL_ANALYTICS` y `VITE_GA_MEASUREMENT_ID` en Vercel (`ADR-007`) |
 | Agregar una página | `src/config/routes.ts` + `src/pages/` |
 | Cambiar título o descripción de una página | `ROUTES` en `src/config/routes.ts` |
 | Agregar un servicio, barbero, producto o pregunta | `src/data/` |

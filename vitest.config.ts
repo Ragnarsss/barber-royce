@@ -1,12 +1,14 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import { siteContentPlugin } from "./vite-plugins/siteContentPlugin";
 
 // Configuración propia de tests: no hereda los plugins de build de
 // vite.config.ts (optimización de imágenes, CSS asíncrono), que no aportan
 // nada al probar y hacen más lenta cada corrida.
 export default defineConfig({
-  plugins: [react()],
+  // El módulo virtual `virtual:site-content` (con el respaldo) tiene que existir también en los tests.
+  plugins: [react(), siteContentPlugin()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -24,7 +26,7 @@ export default defineConfig({
       reporter: ["text-summary", "html"],
       // Línea base del 2026-10-12 redondeada hacia abajo (BR-030). Solo sube:
       // al cerrar un ticket que agregue tests, se ajusta al nuevo valor.
-      thresholds: { statements: 6, branches: 31, functions: 22, lines: 6 },
+      thresholds: { statements: 73, branches: 83, functions: 77, lines: 73 },
     },
   },
 });

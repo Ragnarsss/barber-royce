@@ -296,14 +296,12 @@ export const parallaxLayers = {
     // Capa media - profundidad 2
     middle: {
         y: ["0%", "25%"],
-        scale: [1, 1.08],
         rotate: [0, -2],
     },
     // Capa frontal (más rápida) - profundidad 3
     foreground: {
         y: ["0%", "35%"],
         scale: [1, 1.12],
-        rotate: [0, 3],
     },
     // Elementos decorativos sutiles
     slow: {

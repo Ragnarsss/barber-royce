@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { type ReactNode } from "react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useParallaxLayers } from "@/hooks/useParallaxLayers";
+import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
 
 
@@ -35,7 +35,8 @@ export function AnimatedGridSection<T>({
     enableParallax = true,
 }: AnimatedGridSectionProps<T>) {
     const { ref, controls } = useScrollAnimation();
-    const { ref: sectionRef, layers } = useParallaxLayers();
+    const { ref: sectionRef, scrollYProgress } = useParallaxProgress();
+    const layers = { slow: useSlowLayer(scrollYProgress) };
 
     return (
         <section id={id} className={className} ref={sectionRef}>

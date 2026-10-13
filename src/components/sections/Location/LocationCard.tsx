@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { fadeInScale, fadeInUpShort } from "@/config/animations.config";
+import { trackPhone, trackWhatsApp } from "@/analytics/track";
 import type { Location } from "@/types/location.types";
 import {
   ClockIcon,
@@ -78,7 +79,7 @@ export const LocationCard = ({ location }: LocationCardProps) => (
           <h2 className={styles.sectionTitle}>Contacto</h2>
         </div>
         <div className={styles.contactInfo}>
-          <a href={`tel:${location.phone}`} className={styles.contactLink}>
+          <a href={`tel:${location.phone}`} className={styles.contactLink} onClick={trackPhone("ubicacion")}>
             <PhoneIcon className={styles.smallIcon} />
             {location.phone}
           </a>
@@ -91,6 +92,7 @@ export const LocationCard = ({ location }: LocationCardProps) => (
             className={styles.contactLink}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={trackWhatsApp("ubicacion")}
           >
             <WhatsAppIcon className={styles.smallIcon} />
             WhatsApp: {location.whatsapp}

@@ -1,5 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import styles from "./Features.module.css";
+import { siteText } from "@/content/siteContent";
 import { FEATURES_VIEW_DATA } from "@/data/featuresData.tsx";
 import { AnimatedGridSection } from "@/components/common/AnimatedGridSection/AnimatedGridSection";
 
@@ -15,8 +16,8 @@ export function Features() {
       titleClassName={styles.title}
       subtitleClassName={styles.subtitle}
       gridClassName={styles.grid}
-      title="Innovación y Calidad en Cada Detalle."
-      subtitle="Combinamos la tradición con la vanguardia para ofrecerte:"
+      title={siteText("features.titulo")}
+      subtitle={siteText("features.subtitulo")}
       items={FEATURES_VIEW_DATA}
       renderItem={(feature) => (
         <Card className={styles.card}>

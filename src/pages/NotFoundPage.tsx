@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { CalendarCheck, Home } from "lucide-react";
 import { BOOKING, SITE } from "@/config/constants";
+import { trackReserve } from "@/analytics/track";
 import styles from "./NotFoundPage.module.css";
 
 export function NotFoundPage() {
@@ -34,6 +35,7 @@ export function NotFoundPage() {
             target="_blank"
             rel="noopener noreferrer"
             className={styles.secondaryAction}
+            onClick={trackReserve("404")}
           >
             <CalendarCheck size={20} aria-hidden="true" />
             {BOOKING.label}
