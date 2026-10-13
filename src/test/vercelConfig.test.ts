@@ -40,13 +40,24 @@ describe("vercel.json (BR-002, BR-013)", () => {
     expect(directive(csp, "script-src")).toBe("script-src 'self' https://www.googletagmanager.com");
   });
 
-  it("RNF-SEG-004: los únicos orígenes de terceros nuevos son los de Google Analytics", () => {
-    const googleOrigins = /^https:\/\/(www\.googletagmanager\.com|\*\.googletagmanager\.com|www\.google-analytics\.com|\*\.google-analytics\.com|\*\.analytics\.google\.com)$/;
+  it("RNF-SEG-004: los únicos orígenes de terceros nuevos son los de Google Analytics y la hoja de contenido (BR-047)", () => {
+    const googleOrigins = /^https:\/\/(www\.googletagmanager\.com|\*\.googletagmanager\.com|www\.google-analytics\.com|\*\.google-analytics\.com|\*\.analytics\.google\.com|docs\.google\.com|\*\.googleusercontent\.com)$/;
     const extra = ["script-src", "connect-src", "img-src"]
       .flatMap((name) => (directive(csp, name) ?? "").split(" ").slice(1))
       .filter((source) => source.startsWith("https://") && !googleOrigins.test(source) && source !== "https://images.unsplash.com");
 
     expect(extra).toEqual([]);
+  });
+
+  it("BR-047: la hoja de Google solo se puede leer con fetch (connect-src), nunca como script ni imagen", () => {
+    const sheetOrigins = ["https://docs.google.com", "https://*.googleusercontent.com"];
+    const connect = (directive(csp, "connect-src") ?? "").split(" ");
+
+    expect(sheetOrigins.every((origin) => connect.includes(origin))).toBe(true);
+    for (const name of ["script-src", "img-src", "frame-src"]) {
+      const sources = (directive(csp, name) ?? "").split(" ");
+      expect(sheetOrigins.some((origin) => sources.includes(origin))).toBe(false);
+    }
   });
 
   it("ningún HTML de origen trae manejadores inline (onload=, onclick=…) que la CSP bloquearía", () => {

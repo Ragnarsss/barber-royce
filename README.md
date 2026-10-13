@@ -44,13 +44,13 @@ Todas son opcionales y están documentadas en [`.env.example`](.env.example). Pa
 
 | Variable | Para qué | Llega al navegador |
 |---|---|---|
-| `CONTENT_SHEET_ID` | Identificador de publicación de la hoja de Google con el catálogo | No (solo build) |
-| `CONTENT_SHEET_GIDS` | `pestaña:gid` de cada pestaña publicada como CSV | No (solo build) |
-| `CONTENT_FETCH_TIMEOUT_MS` | Tiempo máximo por pestaña (10 s por defecto) | No (solo build) |
+| `CONTENT_SHEET_ID` | Identificador de publicación de la hoja de Google con el catálogo | Sí (público, no da acceso de edición) |
+| `CONTENT_SHEET_GIDS` | `pestaña:gid` de cada pestaña publicada como CSV | Sí (público) |
+| `CONTENT_FETCH_TIMEOUT_MS` | Tiempo máximo por pestaña (10 s por defecto) | Sí |
 | `VITE_VERCEL_ANALYTICS` | `true` activa Vercel Analytics | Sí (pública) |
 | `VITE_GA_MEASUREMENT_ID` | ID de GA4; activa el aviso de consentimiento | Sí (pública) |
 
-Las variables `VITE_*` terminan dentro del JavaScript del sitio, así que nunca llevan secretos.
+Las variables `VITE_*` terminan dentro del JavaScript del sitio, y desde `BR-047` también los datos de la hoja (identificador y `gid`): todos son públicos, así que nunca llevan secretos.
 
 ### De dónde sacar las variables
 
@@ -70,13 +70,14 @@ Las variables `VITE_*` terminan dentro del JavaScript del sitio, así que nunca 
 
 **Dónde ponerlas**
 
-- **En local:** copia el ejemplo con `cp .env.example .env`, completa `.env` (no se sube al repositorio) y reinicia `npm run dev`. El servidor lee la hoja una vez al arrancar, así que un cambio en la hoja se ve reiniciándolo. Un `npm run build` también la lee.
+- **En local:** copia el archivo `.env.example` y renómbralo `.env` (o ejecuta `cp .env.example .env`), completa los valores (el archivo no se sube al repositorio) y reinicia `npm run dev`. Después, un cambio en la hoja se ve al recargar la página, sin reiniciar nada (tarda unos minutos, ver abajo). Un `npm run build` también lee la hoja.
 - **En producción:** Vercel → Settings → Environment Variables, y vuelve a desplegar.
 
 ## De dónde sale el contenido
 
 - **Datos del negocio** (teléfonos, WhatsApp, email, horarios, redes, URL de AgendaPro, sucursales): solo en `src/config/` y `src/data/locationsData.ts`.
-- **Catálogo** (servicios, productos, equipo, preguntas) y **textos de la portada**: se editan en una hoja de Google y se leen **al construir** el sitio. Sin `CONTENT_SHEET_ID` se usa el respaldo versionado de `src/content/snapshot/`, que son datos de muestra. Si la hoja falla o una pestaña tiene un error, el build no se rompe: usa el respaldo para esa pestaña y lo avisa en el registro (líneas `[contenido]`).
+- **Catálogo** (servicios, productos, equipo, preguntas) y **textos de la portada**: se editan en una hoja de Google. El sitio la lee **al construir** (ese contenido es el punto de partida y el respaldo) y **otra vez en el navegador** cuando la página termina de cargar, así que un cambio en la hoja se ve **sin volver a desplegar**, a los 5 o 6 minutos (Google publica en cerca de 1 minuto y el navegador guarda la respuesta 5). Sin `CONTENT_SHEET_ID` se usa el respaldo versionado de `src/content/snapshot/`, que son datos de muestra, y no se hace ninguna petición. Si la hoja falla o una pestaña tiene un error, nada se rompe: esa pestaña conserva el contenido del build y el motivo sale en el registro del build o en la consola del navegador (líneas `[contenido]`).
+- **Lo publicado en la hoja es público:** cualquiera con el enlace lo puede leer, incluidas las filas con `activo = NO`. Usa una pestaña sin publicar para los borradores.
 - Estructura de la hoja, plantillas (`docs/contenido/*.csv`), publicación y errores frecuentes: [`docs/contenido-hoja.md`](docs/contenido-hoja.md).
 - Decisión de fondo: ADR-008 en [`docs/architecture.md`](docs/architecture.md).
 
@@ -108,7 +109,7 @@ docs/              # backlog, historias, requisitos, arquitectura, guías
 - Los previews están detrás de Vercel Authentication: hay que iniciar sesión para verlos.
 - El CI de GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) corre lint, tipos, tests con cobertura, build y `npm audit`. `master` está protegida: se integra por Pull Request con el CI en verde.
 - **Volver atrás:** en Vercel → Deployments, elige el despliegue anterior bueno y usa **Promote to Production**.
-- **Publicar un cambio de contenido de la hoja:** requiere un nuevo despliegue (Redeploy en Vercel). Ver la sección 5 de [`docs/contenido-hoja.md`](docs/contenido-hoja.md).
+- **Publicar un cambio de contenido de la hoja:** no requiere desplegar; se ve al recargar a los 5 o 6 minutos. Un despliegue solo renueva el contenido de fábrica del build (sección 5 de [`docs/contenido-hoja.md`](docs/contenido-hoja.md)).
 
 ## Cómo se trabaja en este repo
 

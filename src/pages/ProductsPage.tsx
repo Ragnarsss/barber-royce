@@ -7,14 +7,13 @@ import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/common/PageHero/PageHero";
 import { ROUTES } from "@/config/routes";
 import styles from "./ProductsPage.module.css";
-import { siteContent } from "@/content/siteContent";
+import { useSiteContent } from "@/content/useSiteContent";
 import { PRODUCT_CATEGORIES } from "@/types/product.types";
 import { SearchIcon } from "@/components/icons";
 import { fadeInUpShort, staggerFast, cardAnimation } from "@/config/animations.config";
 
-const productsList = siteContent.products;
-
 export function ProductsPage() {
+  const productsList = useSiteContent().products;
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const route = ROUTES.products;

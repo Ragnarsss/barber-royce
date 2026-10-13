@@ -154,14 +154,30 @@ Luego **vuelve a desplegar** el sitio una vez (Deployments → los tres puntos d
 
 ## 5. Publicar un cambio (cada vez)
 
+> Actualizado (2026-10-13): **ya no hace falta volver a desplegar.** El sitio
+> vuelve a leer la hoja cada vez que se carga una página.
+
 1. Edita la hoja (un precio, un texto, una pregunta…).
-2. Pide que se publique de una de estas dos formas:
-   - **Con un botón en la hoja** (recomendado, sección 5.1), o
-   - **Desde Vercel**: Deployments → los tres puntos del último despliegue →
-     **Redeploy**.
-3. Espera **1 o 2 minutos** y recarga el sitio.
+2. Espera **5 o 6 minutos** (Google tarda cerca de 1 minuto en publicar y el
+   navegador guarda la respuesta 5 minutos) y recarga el sitio.
+
+Si una pestaña tiene un error, el sitio no la usa y sigue mostrando el
+contenido con el que se construyó; el motivo queda en la consola del
+navegador (`[contenido]`).
+
+**Qué es «el contenido con el que se construyó»:** cada despliegue lee la hoja
+y la deja como contenido de fábrica del sitio. Sirve de respaldo si Google falla
+y es lo que ven al instante quienes cargan la página. Para renovarlo, vuelve a
+desplegar (Vercel → Deployments → **Redeploy**), pero no es necesario para ver
+tus cambios.
+
+**Importante: lo que está en una pestaña publicada es público.** Cualquiera con
+el enlace puede leerlo, incluidas las filas con `activo = NO` y cualquier
+columna o nota que agregues. Para un borrador, usa una pestaña que no publiques.
 
 ### 5.1 Un botón «Publicar cambios» dentro de la hoja (opcional)
+
+> Desde el 2026-10-13 este botón **ya no es necesario** para ver los cambios (ver arriba). Solo sirve para renovar el contenido de fábrica del sitio sin entrar a Vercel.
 
 Primero crea un **enlace de despliegue**: en Vercel → **Settings → Git → Deploy
 Hooks** → nombre «contenido», rama `master` → **Create Hook** → copia la dirección.
@@ -270,8 +286,8 @@ a medias). Corrige la fila y publica de nuevo.
   `src/content/texts.ts`. Cada texto nuevo se registra ahí, se usa con
   `siteText("clave")` y, si tiene saltos de línea, su título lleva
   `white-space: pre-line`. Los tests lo vigilan.
-- **Descarga y plugin:** `vite-plugins/siteContentSource.ts` y
-  `siteContentPlugin.ts`. Los tests construyen el sitio de verdad contra un servidor
+- **Descarga y plugin:** `src/content/sheetSource.ts` (también la usa el navegador, `ContentProvider`) y
+  `vite-plugins/siteContentPlugin.ts`. Los tests construyen el sitio de verdad contra un servidor
   local que imita a Google.
 - **Hoja privada o muchos editores:** si algún día la hoja no puede ser pública, el
   camino es la API de Google Sheets con una cuenta de servicio (un secreto más), o un

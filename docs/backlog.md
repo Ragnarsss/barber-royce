@@ -548,6 +548,72 @@ Criterios de aceptación:
 1. Con `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` en `.env`, `npm run dev` muestra
    el contenido de la hoja. **Esta prueba la hace el usuario** con su hoja real.
 2. Sin `.env` el sitio sigue usando el respaldo y no hace ninguna petición.
+
+#### BR-047 — El navegador relee la hoja: cambios sin desplegar
+
+- Prioridad: P1 · Esfuerzo: M · Depende de: BR-040
+- Estado: En curso (rama `feat/br-047-contenido-en-vivo`; hecho en local, probado con Chrome real y con la hoja real)
+- Historia de usuario: HU-CNT-001 (CA-06, CA-07)
+- RF/RNF: `RF-CNT-006`, `RNF-CONF-003`, `RNF-SEG-004`
+
+**Origen (2026-10-13):** el usuario esperaba que un cambio en la hoja se viera
+sin volver a desplegar. El diseño de `BR-040` lee la hoja solo al construir
+(`ADR-008`), así que cada cambio exigía un redeploy. El usuario eligió leerla
+también desde el navegador, sabiendo que lo publicado en la hoja es público.
+
+Alcance:
+1. El build lee la hoja como hasta ahora y deja el contenido como punto de
+   partida y respaldo; además entrega al navegador el identificador y los gid
+   (`virtual:site-sheet`).
+2. `ContentProvider` muestra ese contenido y, al terminar de cargar la página,
+   pide el CSV, lo valida con el mismo código y lo reemplaza. Una pestaña que
+   falla conserva el contenido del build. El código de lectura se carga con
+   `import()` solo si hay hoja.
+3. Las páginas leen con `useSiteContent()` / `useSiteText()`.
+4. CSP: `connect-src` permite `docs.google.com` y `*.googleusercontent.com`.
+5. `ADR-008` actualizado con fecha; `HU-CNT-001` con CA-06 y CA-07 (CA-05
+   reemplazado).
+
+Criterios de aceptación:
+1. Cambiar un nombre en la hoja y recargar el sitio lo muestra sin reconstruir
+   (e2e en Chrome real).
+2. Con la hoja caída o con una fila inválida, el sitio muestra el contenido del
+   build.
+3. Sin hoja configurada no hay peticiones a Google ni código de lectura en la
+   página inicial.
+4. **Lo comprueba el usuario** en producción: definir las dos variables en
+   Vercel, desplegar una vez, editar la hoja y ver el cambio a los 5 o 6 minutos.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-047).
+
+---
+
+#### BR-048 — Datos de contacto, sucursales y redes desde la hoja
+
+- Prioridad: P1 · Esfuerzo: M · Depende de: BR-047
+- Estado: Propuesta
+- Historia de usuario: HU-CNT-003
+- RF/RNF: `RF-CNT-007` (por escribir), `RNF-DATOS-001`
+
+**Origen (2026-10-13):** el usuario pidió que también se editen desde la hoja
+los datos de la página de ubicación y contacto, los enlaces a WhatsApp y
+AgendaPro, y los del footer (redes sociales, etc.). Hoy viven en `src/config/`
+y `src/data/locationsData.ts`, y `CLAUDE.md` (regla 4) y `RNF-DATOS-001` los
+fijan ahí: **esto cambia esa regla, por decisión del usuario**.
+
+Preguntas abiertas (se resuelven con el usuario al empezar):
+1. ¿Qué datos exactamente? Propuesta: pestaña `sucursales` (id, nombre,
+   dirección, ciudad, teléfono, WhatsApp, horario, URL de AgendaPro, URL del
+   mapa) y pestaña `negocio` (clave/valor: email, redes, WhatsApp general).
+2. `index.html` (JSON-LD de SEO, meta) y `sitemap` son estáticos: solo se
+   actualizan con un build. ¿Se acepta que el SEO se renueve al desplegar?
+3. Un teléfono o un enlace de reserva mal escrito rompe el contacto: ¿qué
+   validación mínima se exige (formato, `https://`)?
+
+Criterios de aceptación (borrador):
+1. Cambiar un teléfono o una URL de AgendaPro en la hoja se ve en el sitio sin
+   desplegar, en la página de ubicación y en el footer.
+2. Un valor inválido conserva el dato del build y avisa en el registro.
 ---
 
 ### Épica E — Animación y scroll
@@ -1356,6 +1422,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |
 | BR-045 | Títulos invisibles sobre fondo oscuro | C | P0 | S | En curso | — |
 | BR-046 | Leer la hoja desde `.env` y en desarrollo | J | P2 | S | En curso | BR-040 |
+| BR-047 | El navegador relee la hoja: cambios sin desplegar | J | P1 | M | En curso | BR-040 |
+| BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | Propuesta | BR-047 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

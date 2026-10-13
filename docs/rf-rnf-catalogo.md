@@ -100,6 +100,7 @@ Salvo que el CP diga otra cosa:
 | RF-CNT-003 | CNT | Conservar en el repo una copia (`snapshot`) del contenido como respaldo, usada cuando la hoja no está configurada, falla o es inválida; el build nunca la escribe. | Alta | **CP-CNT-003:** sin variables el sitio usa el snapshot y el build termina bien; con la hoja caída, igual más un aviso en el log del build. | HU-CNT-001 | CU-CNT-001 | Implementado (`BR-039`: lógica de respaldo; `BR-040`: descarga al construir; el snapshot sigue en `src/data` hasta `BR-041`) |
 | RF-CNT-004 | CNT | Servicios, productos, equipo y preguntas frecuentes leen el contenido generado en lugar de listas escritas en `src/data`. | Alta | **CP-CNT-004:** los componentes importan el contenido generado; en `src/data` no quedan listas de esos cuatro contenidos salvo el snapshot; el JSON-LD de preguntas sale del mismo contenido. | HU-CNT-001 | — | Implementado (`BR-041`: las 4 páginas leen `siteContent`; el JSON-LD de preguntas pasa a `BR-006`) |
 | RF-CNT-005 | CNT | Sustituir textos del sitio por clave desde la pestaña `textos`, con valor por defecto en el código y largo máximo por clave. | Baja | **CP-CNT-005:** `hero.titulo` en la hoja cambia la portada; una clave ausente deja el texto por defecto; un valor demasiado largo se rechaza con aviso. | HU-CNT-002 | CU-CNT-001 | Implementado (`BR-042`: 13 textos de la home, probado con la home entera y de punta a punta con una hoja local) |
+| RF-CNT-006 | CNT | Volver a leer la hoja en el navegador cuando la página termina de cargar y mostrar el contenido nuevo; una pestaña que falla conserva el contenido del build; sin hoja configurada no hay peticiones ni código de lectura. | Alta | **CP-CNT-006:** con la hoja configurada, cambiar un nombre en ella y recargar lo muestra sin reconstruir; con la hoja caída o una fila inválida se ve el contenido del build; sin variables no hay ninguna petición a Google. | HU-CNT-001 | CU-CNT-001 | Implementado (`BR-047`: probado con Chrome real, un servidor que imita a Google y con tu hoja real bajo la política de seguridad de Vercel) |
 
 ### 2.2 Notas de trazabilidad
 
@@ -186,7 +187,7 @@ Salvo que el CP diga otra cosa:
 | HU-MED-001 | RF-MED-001 | RNF-PRIV-001, RNF-PERF-007, RNF-SEG-004 |
 | HU-MED-002 | RF-MED-002, RF-MED-004 | RNF-PRIV-001, RNF-PERF-007, RNF-SEG-004 |
 | HU-MED-003 | RF-MED-003, RF-MED-005 | RNF-PRIV-001, RNF-A11Y-002, RNF-PERF-002 |
-| HU-CNT-001 | RF-CNT-001 .. RF-CNT-004 | RNF-CONF-003, RNF-DATOS-002, RNF-PERF-001, RNF-SEG-004 |
+| HU-CNT-001 | RF-CNT-001 .. RF-CNT-004, RF-CNT-006 | RNF-CONF-003, RNF-DATOS-002, RNF-PERF-001, RNF-SEG-004 |
 | HU-CNT-002 | RF-CNT-005 | RNF-CONF-003, RNF-DATOS-002 |
 
 ## 5. Documentos relacionados

@@ -4,16 +4,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { PageHero } from "@/components/common/PageHero/PageHero";
 import { ROUTES } from "@/config/routes";
 import styles from "./ServicesPage.module.css";
-import { siteContent } from "@/content/siteContent";
+import { useSiteContent } from "@/content/useSiteContent";
 import { SERVICE_CATEGORIES } from "@/types/service.types";
 import type { ServiceCategory } from "@/types/service.types";
 import { useScrollContainer } from "@/hooks/useScrollContainer";
 import { useState } from "react";
 import { staggerFast, cardAnimation } from "@/config/animations.config";
 
-const servicesList = siteContent.services;
-
 export const ServicesPage = () => {
+  const servicesList = useSiteContent().services;
   const {
     scrollContainerRef,
     handleMouseEnter,

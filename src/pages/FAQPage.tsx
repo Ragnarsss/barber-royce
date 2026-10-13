@@ -3,7 +3,7 @@ import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
 import { Card, CardContent } from "@/components/ui/card";
 import { MessageCircle } from "lucide-react";
 import { PageHero } from "@/components/common/PageHero/PageHero";
-import { siteContent } from "@/content/siteContent";
+import { useSiteContent } from "@/content/useSiteContent";
 import { FAQ_CATEGORIES } from "@/types/faq.types";
 import { ROUTES } from "@/config/routes";
 import { CONTACT } from "@/config/constants";
@@ -12,9 +12,8 @@ import styles from "./FAQPage.module.css";
 import { useState } from "react";
 import { sectionAnimation, fadeInUpShort, defaultViewport } from "@/config/animations.config";
 
-const FAQ_LIST = siteContent.faq;
-
 export const FAQPage = () => {
+    const FAQ_LIST = useSiteContent().faq;
     const [openIndex, setOpenIndex] = useState<number | null>(null);
     const route = ROUTES.faq;
 

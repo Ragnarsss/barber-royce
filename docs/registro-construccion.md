@@ -1229,3 +1229,21 @@ servido con `vite preview` y Chrome real:
 - Los tests (`VITEST`) no leen `.env` ni salen a la red: no dependen de la máquina de quien los corre.
 - `siteContentEnv.test.ts` (5 tests) con carpeta temporal; control negativo: sin el cambio fallan 3 de 5.
 - Detalle conocido: `loadEnv` de Vite da prioridad a una variable del sistema aunque esté vacía.
+
+---
+
+<a id="br-047"></a>
+
+## BR-047 — El navegador relee la hoja: cambios sin desplegar
+
+**Notas de construcción (2026-10-13):**
+- Origen: el usuario esperaba cambios sin redeploy; yo había construido lectura solo al build (`ADR-008`, decidido con el usuario ausente). Se cambió por decisión suya, registrada con fecha en `ADR-008`, `HU-CNT-001` (CA-05 reemplazado por CA-06 y CA-07) y `RF-CNT-006`.
+- La descarga se movió de `vite-plugins/siteContentSource.ts` a `src/content/sheetSource.ts` para usarla también en el navegador; `fetchSheetTabs` descarga una fuente y `sheetSourceFromEnv` arma lo que recibe el navegador.
+- El plugin expone `virtual:site-sheet` (identificador, gid, base y tiempo máximo, o `null`). Sin hoja o sin ninguna pestaña válida: `null` y ninguna petición.
+- `ContentProvider` parte del contenido del build, espera al evento `load` (como la analítica, para no competir con el LCP) y baja `refreshContent` con `import()`. `refreshContent` reutiliza `resolveContent` con el contenido del build como respaldo por pestaña.
+- Las 4 páginas y las 8 secciones pasaron de `siteContent`/`siteText` (constantes de módulo) a `useSiteContent()`/`useSiteText()`.
+- CSP: `connect-src` + `https://docs.google.com https://*.googleusercontent.com` (Google redirige el CSV a `googleusercontent.com`). El test de orígenes se actualizó y se agregó que la hoja no sirva para scripts, imágenes ni marcos.
+- Verificación: 6 tests del proveedor (control negativo: 3 fallan sin el cambio), tests de `sheetSourceFromEnv` y `fetchSheetTabs`, 3 tests del módulo en el build real y un e2e en Chrome real (`liveContent.e2e.test.ts`: cambio sin reconstruir, hoja caída, fila inválida; sin el refresco el primero falla). Además se construyó con la hoja real del usuario y se abrió en Chrome con la CSP exacta de `vercel.json`: 10 peticiones a Google, ningún aviso de CSP ni CORS.
+- Medido con la hoja real: Google publicó el cambio en cerca de 1 minuto; la respuesta lleva `Cache-Control: max-age=300`.
+- **Por confirmar (usuario):** si el texto de privacidad debe mencionar que el navegador consulta a Google al cargar.
+- **Pendiente (usuario):** definir `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` en Vercel y desplegar una vez; es el criterio 4 del ticket.

@@ -4,11 +4,11 @@ import { Card } from "@/components/ui/card";
 import { PageHero } from "@/components/common/PageHero/PageHero";
 import { ROUTES } from "@/config/routes";
 import styles from "./TeamPage.module.css";
-import { siteContent } from "@/content/siteContent";
+import { useSiteContent } from "@/content/useSiteContent";
 import { scaleIn, defaultViewport } from "@/config/animations.config";
 
 export const TeamPage = () => {
-  const team = siteContent.team;
+  const team = useSiteContent().team;
   const route = ROUTES.team;
 
   return (

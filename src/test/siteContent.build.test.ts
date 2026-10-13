@@ -13,6 +13,7 @@ import { snapshot } from "../content/snapshot";
  * importa `virtual:site-content`, así el contenido queda en el bundle y se puede inspeccionar.
  */
 const ENTRY = resolve(process.cwd(), "src/test/fixtures/contentEntry.ts");
+const SHEET_ENTRY = resolve(process.cwd(), "src/test/fixtures/sheetEntry.ts");
 const SHEET_ID = "2PACX-id-secreto-de-prueba";
 
 const SERVICIOS = "id,nombre,descripcion,precio,duracion,categoria\ncorte-hoja,Corte desde la hoja,Descripción desde la hoja,7500,50 min,Corte de Cabello\n";
@@ -56,7 +57,7 @@ describe("contenido desde la hoja en el build real (BR-040)", () => {
     await new Promise((done) => server.close(done));
   });
 
-  it("CA-01 y CA-05: con la hoja válida, el sitio trae sus datos; el identificador y la dirección de la hoja no llegan al sitio", async () => {
+  it("CA-01: con la hoja válida, el sitio trae sus datos; el módulo de contenido no lleva la dirección de la hoja", async () => {
     hojaPorGid["0"] = SERVICIOS;
     hojaPorGid["1"] = PRODUCTOS;
     hits = 0;
@@ -70,7 +71,7 @@ describe("contenido desde la hoja en el build real (BR-040)", () => {
     expect(filesContaining(files, SERVICIO_DEL_RESPALDO)).toEqual([]);
     // Las pestañas que no se configuraron siguen con el respaldo.
     expect(filesContaining(files, EQUIPO_DEL_RESPALDO)).toHaveLength(1);
-    // El navegador nunca sabrá de dónde salió el contenido.
+    // El contenido en sí no sabe de dónde salió. Quién sí lo sabe es `virtual:site-sheet` (BR-047), probado abajo.
     for (const secreto of [SHEET_ID, baseUrl, "docs.google.com", "CONTENT_SHEET"]) {
       expect(filesContaining(files, secreto), secreto).toEqual([]);
     }
@@ -121,5 +122,30 @@ describe("contenido desde la hoja en el build real (BR-040)", () => {
     expect(hits).toBe(0);
     expect(filesContaining(files, SERVICIO_DEL_RESPALDO)).toHaveLength(1);
     expect(filesContaining(files, "Corte desde la hoja")).toEqual([]);
+  }, 120_000);
+
+  it("BR-047: con la hoja configurada, el navegador recibe el identificador y los gid para volver a leerla, y nada más de las variables", async () => {
+    const files = await buildSite(env(), { input: SHEET_ENTRY });
+
+    expect(filesContaining(files, SHEET_ID)).toHaveLength(1);
+    expect(filesContaining(files, baseUrl)).toHaveLength(1);
+    expect(filesContaining(files, 'servicios:"0"')).toHaveLength(1);
+    expect(filesContaining(files, "CONTENT_SHEET")).toEqual([]);
+  }, 120_000);
+
+  it("BR-047: sin hoja configurada, el navegador no recibe ninguna fuente (null) y no se pide nada", async () => {
+    hits = 0;
+
+    const files = await buildSite({ CONTENT_SHEET_ID: "", CONTENT_SHEET_GIDS: "", CONTENT_SHEET_BASE_URL: baseUrl }, { input: SHEET_ENTRY });
+
+    expect(hits).toBe(0);
+    expect(filesContaining(files, "null")).toHaveLength(1);
+    expect(filesContaining(files, SHEET_ID)).toEqual([]);
+  }, 120_000);
+
+  it("BR-047: con el identificador pero sin ninguna pestaña válida, tampoco hay fuente en el navegador", async () => {
+    const files = await buildSite(env({ CONTENT_SHEET_GIDS: "peluqueria:5" }), { input: SHEET_ENTRY });
+
+    expect(filesContaining(files, SHEET_ID)).toEqual([]);
   }, 120_000);
 });

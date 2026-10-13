@@ -7,10 +7,11 @@ import { useScrollDirection } from "@/hooks/useScrollMotion";
 import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
 import { BOOKING, CONTACT } from "@/config/constants";
 import { trackReserve, trackWhatsApp } from "@/analytics/track";
-import { siteText } from "@/content/siteContent";
+import { useSiteText } from "@/content/useSiteContent";
 import { scaleIn } from "@/config/animations.config";
 
 export function CTA2() {
+  const siteText = useSiteText();
   const { ref, controls } = useScrollAnimation();
   const direction = useScrollDirection();
 

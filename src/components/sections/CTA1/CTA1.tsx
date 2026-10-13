@@ -9,9 +9,10 @@ import { fadeInLeft, fadeInRight } from "@/config/animations.config";
 import { Link } from "react-router-dom";
 import { BOOKING } from "@/config/constants";
 import { trackReserve } from "@/analytics/track";
-import { siteText } from "@/content/siteContent";
+import { useSiteText } from "@/content/useSiteContent";
 
 export function CTA1() {
+  const siteText = useSiteText();
   const { ref, controls } = useScrollAnimation();
 
   const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>(undefined, {

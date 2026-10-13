@@ -6,6 +6,12 @@ declare module "virtual:site-content" {
   export default content;
 }
 
+// De dónde puede el navegador volver a leer la hoja (BR-047); `null` si no hay hoja configurada.
+declare module "virtual:site-sheet" {
+  const source: import("./content/sheetSource").SheetSource | null;
+  export default source;
+}
+
 interface ImportMetaEnv {
   /** "true" activa Vercel Analytics (BR-036). Sin ella no se carga nada. */
   readonly VITE_VERCEL_ANALYTICS?: string;

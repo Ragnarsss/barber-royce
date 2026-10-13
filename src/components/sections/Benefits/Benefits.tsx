@@ -1,11 +1,12 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import styles from "./Benefits.module.css";
-import { siteText } from "@/content/siteContent";
+import { useSiteText } from "@/content/useSiteContent";
 import { BENEFITS_VIEW_DATA } from "@/data/benefitsData.tsx";
 import barberBack954w from "@/assets/optimized/barber_background_954w.webp";
 import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
 
 export function Benefits() {
+  const siteText = useSiteText();
   return (
     <section id="benefits" className={styles.benefits}>
       <div className={styles.imageBackground}>

@@ -55,6 +55,7 @@ citan.
 | HU-MED-003 | MED | Decidir si acepto que midan mi visita | Alta | 5 | 5 | — | Propuesta |
 | HU-CNT-001 | CNT | Cambiar servicios, productos, equipo y preguntas desde una hoja | Alta | 5 | 8 | HU-INFO-001 | Propuesta |
 | HU-CNT-002 | CNT | Cambiar títulos y textos del sitio desde la misma hoja | Baja | 3 | 5 | HU-CNT-001 | Propuesta |
+| HU-CNT-003 | CNT | Cambiar datos de contacto, sucursales y redes desde la hoja | Alta | 5 | 8 | HU-CNT-001 | Propuesta |
 
 ## Épicas
 
@@ -66,7 +67,7 @@ citan.
 | Experiencia | HU-EXP-001, HU-EXP-002, HU-EXP-003 |
 | Operación | HU-OPS-001 |
 | Medición y privacidad | HU-MED-001, HU-MED-002, HU-MED-003 |
-| Contenido editable | HU-CNT-001, HU-CNT-002 |
+| Contenido editable | HU-CNT-001, HU-CNT-002, HU-CNT-003 |
 
 ---
 
@@ -708,8 +709,23 @@ sitio se actualice, para no depender de un desarrollador por cada cambio.
 - CA-04: Given edito un precio en la hoja y disparo la publicación, When
   termina el despliegue, Then el sitio muestra el precio nuevo sin
   cambios de código ni en el repo.
-- CA-05: Given el sitio ya publicado, When un visitante lo abre, Then no
-  hace ninguna petición a Google Sheets (el contenido viaja en el sitio).
+- CA-05: ~~Given el sitio ya publicado, When un visitante lo abre, Then no
+  hace ninguna petición a Google Sheets (el contenido viaja en el sitio).~~
+  **Reemplazado el 2026-10-13 por CA-06** (decisión del usuario, `BR-047`).
+- CA-06 (2026-10-13): Given la hoja está configurada y el sitio publicado,
+  When edito un precio en la hoja y, pasados unos minutos, un visitante abre o
+  recarga el sitio, Then ve el precio nuevo sin un despliegue; y When la hoja
+  no responde o una pestaña es inválida, Then ve el contenido con el que se
+  construyó el sitio.
+- CA-07 (2026-10-13): Given no hay hoja configurada, When un visitante abre
+  el sitio, Then no se hace ninguna petición a Google ni se descarga el código
+  de lectura de la hoja.
+
+> Actualizada (2026-10-13): el dueño necesita ver sus cambios sin volver a
+> desplegar. La hoja se lee en el build **y** en el navegador (`ADR-008`,
+> actualización del 2026-10-13). El riesgo "un cambio puede tardar unos
+> minutos" se mantiene (5 a 6 minutos, no un build). Lo publicado en la hoja
+> es público, incluidas las filas con `activo = NO`.
 
 ### Reglas de negocio asociadas:
 
@@ -768,6 +784,45 @@ el de la portada) desde la hoja, para ajustar el mensaje sin tocar código.
 
 - Entrada: pestaña `textos` (`clave`, `valor`).
 - Salida: textos que reemplazan a los literales del código.
+
+---
+
+## HU-CNT-003 - Cambiar datos de contacto, sucursales y redes desde la hoja
+
+Como dueño, quiero cambiar teléfonos, direcciones, horarios, enlaces de
+WhatsApp y AgendaPro y las redes sociales en la misma hoja, para corregir
+un dato de contacto sin pedir un cambio de código.
+
+- Epic: Contenido editable
+- Actor / Persona: Dueño
+- Prioridad: Alta
+- Estimación: 8 SP
+- Fuente: pedido del usuario (2026-10-13): «necesito que los datos de
+  contacto estén en una hoja, los de la página de ubicación y contacto, y los
+  enlaces a WhatsApp, AgendaPro, etc.; y los del footer también, redes
+  sociales».
+- Dependencias: HU-CNT-001 (BR-047: lectura en el navegador).
+- Riesgo: Alto — un teléfono o un enlace de reserva mal escrito rompe el
+  contacto; `index.html` (JSON-LD, meta) y el sitemap son estáticos y solo se
+  actualizan al construir; **cambia la regla de `CLAUDE.md` 4 y `RNF-DATOS-001`**
+  (los datos del negocio vivían solo en `src/config/`).
+- Decisión del usuario (2026-10-13): estos datos también salen de la hoja.
+  Qué datos exactos, qué se valida y qué pasa con el SEO estático se resuelven
+  al empezar `BR-048`.
+- RF relacionados: RF-CNT-007 (por escribir con `BR-048`).
+- RNF impactados: RNF-DATOS-001, RNF-CONF-003, RNF-SEG-004.
+- Casos de uso relacionados: CU-CNT-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given la hoja está configurada, When cambio el teléfono de una
+  sucursal y un visitante recarga el sitio, Then ve el teléfono nuevo en la
+  página de ubicación y en el footer, sin desplegar.
+- CA-02: Given edito la URL de AgendaPro o de WhatsApp, When un visitante
+  pulsa «Reservar», Then llega al enlace nuevo.
+- CA-03: Given un valor inválido (enlace sin `https://`, teléfono vacío),
+  When se lee la hoja, Then se conserva el dato con el que se construyó el
+  sitio y queda un aviso en el registro.
 
 ---
 

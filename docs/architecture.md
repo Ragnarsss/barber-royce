@@ -309,6 +309,37 @@ No hay gestor de estado global (ADR-004).
 - **A confirmar con el usuario:** pestañas y columnas, si la hoja puede
   ser pública, y quién crea el `deploy hook`.
 
+> **Actualización (2026-10-13, decisión del usuario, `BR-047`):** el dueño
+> necesita que un cambio en la hoja se vea **sin volver a desplegar**. Se
+> elige leer la hoja **también desde el navegador**, además del build. Cambia
+> lo decidido arriba así:
+>
+> - **Punto 2 (cambia):** el build sigue leyendo la hoja y deja ese contenido
+>   en el sitio como punto de partida y respaldo. Cuando la página termina de
+>   cargar, el navegador vuelve a pedir el CSV y, si responde, muestra lo que la
+>   hoja diga (`ContentProvider`). Sin hoja configurada no hace ninguna petición
+>   ni baja el código de lectura (se carga con `import()`).
+> - **Punto 3 (se mantiene):** la misma validación corre en el navegador. Una
+>   pestaña que no responde o no valida conserva el contenido del build; las
+>   demás se actualizan.
+> - **Punto 4 (ya no hace falta):** publicar un cambio no requiere `deploy
+>   hook`. El `deploy hook` sigue sirviendo para renovar el contenido de
+>   fábrica del build.
+> - **Punto 5 (cambia):** el identificador y los `gid` llegan al navegador
+>   (`virtual:site-sheet`). No son un secreto: quien tenga el enlace de una
+>   hoja publicada puede leer esas pestañas. El código y la política de seguridad
+>   (`connect-src`: `docs.google.com` y `*.googleusercontent.com`) lo permiten
+>   solo para `fetch`.
+> - **Costos que se aceptan** (eran las razones de descartar esta opción):
+>   el contenido puede cambiar unos instantes después de cargar; el sitio
+>   depende de Google solo para *refrescar* (si falla, queda el contenido del
+>   build); y **todo lo que esté en una pestaña publicada es público**, incluidas
+>   las filas con `activo = NO` y cualquier columna o nota de trabajo.
+> - **Retraso esperado:** Google publica en cerca de 1 minuto y la respuesta se
+>   cachea 5 minutos, así que un cambio se ve en 5 a 6 minutos.
+> - **Por confirmar:** si el texto de privacidad debe mencionar que el
+>   navegador consulta a Google al cargar el sitio.
+
 ## 10. Deuda conocida y diferida
 
 | Tema | Estado | Ticket |
