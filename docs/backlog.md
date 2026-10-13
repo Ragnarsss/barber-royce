@@ -524,6 +524,30 @@ Alcance:
 Criterios de aceptación:
 1. CP-COMP-001 pasa en 360, 768, 1280 y 1920 px.
 
+
+#### BR-046 — Leer la hoja desde `.env` y en desarrollo
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-040
+- Estado: En curso (rama `feat/br-046-env-local`; hecho en local)
+- Historia de usuario: HU-CNT-001
+- RF/RNF: `RNF-CONF-003`
+
+**Origen (2026-10-13):** el usuario pidió un `.env` para cargar las variables de
+la hoja. Al revisarlo se vio que el plugin solo leía las variables del sistema y
+que `npm run dev` nunca leía la hoja: ni un `.env` ni el servidor local
+servían para verla. Además el README no decía de dónde se sacan los valores.
+
+Alcance:
+1. El plugin lee `.env` / `.env.local` (con `loadEnv`); las variables del
+   sistema, si no están vacías, ganan.
+2. `npm run dev` lee la hoja una vez al arrancar (un cambio en la hoja pide
+   reiniciar). Los tests no leen `.env` ni salen a la red.
+3. README: sección «De dónde sacar las variables»; `.env.example` actualizado.
+
+Criterios de aceptación:
+1. Con `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` en `.env`, `npm run dev` muestra
+   el contenido de la hoja. **Esta prueba la hace el usuario** con su hoja real.
+2. Sin `.env` el sitio sigue usando el respaldo y no hace ninguna petición.
 ---
 
 ### Épica E — Animación y scroll
@@ -1331,6 +1355,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-043 | Guía para publicar desde la hoja | J | P2 | S | En curso | BR-040 |
 | BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |
 | BR-045 | Títulos invisibles sobre fondo oscuro | C | P0 | S | En curso | — |
+| BR-046 | Leer la hoja desde `.env` y en desarrollo | J | P2 | S | En curso | BR-040 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

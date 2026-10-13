@@ -1218,3 +1218,14 @@ servido con `vite preview` y Chrome real:
 - README reescrito en español: stack real, cómo levantarlo en local (sin `.env`), tabla de comandos, variables de entorno (de build y `VITE_*`), de dónde sale el contenido (hoja de Google y respaldo), analítica opt-in, estructura, despliegue y rollback, y el proceso por tickets.
 - Se corrigió lo que estaba mal: puerto 5173 (es 8888), Tailwind «TBD» (descartado por ADR-002), `react-snap` (no está instalado), variables que nadie usa y dos URLs de GitHub distintas.
 - **Pendiente (usuario):** seguir el README desde un clon limpio. Es el criterio de aceptación del ticket.
+
+---
+
+## BR-046 — Leer la hoja desde `.env` y en desarrollo
+
+**Notas de construcción (2026-10-13):**
+- Error mío: al pedir el `.env` se vio que mi consejo anterior («ponlas en `.env.local` y reinicia `npm run dev`») no funcionaba: el plugin leía solo `process.env` y en desarrollo no leía la hoja.
+- `siteContentPlugin` usa `loadEnv` y mezcla con las variables del sistema (ganan si no están vacías). En desarrollo lee la hoja al arrancar.
+- Los tests (`VITEST`) no leen `.env` ni salen a la red: no dependen de la máquina de quien los corre.
+- `siteContentEnv.test.ts` (5 tests) con carpeta temporal; control negativo: sin el cambio fallan 3 de 5.
+- Detalle conocido: `loadEnv` de Vite da prioridad a una variable del sistema aunque esté vacía.

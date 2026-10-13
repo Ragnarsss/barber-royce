@@ -17,7 +17,7 @@ npm install
 npm run dev        # http://localhost:8888
 ```
 
-No hace falta ningún archivo `.env`: sin variables el sitio funciona completo, con el contenido de respaldo y sin analítica.
+No hace falta ningún archivo `.env`: sin variables el sitio funciona completo, con el contenido de respaldo y sin analítica. Para ver tu hoja de Google en local, mira «De dónde sacar las variables» más abajo.
 
 Si el servidor de desarrollo muestra errores de importación después de cambiar de rama, deténlo (`Ctrl+C`), vuelve a ejecutar `npm run dev` y recarga con `Ctrl+Shift+R`.
 
@@ -40,7 +40,7 @@ Los tests viven junto al archivo que prueban (`*.test.ts(x)`). Los de `src/test/
 
 ## Variables de entorno
 
-Todas son opcionales y están documentadas en [`.env.example`](.env.example). Para probar alguna en local, ponla en un archivo `.env.local` (no se sube al repositorio) y reinicia `npm run dev`. En producción se definen en Vercel (Settings → Environment Variables) y hay que volver a desplegar.
+Todas son opcionales y están documentadas en [`.env.example`](.env.example). Para probar alguna en local, ponla en un archivo `.env` (no se sube al repositorio) y reinicia `npm run dev`. En producción se definen en Vercel (Settings → Environment Variables) y hay que volver a desplegar.
 
 | Variable | Para qué | Llega al navegador |
 |---|---|---|
@@ -51,6 +51,27 @@ Todas son opcionales y están documentadas en [`.env.example`](.env.example). Pa
 | `VITE_GA_MEASUREMENT_ID` | ID de GA4; activa el aviso de consentimiento | Sí (pública) |
 
 Las variables `VITE_*` terminan dentro del JavaScript del sitio, así que nunca llevan secretos.
+
+### De dónde sacar las variables
+
+**Hoja de Google (`CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS`)**
+
+1. Crea la hoja con las cinco pestañas (`servicios`, `productos`, `equipo`, `preguntas`, `textos`) importando las plantillas de `docs/contenido/`. Cada columna y regla está en [`docs/contenido-hoja.md`](docs/contenido-hoja.md).
+2. En Google Sheets: **Archivo → Compartir → Publicar en la web**. Elige **una pestaña** (no «Documento completo») y el formato **CSV**, y publica. Repite con cada pestaña. Lo publicado es público: no pongas nada confidencial en la hoja.
+3. De cada dirección que aparece (`https://docs.google.com/spreadsheets/d/e/2PACX-…/pub?gid=123456&single=true&output=csv`) saca dos datos:
+   - el identificador `2PACX-…` (es el mismo en todas las pestañas) → `CONTENT_SHEET_ID`;
+   - el número después de `gid=` (distinto en cada pestaña; la primera suele ser `0`) → una entrada de `CONTENT_SHEET_GIDS`, con el formato `servicios:0,productos:123456,equipo:234567,preguntas:345678,textos:456789`.
+4. No sirve el identificador largo de la dirección de edición (`/d/1AbC…/edit`).
+
+**Analítica (opcional)**
+
+- `VITE_VERCEL_ANALYTICS=true`: antes hay que habilitar Analytics en el panel de Vercel (proyecto → Analytics).
+- `VITE_GA_MEASUREMENT_ID`: en [analytics.google.com](https://analytics.google.com) crea una propiedad GA4 y un flujo de datos web; el ID (`G-XXXXXXXXXX`) está en Administrar → Flujos de datos.
+
+**Dónde ponerlas**
+
+- **En local:** copia el ejemplo con `cp .env.example .env`, completa `.env` (no se sube al repositorio) y reinicia `npm run dev`. El servidor lee la hoja una vez al arrancar, así que un cambio en la hoja se ve reiniciándolo. Un `npm run build` también la lee.
+- **En producción:** Vercel → Settings → Environment Variables, y vuelve a desplegar.
 
 ## De dónde sale el contenido
 
