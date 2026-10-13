@@ -58,9 +58,9 @@ const content: SiteContent = {
 
 const render = (ui: ReactElement) =>
   renderWithProviders(
-    <LenisContext.Provider value={{ lenis: null, isReady: false }}>
+    <LenisContext value={null}>
       <ContentContext.Provider value={content}>{ui}</ContentContext.Provider>
-    </LenisContext.Provider>,
+    </LenisContext>,
   );
 
 describe("los datos del negocio se leen del contenido vigente (BR-048)", () => {

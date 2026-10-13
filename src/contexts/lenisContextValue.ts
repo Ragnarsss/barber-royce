@@ -1,9 +1,5 @@
 import { createContext } from 'react';
 import type Lenis from 'lenis';
 
-export interface LenisContextType {
-    lenis: Lenis | null;
-    isReady: boolean;
-}
-
-export const LenisContext = createContext<LenisContextType | undefined>(undefined);
+/** La instancia de Lenis, o null si aún no existe o el usuario pidió reducir el movimiento. `undefined` es "sin proveedor". */
+export const LenisContext = createContext<Lenis | null | undefined>(undefined);

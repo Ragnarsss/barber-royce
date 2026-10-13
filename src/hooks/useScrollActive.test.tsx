@@ -14,7 +14,7 @@ function fakeLenis() {
 
 const withLenis = (lenis: Lenis | null) =>
   function Wrapper({ children }: { children: ReactNode }) {
-    return <LenisContext.Provider value={{ lenis, isReady: lenis !== null }}>{children}</LenisContext.Provider>;
+    return <LenisContext value={lenis}>{children}</LenisContext>;
   };
 
 const useHook = useLenisScrollActive;
@@ -46,7 +46,7 @@ describe("useLenisScrollActive (BR-014)", () => {
     const lenis = fakeLenis();
     let current: Lenis | null = null;
     function Wrapper({ children }: { children: ReactNode }) {
-      return <LenisContext.Provider value={{ lenis: current, isReady: current !== null }}>{children}</LenisContext.Provider>;
+      return <LenisContext value={current}>{children}</LenisContext>;
     }
 
     const { rerender } = renderHook(() => useHook(), { wrapper: Wrapper });

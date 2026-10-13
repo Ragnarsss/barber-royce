@@ -84,7 +84,7 @@ descripción de cada una.
 
 ## 5. Animación y scroll
 
-- **Lenis** da el scroll suave. Se crea en `useLenis()` (llamado en
+- **Lenis** da el scroll suave. Se crea en `useCreateLenis()` (llamado en
   `App.tsx`) y se comparte con `LenisContext`.
 - **framer-motion** anima entradas y parallax. Las variantes viven en
   `src/config/animations.config.ts`.

@@ -10,11 +10,6 @@
 @import "./mixins.css";
 @import "./performance.css"; /* Performance optimizations */
 
-/* Lenis smooth scroll se encarga del scroll behavior */
-html {
-  /* scroll-behavior: smooth; - Removido, ahora usa Lenis */
-}
-
 /* Configuración base del body */
 body {
   font-family: var(--font-family-primary);

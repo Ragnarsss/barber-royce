@@ -1,20 +1,21 @@
 import { useContext } from 'react';
 import type Lenis from 'lenis';
-import { LenisContext, type LenisContextType } from '@/contexts/lenisContextValue';
+import { LenisContext } from '@/contexts/lenisContextValue';
 
-const useLenisContextValue = (hookName: string): LenisContextType => {
-    const context = useContext(LenisContext);
-    if (!context) {
-        throw new Error(`${hookName} must be used within a LenisProvider`);
+const useLenisContextValue = (hookName: string): Lenis | null => {
+    const lenis = useContext(LenisContext);
+    if (lenis === undefined) {
+        throw new Error(`${hookName} must be used within a LenisContext`);
     }
-    return context;
+    return lenis;
 };
 
 export const useLenisInstance = (): Lenis | null =>
-    useLenisContextValue('useLenisInstance').lenis;
+    useLenisContextValue('useLenisInstance');
 
+/** Lenis está listo en cuanto existe la instancia: `useCreateLenis` la publica ya inicializada. */
 export const useLenisReady = (): boolean =>
-    useLenisContextValue('useLenisReady').isReady;
+    useLenisContextValue('useLenisReady') !== null;
 
 /**
  * Hook para refrescar Lenis manualmente cuando sea necesario
