@@ -457,3 +457,53 @@ responden 200 y el bundle publicado contiene `PageError`.
   final, en el preview): que el parallax se vea igual en Hero, CTA1, CTA2,
   SocialProof1/2 y las secciones de Features/Reviews, y Profiler/Performance
   con CPU 4x (CP-PERF-003, CP-PERF-006).
+
+---
+
+<a id="br-011"></a>
+
+## BR-011 — Ruta crítica del LCP
+
+**Notas de construcción (2026-10-12):**
+- Causa: `index.html` precargaba `hero_model_left_profile.png` (685 KB
+  transferidos) que el `<picture>` no usa porque elige WebP: la imagen del
+  LCP se descargaba dos veces. Además el `<img>` de respaldo de cinco
+  `<picture>` apuntaba a PNG originales de hasta 1,9 MB.
+- Arreglo:
+  - Preload nuevo con `imagesrcset` e `imagesizes` idénticos a los del
+    `<picture>` del Hero, `type="image/webp"` y `fetchpriority="high"`.
+    Vite reescribe `imagesrcset` a los archivos con hash.
+  - El `<img>` de respaldo de Hero, Benefits, CTA1, SocialProof1 y Navbar
+    pasa al WebP más chico; los PNG originales dejan de importarse y de
+    salir en `dist/` (quedan `cta2_crew.png` y el logo del footer, que
+    son de `BR-012`).
+- **Decisión contraria a la auditoría (medida):** el orden AVIF → WebP se
+  descarta. Cada AVIF pesaba más que su WebP: hero 104.475 frente a
+  101.274 bytes, CTA1 55.563 frente a 50.352, SocialProof 34.013 frente a
+  28.992, fondo de Benefits 77.348 frente a 65.580, logo 1.524 frente a
+  1.172. Se eliminan los cinco `<source type="image/avif">`, los cinco
+  `.avif` del repo y la generación en `scripts/optimize-images.js`.
+- Medición (Lighthouse 12, móvil, `vite preview` local, 1 corrida cada
+  una; la mediana de 3 y el preview de Vercel quedan para el cierre):
+
+  | | Antes | Después |
+  |---|---|---|
+  | Rendimiento | 65 | 85 |
+  | LCP | 7,5 s | 3,7 s |
+  | TBT | 330 ms | 110 ms |
+  | CLS | 0 | 0 |
+  | Peso transferido | 1.260 KiB | 573 KiB |
+
+- Lo que queda del LCP: fases TTFB 456 ms, retraso de carga 0 ms, carga
+  0 ms, **retraso de render 3.277 ms**. La imagen ya llega a tiempo; falta
+  que React monte. Se abre `BR-035` y el criterio de LCP ≤ 2,5 s de este
+  ticket pasa allí.
+- Test (`src/test/lcpPreload.test.ts`, 5 casos; 3 fallan contra el
+  `index.html` anterior): el preload coincide con `sizes` y con los
+  archivos WebP del `<picture>`, no hay preload de PNG ni PNG como imagen
+  del Hero, y no hay `<source>` AVIF.
+- No se evaluó el preload de fuentes (ex `P002`): sin medición previa que
+  lo justifique, queda para cuando `BR-035` fije la línea base.
+- Cobertura sin cambio de umbral (19,64 / 53,09 / 35,16 / 19,64).
+- Verificación local: 51 tests, lint, tipos y build OK; `dist/` pasa de
+  incluir PNG de ~6 MB a 2,8 MB en total.

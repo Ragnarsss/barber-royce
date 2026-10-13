@@ -590,7 +590,7 @@ Criterios de aceptación:
 #### BR-011 — Ruta crítica del LCP
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (rama `perf/br-011-ruta-critica-lcp`; hecho en local, falta confirmar en el preview)
 - Historia de usuario: HU-EXP-001 (CA-01)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-004`
 
@@ -603,11 +603,55 @@ al PNG original.
 Alcance:
 1. Quitar ese preload; precargar la imagen que de verdad es el LCP
    (`imagesrcset` del AVIF) o confiar en `fetchpriority="high"`.
-2. Orden `<source>` AVIF → WebP; `<img>` de respaldo en WebP.
+2. ~~Orden `<source>` AVIF → WebP~~; `<img>` de respaldo en WebP.
+
+> **Alcance ajustado (2026-10-12):** el orden AVIF → WebP **no se aplica**.
+> Al medir, cada AVIF pesa entre 3 % y 28 % más que el WebP del mismo
+> tamaño (hero 104 KB frente a 101 KB; fondo de Benefits 77 KB frente a
+> 65 KB), así que ponerlo primero empeoraba la carga. Los `<source>` AVIF,
+> que ningún navegador elegía, se eliminan junto con los archivos y la
+> generación en el script.
 3. Evaluar el preload de Montserrat 400/700 (ex `P002`) con medición.
 
 Criterios de aceptación:
-1. CP-PERF-001 pasa en la home; el PNG del hero no aparece en Network.
+1. El PNG del hero no aparece en Network y el preload coincide con el
+   `<picture>` (test `lcpPreload.test.ts`).
+2. CP-PERF-001 (LCP ≤ 2,5 s) **no se alcanza con este ticket**: tras
+   quitar el PNG el LCP baja de 7,5 s a 3,7 s en Lighthouse móvil local,
+   pero el resto es retraso de render por el JavaScript inicial. Pasa a
+   `BR-035`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-011).
+
+#### BR-035 — Reducir el JavaScript de la carga inicial de la home
+
+- Prioridad: P1 · Esfuerzo: M · Depende de: BR-011, BR-013
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-001 (CA-01)
+- RF/RNF: `RNF-PERF-001`, `RNF-PERF-003`, `RNF-PERF-005`
+
+**Origen (2026-10-12):** tras `BR-011`, Lighthouse móvil local mide LCP
+3,7 s con la imagen ya descargada a los 0,5 s: las fases son TTFB 456 ms,
+retraso de carga 0 ms, carga 0 ms y **retraso de render 3.277 ms**. La
+home es una SPA y no pinta nada hasta que React monta; el bundle carga
+todas las secciones de la home (Hero, Benefits, Features, Reviews,
+SocialProof1/2, CTA1/2) y Lighthouse estima 54 KiB de JavaScript sin
+usar. FCP también es 2,5 s.
+
+Alcance:
+1. Medir el tamaño de los chunks que pide la home (`perf:bundle`) y fijar
+   la línea base de `RNF-PERF-005` (≤ 200 KB gzip).
+2. Cargar con `lazy()` + `Suspense` las secciones de la home que están
+   bajo el pliegue; el Hero y el navbar quedan en el chunk inicial
+   (patrón de rutas lazy de RadarOP).
+3. Revisar qué más llega al chunk inicial (por ejemplo `honeycomb-grid`,
+   `radix-ui` completo) con el visualizador.
+
+Criterios de aceptación:
+1. LCP ≤ 2,5 s y TBT ≤ 200 ms en Lighthouse móvil, mediana de 3, en el
+   preview (CP-PERF-001, CP-PERF-003).
+2. JavaScript de la carga inicial ≤ 200 KB gzip (CP-PERF-005).
+3. Las secciones diferidas no producen saltos de diseño (CLS ≤ 0,1).
 
 #### BR-012 — Optimizar las imágenes que quedaron fuera
 
@@ -876,8 +920,9 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-008 | Fotos propias en lugar de Unsplash | B | P0 | M | Bloqueada | — |
 | BR-009 | Decidir botón "Comprar" | B | P1 | XS | Propuesta | — |
 | BR-010 | Variables de entorno | B | P1 | XS | Propuesta | — |
-| BR-011 | Ruta crítica del LCP | F | P1 | S | Propuesta | — |
+| BR-011 | Ruta crítica del LCP | F | P1 | S | En curso | — |
 | BR-012 | Imágenes pendientes | F | P1 | S | Propuesta | BR-011 |
+| BR-035 | JavaScript inicial de la home | F | P1 | M | Propuesta | BR-011, BR-013 |
 | BR-013 | CSS crítico | F | P1 | S | Propuesta | — |
 | BR-014 | Lenis sin fugas | E | P1 | M | En curso | BR-004 |
 | BR-015 | Cero re-renders por scroll | E | P1 | M | En curso | BR-014 |

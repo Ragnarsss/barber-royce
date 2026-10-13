@@ -21,7 +21,7 @@ usuario ni formularios que envíen datos.
 | Estilos | CSS Modules + tokens CSS en `src/styles/tokens/` (ADR-002) |
 | Animación y scroll | `framer-motion` 12, `lenis` |
 | Iconos y fuentes | `lucide-react`, Montserrat self-hosted (`@fontsource/montserrat`) |
-| Imágenes | `sharp` (`scripts/optimize-images.js`) + `vite-plugin-image-optimizer` |
+| Imágenes | `sharp` (`scripts/optimize-images.js`, solo WebP: el AVIF pesaba más) + `vite-plugin-image-optimizer` |
 | Calidad | ESLint 9 (flat config), commitizen. Tests y CI: `BR-029`, `BR-030` |
 | Rendimiento | `@lhci/cli` (`lighthouserc.json`), `vite-bundle-visualizer` |
 | Hosting | Vercel (ADR-003, `BR-002`) |

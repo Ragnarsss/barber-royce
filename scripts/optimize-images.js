@@ -81,27 +81,10 @@ async function optimizeImages() {
         );
       }
 
-      // Generate AVIF fallback for base size (mejor compresión)
-      const baseSize = img.sizes[0];
-      const avifPath = path.join(
-        outputDir,
-        `${img.displayName}_${baseSize}w.avif`,
-      );
-      await sharp(inputPath)
-        .resize(baseSize, null, {
-          withoutEnlargement: true,
-          fit: "inside",
-        })
-        .avif({ quality: 80 })
-        .toFile(avifPath);
-
-      const avifStats = await fs.stat(avifPath);
-      const avifSizeKB = (avifStats.size / 1024).toFixed(2);
-      totalOptimizedSize += avifStats.size;
-
-      console.log(
-        `  Generated ${img.displayName}_${baseSize}w.avif (${avifSizeKB} KB) - fallback\n`,
-      );
+      // Sin AVIF (BR-011): con quality 80 pesaba entre 3 % y 28 % MAS que el
+      // WebP del mismo tamano, y como el <picture> lista WebP primero ningun
+      // navegador lo elegia. Si se reintroduce, medir antes de publicarlo.
+      console.log("");
     } catch (error) {
       console.error(`  Error processing ${img.input}:`, error.message);
     }

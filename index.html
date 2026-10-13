@@ -287,14 +287,17 @@
 
     <!-- Performance: Fonts self-hosted, Google Fonts removido -->
 
-    <!-- Performance: Preload critical assets para mejorar LCP -->
-    <!-- Hero image - Above the fold, máxima prioridad -->
+    <!-- Performance: Preload de la imagen del LCP (BR-011).
+         Mismo srcset y sizes que el <picture> del Hero, para que el navegador
+         descargue exactamente el mismo archivo y no dos. Si cambias uno,
+         cambia el otro. -->
     <link
       rel="preload"
-      href="/src/assets/hero_model_left_profile.png"
       as="image"
-      type="image/png"
+      type="image/webp"
       fetchpriority="high"
+      imagesrcset="/src/assets/optimized/hero_model_left_profile_842w.webp 842w, /src/assets/optimized/hero_model_left_profile_1060w.webp 1060w, /src/assets/optimized/hero_model_left_profile_1684w.webp 1684w"
+      imagesizes="(max-width: 768px) 100vw, (max-width: 1400px) 50vw, 842px"
     />
   </head>
   <body>

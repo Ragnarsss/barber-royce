@@ -3,8 +3,6 @@ import { Calendar, ArrowRight } from "lucide-react";
 import styles from "./CTA1.module.css";
 import cta700w from "@/assets/optimized/cta1_model_700w.webp";
 import cta1400w from "@/assets/optimized/cta1_model_1400w.webp";
-import ctaAvif from "@/assets/optimized/cta1_model_700w.avif";
-import ctaImage from "@/assets/cta1_model.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { fadeInLeft, fadeInRight } from "@/config/animations.config";
@@ -101,12 +99,8 @@ export function CTA1() {
             sizes="(max-width: 768px) 100vw, 700px"
             type="image/webp"
           />
-          <source
-            srcSet={ctaAvif}
-            type="image/avif"
-          />
           <img
-            src={ctaImage}
+            src={cta700w}
             alt="Modelo con corte premium de Royce Barbería"
             loading="lazy"
             width="700"

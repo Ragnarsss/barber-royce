@@ -3,8 +3,6 @@ import styles from "./SocialProof1.module.css";
 import socialProof560w from "@/assets/optimized/social_proof_560w.webp";
 import socialProof1120w from "@/assets/optimized/social_proof_1120w.webp";
 import socialProof1680w from "@/assets/optimized/social_proof_1680w.webp";
-import socialProofAvif from "@/assets/optimized/social_proof_560w.avif";
-import socialProofImage from "@/assets/social_proof_1.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
@@ -196,9 +194,8 @@ export function SocialProof1() {
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px"
                   type="image/webp"
                 />
-                <source srcSet={socialProofAvif} type="image/avif" />
                 <img
-                  src={socialProofImage}
+                  src={socialProof560w}
                   className={styles.image}
                   loading="lazy"
                   alt="Cliente satisfecho en Royce Barbería"

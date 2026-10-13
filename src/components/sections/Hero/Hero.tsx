@@ -5,8 +5,6 @@ import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData.tsx";
 import heroImage842w from "@/assets/optimized/hero_model_left_profile_842w.webp";
 import heroImage1060w from "@/assets/optimized/hero_model_left_profile_1060w.webp";
 import heroImage1684w from "@/assets/optimized/hero_model_left_profile_1684w.webp";
-import heroImageAvif from "@/assets/optimized/hero_model_left_profile_842w.avif";
-import backgroundImage from "@/assets/hero_model_left_profile.png";
 
 import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
@@ -86,12 +84,8 @@ export function Hero() {
           sizes="(max-width: 768px) 100vw, (max-width: 1400px) 50vw, 842px"
           type="image/webp"
         />
-        <source
-          srcSet={heroImageAvif}
-          type="image/avif"
-        />
         <motion.img
-          src={backgroundImage}
+          src={heroImage842w}
           alt="Barbero profesional mostrando corte moderno premium en Royce Barbería"
           loading="eager"
           fetchPriority="high"

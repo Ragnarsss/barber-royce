@@ -3,8 +3,6 @@ import styles from "./Benefits.module.css";
 import { BENEFITS_VIEW_DATA } from "@/data/benefitsData.tsx";
 import barberBack954w from "@/assets/optimized/barber_background_954w.webp";
 import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
-import barberBackAvif from "@/assets/optimized/barber_background_954w.avif";
-import barberBackImage from "@/assets/barber_back.png";
 
 export function Benefits() {
   return (
@@ -16,12 +14,8 @@ export function Benefits() {
             sizes="(max-width: 1400px) 100vw, 954px"
             type="image/webp"
           />
-          <source
-            srcSet={barberBackAvif}
-            type="image/avif"
-          />
           <img
-            src={barberBackImage}
+            src={barberBack954w}
             alt="Barbero profesional trabajando"
             className={styles.backgroundImage}
             loading="lazy"

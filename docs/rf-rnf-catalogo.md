@@ -117,7 +117,7 @@ Salvo que el CP diga otra cosa:
 
 | ID | Cat | Requisito no funcional | Métrica | Umbral | Método de verificación | Afecta a | Estado |
 |---|---|---|---|---|---|---|---|
-| RNF-PERF-001 | PERF | La página principal de cada ruta pinta rápido en un celular de gama media. | LCP (Lighthouse móvil) | ≤ 2,5 s en cada ruta | **CP-PERF-001:** Lighthouse móvil contra el preview, mediana de 3 corridas, las 7 rutas. | Todas las rutas | Propuesto (LCP depende de un PNG precargado y no usado; `BR-011`) |
+| RNF-PERF-001 | PERF | La página principal de cada ruta pinta rápido en un celular de gama media. | LCP (Lighthouse móvil) | ≤ 2,5 s en cada ruta | **CP-PERF-001:** Lighthouse móvil contra el preview, mediana de 3 corridas, las 7 rutas. | Todas las rutas | Implementado parcial (`BR-011`: LCP móvil local 7,5 s → 3,7 s al quitar el PNG; el resto es JavaScript inicial, `BR-035`) |
 | RNF-PERF-002 | PERF | El contenido no salta mientras carga. | CLS | ≤ 0,1 en cada ruta | **CP-PERF-002:** Lighthouse móvil; toda `<img>` tiene `width` y `height`. | Todas las rutas | Propuesto (`BR-012`, `BR-013`) |
 | RNF-PERF-003 | PERF | La página responde a la interacción sin bloquear el hilo principal. | TBT (Lighthouse móvil) | ≤ 200 ms en cada ruta | **CP-PERF-003:** Lighthouse móvil. | Todas las rutas | Propuesto |
 | RNF-PERF-004 | PERF | Las imágenes llegan optimizadas. | Peso transferido de la home en la primera carga; peso de cualquier imagen servida | ≤ 1,5 MB; ≤ 300 KB por imagen | **CP-PERF-004:** pestaña Network del preview con caché deshabilitada; ninguna petición a dominios de imágenes de terceros. | Imágenes de todas las rutas | Propuesto (`BR-008`, `BR-011`, `BR-012`) |

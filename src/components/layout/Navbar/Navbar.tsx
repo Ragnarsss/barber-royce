@@ -3,8 +3,6 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
 import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
-import logoAvif from "@/assets/optimized/royce-barber-logo_46w.avif";
-import logo from "@/assets/royce-barber-logo.png";
 import { useNavbarScroll } from "@/hooks/useNavbarScroll";
 import { useLenisInstance } from "@/hooks/useLenisContext";
 import { getNavRoutes } from "@/config/routes";
@@ -58,11 +56,7 @@ export const Navbar = () => {
               srcSet={`${logo46w} 1x, ${logo92w} 2x`}
               type="image/webp"
             />
-            <source
-              srcSet={logoAvif}
-              type="image/avif"
-            />
-            <img src={logo} alt="Barber Royce" className={styles.logoImage} width="46" height="56" />
+            <img src={logo46w} alt="Barber Royce" className={styles.logoImage} width="46" height="56" />
           </picture>
         </Link>
 
