@@ -1,0 +1,6 @@
+id,nombre,cargo,experiencia,imagen,lider,activo,orden
+carlos-mendoza,Carlos Mendoza,Master Barber,15 años de experiencia,https://images.unsplash.com/photo-1622287162716-f311baa1a2b8?w=400&h=400&fit=crop,SI,SI,1
+miguel-torres,Miguel Torres,Senior Barber,10 años de experiencia,https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=400&h=400&fit=crop,NO,SI,2
+juan-ramirez,Juan Ramirez,Barber Specialist,8 años de experiencia,https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&h=400&fit=crop,NO,SI,3
+roberto-silva,Roberto Silva,Barber,5 años de experiencia,https://images.unsplash.com/photo-1617019114583-affb34d1b3cd?w=400&h=400&fit=crop,NO,SI,4
+david-morales,David Morales,Barber,4 años de experiencia,https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=400&h=400&fit=crop,NO,SI,5

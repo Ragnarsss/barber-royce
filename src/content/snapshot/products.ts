@@ -1,8 +1,4 @@
 import type { Product } from "@/types/product.types";
-import { PRODUCT_CATEGORIES } from "@/types/product.types";
-
-export const productCategories = PRODUCT_CATEGORIES;
-
 export const productsList: Product[] = [
     {
         name: "Pomada Premium",

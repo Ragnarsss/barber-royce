@@ -230,6 +230,10 @@ Criterios de aceptación:
 - Historia de usuario: HU-SEO-001 (CA-01, CA-02, CA-03), HU-INFO-005 (CA-03)
 - RF/RNF: `RF-SEO-001`, `RF-SEO-002`, `RF-SEO-003`, `RNF-SEO-002`
 
+> **Requisito añadido (2026-10-12, desde `BR-041`):** el `FAQPage` del
+> JSON-LD debe generarse desde `siteContent.faq` (`src/content/siteContent.ts`),
+> no copiarse a mano.
+
 **Origen (2026-10-12):** JSON-LD con `addressCountry: "ES"`, `postalCode:
 "Coquimbo"`, `geo` 0,0, imagen `/royce-barber-logo.png` inexistente,
 `aggregateRating` estático, `ReserveAction` a `/#reservar` (no existe),
@@ -1174,7 +1178,7 @@ variables en Vercel (`CONTENT_SHEET_ID`, `CONTENT_SHEET_GIDS`). Guía en
 #### BR-041 — Servicios, productos, equipo y preguntas desde el contenido generado
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-040
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-041-catalogo-desde-contenido`; hecho en local; sin pasos manuales)
 - Historia de usuario: HU-CNT-001 (CA-01, CA-04)
 - RF/RNF: `RF-CNT-004`, `RNF-DATOS-002`, `RNF-PERF-001`
 
@@ -1188,12 +1192,17 @@ Alcance:
    formato USD de productos, `BR-009`, en su parte de formato).
 3. Plantillas CSV en `docs/contenido/` (una por pestaña) para importarlas
    en Google Sheets.
-4. El JSON-LD de preguntas sale del mismo contenido (adelanta parte de
-   `BR-006`).
+4. ~~El JSON-LD de preguntas sale del mismo contenido~~ → **se traslada a
+   `BR-006`** (2026-10-12): el JSON-LD vive en `index.html` y se corrige ahí
+   junto con los demás errores de SEO técnico; hacerlo aquí lo dejaría a
+   medias. Requisito para `BR-006`: el `FAQPage` debe salir de
+   `siteContent.faq`.
 
 Criterios de aceptación:
 1. Cambiar el respaldo cambia lo que muestra el sitio (CP-CNT-004).
 2. Las plantillas CSV pasan el esquema.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-041).
 
 #### BR-042 — Textos y títulos desde la pestaña `textos`
 
@@ -1303,7 +1312,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-038 | Eventos de conversión y vistas por ruta | I | P2 | S | En curso | BR-037 |
 | BR-039 | Núcleo de contenido: CSV, validación y respaldo | J | P2 | M | En curso | BR-030 |
 | BR-040 | Descarga de la hoja al construir | J | P2 | M | En curso | BR-039 |
-| BR-041 | Catálogo desde el contenido generado | J | P2 | M | Propuesta | BR-040 |
+| BR-041 | Catálogo desde el contenido generado | J | P2 | M | En curso | BR-040 |
 | BR-042 | Textos y títulos desde la hoja | J | P3 | M | Propuesta | BR-041 |
 | BR-043 | Guía para publicar desde la hoja | J | P2 | S | Propuesta | BR-040 |
 | BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |

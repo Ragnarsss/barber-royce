@@ -1043,3 +1043,50 @@ servido con `vite preview` y Chrome real:
   pestañas como CSV, definir `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` en
   Vercel y volver a desplegar; la primera vez, revisar el log del build
   (`[contenido] …`) para confirmar que cada pestaña dice "hoja".
+
+---
+
+<a id="br-041"></a>
+
+## BR-041 — Servicios, productos, equipo y preguntas desde el contenido generado
+
+**Notas de construcción (2026-10-12):**
+- `git mv` de `src/data/{services,products,team,faq}Data.ts` a
+  `src/content/snapshot/{services,products,team,faq}.ts`. `src/data` ya no
+  tiene esas listas (queda lo que no es editable: `aboutData`,
+  `locationsData`, `reviewsData`, etc.). Se quitaron las exportaciones
+  duplicadas de categorías (viven en `src/types`) y dos helpers de FAQ sin
+  uso (`getFAQsByCategory`, `searchFAQs`).
+- `src/content/siteContent.ts` expone el módulo virtual; `ServicesPage`,
+  `ProductsPage`, `TeamPage` y `FAQPage` leen de ahí. Los precios llegan ya
+  formateados (`$4.000`).
+- `vitest.config.ts` registra `siteContentPlugin()` para que
+  `virtual:site-content` exista también en los tests.
+- `contentToSheet` ahora genera ids legibles a partir del nombre
+  (`corte-de-cabello`, con sufijo `-2` si se repite) y se agregó `slugify`.
+- Plantillas CSV en `docs/contenido/` (una por pestaña), generadas del
+  contenido actual con una orden única de `vite-node` desde fuera del repo
+  (no se dejó ningún script). `textos.csv` solo trae el encabezado hasta
+  `BR-042`. **Los precios de productos del ejemplo (`25`, `22`…) son los
+  actuales del sitio, en formato de dólares: son de muestra** (`BR-009`).
+- Tests (`contentWiring.test.tsx`, 11 + 9 de `sheetFormat`/`slugify`):
+  - Las 4 páginas muestran un contenido **distinto al respaldo**
+    (simulado con `vi.mock("virtual:site-content")`): prueba que leen del
+    módulo y no del respaldo, y que el filtro por categoría sigue
+    funcionando.
+  - `src/data` no tiene las listas, nadie importa el respaldo ni los
+    archivos viejos.
+  - Las plantillas pasan el esquema y, leídas como hoja, reproducen el
+    contenido actual: importarlas no cambia el sitio.
+  - Controles negativos: una página que lee el respaldo directo y una
+    plantilla con un precio roto hacen fallar los tests.
+- **Prueba de extremo a extremo hecha** (sin Google): un servidor local
+  sirvió las plantillas con un servicio editado; `npm run build` con
+  `CONTENT_SHEET_*` escribió en el log `servicios: hoja (15 filas)`,
+  `productos: hoja (6 filas)`, `equipo: hoja (5 filas)`, `preguntas: hoja
+  (12 filas)` y `textos: hoja (0 filas)`; en Chrome, `/servicios` mostró
+  «CORTE EDITADO EN LA HOJA» y `$7.777`; el navegador hizo **0 peticiones**
+  a la hoja y el identificador y la dirección no aparecen en el sitio.
+- Cambio de alcance: el JSON-LD de preguntas se traslada a `BR-006` (con el
+  requisito de generarlo desde `siteContent.faq`).
+- Verificación local: lint, tipos y tests OK.

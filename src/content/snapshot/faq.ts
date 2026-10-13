@@ -3,10 +3,7 @@
  * DRY: Separación de contenido y presentación
  */
 
-import type { FAQ, FAQCategory } from "@/types/faq.types";
-import { FAQ_CATEGORIES as FAQ_CATS } from "@/types/faq.types";
-
-export const FAQ_CATEGORIES = FAQ_CATS;
+import type { FAQ } from "@/types/faq.types";
 
 export const FAQ_LIST: FAQ[] = [
     // Reservas y Horarios
@@ -77,14 +74,3 @@ export const FAQ_LIST: FAQ[] = [
         answer: "Contamos con estacionamiento disponible cerca de nuestras instalaciones. También estamos bien ubicados con fácil acceso al transporte público."
     }
 ];
-
-// Helper para obtener FAQs por categoría
-export const getFAQsByCategory = (category: FAQCategory) =>
-    FAQ_LIST.filter(faq => faq.category === category);
-
-// Helper para buscar FAQs
-export const searchFAQs = (query: string) =>
-    FAQ_LIST.filter(faq =>
-        faq.question.toLowerCase().includes(query.toLowerCase()) ||
-        faq.answer.toLowerCase().includes(query.toLowerCase())
-    );

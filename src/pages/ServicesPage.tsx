@@ -4,11 +4,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { PageHero } from "@/components/common/PageHero/PageHero";
 import { ROUTES } from "@/config/routes";
 import styles from "./ServicesPage.module.css";
-import { servicesList, serviceCategories } from "@/data/servicesData";
+import { siteContent } from "@/content/siteContent";
+import { SERVICE_CATEGORIES } from "@/types/service.types";
 import type { ServiceCategory } from "@/types/service.types";
 import { useScrollContainer } from "@/hooks/useScrollContainer";
 import { useState } from "react";
 import { staggerFast, cardAnimation } from "@/config/animations.config";
+
+const servicesList = siteContent.services;
 
 export const ServicesPage = () => {
   const {
@@ -38,7 +41,7 @@ export const ServicesPage = () => {
         {/* Filtros de categorías */}
         <div className={styles.filtersContainer}>
           <div className={styles.filters}>
-            {serviceCategories.map((category) => (
+            {SERVICE_CATEGORIES.map((category) => (
               <motion.button
                 key={category}
                 className={`${styles.filterButton} ${selectedCategory === category ? styles.filterButtonActive : ''}`}

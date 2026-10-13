@@ -62,7 +62,9 @@ Tests junto al archivo que prueban (`*.test.ts(x)`); helper de render en `src/te
    `index.html` sin un test que lo compare (`RNF-DATOS-001`).
    El **catálogo** (servicios, productos, equipo, preguntas) y los textos
    editables viven en la hoja de Google, con un respaldo en el repo
-   (`ADR-008`, cuando esté conectada): no se editan a mano en dos lugares.
+   (`ADR-008`): se leen de `src/content/siteContent.ts`, nunca de
+   `src/content/snapshot/` (el respaldo lo actualiza el desarrollador cuando
+   el dueño confirma contenido nuevo). No se editan a mano en dos lugares.
 5. **Estilos:** CSS Modules + tokens de `src/styles/tokens/`. Nada de
    colores hex en los módulos ni clases de Tailwind (ADR-002).
 6. **Animación:** nunca `setState` por evento de scroll; usar `MotionValue`.

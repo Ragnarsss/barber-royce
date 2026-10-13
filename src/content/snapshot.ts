@@ -1,13 +1,14 @@
-import { servicesList } from "@/data/servicesData";
-import { productsList } from "@/data/productsData";
-import { teamMembersList } from "@/data/teamData";
-import { FAQ_LIST } from "@/data/faqData";
+import { servicesList } from "./snapshot/services";
+import { productsList } from "./snapshot/products";
+import { teamMembersList } from "./snapshot/team";
+import { FAQ_LIST } from "./snapshot/faq";
 import type { SiteContent } from "./types";
 
 /**
- * Respaldo del contenido (ADR-008): lo que el sitio publica cuando la hoja no está configurada, no
- * responde o es inválida. Hoy son los datos de `src/data`; `BR-041` los mueve aquí. El build nunca lo
- * modifica: lo actualiza el desarrollador cuando el dueño confirma contenido nuevo.
+ * Respaldo del contenido (ADR-008, RF-CNT-003): lo que el sitio publica cuando la hoja no está configurada,
+ * no responde o es inválida. Los cuatro catálogos viven en `./snapshot/` (antes `src/data/`); este archivo
+ * los reúne. El build nunca lo modifica: lo actualiza el desarrollador cuando el dueño confirma contenido
+ * nuevo (se copia el contenido vigente de la hoja a `./snapshot/*.ts`).
  */
 export const snapshot: SiteContent = {
   services: servicesList,

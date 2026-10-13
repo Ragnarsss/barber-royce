@@ -5,29 +5,59 @@ import type { SiteContent } from "./types";
 
 const yesNo = (value: boolean) => (value ? "SI" : "NO");
 
+/** `Corte + Barba ¡Premium!` → `corte-barba-premium`: un id legible para la hoja, único dentro de la pestaña. */
+export function slugify(text: string): string {
+  return (
+    text
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "")
+      .slice(0, 60)
+      .replace(/-+$/, "") || "fila"
+  );
+}
+
+/** Ids a partir de los textos de cada fila, con sufijo `-2`, `-3`… si se repiten. */
+function uniqueIds(labels: string[]): string[] {
+  const used = new Map<string, number>();
+  return labels.map((label) => {
+    const base = slugify(label);
+    const count = (used.get(base) ?? 0) + 1;
+    used.set(base, count);
+    return count === 1 ? base : `${base}-${count}`;
+  });
+}
+
 /**
  * Convierte contenido en el formato de la hoja: un CSV por pestaña, con los mismos encabezados que espera
  * `resolveContent`. Sirve para (1) comprobar que el respaldo cumple el mismo esquema que la hoja (ida y
  * vuelta sin pérdidas) y (2) generar las plantillas que el dueño importa en Google Sheets.
- * Los `id` se generan por posición (`servicio-1`…): en la hoja real los elige el dueño.
+ * Los `id` salen del nombre de cada fila (`corte-de-cabello`): en la hoja real los elige el dueño.
  */
 export function contentToSheet(content: SiteContent): SheetCsv {
+  const serviceIds = uniqueIds(content.services.map((s) => s.name));
+  const productIds = uniqueIds(content.products.map((p) => p.name));
+  const teamIds = uniqueIds(content.team.map((m) => m.name));
+  const faqIds = uniqueIds(content.faq.map((q) => q.question));
+
   return {
     servicios: toCsv([
       ["id", "nombre", "descripcion", "precio", "duracion", "incluye", "categoria", "imagen", "activo", "orden"],
-      ...content.services.map((s, i) => [`servicio-${i + 1}`, s.name, s.description, String(parseClp(s.price)), s.duration, s.includes, s.category, s.image, "SI", String(i + 1)]),
+      ...content.services.map((s, i) => [serviceIds[i], s.name, s.description, String(parseClp(s.price)), s.duration, s.includes, s.category, s.image, "SI", String(i + 1)]),
     ]),
     productos: toCsv([
       ["id", "nombre", "descripcion", "precio", "categoria", "imagen", "activo", "orden"],
-      ...content.products.map((p, i) => [`producto-${i + 1}`, p.name, p.description, String(parseClp(p.price)), p.category, p.image, "SI", String(i + 1)]),
+      ...content.products.map((p, i) => [productIds[i], p.name, p.description, String(parseClp(p.price)), p.category, p.image, "SI", String(i + 1)]),
     ]),
     equipo: toCsv([
       ["id", "nombre", "cargo", "experiencia", "imagen", "lider", "activo", "orden"],
-      ...content.team.map((m, i) => [`barbero-${i + 1}`, m.name, m.role, m.experience, m.image, yesNo(m.isLead), "SI", String(i + 1)]),
+      ...content.team.map((m, i) => [teamIds[i], m.name, m.role, m.experience, m.image, yesNo(m.isLead), "SI", String(i + 1)]),
     ]),
     preguntas: toCsv([
       ["id", "categoria", "pregunta", "respuesta", "activo", "orden"],
-      ...content.faq.map((q, i) => [`pregunta-${i + 1}`, q.category, q.question, q.answer, "SI", String(i + 1)]),
+      ...content.faq.map((q, i) => [faqIds[i], q.category, q.question, q.answer, "SI", String(i + 1)]),
     ]),
     textos: toCsv([["clave", "valor"], ...Object.entries(content.texts)]),
   };

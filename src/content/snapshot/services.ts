@@ -1,8 +1,4 @@
 import type { Service } from "@/types/service.types";
-import { SERVICE_CATEGORIES } from "@/types/service.types";
-
-export const serviceCategories = SERVICE_CATEGORIES;
-
 export const servicesList: Service[] = [
   {
     name: "CORTE DE CABELLO",
