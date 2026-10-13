@@ -53,6 +53,9 @@ externos sin `rel`, `dangerouslySetInnerHTML`.
   `useReducedMotion`/`MotionConfig`, `whileInView` + `viewport.once`.
 - React Router 7: `<Link>` para rutas internas, `lazy` con `Suspense`.
 - TypeScript: `as`, `!`, `any`, `satisfies` y `as const` donde corresponde.
+  Configuración que se pasa a una librería sin el tipo que la librería
+  exporta (`LenisOptions`, `Variants`…), o `as const` redundante junto a
+  una anotación (`engineering-guidelines.md` §14).
 
 No reportes estilo que ya decide ESLint o Prettier.
 

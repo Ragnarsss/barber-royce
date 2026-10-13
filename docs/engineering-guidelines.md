@@ -231,9 +231,14 @@ umbrales están en `rf-rnf-catalogo.md` (`RNF-PERF-*`).
 ## 14. Tipos y estados
 
 - `strict` está encendido en `tsconfig.app.json`; se mantiene así.
-- Las constantes de configuración se declaran `as const` y, cuando cubren
-  un catálogo, con `satisfies Record<Clave, Valor>` para que el compilador
-  avise si falta un caso.
+- Las constantes de configuración propias se declaran `as const` y, cuando
+  cubren un catálogo, con `satisfies Record<Clave, Valor>` para que el
+  compilador avise si falta un caso.
+- La configuración que se pasa a una librería se tipa con el tipo que esa
+  librería exporta (`LenisOptions`, `Variants`, `Transition`…), con
+  anotación o con `satisfies` si hace falta conservar los literales. Así el
+  compilador valida las opciones y el editor las autocompleta. `as const`
+  no tipa: no se usa para eso, ni junto a una anotación (2026-10-13, `BR-049`).
 - Un estado con variantes es una unión discriminada (`'abierto' |
   'cerrado'`), no varios booleanos.
 - Un cast `as` sobre un dato externo va detrás de un *type guard*.

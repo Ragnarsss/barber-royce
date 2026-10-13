@@ -6,11 +6,12 @@ import { MotionConfig } from "framer-motion";
 import { Layout } from "./components/layout/Layout/Layout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import { HomePage } from "./pages/HomePage";
-import { useLenis } from "./hooks/useLenis";
-import { LenisProvider } from "./contexts/LenisContext";
+import { useCreateLenis } from "./hooks/useCreateLenis";
+import { LenisContext } from "./contexts/lenisContextValue";
 import { CatastrophicError, reportError } from "./components/common/ErrorBoundary";
 import { analyticsEnabled } from "./analytics/enabled";
 import { ContentProvider } from "./content/ContentProvider";
+import "lenis/dist/lenis.css";
 import "./styles/global.css";
 import "./styles/variables.css";
 
@@ -25,7 +26,7 @@ const PrivacyPage = lazy(() => import("./pages/PrivacyPage").then(m => ({ defaul
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
 
 function App() {
-  const lenis = useLenis();
+  const lenis = useCreateLenis();
 
   return (
     // Último recurso: errores fuera de las páginas (router, Lenis, layout).
@@ -35,26 +36,26 @@ function App() {
         <ContentProvider>
         {/* Con "reducir movimiento" framer-motion omite las animaciones de transformación (BR-017) */}
         <MotionConfig reducedMotion="user">
-        <LenisProvider lenis={lenis}>
-          <BrowserRouter>
-            <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route index element={<HomePage />} />
-                <Route path="servicios" element={<ServicesPage />} />
-                <Route path="productos" element={<ProductsPage />} />
-                <Route path="equipo" element={<TeamPage />} />
-                <Route path="ubicacion" element={<LocationPage />} />
-                <Route path="nosotros" element={<AboutPage />} />
-                <Route path="preguntas-frecuentes" element={<FAQPage />} />
-                {/* Solo existe si hay analítica configurada: es un borrador legal por validar (BR-044) */}
-                {analyticsEnabled() && <Route path="privacidad" element={<PrivacyPage />} />}
-                {/* Cualquier ruta inexistente (BR-003) */}
-                <Route path="*" element={<NotFoundPage />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </LenisProvider>
+          <LenisContext value={lenis}>
+            <BrowserRouter>
+              <ScrollToTop />
+              <Routes>
+                <Route path="/" element={<Layout />}>
+                  <Route index element={<HomePage />} />
+                  <Route path="servicios" element={<ServicesPage />} />
+                  <Route path="productos" element={<ProductsPage />} />
+                  <Route path="equipo" element={<TeamPage />} />
+                  <Route path="ubicacion" element={<LocationPage />} />
+                  <Route path="nosotros" element={<AboutPage />} />
+                  <Route path="preguntas-frecuentes" element={<FAQPage />} />
+                  {/* Solo existe si hay analítica configurada: es un borrador legal por validar (BR-044) */}
+                  {analyticsEnabled() && <Route path="privacidad" element={<PrivacyPage />} />}
+                  {/* Cualquier ruta inexistente (BR-003) */}
+                  <Route path="*" element={<NotFoundPage />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </LenisContext>
         </MotionConfig>
         </ContentProvider>
       </HelmetProvider>

@@ -746,6 +746,63 @@ Alcance:
 Criterios de aceptación:
 1. Con reduced motion no hay transición; CLS y TBT no empeoran.
 
+#### BR-049 — El smooth scroll no se percibe y su implementación tiene redundancias
+
+- Prioridad: P1 · Esfuerzo: S · Depende de: BR-014, BR-017
+- Estado: En curso (rama `fix/br-049-smooth-scroll`; hecho en local, falta verificar en el preview)
+- Historia de usuario: HU-EXP-001 (CA-02)
+- RF/RNF: `RNF-PERF-006`, `RNF-A11Y-003`
+
+**Origen (2026-10-13):** el dueño del sitio no ve el efecto de Lenis; el
+scroll se siente igual que el nativo. Revisión del código:
+`useLenis.ts:11` fija `duration: 0.25`; `reset.css:67` deja
+`html { scroll-behavior: smooth }` (el comentario de `global.css:15` dice
+que se removió); no se importa `lenis/dist/lenis.css`.
+
+**Causa:**
+1. Con `duration: 0.25` la interpolación dura 250 ms y no se distingue del
+   scroll nativo.
+2. El `scroll-behavior: smooth` nativo se suma al de Lenis: dos suavizados
+   sobre el mismo desplazamiento. Lenis exige `scroll-behavior: auto`
+   mientras está activo, y eso lo resuelve `lenis.css`.
+3. Redundancias que no producen el defecto pero sí complejidad:
+   - loop `requestAnimationFrame` manual (Lenis trae `autoRaf`);
+   - `ResizeObserver` sobre `body` que duplica `autoResize: true`;
+   - dos mecanismos de "listo" (`rAF` en el hook y `setTimeout` de 100 ms
+     con un segundo `resize()` en `LenisContext`);
+   - `setLenisInstance(null)` en el cleanup;
+   - `useLenis` (crea la instancia) y `useLenisContext` (la consume) tienen
+     nombres que se confunden.
+
+**Arreglo:**
+1. `duration` con un valor perceptible (~1,2 s), en la constante de config.
+2. Importar `lenis/dist/lenis.css` y quitar `scroll-behavior: smooth` de
+   `reset.css`; sin Lenis (reduced motion o fallo) el scroll vuelve a ser
+   nativo sin suavizado.
+3. `autoRaf: true`, sin loop manual; sin `ResizeObserver` propio (confirmar
+   contra Lenis 1.3 que `autoResize` cubre el alto del contenido).
+4. Un solo punto de "listo": el hook publica la instancia y `isReady` se
+   deriva de ella, sin `setTimeout` ni segundo `resize()`.
+5. Renombrar el hook que crea la instancia (p. ej. `useLenisInstance`) y
+   quitar el `setState` del cleanup.
+6. Se conserva `prefers-reduced-motion` sin Lenis (BR-017) y sin leer
+   `window.lenis`.
+7. La config de Lenis se tipa con `LenisOptions`, y la práctica queda en
+   `engineering-guidelines.md` §14 y en el agente `calidad-codigo-auditor`
+   (decisión del 2026-10-13).
+
+Criterios de aceptación:
+1. Con movimiento normal, `html` tiene la clase `lenis` y una rueda de
+   ratón produce un desplazamiento interpolado de ≥ 1 s (verificado en el
+   preview de Vercel).
+2. Con `prefers-reduced-motion: reduce` no se crea Lenis y el scroll es
+   nativo, sin `scroll-behavior: smooth` (CP-A11Y-003).
+3. Ningún listener, observer ni `rAF` queda vivo tras desmontar (test del
+   hook, `HU-EXP-001 CA-02`).
+4. `ScrollToTop` y la navegación por anclas siguen funcionando en las 7
+   rutas.
+5. CP-PERF-006 no empeora.
+
 ---
 
 ### Épica F — Rendimiento e imágenes
@@ -1439,6 +1496,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-046 | Leer la hoja desde `.env` y en desarrollo | J | P2 | S | En curso | BR-040 |
 | BR-047 | El navegador relee la hoja: cambios sin desplegar | J | P1 | M | En curso | BR-040 |
 | BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | En curso | BR-047 |
+| BR-049 | Smooth scroll imperceptible y redundante | E | P1 | S | En curso | BR-014, BR-017 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

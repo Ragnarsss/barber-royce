@@ -62,10 +62,7 @@ h6 {
   overflow-wrap: break-word;
 }
 
-/* Scroll suave para navegación por anclas */
-html {
-  scroll-behavior: smooth;
-}
+/* El scroll suave lo hace Lenis; con "reducir movimiento" el scroll es nativo (BR-049) */
 
 /* Reduce motion para usuarios con preferencia de accesibilidad */
 @media (prefers-reduced-motion: reduce) {

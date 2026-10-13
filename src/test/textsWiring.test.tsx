@@ -38,7 +38,7 @@ const occurrences = (text: string, part: string) => text.split(part).length - 1;
 
 // La home entera, como la monta HomePage.
 const home: ReactElement = (
-  <LenisContext.Provider value={{ lenis: null, isReady: false }}>
+  <LenisContext value={null}>
     <Hero />
     <CTA1 />
     <SocialProof1 />
@@ -47,7 +47,7 @@ const home: ReactElement = (
     <Features />
     <SocialProof2 />
     <CTA2 />
-  </LenisContext.Provider>
+  </LenisContext>
 );
 
 const render = () => {

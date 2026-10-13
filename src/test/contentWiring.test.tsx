@@ -37,7 +37,7 @@ import { ServicesPage } from "@/pages/ServicesPage";
 import { TeamPage } from "@/pages/TeamPage";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const withLenis = (ui: ReactNode) => <LenisContext.Provider value={{ lenis: null, isReady: false }}>{ui}</LenisContext.Provider>;
+const withLenis = (ui: ReactNode) => <LenisContext value={null}>{ui}</LenisContext>;
 
 describe("las páginas leen el contenido generado (BR-041, RF-CNT-004, CP-CNT-004)", () => {
   beforeAll(() => {
