@@ -1141,7 +1141,7 @@ Criterios de aceptación:
 #### BR-040 — Descarga de la hoja al construir
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-039
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-040-descarga-hoja-build`; código hecho en local; faltan los pasos manuales del usuario)
 - Historia de usuario: HU-CNT-001 (CA-01, CA-02, CA-05)
 - RF/RNF: `RF-CNT-001`, `RF-CNT-003`, `RNF-CONF-003`, `RNF-SEG-004`
 
@@ -1166,7 +1166,10 @@ Criterios de aceptación:
 **Pasos manuales (del usuario):** crear la hoja con las pestañas de las
 plantillas (`BR-041`); Archivo → Compartir → Publicar en la web (cada
 pestaña en CSV); copiar el id de publicación y los `gid`; definir las
-variables en Vercel.
+variables en Vercel (`CONTENT_SHEET_ID`, `CONTENT_SHEET_GIDS`). Guía en
+`BR-043`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-040).
 
 #### BR-041 — Servicios, productos, equipo y preguntas desde el contenido generado
 
@@ -1299,7 +1302,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-037 | Consentimiento y Google Analytics 4 | I | P2 | M | En curso | BR-044, BR-030 |
 | BR-038 | Eventos de conversión y vistas por ruta | I | P2 | S | En curso | BR-037 |
 | BR-039 | Núcleo de contenido: CSV, validación y respaldo | J | P2 | M | En curso | BR-030 |
-| BR-040 | Descarga de la hoja al construir | J | P2 | M | Propuesta | BR-039 |
+| BR-040 | Descarga de la hoja al construir | J | P2 | M | En curso | BR-039 |
 | BR-041 | Catálogo desde el contenido generado | J | P2 | M | Propuesta | BR-040 |
 | BR-042 | Textos y títulos desde la hoja | J | P3 | M | Propuesta | BR-041 |
 | BR-043 | Guía para publicar desde la hoja | J | P2 | S | Propuesta | BR-040 |

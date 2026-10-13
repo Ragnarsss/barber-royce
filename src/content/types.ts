@@ -1,7 +1,9 @@
-import type { FAQ } from "@/types/faq.types";
-import type { Product } from "@/types/product.types";
-import type { Service } from "@/types/service.types";
-import type { TeamMember } from "@/types/team.types";
+// Rutas relativas a propósito: `vite-plugins/` importa este archivo desde el contexto de `vite.config.ts`,
+// que no conoce el alias `@/` (ADR-008).
+import type { FAQ } from "../types/faq.types";
+import type { Product } from "../types/product.types";
+import type { Service } from "../types/service.types";
+import type { TeamMember } from "../types/team.types";
 
 /** Pestañas de la hoja de cálculo, en el orden en que se procesan. */
 export const CONTENT_TABS = ["servicios", "productos", "equipo", "preguntas", "textos"] as const;

@@ -985,3 +985,61 @@ servido con `vite preview` y Chrome real:
   del precio no aplicó (mi `sed` no coincidió) y se repitió bien.
 - Cobertura: 44,57 / 83,24 / 64,11 / 44,57 → umbral 44/83/64/44.
 - Verificación local: 240 tests, lint, tipos OK. Sin pasos manuales.
+
+---
+
+<a id="br-040"></a>
+
+## BR-040 — Descarga de la hoja al construir
+
+**Notas de construcción (2026-10-12):**
+- `vite-plugins/siteContentSource.ts` (solo texto y red, sin Vite ni
+  esquemas): `fetchSheet(env, fetch)` descarga en paralelo cada pestaña
+  publicada como CSV
+  (`…/spreadsheets/d/e/<id>/pub?gid=<gid>&single=true&output=csv`), con
+  tiempo máximo por pestaña (10 s por defecto) y **nunca lanza**: cada falla
+  queda en una lista de problemas. Rechaza HTTP distinto de 200, una
+  respuesta que no es CSV (Google responde HTML si la pestaña no está
+  publicada), respuestas de más de 1 MB y errores de red. `parseGids` lee
+  `servicios:0,productos:123` y avisa de formatos erróneos, pestañas que no
+  existen y gids no numéricos sin dejar de leer las demás.
+- `vite-plugins/siteContentPlugin.ts`: módulo virtual `virtual:site-content`.
+  - Sin `CONTENT_SHEET_ID`, o en desarrollo: el módulo re-exporta el
+    respaldo. Ninguna petición.
+  - Con la hoja, al construir: descarga, valida con `resolveContent` y
+    escribe el resultado como **datos** en el módulo. El resolvedor se
+    ejecuta con un servidor de Vite en modo middleware y `ssrLoadModule`
+    (el código de la app usa el alias `@/`, que el contexto de
+    `vite.config.ts` no conoce). El navegador no recibe el código de CSV
+    ni de validación, ni habla con Google.
+  - Todo va al log del build con el prefijo `[contenido]`: una línea por
+    pestaña y una por problema con pestaña, fila y campo. Una última red
+    de seguridad convierte cualquier error del plugin en "se usa el
+    respaldo": nada de la hoja puede detener el build.
+- Variables de build (sin `VITE_`, no llegan al navegador):
+  `CONTENT_SHEET_ID`, `CONTENT_SHEET_GIDS` y `CONTENT_FETCH_TIMEOUT_MS`;
+  `CONTENT_SHEET_BASE_URL` solo para pruebas. Documentadas en
+  `.env.example`.
+- Ajustes: `src/content/types.ts` usa rutas relativas (lo importa el
+  plugin desde el contexto de `vite.config.ts`) y `tsconfig.node.json`
+  incluye `vite-plugins`.
+- Tests:
+  - `siteContentSource.test.ts` (25): `parseGids`, `sheetUrl`, sin hoja no
+    pide nada, 404, HTML, sin tipo de contenido, red, `fetch` que lanza,
+    timeout real (80 ms), respuesta enorme, tiempo inválido.
+  - `siteContent.build.test.ts` (5, **builds reales** con un servidor HTTP
+    local que imita a Google, vía una entrada de prueba que importa el
+    módulo virtual): hoja válida (CA-01), el identificador, la dirección y
+    los nombres de las variables **no aparecen en ningún archivo del sitio**
+    (CA-05), fila inválida con el log exacto `servicios fila 2, precio: es
+    obligatorio` (CA-03) y las demás pestañas intactas (RN-03), hoja caída,
+    404 y sin configurar con 0 peticiones.
+  - Controles negativos (todos hacen fallar los tests): ignorar el
+    contenido generado, descarga sin tolerancia a errores y plugin sin red
+    de seguridad.
+- Verificación local: lint, tipos y tests OK; los builds de prueba tardan
+  ~0,6 s cada uno.
+- **Pasos manuales pendientes (usuario):** crear la hoja y publicar sus
+  pestañas como CSV, definir `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` en
+  Vercel y volver a desplegar; la primera vez, revisar el log del build
+  (`[contenido] …`) para confirmar que cada pestaña dice "hoja".

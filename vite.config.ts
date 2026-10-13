@@ -3,12 +3,15 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
+import { siteContentPlugin } from "./vite-plugins/siteContentPlugin";
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    // Contenido editable desde una hoja de Google, leído al construir (BR-040, ADR-008)
+    siteContentPlugin(),
     // Optimización automática de imágenes en build
     ViteImageOptimizer({
       // PNG optimization

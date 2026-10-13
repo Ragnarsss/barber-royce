@@ -41,12 +41,15 @@ src/
     ui/                   ScrollProgressBar + restos de shadcn (se retiran, BR-023)
     icons/                SVG propios
   config/                 routes.ts, constants.ts, animations.config.ts
+  content/                contenido editable (BR-039): CSV, esquemas, resolveContent, respaldo
+  analytics/              Vercel Analytics, consentimiento y GA4 (ADR-007)
   contexts/               LenisContext
   hooks/                  Lenis, scroll, parallax
   data/                   contenido estático del negocio
   types/                  tipos
   styles/                 global.css, reset.css, tokens/
   assets/                 imágenes originales + optimized/ (AVIF/WebP)
+vite-plugins/             plugin de Vite que lee la hoja al construir (BR-040, ADR-008)
 public/                   favicons, og-image, robots.txt, sitemap.xml, manifest
 docs/                     documentación del proceso (ver ../CLAUDE.md)
 ```
