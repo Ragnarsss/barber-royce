@@ -1114,7 +1114,7 @@ Criterios de aceptación:
 #### BR-039 — Núcleo de contenido: CSV, validación y respaldo
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-030
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-039-contenido-nucleo`; hecho en local; sin pasos manuales)
 - Historia de usuario: HU-CNT-001 (CA-02, CA-03)
 - RF/RNF: `RF-CNT-002`, `RF-CNT-003`, `RNF-CONF-003`, `RNF-DATOS-002`
 
@@ -1135,6 +1135,8 @@ Criterios de aceptación:
    fila y campo (CP-CNT-002).
 2. Con pestañas ausentes, el resultado es igual al respaldo (CP-CNT-003).
 3. El respaldo cumple el mismo esquema (CP-DATOS-002).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-039).
 
 #### BR-040 — Descarga de la hoja al construir
 
@@ -1296,7 +1298,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-036 | Vercel Analytics por variable | I | P2 | S | En curso | BR-010 |
 | BR-037 | Consentimiento y Google Analytics 4 | I | P2 | M | En curso | BR-044, BR-030 |
 | BR-038 | Eventos de conversión y vistas por ruta | I | P2 | S | En curso | BR-037 |
-| BR-039 | Núcleo de contenido: CSV, validación y respaldo | J | P2 | M | Propuesta | BR-030 |
+| BR-039 | Núcleo de contenido: CSV, validación y respaldo | J | P2 | M | En curso | BR-030 |
 | BR-040 | Descarga de la hoja al construir | J | P2 | M | Propuesta | BR-039 |
 | BR-041 | Catálogo desde el contenido generado | J | P2 | M | Propuesta | BR-040 |
 | BR-042 | Textos y títulos desde la hoja | J | P3 | M | Propuesta | BR-041 |

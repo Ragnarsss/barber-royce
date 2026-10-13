@@ -1,0 +1,46 @@
+import type { FAQ } from "@/types/faq.types";
+import type { Product } from "@/types/product.types";
+import type { Service } from "@/types/service.types";
+import type { TeamMember } from "@/types/team.types";
+
+/** Pestañas de la hoja de cálculo, en el orden en que se procesan. */
+export const CONTENT_TABS = ["servicios", "productos", "equipo", "preguntas", "textos"] as const;
+export type ContentTab = (typeof CONTENT_TABS)[number];
+
+/** Contenido editable del sitio (HU-CNT-001, HU-CNT-002). Las listas usan los mismos tipos que ya consumen las páginas. */
+export interface SiteContent {
+  services: Service[];
+  products: Product[];
+  team: TeamMember[];
+  faq: FAQ[];
+  /** Textos sueltos por clave (`hero.titulo`). */
+  texts: Record<string, string>;
+}
+
+/** Qué clave de `SiteContent` llena cada pestaña. */
+export const TAB_TO_KEY = {
+  servicios: "services",
+  productos: "products",
+  equipo: "team",
+  preguntas: "faq",
+  textos: "texts",
+} as const satisfies Record<ContentTab, keyof SiteContent>;
+
+/** Un problema encontrado en una pestaña. `row` es el número de fila en la hoja (la 1 es el encabezado). */
+export interface ContentIssue {
+  tab: ContentTab;
+  row: number;
+  field: string;
+  message: string;
+}
+
+/** Qué pasó con una pestaña: de dónde salió su contenido y por qué. */
+export interface TabReport {
+  tab: ContentTab;
+  source: "hoja" | "respaldo";
+  /** Filas aceptadas cuando `source` es `hoja`. */
+  count?: number;
+  /** Por qué se usó el respaldo (cuando `source` es `respaldo`). */
+  reason?: string;
+  issues: ContentIssue[];
+}

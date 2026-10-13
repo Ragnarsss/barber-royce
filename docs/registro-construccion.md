@@ -933,3 +933,55 @@ servido con `vite preview` y Chrome real:
 - **Pasos manuales pendientes (usuario):** con el ID real configurado,
   ver los eventos en GA4 → Administrar → DebugView; marcar `reserve_click`
   como evento clave (conversión) en GA4.
+
+---
+
+<a id="br-039"></a>
+
+## BR-039 — Núcleo de contenido: CSV, validación y respaldo
+
+**Notas de construcción (2026-10-12):**
+- Carpeta nueva `src/content/`, **sin red ni Vite**, para poder probarla
+  entera:
+  - `csv.ts`: `parseCsv` (comillas, comas y saltos de línea dentro de una
+    celda, `""` escapado, CRLF/CR, BOM, filas vacías, última fila sin
+    salto, comilla sin cerrar), `toTable` (encabezados normalizados sin
+    tildes; el número de fila coincide con el de la hoja, la 1 es el
+    encabezado) y `toCsv`.
+  - `schemas.ts`: un lector por pestaña (`servicios`, `productos`,
+    `equipo`, `preguntas`, `textos`) con campos obligatorios, largos
+    máximos, precio entero en CLP (explica "escribe 15000, sin $ ni
+    puntos"), categorías cerradas (sin «Todos»), ids únicos, `https://`
+    en imágenes, `activo` (SI/NO: una fila oculta no se valida, sirve de
+    borrador), `orden`, y como máximo un líder. Cada problema trae
+    pestaña, fila y campo.
+  - `resolveContent(hoja, respaldo)`: decide **por pestaña** si el sitio
+    usa la hoja o el respaldo. Una sola fila inválida rechaza la pestaña
+    completa (RN-03: las demás siguen), una pestaña vacía, sin filas
+    activas, con otro encabezado o ilegible usa el respaldo, y **nunca
+    lanza** (HTML de error de Google, JSON, caracteres de control, una
+    línea gigante). Devuelve el contenido y un informe por pestaña;
+    `formatReports` lo convierte en líneas para el log del build.
+  - `format.ts`: `formatClp(4000) = "$4.000"` y su inversa.
+  - `snapshot.ts`: el respaldo, hoy los datos de `src/data` (`BR-041` los
+    mueve aquí). `sheetFormat.ts`: `contentToSheet` escribe cualquier
+    contenido en el formato de la hoja.
+- **CP-DATOS-002 con prueba fuerte:** el contenido actual del sitio,
+  escrito como hoja (`contentToSheet`) y leído de vuelta con los mismos
+  esquemas, queda idéntico y sin problemas. Demuestra que el respaldo
+  cumple el esquema y que la conversión no pierde nada.
+- Decisiones por defecto, por confirmar: un texto con HTML se guarda como
+  texto (nunca se interpreta); `textos` con solo encabezado es válida
+  ("sin textos propios") a diferencia de los catálogos, que usan el
+  respaldo si quedan vacíos; el tope de precio es 1.000.000 CLP.
+- Dos errores míos durante la construcción: propiedades en el constructor
+  (el proyecto usa `erasableSyntaxOnly`) y un problema de `textos` con la
+  fila en 0 (ahora el lector expone `report`, que sabe su fila).
+- Tests (82 en `src/content/`): `csv` (18), `schemas` (32, con los errores
+  que puede cometer el dueño), `resolveContent` (21), `format` (11).
+  Controles negativos: aceptar una pestaña con problemas, no clonar el
+  respaldo, comas en vez de puntos en el precio, separador distinto en el
+  CSV y comillas escapadas. Todos hacen fallar los tests. Un primer control
+  del precio no aplicó (mi `sed` no coincidió) y se repitió bien.
+- Cobertura: 44,57 / 83,24 / 64,11 / 44,57 → umbral 44/83/64/44.
+- Verificación local: 240 tests, lint, tipos OK. Sin pasos manuales.
