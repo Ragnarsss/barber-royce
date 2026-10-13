@@ -94,7 +94,7 @@ Criterios de aceptación:
 #### BR-032 — Actualizar el README
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: BR-001
-- Estado: Propuesta
+- Estado: En curso (rama `docs/br-032-readme`; README reescrito; falta que alguien lo siga desde cero)
 - Historia de usuario: HU-OPS-001 (CA-02)
 - RF/RNF: no aplica — documentación.
 
@@ -1318,7 +1318,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-029 | CI en GitHub Actions | H | P1 | S | Hecho | BR-004, BR-030 |
 | BR-030 | Vitest y primeros tests | H | P1 | M | Hecho | — |
 | BR-031 | Lighthouse CI | H | P2 | S | Propuesta | BR-029, BR-002 |
-| BR-032 | Actualizar README | A | P2 | S | Propuesta | BR-001 |
+| BR-032 | Actualizar README | A | P2 | S | En curso | BR-001 |
 | BR-033 | Accesibilidad | G | P2 | S | Propuesta | — |
 | BR-034 | Spike prerender | G | P1 | M | Propuesta (spike) | BR-006 |
 | BR-036 | Vercel Analytics por variable | I | P2 | S | En curso | BR-010 |
