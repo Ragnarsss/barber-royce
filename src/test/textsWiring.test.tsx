@@ -6,17 +6,22 @@ import { renderWithProviders } from "./renderWithProviders";
 
 // El contenido «de la hoja» cambia en cada prueba: el módulo virtual lee `state.texts` en el momento de renderizar.
 const state = vi.hoisted(() => ({ texts: {} as Record<string, string> }));
-vi.mock("virtual:site-content", () => ({
-  default: {
-    services: [],
-    products: [],
-    team: [],
-    faq: [],
-    get texts() {
-      return state.texts;
+vi.mock("virtual:site-content", async () => {
+  const { snapshot } = await import("@/content/snapshot");
+  return {
+    default: {
+      services: [],
+      products: [],
+      team: [],
+      faq: [],
+      business: snapshot.business,
+      locations: [],
+      get texts() {
+        return state.texts;
+      },
     },
-  },
-}));
+  };
+});
 
 import { Benefits } from "@/components/sections/Benefits/Benefits";
 import { CTA1 } from "@/components/sections/CTA1/CTA1";

@@ -10,13 +10,14 @@ import {
   WhatsAppIcon,
 } from "@/components/icons";
 import { getFooterRoutes } from "@/config/routes";
-import { CONTACT, SCHEDULE, SOCIAL_MEDIA } from "@/config/constants";
+import { useSiteContent } from "@/content/useSiteContent";
 import { PrivacyPreferencesButton } from "@/analytics/PrivacyPreferencesButton";
 import { trackPhone, trackWhatsApp } from "@/analytics/track";
 import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
 import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
 
 export const Footer = () => {
+  const { business } = useSiteContent();
   const footerRoutes = getFooterRoutes();
 
   return (
@@ -60,17 +61,17 @@ export const Footer = () => {
             <ul className={styles.contact}>
               <li className={styles.contactItem}>
                 <PhoneIcon className={styles.contactIcon} />
-                <a href={CONTACT.phone.link} onClick={trackPhone("footer")}>
-                  {CONTACT.phone.display}
+                <a href={business.contact.phone.link} onClick={trackPhone("footer")}>
+                  {business.contact.phone.display}
                 </a>
               </li>
               <li className={styles.contactItem}>
                 <EmailIcon className={styles.contactIcon} />
-                <a href={CONTACT.email.link}>{CONTACT.email.display}</a>
+                <a href={business.contact.email.link}>{business.contact.email.display}</a>
               </li>
               <li className={styles.contactItem}>
                 <ClockIcon className={styles.contactIcon} />
-                <span>{SCHEDULE.display}</span>
+                <span>{business.schedule.display}</span>
               </li>
             </ul>
           </div>
@@ -80,34 +81,34 @@ export const Footer = () => {
             <h4 className={styles.columnTitle}>Síguenos</h4>
             <div className={styles.social}>
               <a
-                href={SOCIAL_MEDIA.instagram.url}
+                href={business.social.instagram.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={SOCIAL_MEDIA.instagram.label}
+                aria-label={business.social.instagram.label}
                 className={styles.socialLink}
               >
                 <InstagramIcon />
               </a>
               <a
-                href={SOCIAL_MEDIA.facebook.url}
+                href={business.social.facebook.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={SOCIAL_MEDIA.facebook.label}
+                aria-label={business.social.facebook.label}
                 className={styles.socialLink}
               >
                 <FacebookIcon />
               </a>
               <a
-                href={SOCIAL_MEDIA.tiktok.url}
+                href={business.social.tiktok.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={SOCIAL_MEDIA.tiktok.label}
+                aria-label={business.social.tiktok.label}
                 className={styles.socialLink}
               >
                 <TikTokIcon />
               </a>
               <a
-                href={CONTACT.whatsapp.link}
+                href={business.contact.whatsapp.link}
                 onClick={trackWhatsApp("footer")}
                 target="_blank"
                 rel="noopener noreferrer"

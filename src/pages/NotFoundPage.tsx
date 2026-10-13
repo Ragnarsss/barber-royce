@@ -1,11 +1,13 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import { CalendarCheck, Home } from "lucide-react";
-import { BOOKING, SITE } from "@/config/constants";
+import { SITE } from "@/config/constants";
+import { useSiteContent } from "@/content/useSiteContent";
 import { trackReserve } from "@/analytics/track";
 import styles from "./NotFoundPage.module.css";
 
 export function NotFoundPage() {
+  const { business } = useSiteContent();
   return (
     <section className={styles.container} aria-labelledby="not-found-title">
       <Helmet>
@@ -31,14 +33,14 @@ export function NotFoundPage() {
             Volver al inicio
           </Link>
           <a
-            href={BOOKING.url}
+            href={business.booking.url}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.secondaryAction}
             onClick={trackReserve("404")}
           >
             <CalendarCheck size={20} aria-hidden="true" />
-            {BOOKING.label}
+            {business.booking.label}
             <span className={styles.srOnly}> (se abre en una pestaña nueva)</span>
           </a>
         </div>

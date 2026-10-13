@@ -1247,3 +1247,24 @@ servido con `vite preview` y Chrome real:
 - Medido con la hoja real: Google publicó el cambio en cerca de 1 minuto; la respuesta lleva `Cache-Control: max-age=300`.
 - **Por confirmar (usuario):** si el texto de privacidad debe mencionar que el navegador consulta a Google al cargar.
 - **Pendiente (usuario):** definir `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` en Vercel y desplegar una vez; es el criterio 4 del ticket.
+
+---
+
+<a id="br-048"></a>
+
+## BR-048 — Datos de contacto, sucursales y redes desde la hoja
+
+**Notas de construcción (2026-10-13):**
+- Decisión del usuario: los datos del negocio «van en config, pero el dueño tiene que poder modificarlos». Cambia la regla 4 de `CLAUDE.md` (con excepción fechada) y se apoya en `BR-047` (lectura en el navegador). `src/config/constants.ts` y `src/data/locationsData.ts` quedan como valores de origen y respaldo.
+- Dos pestañas nuevas: `negocio` (clave/valor, 13 claves en `BUSINESS_FIELDS`) y `sucursales` (11 columnas obligatorias). `SiteContent` gana `business` y `locations`; `CONTENT_TABS` pasa a 7.
+- `src/content/business.ts`: validadores (teléfono de 8 a 15 dígitos, correo, `https://`, mapa solo de Google Maps), `buildBusiness` (la hoja sobre lo que ya tiene el sitio), `telLink` y `buildWhatsAppLink`. El dueño escribe lo que ve una persona; los enlaces los arma el sitio.
+- `readBusiness` y `readLocations` siguen las reglas de las otras pestañas: un valor inválido rechaza **toda** la pestaña y se conserva lo anterior; una clave desconocida se ignora con aviso.
+- Consumidores migrados a `useSiteContent()`: Footer, Navbar, CTA1, CTA2, FAQPage, NotFoundPage, PrivacyPage y LocationPage. El test de enlaces rastreados busca ahora `booking.url` / `contact.*.link`.
+- Se agregó `WHATSAPP_DEFAULTS` (número y mensaje) a las constantes; el enlace por defecto se arma con la misma función y un test comprueba que da el mismo resultado.
+- Dos datos de muestra se hicieron coherentes para que las plantillas den la ida y vuelta sin cambiar el sitio: el WhatsApp mostrado pasa a `+56 9 3109 4222` (el número al que ya apuntaba el enlace) y `tel:+1234567890` a `tel:1234567890`. Siguen siendo de muestra hasta `BR-005`.
+- Plantillas `docs/contenido/negocio.csv` y `sucursales.csv` generadas desde el respaldo; un test comprueba que cada plantilla es exactamente lo que se genera del respaldo.
+- Tests: `business.test.ts` (validadores, enlaces, `buildBusiness`, las dos pestañas), `businessWiring.test.tsx` (cada pantalla muestra lo de la hoja; control negativo: con Footer y LocationPage sin migrar fallan 2 de 7), e2e en Chrome real (el teléfono de la pestaña `negocio` llega al footer sin reconstruir; un teléfono inválido no se publica) y la guía (cada clave y columna aparece en `contenido-hoja.md`).
+- Detalle: `refreshContent` solo avisa de las pestañas con `gid` configurado; si faltan `negocio` y `sucursales` en `CONTENT_SHEET_GIDS`, no hay avisos en el navegador.
+- **Lo que la hoja no cambia:** `index.html` (JSON-LD, meta) y el sitemap son estáticos; se renuevan al desplegar. Quedan con los datos de `constants.ts`.
+- **Por confirmar (usuario):** las decisiones por defecto del ticket (dos pestañas, validaciones, SEO estático) y el cambio del número de WhatsApp mostrado.
+- **Pendiente (usuario):** crear las pestañas `negocio` y `sucursales` desde las plantillas, publicarlas y sumar sus `gid` a `CONTENT_SHEET_GIDS`.

@@ -1,5 +1,6 @@
 import { parseCsv, toTable } from "./csv";
-import { readFaq, readProducts, readServices, readTeam, readTexts, type TabResult } from "./schemas";
+import { buildBusiness } from "./business";
+import { readBusiness, readFaq, readLocations, readProducts, readServices, readTeam, readTexts, type TabResult } from "./schemas";
 import { CONTENT_TABS, type ContentIssue, type ContentTab, type SiteContent, type TabReport } from "./types";
 
 /** Hoja descargada: el texto CSV de cada pestaña. Una pestaña ausente significa "no se pudo obtener". */
@@ -17,6 +18,8 @@ const APPLY: Record<ContentTab, (content: SiteContent, items: never[]) => void> 
   equipo: (content, items) => void (content.team = items),
   preguntas: (content, items) => void (content.faq = items),
   textos: (content, items) => void (content.texts = Object.fromEntries(items as [string, string][])),
+  negocio: (content, items) => void (content.business = buildBusiness(Object.fromEntries(items as [string, string][]), content.business)),
+  sucursales: (content, items) => void (content.locations = items),
 };
 
 const READERS: Record<ContentTab, (table: ReturnType<typeof toTable>) => TabResult<unknown>> = {
@@ -25,6 +28,8 @@ const READERS: Record<ContentTab, (table: ReturnType<typeof toTable>) => TabResu
   equipo: readTeam,
   preguntas: readFaq,
   textos: readTexts,
+  negocio: readBusiness,
+  sucursales: readLocations,
 };
 
 function backup(tab: ContentTab, reason: string, issues: ContentIssue[] = [], warnings: ContentIssue[] = []): TabReport {
@@ -67,8 +72,8 @@ export function resolveContent(sheet: SheetCsv, snapshot: SiteContent): Resolved
     const { items, issues, warnings } = READERS[tab](table);
     if (issues.length > 0) {
       reports.push(backup(tab, `${issues.length} problema${issues.length === 1 ? "" : "s"} en la hoja`, issues, warnings));
-    } else if (items.length === 0 && tab !== "textos") {
-      // Una pestaña sin filas activas dejaría el sitio sin servicios, productos, equipo o preguntas.
+    } else if (items.length === 0 && tab !== "textos" && tab !== "negocio") {
+      // Una pestaña sin filas activas dejaría el sitio sin servicios, productos, equipo, preguntas o sucursales.
       reports.push(backup(tab, "no tiene ninguna fila activa", [], warnings));
     } else {
       APPLY[tab](content, items as never[]);

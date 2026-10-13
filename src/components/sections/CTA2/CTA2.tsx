@@ -5,12 +5,12 @@ import backgroundImage from "@/assets/optimized/cta2_crew_455w.webp";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useScrollDirection } from "@/hooks/useScrollMotion";
 import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
-import { BOOKING, CONTACT } from "@/config/constants";
 import { trackReserve, trackWhatsApp } from "@/analytics/track";
-import { useSiteText } from "@/content/useSiteContent";
+import { useSiteContent, useSiteText } from "@/content/useSiteContent";
 import { scaleIn } from "@/config/animations.config";
 
 export function CTA2() {
+  const { business } = useSiteContent();
   const siteText = useSiteText();
   const { ref, controls } = useScrollAnimation();
   const direction = useScrollDirection();
@@ -52,12 +52,12 @@ export function CTA2() {
           <strong> confianza en nuestra calidad.</strong>
         </p>
         <div className={styles.ctaButtons}>
-          <a className={styles.ctaButton} href={BOOKING.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta2")}>
+          <a className={styles.ctaButton} href={business.booking.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta2")}>
             <Calendar size={20} />
             Agendar Ahora
           </a>
           <a
-            href={CONTACT.whatsapp.link}
+            href={business.contact.whatsapp.link}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.ctaButtonGhost}

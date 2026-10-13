@@ -591,9 +591,9 @@ Criterios de aceptación:
 #### BR-048 — Datos de contacto, sucursales y redes desde la hoja
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-047
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-048-negocio-desde-la-hoja`; hecho en local, probado con Chrome real; falta crear las dos pestañas en la hoja real)
 - Historia de usuario: HU-CNT-003
-- RF/RNF: `RF-CNT-007` (por escribir), `RNF-DATOS-001`
+- RF/RNF: `RF-CNT-007`, `RNF-DATOS-001`
 
 **Origen (2026-10-13):** el usuario pidió que también se editen desde la hoja
 los datos de la página de ubicación y contacto, los enlaces a WhatsApp y
@@ -601,19 +601,34 @@ AgendaPro, y los del footer (redes sociales, etc.). Hoy viven en `src/config/`
 y `src/data/locationsData.ts`, y `CLAUDE.md` (regla 4) y `RNF-DATOS-001` los
 fijan ahí: **esto cambia esa regla, por decisión del usuario**.
 
-Preguntas abiertas (se resuelven con el usuario al empezar):
-1. ¿Qué datos exactamente? Propuesta: pestaña `sucursales` (id, nombre,
-   dirección, ciudad, teléfono, WhatsApp, horario, URL de AgendaPro, URL del
-   mapa) y pestaña `negocio` (clave/valor: email, redes, WhatsApp general).
-2. `index.html` (JSON-LD de SEO, meta) y `sitemap` son estáticos: solo se
-   actualizan con un build. ¿Se acepta que el SEO se renueve al desplegar?
-3. Un teléfono o un enlace de reserva mal escrito rompe el contacto: ¿qué
-   validación mínima se exige (formato, `https://`)?
+Decisiones tomadas por defecto el 2026-10-13 (el usuario dijo «procedamos»;
+**por confirmar**):
+1. Dos pestañas: `negocio` (clave/valor: teléfono, WhatsApp y su mensaje,
+   correo, enlace y texto de reservas, cuatro horarios, tres redes) y
+   `sucursales` (id, nombre, dirección, ciudad, teléfono, correo, WhatsApp,
+   mapa y tres horarios). El dueño escribe lo que ve una persona; los enlaces
+   (`tel:`, `mailto:`, WhatsApp) los arma el sitio.
+2. `index.html` (JSON-LD, meta) y el sitemap son estáticos: **no cambian con
+   la hoja**, solo al desplegar. Los valores de origen siguen en
+   `src/config/constants.ts` y `src/data/locationsData.ts`.
+3. Validación: teléfono de 8 a 15 dígitos, correo con `@` y punto, enlaces
+   solo `https://`, mapa solo de Google Maps (lo que permite la CSP). Un valor
+   inválido rechaza **toda** la pestaña y conserva lo anterior.
+4. Cambios de datos visibles: `CONTACT.whatsapp.display` pasa de
+   `+56 9 1234 5678` (de muestra) a `+56 9 3109 4222`, el número al que ya
+   apuntaba el enlace; y `tel:+1234567890` pasa a `tel:1234567890`, para que el
+   enlace salga del mismo número que se muestra (siguen siendo de muestra hasta
+   `BR-005`).
 
-Criterios de aceptación (borrador):
+Criterios de aceptación:
 1. Cambiar un teléfono o una URL de AgendaPro en la hoja se ve en el sitio sin
-   desplegar, en la página de ubicación y en el footer.
+   desplegar, en la página de ubicación y en el footer (e2e en Chrome real).
 2. Un valor inválido conserva el dato del build y avisa en el registro.
+3. **Lo comprueba el usuario:** crear las pestañas `negocio` y `sucursales` desde
+   las plantillas, publicarlas, agregar sus `gid` a `CONTENT_SHEET_GIDS`, y ver el
+   cambio de un teléfono en el footer.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-048).
 ---
 
 ### Épica E — Animación y scroll
@@ -1423,7 +1438,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-045 | Títulos invisibles sobre fondo oscuro | C | P0 | S | En curso | — |
 | BR-046 | Leer la hoja desde `.env` y en desarrollo | J | P2 | S | En curso | BR-040 |
 | BR-047 | El navegador relee la hoja: cambios sin desplegar | J | P1 | M | En curso | BR-040 |
-| BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | Propuesta | BR-047 |
+| BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | En curso | BR-047 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

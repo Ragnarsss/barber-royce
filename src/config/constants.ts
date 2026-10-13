@@ -7,16 +7,23 @@
 export const CONTACT = {
     phone: {
         display: "(123) 456-7890",
-        link: "tel:+1234567890",
+        link: "tel:1234567890",
     },
     whatsapp: {
-        display: "+56 9 1234 5678",
+        display: "+56 9 3109 4222",
         link: "https://api.whatsapp.com/send/?phone=56931094222&text=%C2%A1Hola%21+vi+tu+p%C3%A1gina+de+AgendaPro+y+me+gustar%C3%ADa+resolver+algunas+dudas&type=phone_number&app_absent=0",
     },
     email: {
         display: "info@barberroyce.com",
         link: "mailto:info@barberroyce.com",
     },
+} as const;
+
+// WhatsApp: número y mensaje con que se arma el enlace de `CONTACT.whatsapp.link` (BR-048). La hoja puede
+// cambiar uno u otro; lo que no cambie usa estos valores.
+export const WHATSAPP_DEFAULTS = {
+    number: "56931094222",
+    message: "¡Hola! vi tu página de AgendaPro y me gustaría resolver algunas dudas",
 } as const;
 
 // Reserva (AgendaPro, ADR-001). Fuente única: BR-005 migra los demás CTAs aquí.

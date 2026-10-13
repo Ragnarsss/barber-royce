@@ -56,11 +56,11 @@ Las variables `VITE_*` terminan dentro del JavaScript del sitio, y desde `BR-047
 
 **Hoja de Google (`CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS`)**
 
-1. Crea la hoja con las cinco pestañas (`servicios`, `productos`, `equipo`, `preguntas`, `textos`) importando las plantillas de `docs/contenido/`. Cada columna y regla está en [`docs/contenido-hoja.md`](docs/contenido-hoja.md).
+1. Crea la hoja con las siete pestañas (`servicios`, `productos`, `equipo`, `preguntas`, `textos`, `negocio`, `sucursales`) importando las plantillas de `docs/contenido/`. Cada columna y regla está en [`docs/contenido-hoja.md`](docs/contenido-hoja.md).
 2. En Google Sheets: **Archivo → Compartir → Publicar en la web**. Elige **una pestaña** (no «Documento completo») y el formato **CSV**, y publica. Repite con cada pestaña. Lo publicado es público: no pongas nada confidencial en la hoja.
 3. De cada dirección que aparece (`https://docs.google.com/spreadsheets/d/e/2PACX-…/pub?gid=123456&single=true&output=csv`) saca dos datos:
    - el identificador `2PACX-…` (es el mismo en todas las pestañas) → `CONTENT_SHEET_ID`;
-   - el número después de `gid=` (distinto en cada pestaña; la primera suele ser `0`) → una entrada de `CONTENT_SHEET_GIDS`, con el formato `servicios:0,productos:123456,equipo:234567,preguntas:345678,textos:456789`.
+   - el número después de `gid=` (distinto en cada pestaña; la primera suele ser `0`) → una entrada de `CONTENT_SHEET_GIDS`, con el formato `servicios:0,productos:123456,equipo:234567,preguntas:345678,textos:456789,negocio:567890,sucursales:678901`.
 4. No sirve el identificador largo de la dirección de edición (`/d/1AbC…/edit`).
 
 **Analítica (opcional)**
@@ -75,8 +75,8 @@ Las variables `VITE_*` terminan dentro del JavaScript del sitio, y desde `BR-047
 
 ## De dónde sale el contenido
 
-- **Datos del negocio** (teléfonos, WhatsApp, email, horarios, redes, URL de AgendaPro, sucursales): solo en `src/config/` y `src/data/locationsData.ts`.
-- **Catálogo** (servicios, productos, equipo, preguntas) y **textos de la portada**: se editan en una hoja de Google. El sitio la lee **al construir** (ese contenido es el punto de partida y el respaldo) y **otra vez en el navegador** cuando la página termina de cargar, así que un cambio en la hoja se ve **sin volver a desplegar**, a los 5 o 6 minutos (Google publica en cerca de 1 minuto y el navegador guarda la respuesta 5). Sin `CONTENT_SHEET_ID` se usa el respaldo versionado de `src/content/snapshot/`, que son datos de muestra, y no se hace ninguna petición. Si la hoja falla o una pestaña tiene un error, nada se rompe: esa pestaña conserva el contenido del build y el motivo sale en el registro del build o en la consola del navegador (líneas `[contenido]`).
+- **Datos del negocio** (teléfonos, WhatsApp, email, horarios, redes, URL de AgendaPro, sucursales): sus valores de origen están en `src/config/` y `src/data/locationsData.ts`, y el dueño los puede cambiar desde la hoja (ver abajo).
+- **Catálogo** (servicios, productos, equipo, preguntas), **textos de la portada** y **datos del negocio** (teléfono, WhatsApp, correo, enlace de reservas, horarios, redes y sucursales; pestañas `negocio` y `sucursales`): se editan en una hoja de Google. El sitio la lee **al construir** (ese contenido es el punto de partida y el respaldo) y **otra vez en el navegador** cuando la página termina de cargar, así que un cambio en la hoja se ve **sin volver a desplegar**, a los 5 o 6 minutos (Google publica en cerca de 1 minuto y el navegador guarda la respuesta 5). Sin `CONTENT_SHEET_ID` se usa el respaldo versionado de `src/content/snapshot/`, que son datos de muestra, y no se hace ninguna petición. Si la hoja falla o una pestaña tiene un error, nada se rompe: esa pestaña conserva el contenido del build y el motivo sale en el registro del build o en la consola del navegador (líneas `[contenido]`).
 - **Lo publicado en la hoja es público:** cualquiera con el enlace lo puede leer, incluidas las filas con `activo = NO`. Usa una pestaña sin publicar para los borradores.
 - Estructura de la hoja, plantillas (`docs/contenido/*.csv`), publicación y errores frecuentes: [`docs/contenido-hoja.md`](docs/contenido-hoja.md).
 - Decisión de fondo: ADR-008 en [`docs/architecture.md`](docs/architecture.md).

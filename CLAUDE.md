@@ -60,6 +60,11 @@ Tests junto al archivo que prueban (`*.test.ts(x)`); helper de render en `src/te
    de AgendaPro, sucursales) solo en `src/config/` y
    `src/data/locationsData.ts`. Nunca un literal en un componente ni en
    `index.html` sin un test que lo compare (`RNF-DATOS-001`).
+   Excepción (2026-10-13, `BR-048`, decisión del usuario): esos mismos
+   datos también los edita el dueño en la hoja de Google (pestañas `negocio`
+   y `sucursales`); `src/config/` y `src/data/locationsData.ts` son los valores
+   de origen y el respaldo. Se leen con `useSiteContent()`, no de las
+   constantes, salvo `index.html` y el SEO, que son estáticos.
    El **catálogo** (servicios, productos, equipo, preguntas) y los textos
    editables viven en la hoja de Google, con un respaldo en el repo
    (`ADR-008`): se leen con `useSiteContent()` / `useSiteText()`

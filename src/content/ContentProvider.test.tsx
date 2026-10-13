@@ -92,6 +92,16 @@ describe("ContentProvider (BR-047)", () => {
     expect(screen.getByTestId("service")).toHaveTextContent(bakedContent.services[0].name);
   });
 
+  it("una pestaña que no se configuró no genera avisos aunque el sitio use su valor de siempre", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const fetchImpl = sheetFetch({ "2": EQUIPO });
+
+    renderProbe({ sheet: { ...SOURCE, gids: { equipo: "2" } }, fetchImpl });
+
+    await waitFor(() => expect(screen.getByTestId("team")).toHaveTextContent("Carlos Mendozzz"));
+    expect(warn).not.toHaveBeenCalled();
+  });
+
   it("con la hoja caída se queda con el contenido del build y lo avisa en la consola", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const fetchImpl = vi.fn(async () => {

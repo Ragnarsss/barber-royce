@@ -7,11 +7,11 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { fadeInLeft, fadeInRight } from "@/config/animations.config";
 import { Link } from "react-router-dom";
-import { BOOKING } from "@/config/constants";
 import { trackReserve } from "@/analytics/track";
-import { useSiteText } from "@/content/useSiteContent";
+import { useSiteContent, useSiteText } from "@/content/useSiteContent";
 
 export function CTA1() {
+  const { business } = useSiteContent();
   const siteText = useSiteText();
   const { ref, controls } = useScrollAnimation();
 
@@ -68,7 +68,7 @@ export function CTA1() {
             <h2 className={styles.title}>{siteText("cta1.titulo")}</h2>
             <p className={styles.subtitle}>{siteText("cta1.subtitulo")}</p>
             <div className={styles.ctaButtons}>
-              <a className={styles.ctaButton} href={BOOKING.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta1")}>
+              <a className={styles.ctaButton} href={business.booking.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta1")}>
                 <Calendar size={20} />
                 Agendar Ahora
               </a>

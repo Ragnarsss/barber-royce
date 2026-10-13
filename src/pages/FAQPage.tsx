@@ -6,14 +6,13 @@ import { PageHero } from "@/components/common/PageHero/PageHero";
 import { useSiteContent } from "@/content/useSiteContent";
 import { FAQ_CATEGORIES } from "@/types/faq.types";
 import { ROUTES } from "@/config/routes";
-import { CONTACT } from "@/config/constants";
 import { trackWhatsApp } from "@/analytics/track";
 import styles from "./FAQPage.module.css";
 import { useState } from "react";
 import { sectionAnimation, fadeInUpShort, defaultViewport } from "@/config/animations.config";
 
 export const FAQPage = () => {
-    const FAQ_LIST = useSiteContent().faq;
+    const { faq: FAQ_LIST, business } = useSiteContent();
     const [openIndex, setOpenIndex] = useState<number | null>(null);
     const route = ROUTES.faq;
 
@@ -116,7 +115,7 @@ export const FAQPage = () => {
                                     tus dudas de inmediato.
                                 </p>
                                 <div className={styles.contactButtons}>
-                                    <a href={CONTACT.whatsapp.link} className={styles.contactButton} target="_blank" rel="noopener noreferrer" onClick={trackWhatsApp("faq")}>
+                                    <a href={business.contact.whatsapp.link} className={styles.contactButton} target="_blank" rel="noopener noreferrer" onClick={trackWhatsApp("faq")}>
                                         <MessageCircle size={20} />
                                         Hablemos por WhatsApp
                                     </a>
