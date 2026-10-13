@@ -591,3 +591,49 @@ responden 200 y el bundle publicado contiene `PageError`.
   trae un `<link rel="stylesheet">` normal y ningún `onload`. Pendiente
   (al final, en el preview): la consola sin violaciones de CSP y la página
   con estilos desde la primera pintura con CPU 4x.
+
+---
+
+<a id="br-035"></a>
+
+## BR-035 — Separar los vendors del chunk de la app
+
+**Notas de construcción (2026-10-12):**
+- Hipótesis inicial: el LCP restante venía del JavaScript de la home.
+  Se probó cargar con `lazy()` las siete secciones bajo el pliegue
+  (`HomeBelowTheFold`, precargadas con `requestIdleCallback`). Resultado
+  con Lighthouse móvil local, 2 corridas: LCP 3,5 / 3,5 s (sin cambio),
+  TBT 70 / 90 ms (antes 100-120 ms), rendimiento 87 / 86. Las secciones
+  pesan 20 KB: ganancia marginal por código extra, **se descartó y se
+  revirtió**.
+- Análisis del chunk `index` con `vite-bundle-visualizer --template
+  raw-data`: 663 KB sin minificar, de los cuales **541 KB `react-dom`**,
+  32 KB `react-helmet-async`, 11 KB `scheduler` y ~50 KB de código propio.
+  Con `manualChunks` como objeto (`"react-vendor": ["react", "react-dom",
+  "react-router-dom"]`), `react-dom/client` quedaba fuera del chunk de
+  vendors.
+- Arreglo: `manualChunks` como función con expresiones por paquete
+  (`vite.config.ts`).
+
+  | Chunk | Antes (raw / gzip) | Después (raw / gzip) |
+  |---|---|---|
+  | app (`index`) | 260 KB / 85 KB | 79 KB / 29 KB |
+  | `react-vendor` | 49 KB / 17 KB | 231 KB / 74 KB |
+  | `animation-vendor` | 146 KB / 47 KB | 145 KB / 47 KB |
+  | `ui-vendor` | 32 KB / 11 KB | 32 KB / 11 KB |
+  | **Inicial (4 chunks)** | **~160 KB gzip** | **~160 KB gzip** |
+
+  El total no cambia; la mejora es de caché: un despliegue que solo toca
+  el código de la app deja de invalidar los ~74 KB gzip de React.
+  `RNF-PERF-005` (≤ 200 KB gzip) ya se cumplía: queda medido.
+- Conclusión de las cuatro iteraciones del LCP (`BR-011`, `BR-013`, este
+  ticket): la imagen llega a los 0,5 s y se pinta a los 3,5 s porque la
+  home se renderiza solo en el cliente. La palanca es el prerender
+  (`BR-034`, subido a P1).
+- Test (`src/test/manualChunks.test.ts`, 13 casos, entorno `node` porque
+  esbuild no corre bajo `jsdom`; falla contra la configuración anterior):
+  cada paquete va a su chunk, el código de la app no cae en ninguno y
+  `react-helmet-async` no se confunde con `react`.
+- Verificación local: 73 tests, lint, tipos y build OK. Pendiente (al
+  final): comprobar en el segundo despliegue que el hash de
+  `react-vendor` no cambia si solo cambia el código de la app.

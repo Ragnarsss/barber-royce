@@ -47,18 +47,21 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Manual chunking strategy for better caching
-        manualChunks: {
-          // Vendor chunk for React and related libraries
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
-          // Animation libraries chunk
-          "animation-vendor": ["framer-motion", "lenis"],
-          // UI libraries chunk
-          "ui-vendor": [
-            "lucide-react",
-            "class-variance-authority",
-            "clsx",
-            "tailwind-merge",
-          ],
+        // Los vendors van en chunks aparte para que un cambio en el código de la app
+        // no invalide el caché de React y de las librerías de animación (BR-035).
+        // Con la forma de objeto, react-dom/client quedaba en el chunk de la app.
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+          if (/node_modules\/(react|react-dom|react-router|react-router-dom|scheduler)\//.test(id)) {
+            return "react-vendor";
+          }
+          if (/node_modules\/(framer-motion|motion-dom|motion-utils|lenis)\//.test(id)) {
+            return "animation-vendor";
+          }
+          if (/node_modules\/(lucide-react|class-variance-authority|clsx|tailwind-merge)\//.test(id)) {
+            return "ui-vendor";
+          }
+          return undefined;
         },
         // Asset file naming
         assetFileNames: (assetInfo) => {

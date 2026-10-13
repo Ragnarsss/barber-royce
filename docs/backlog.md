@@ -623,35 +623,43 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-011).
 
-#### BR-035 — Reducir el JavaScript de la carga inicial de la home
+#### BR-035 — Separar los vendors del chunk de la app
 
-- Prioridad: P1 · Esfuerzo: M · Depende de: BR-011, BR-013
-- Estado: Propuesta
+- Prioridad: P1 · Esfuerzo: S · Depende de: BR-011
+- Estado: En curso (rama `perf/br-035-js-inicial-home`; hecho en local, falta confirmar en el preview)
 - Historia de usuario: HU-EXP-001 (CA-01)
-- RF/RNF: `RNF-PERF-001`, `RNF-PERF-003`, `RNF-PERF-005`
+- RF/RNF: `RNF-PERF-005`
 
 **Origen (2026-10-12):** tras `BR-011`, Lighthouse móvil local mide LCP
-3,7 s con la imagen ya descargada a los 0,5 s: las fases son TTFB 456 ms,
-retraso de carga 0 ms, carga 0 ms y **retraso de render 3.277 ms**. La
-home es una SPA y no pinta nada hasta que React monta; el bundle carga
-todas las secciones de la home (Hero, Benefits, Features, Reviews,
-SocialProof1/2, CTA1/2) y Lighthouse estima 54 KiB de JavaScript sin
-usar. FCP también es 2,5 s.
+3,7 s con la imagen ya descargada a los 0,5 s: retraso de render
+3.277 ms. Se sospechó del JavaScript inicial de la home.
+
+> **Alcance ajustado (2026-10-12, por medición):** el ticket nació como
+> "cargar con `lazy()` las secciones bajo el pliegue". Se probó y se
+> **descartó**: las siete secciones pesan 20 KB sin minificar, el LCP no
+> se movió (3,5 s antes y después) y el TBT solo bajó ~30 ms. El análisis
+> del chunk `index` (663 KB sin minificar) mostró dónde estaba el peso:
+> **541 KB eran `react-dom`**, que `manualChunks` en forma de objeto dejaba
+> en el chunk de la app. El ticket pasa a corregir eso.
 
 Alcance:
-1. Medir el tamaño de los chunks que pide la home (`perf:bundle`) y fijar
-   la línea base de `RNF-PERF-005` (≤ 200 KB gzip).
-2. Cargar con `lazy()` + `Suspense` las secciones de la home que están
-   bajo el pliegue; el Hero y el navbar quedan en el chunk inicial
-   (patrón de rutas lazy de RadarOP).
-3. Revisar qué más llega al chunk inicial (por ejemplo `honeycomb-grid`,
-   `radix-ui` completo) con el visualizador.
+1. `manualChunks` como función: `react`, `react-dom`, `react-router*` y
+   `scheduler` en `react-vendor`; `framer-motion`, `motion-*` y `lenis` en
+   `animation-vendor`; iconos y utilidades de clases en `ui-vendor`.
+2. Medir la línea base de `RNF-PERF-005`.
 
 Criterios de aceptación:
-1. LCP ≤ 2,5 s y TBT ≤ 200 ms en Lighthouse móvil, mediana de 3, en el
-   preview (CP-PERF-001, CP-PERF-003).
-2. JavaScript de la carga inicial ≤ 200 KB gzip (CP-PERF-005).
-3. Las secciones diferidas no producen saltos de diseño (CLS ≤ 0,1).
+1. El chunk de la app baja de ~240 KB a ~79 KB sin minificar y `react-dom`
+   queda en `react-vendor` (test `manualChunks.test.ts`).
+2. JavaScript de la carga inicial ≤ 200 KB gzip (CP-PERF-005): 160 KB.
+3. Un cambio solo en el código de la app no cambia el hash de
+   `react-vendor` ni de `animation-vendor` (se comprueba en el segundo
+   despliegue).
+
+El LCP ≤ 2,5 s **no se resuelve aquí**: la causa es renderizar solo en el
+cliente. Ver evidencia en `BR-034`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-035).
 
 #### BR-012 — Optimizar las imágenes que quedaron fuera
 
@@ -731,7 +739,7 @@ Criterios de aceptación:
 
 #### BR-034 — Spike: prerender de rutas para SEO
 
-- Prioridad: P2 · Esfuerzo: M · Depende de: BR-006
+- Prioridad: P1 · Esfuerzo: M · Depende de: BR-006
 - Estado: Propuesta (spike)
 - Historia de usuario: HU-SEO-001 (CA-01)
 - RF/RNF: `RNF-SEO-003`
@@ -739,6 +747,14 @@ Criterios de aceptación:
 **Origen (2026-10-12):** es una SPA; un crawler sin JavaScript solo ve los
 metadatos de la home. Google ejecuta JS, pero otros (WhatsApp, Facebook al
 compartir un enlace) no.
+
+> **Evidencia nueva (2026-10-12) → sube a P1:** además de SEO, es la
+> palanca real del LCP. Con la imagen del hero ya descargada a los
+> 0,5 s, Lighthouse móvil mide un retraso de render de 3.277 ms hasta
+> que React monta (LCP 3,5-3,7 s; objetivo 2,5 s). Ni quitar el PNG
+> (`BR-011`), ni diferir CSS (`BR-013`), ni dividir la home (`BR-035`)
+> lo mueven; con HTML prerenderizado el hero se pinta en el primer
+> pintado.
 
 Alcance:
 1. Evaluar prerender estático de las 7 rutas en el build (plugin de
@@ -932,7 +948,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-010 | Variables de entorno | B | P1 | XS | Propuesta | — |
 | BR-011 | Ruta crítica del LCP | F | P1 | S | En curso | — |
 | BR-012 | Imágenes pendientes | F | P1 | S | En curso | BR-011 |
-| BR-035 | JavaScript inicial de la home | F | P1 | M | Propuesta | BR-011, BR-013 |
+| BR-035 | Separar vendors del chunk de la app | F | P1 | S | En curso | BR-011 |
 | BR-013 | CSS crítico | F | P1 | S | En curso | — |
 | BR-014 | Lenis sin fugas | E | P1 | M | En curso | BR-004 |
 | BR-015 | Cero re-renders por scroll | E | P1 | M | En curso | BR-014 |
@@ -954,7 +970,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-031 | Lighthouse CI | H | P2 | S | Propuesta | BR-029, BR-002 |
 | BR-032 | Actualizar README | A | P2 | S | Propuesta | BR-001 |
 | BR-033 | Accesibilidad | G | P2 | S | Propuesta | — |
-| BR-034 | Spike prerender | G | P2 | M | Propuesta (spike) | BR-006 |
+| BR-034 | Spike prerender | G | P1 | M | Propuesta (spike) | BR-006 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
