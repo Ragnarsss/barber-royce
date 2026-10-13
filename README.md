@@ -1,177 +1,106 @@
-# Barber Royce - Landing Page
+# Barber Royce
 
-High-performance, conversion-focused landing page for a barbershop business. Built with modern web technologies optimized for SEO, accessibility, and user experience.
+Sitio web de **Royce Barbería** (La Serena y Coquimbo, Chile). Presenta servicios, equipo, productos, sucursales y preguntas frecuentes, y deriva las reservas a **AgendaPro**. Es una SPA estática, sin backend propio, desplegada en **Vercel**: https://barber-royce.vercel.app
 
-## Project Overview
+## Stack
 
-Professional landing page designed to maximize online presence and drive booking conversions for a local barbershop. Implements best practices for local SEO, performance optimization, and cross-device compatibility.
+React 19 · TypeScript 5.9 (`strict`) · Vite 7 (SWC) · React Router 7 · CSS Modules + tokens CSS · framer-motion 12 · Lenis · react-helmet-async · Vitest + Testing Library. Las decisiones y sus motivos están en [`docs/architecture.md`](docs/architecture.md).
 
-## Tech Stack
+## Levantarlo en local
 
-- **Framework**: React 19 + TypeScript
-- **Build Tool**: Vite 7
-- **Styling**: CSS Modules / TailwindCSS (TBD)
-- **State Management**: React Hooks
-- **Fast Refresh**: SWC
-
-## Key Features
-
-- Modern, responsive design (mobile-first)
-- Optimized Core Web Vitals (LCP < 2.5s, INP < 200ms, CLS < 0.1)
-- SEO-optimized with prerendering capabilities
-- Local SEO integration (Google Business Profile)
-- Analytics & conversion tracking
-- WCAG 2.1 AA accessibility compliant
-- Progressive Web App capabilities
-
-## Prerequisites
-
-- Node.js 18+
-- npm or yarn
-- Git
-
-## Installation
+Necesitas Git y Node.js en la versión de [`.nvmrc`](.nvmrc) (con `nvm use` o `fnm use` queda lista).
 
 ```bash
-# Clone repository
-git clone https://github.com/[username]/barber-royce.git
+git clone https://github.com/Ragnarsss/barber-royce.git
 cd barber-royce
-
-# Install dependencies
 npm install
-
-# Start development server
-npm run dev
+npm run dev        # http://localhost:8888
 ```
 
-## Available Scripts
+No hace falta ningún archivo `.env`: sin variables el sitio funciona completo, con el contenido de respaldo y sin analítica.
 
-```bash
-npm run dev      # Start development server (http://localhost:5173)
-npm run build    # Build for production
-npm run preview  # Preview production build
-npm run lint     # Run ESLint
+Si el servidor de desarrollo muestra errores de importación después de cambiar de rama, deténlo (`Ctrl+C`), vuelve a ejecutar `npm run dev` y recarga con `Ctrl+Shift+R`.
+
+## Comandos
+
+| Comando | Qué hace |
+|---|---|
+| `npm run dev` | Servidor de desarrollo en el puerto 8888 |
+| `npm run build` | Revisa los tipos y genera `dist/` (`tsc -b && vite build`) |
+| `npm run preview` | Sirve `dist/` en http://localhost:4173 |
+| `npm run lint` | ESLint, sin avisos permitidos |
+| `npm test` | Vitest en modo watch |
+| `npm run test:run` | Vitest una vez |
+| `npm run test:coverage` | Vitest con cobertura y umbrales (lo mismo que corre el CI) |
+| `npm run commit` | Commit guiado (Conventional Commits) |
+| `npm run perf:lighthouse` | Lighthouse CI local |
+| `npm run perf:bundle` | Visualizador del tamaño del bundle |
+
+Los tests viven junto al archivo que prueban (`*.test.ts(x)`). Los de `src/test/` construyen el sitio de verdad; el de contraste (`contrast.e2e.test.ts`) usa Google Chrome y se omite solo si no lo encuentra.
+
+## Variables de entorno
+
+Todas son opcionales y están documentadas en [`.env.example`](.env.example). Para probar alguna en local, ponla en un archivo `.env.local` (no se sube al repositorio) y reinicia `npm run dev`. En producción se definen en Vercel (Settings → Environment Variables) y hay que volver a desplegar.
+
+| Variable | Para qué | Llega al navegador |
+|---|---|---|
+| `CONTENT_SHEET_ID` | Identificador de publicación de la hoja de Google con el catálogo | No (solo build) |
+| `CONTENT_SHEET_GIDS` | `pestaña:gid` de cada pestaña publicada como CSV | No (solo build) |
+| `CONTENT_FETCH_TIMEOUT_MS` | Tiempo máximo por pestaña (10 s por defecto) | No (solo build) |
+| `VITE_VERCEL_ANALYTICS` | `true` activa Vercel Analytics | Sí (pública) |
+| `VITE_GA_MEASUREMENT_ID` | ID de GA4; activa el aviso de consentimiento | Sí (pública) |
+
+Las variables `VITE_*` terminan dentro del JavaScript del sitio, así que nunca llevan secretos.
+
+## De dónde sale el contenido
+
+- **Datos del negocio** (teléfonos, WhatsApp, email, horarios, redes, URL de AgendaPro, sucursales): solo en `src/config/` y `src/data/locationsData.ts`.
+- **Catálogo** (servicios, productos, equipo, preguntas) y **textos de la portada**: se editan en una hoja de Google y se leen **al construir** el sitio. Sin `CONTENT_SHEET_ID` se usa el respaldo versionado de `src/content/snapshot/`, que son datos de muestra. Si la hoja falla o una pestaña tiene un error, el build no se rompe: usa el respaldo para esa pestaña y lo avisa en el registro (líneas `[contenido]`).
+- Estructura de la hoja, plantillas (`docs/contenido/*.csv`), publicación y errores frecuentes: [`docs/contenido-hoja.md`](docs/contenido-hoja.md).
+- Decisión de fondo: ADR-008 en [`docs/architecture.md`](docs/architecture.md).
+
+## Analítica
+
+Apagada por defecto. Con `VITE_VERCEL_ANALYTICS=true` mide visitas sin cookies. Con `VITE_GA_MEASUREMENT_ID` muestra un aviso de consentimiento y solo carga Google Analytics si la persona acepta. Detalle en ADR-007.
+
+## Estructura
+
+```
+src/
+├── analytics/     # consentimiento, GA4, Vercel Analytics, eventos de conversión
+├── components/    # common, layout y sections
+├── config/        # datos del negocio y rutas
+├── content/       # lectura de la hoja, validación y respaldo (snapshot/)
+├── data/          # sucursales
+├── hooks/         # scroll, parallax, Lenis
+├── pages/         # una por ruta
+├── styles/        # tokens CSS y estilos globales
+└── test/          # utilidades de test y pruebas de build
+vite-plugins/      # plugin que lee la hoja al construir
+docs/              # backlog, historias, requisitos, arquitectura, guías
+.claude/           # skills y agentes para trabajar con Claude Code
 ```
 
-## Project Structure
+## Despliegue
 
-```
-barber-royce/
-├── src/
-│   ├── components/      # React components
-│   ├── assets/          # Images, fonts, static files
-│   ├── App.tsx          # Main application component
-│   └── main.tsx         # Entry point
-├── public/              # Static assets
-├── WEB_REQUIREMENTS_CHECKLIST.md  # Technical requirements & KPIs
-└── vite.config.ts       # Vite configuration
-```
+- Vercel despliega solo: cada push a una rama genera un preview y `master` va a producción. La configuración (rewrite de la SPA, cabeceras de seguridad, caché) está en [`vercel.json`](vercel.json).
+- Los previews están detrás de Vercel Authentication: hay que iniciar sesión para verlos.
+- El CI de GitHub Actions ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) corre lint, tipos, tests con cobertura, build y `npm audit`. `master` está protegida: se integra por Pull Request con el CI en verde.
+- **Volver atrás:** en Vercel → Deployments, elige el despliegue anterior bueno y usa **Promote to Production**.
+- **Publicar un cambio de contenido de la hoja:** requiere un nuevo despliegue (Redeploy en Vercel). Ver la sección 5 de [`docs/contenido-hoja.md`](docs/contenido-hoja.md).
 
-## Performance Targets
+## Cómo se trabaja en este repo
 
-| Metric                          | Target  | Current |
-| ------------------------------- | ------- | ------- |
-| LCP (Largest Contentful Paint)  | < 2.5s  | TBD     |
-| INP (Interaction to Next Paint) | < 200ms | TBD     |
-| CLS (Cumulative Layout Shift)   | < 0.1   | TBD     |
-| Lighthouse Score                | > 90    | TBD     |
-| Bundle Size                     | < 200KB | TBD     |
+Todo trabajo parte de un ticket `BR-NNN` de [`docs/backlog.md`](docs/backlog.md), en una rama `tipo/br-nnn-descripcion`, con commits `tipo(alcance): descripción (BR-NNN)`. Un ticket está «Hecho» cuando cumple la Definition of Done ([`docs/engineering-guidelines.md`](docs/engineering-guidelines.md) §6), verificada en el preview de Vercel.
 
-## Key Metrics & KPIs
+| Documento | Para qué |
+|---|---|
+| [`CLAUDE.md`](CLAUDE.md) | Reglas del proyecto (también valen para personas) |
+| [`AGENTS.md`](AGENTS.md) | Skills y agentes de `.claude/` |
+| [`docs/historias-usuario.md`](docs/historias-usuario.md) | Para qué se hace cada cosa |
+| [`docs/rf-rnf-catalogo.md`](docs/rf-rnf-catalogo.md) | Requisitos verificables |
+| [`docs/registro-construccion.md`](docs/registro-construccion.md) | Bitácora de construcción por ticket |
 
-See [WEB_REQUIREMENTS_CHECKLIST.md](./WEB_REQUIREMENTS_CHECKLIST.md) for comprehensive metrics dashboard including:
+## Licencia
 
-- Marketing & conversion metrics
-- Social media integration
-- Technical performance
-- SEO & local search
-- Cross-functional KPIs
-
-## Configuration
-
-### Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-VITE_GA_TRACKING_ID=your-ga-tracking-id
-VITE_GMB_LOCATION_ID=your-gmb-location-id
-VITE_API_URL=your-api-url
-```
-
-## Deployment
-
-### Recommended Platforms
-
-- **Vercel** (Recommended for React SPA)
-- **Netlify**
-- **CloudFlare Pages**
-
-```bash
-# Build production bundle
-npm run build
-
-# Deploy to Vercel
-vercel --prod
-
-# Or deploy to Netlify
-netlify deploy --prod
-```
-
-## SEO Strategy
-
-- React with prerendering (react-snap)
-- Dynamic meta tags (react-helmet-async)
-- Schema.org structured data (LocalBusiness)
-- Google Business Profile integration
-- Optimized for local search queries
-
-## Testing
-
-```bash
-# Run linter
-npm run lint
-
-# Type check
-tsc --noEmit
-
-# Test build
-npm run build && npm run preview
-```
-
-## Development Roadmap
-
-- [ ] Initial setup & component architecture
-- [ ] Hero section with booking CTA
-- [ ] Services showcase
-- [ ] Portfolio/gallery implementation
-- [ ] Contact & location integration
-- [ ] Analytics & tracking setup
-- [ ] SEO optimization
-- [ ] Performance tuning
-- [ ] A/B testing implementation
-
-## Contributing
-
-This is a private commercial project. For team members:
-
-1. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-2. Commit changes (`git commit -m 'Add AmazingFeature'`)
-3. Push to branch (`git push origin feature/AmazingFeature`)
-4. Open a Pull Request
-
-## License
-
-Private & Confidential - All Rights Reserved
-
-## Contact
-
-Project Maintainer - [@Ragnarsss](https://github.com/Ragnarsss)
-
-Project Link: [https://github.com/zunig/barber-royce](https://github.com/Ragnarsss/barber-royce)
-
----
-
-**Status**: In Development  
-**Version**: 0.0.0  
-**Last Updated**: February 2026
+Privado. Todos los derechos reservados.

@@ -1207,3 +1207,14 @@ servido con `vite preview` y Chrome real:
   contraste construye con un ID de prueba para seguir cubriendo `/privacidad`.
 - **Por confirmar (usuario):** validar el texto de `/privacidad` antes de
   activar la analítica.
+
+---
+
+<a id="br-032"></a>
+
+## BR-032 — Actualizar el README
+
+**Notas de construcción (2026-10-13):**
+- README reescrito en español: stack real, cómo levantarlo en local (sin `.env`), tabla de comandos, variables de entorno (de build y `VITE_*`), de dónde sale el contenido (hoja de Google y respaldo), analítica opt-in, estructura, despliegue y rollback, y el proceso por tickets.
+- Se corrigió lo que estaba mal: puerto 5173 (es 8888), Tailwind «TBD» (descartado por ADR-002), `react-snap` (no está instalado), variables que nadie usa y dos URLs de GitHub distintas.
+- **Pendiente (usuario):** seguir el README desde un clon limpio. Es el criterio de aceptación del ticket.
