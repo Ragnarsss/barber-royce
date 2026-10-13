@@ -8,6 +8,7 @@ import { useParallaxProgress, useMiddleLayer, useForegroundLayer, useSlowLayer, 
 import { fadeInLeft, fadeInRight } from "@/config/animations.config";
 import { Link } from "react-router-dom";
 import { BOOKING } from "@/config/constants";
+import { trackReserve } from "@/analytics/track";
 
 export function CTA1() {
   const { ref, controls } = useScrollAnimation();
@@ -74,7 +75,7 @@ export function CTA1() {
               qué somos la barbería de elección para quienes buscan lo mejor.
             </p>
             <div className={styles.ctaButtons}>
-              <a className={styles.ctaButton} href={BOOKING.url} target="_blank" rel="noopener noreferrer">
+              <a className={styles.ctaButton} href={BOOKING.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta1")}>
                 <Calendar size={20} />
                 Agendar Ahora
               </a>

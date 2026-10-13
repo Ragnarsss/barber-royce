@@ -1,11 +1,13 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, screen } from "@testing-library/react";
+import { Link } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
 import { renderWithProviders } from "@/test/renderWithProviders";
 import { AnalyticsRoot } from "./AnalyticsRoot";
 import { CONSENT_STORAGE_KEY, resetConsentCache } from "./consent";
 import { GTAG_SCRIPT_URL } from "./googleAnalytics";
 import { PrivacyPreferencesButton } from "./PrivacyPreferencesButton";
+import { ROUTES } from "@/config/routes";
 
 const ID = "G-TEST123";
 
@@ -20,11 +22,21 @@ const renderRoot = () =>
     <>
       <AnalyticsRoot measurementId={ID} />
       <PrivacyPreferencesButton />
+      <Link to="/servicios">ir a servicios</Link>
     </>,
   );
 
+/** Eventos `page_view` que recibió Google, en orden. */
+const pageViews = () =>
+  ((google.dataLayer ?? []) as ArrayLike<unknown>[])
+    .map((entry) => Array.from(entry))
+    .filter(([kind, name]) => kind === "event" && name === "page_view")
+    .map(([, , params]) => params as { page_path: string; page_title: string });
+
 describe("AnalyticsRoot: aviso de consentimiento y carga de Google (BR-037)", () => {
   beforeEach(() => {
+    // En producción `Layout` pasa esta misma variable como prop; `trackEvent` la lee del entorno.
+    vi.stubEnv("VITE_GA_MEASUREMENT_ID", ID);
     window.localStorage.clear();
     resetConsentCache();
     document.head.innerHTML = "";
@@ -34,6 +46,10 @@ describe("AnalyticsRoot: aviso de consentimiento y carga de Google (BR-037)", ()
     // @ts-expect-error vuelve al getter original de jsdom
     delete document.readyState;
     document.cookie = "_ga=abc; path=/";
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   describe("primera visita, sin decidir", () => {
@@ -167,6 +183,58 @@ describe("AnalyticsRoot: aviso de consentimiento y carga de Google (BR-037)", ()
 
       expect(window.localStorage.getItem(CONSENT_STORAGE_KEY)).toBe("denied");
       expect(google[`ga-disable-${ID}`]).toBe(true);
+    });
+  });
+
+  describe("vistas por ruta (BR-038, HU-MED-002 CA-02)", () => {
+    it("con consentimiento previo envía un page_view de la página inicial", () => {
+      window.localStorage.setItem(CONSENT_STORAGE_KEY, "granted");
+      resetConsentCache();
+
+      renderRoot();
+
+      expect(pageViews().map((view) => view.page_path)).toEqual(["/"]);
+    });
+
+    it("cada cambio de ruta envía su propio page_view con el título de ROUTES", async () => {
+      const user = userEvent.setup();
+      window.localStorage.setItem(CONSENT_STORAGE_KEY, "granted");
+      resetConsentCache();
+      renderRoot();
+
+      await user.click(screen.getByRole("link", { name: "ir a servicios" }));
+
+      expect(pageViews().map((view) => view.page_path)).toEqual(["/", "/servicios"]);
+      expect(pageViews()[1].page_title).toBe(ROUTES.services.title);
+    });
+
+    it("al aceptar a mitad de la visita se envía el page_view de la página actual", async () => {
+      const user = userEvent.setup();
+      renderRoot();
+      expect(pageViews()).toEqual([]);
+
+      await user.click(screen.getByRole("button", { name: "Aceptar" }));
+
+      expect(pageViews().map((view) => view.page_path)).toEqual(["/"]);
+    });
+
+    it("sin consentimiento, navegar no envía ningún page_view", async () => {
+      const user = userEvent.setup();
+      renderRoot();
+
+      await user.click(screen.getByRole("link", { name: "ir a servicios" }));
+
+      expect(pageViews()).toEqual([]);
+    });
+
+    it("tras rechazar, navegar no envía ningún page_view", async () => {
+      const user = userEvent.setup();
+      renderRoot();
+      await user.click(screen.getByRole("button", { name: "Rechazar" }));
+
+      await user.click(screen.getByRole("link", { name: "ir a servicios" }));
+
+      expect(pageViews()).toEqual([]);
     });
   });
 });

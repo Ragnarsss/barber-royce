@@ -12,6 +12,7 @@ import {
 import { getFooterRoutes } from "@/config/routes";
 import { CONTACT, SCHEDULE, SOCIAL_MEDIA } from "@/config/constants";
 import { PrivacyPreferencesButton } from "@/analytics/PrivacyPreferencesButton";
+import { trackPhone, trackWhatsApp } from "@/analytics/track";
 import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
 import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
 
@@ -59,7 +60,9 @@ export const Footer = () => {
             <ul className={styles.contact}>
               <li className={styles.contactItem}>
                 <PhoneIcon className={styles.contactIcon} />
-                <a href={CONTACT.phone.link}>{CONTACT.phone.display}</a>
+                <a href={CONTACT.phone.link} onClick={trackPhone("footer")}>
+                  {CONTACT.phone.display}
+                </a>
               </li>
               <li className={styles.contactItem}>
                 <EmailIcon className={styles.contactIcon} />
@@ -105,6 +108,7 @@ export const Footer = () => {
               </a>
               <a
                 href={CONTACT.whatsapp.link}
+                onClick={trackWhatsApp("footer")}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"

@@ -7,6 +7,7 @@ import { useNavbarScroll } from "@/hooks/useNavbarScroll";
 import { useLenisInstance } from "@/hooks/useLenisContext";
 import { getNavRoutes } from "@/config/routes";
 import { BOOKING } from "@/config/constants";
+import { trackReserve } from "@/analytics/track";
 
 export const Navbar = () => {
   const { isScrolled } = useNavbarScroll();
@@ -86,6 +87,7 @@ export const Navbar = () => {
             href={BOOKING.url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={trackReserve("navbar")}
           >
             Agendar Sesión
           </a>
@@ -128,7 +130,10 @@ export const Navbar = () => {
           target="_blank"
           rel="noopener noreferrer"
           className={styles.ctaButton}
-          onClick={() => setIsMobileMenuOpen(false)}
+          onClick={() => {
+            trackReserve("navbar-movil")();
+            setIsMobileMenuOpen(false);
+          }}
         >
           Agendar Sesión
         </a>

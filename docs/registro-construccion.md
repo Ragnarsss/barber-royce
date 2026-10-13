@@ -885,3 +885,51 @@ servido con `vite preview` y Chrome real:
   footer sigue casi ilegible (su fondo es degradado y el test no lo
   evalúa) y el `h2` rojo de `CTA2` mide 2,72.
 - Verificación local: lint, tipos y tests OK.
+
+---
+
+<a id="br-038"></a>
+
+## BR-038 — Eventos de conversión y vistas por ruta
+
+**Notas de construcción (2026-10-12):**
+- `src/analytics/track.ts`:
+  - `trackEvent(nombre, params)` solo envía si Google está **habilitado**:
+    `enableGoogleAnalytics` deja `ga-disable-<ID>` en `false` tras el
+    consentimiento y `disableGoogleAnalytics` lo deja en `true`; mientras
+    sea `undefined` (nunca se aceptó) no hay evento. Sin ID de medición no
+    hace nada y el build elimina el resto.
+  - Manejadores listos para `onClick`: `trackReserve`, `trackWhatsApp` y
+    `trackPhone`, que reciben la `section` (`navbar`, `navbar-movil`,
+    `cta1`, `cta2`, `footer`, `ubicacion`, `faq`, `404`). El único
+    parámetro es la sección: nunca teléfono ni texto (RN-01). `gtag`
+    encola de forma síncrona, así que el enlace no se retrasa (RN-02).
+  - `trackPageView(ruta)`: `page_path`, `page_location` y `page_title`.
+    El título sale de `ROUTES` (no de `document.title`, que Helmet
+    actualiza después de renderizar).
+- `AnalyticsRoot` suma un efecto por ruta y consentimiento que envía el
+  `page_view` (la app es una SPA y GA4 no detecta los cambios de ruta). Se
+  declara después del que habilita Google, así que en cada ruta, y al
+  aceptar a mitad de la visita, Google ya está habilitado.
+- 11 enlaces instrumentados en 8 archivos: reserva (navbar escritorio y
+  móvil, `CTA1`, `CTA2`, 404), WhatsApp (`CTA2`, footer, ubicación, FAQ) y
+  teléfono (footer, ubicación). En el menú móvil, el manejador se combina
+  con el cierre del menú.
+- Tests (53 en `src/analytics/` + 3 de enlaces): `track.test.ts` (13: sin
+  habilitar, habilitado, revocado, sin ID, sin `gtag`, una sección y nada
+  más por evento, síncrono, títulos), 5 de vistas por ruta en
+  `AnalyticsRoot.test.tsx` (consentimiento previo, cada ruta, aceptar a
+  mitad, sin consentimiento, tras rechazar) y `trackedLinks.test.ts`, que
+  lee el JSX de todo el sitio y falla si un enlace de reserva, WhatsApp o
+  teléfono no rastrea su clic o usa el evento equivocado. Controles
+  negativos hechos: quitar el rastreo del footer y quitar la condición de
+  "Google habilitado" hacen fallar los tests.
+- Error mío al contar: dije 12 enlaces y son 11.
+- Verificación en Chrome real (peticiones a Google bloqueadas, `dataLayer`
+  leído): antes de aceptar, 0 eventos; al aceptar, `page_view` de `/`; al
+  ir a `/servicios`, su `page_view` con el título de `ROUTES`;
+  `reserve_click {section: navbar}` y `phone_click {section: footer}`; tras
+  rechazar, 0 eventos nuevos.
+- **Pasos manuales pendientes (usuario):** con el ID real configurado,
+  ver los eventos en GA4 → Administrar → DebugView; marcar `reserve_click`
+  como evento clave (conversión) en GA4.

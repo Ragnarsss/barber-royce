@@ -1082,7 +1082,7 @@ validar el texto de `/privacidad`; volver a desplegar.
 #### BR-038 — Eventos de conversión y vistas por ruta
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: BR-037
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-038-eventos-conversion`; código hecho en local; falta ver los eventos en GA4 con un ID real)
 - Historia de usuario: HU-MED-002 (CA-02, CA-03, CA-04)
 - RF/RNF: `RF-MED-004`, `RNF-PRIV-001`
 
@@ -1100,6 +1100,8 @@ Criterios de aceptación:
 1. Con consentimiento, 3 rutas = 3 `page_view`; cada clic genera su evento
    (CP-MED-004), con tests.
 2. Sin consentimiento, 0 eventos.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-038).
 
 ### Épica J — Contenido editable desde una hoja de cálculo
 
@@ -1293,7 +1295,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-034 | Spike prerender | G | P1 | M | Propuesta (spike) | BR-006 |
 | BR-036 | Vercel Analytics por variable | I | P2 | S | En curso | BR-010 |
 | BR-037 | Consentimiento y Google Analytics 4 | I | P2 | M | En curso | BR-044, BR-030 |
-| BR-038 | Eventos de conversión y vistas por ruta | I | P2 | S | Propuesta | BR-037 |
+| BR-038 | Eventos de conversión y vistas por ruta | I | P2 | S | En curso | BR-037 |
 | BR-039 | Núcleo de contenido: CSV, validación y respaldo | J | P2 | M | Propuesta | BR-030 |
 | BR-040 | Descarga de la hoja al construir | J | P2 | M | Propuesta | BR-039 |
 | BR-041 | Catálogo desde el contenido generado | J | P2 | M | Propuesta | BR-040 |

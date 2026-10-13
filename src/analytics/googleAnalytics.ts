@@ -11,7 +11,7 @@
 
 type GtagArgs = unknown[];
 
-interface GoogleWindow {
+export interface GoogleWindow {
   dataLayer?: GtagArgs[];
   gtag?: (...args: GtagArgs) => void;
   [key: `ga-disable-${string}`]: boolean | undefined;
