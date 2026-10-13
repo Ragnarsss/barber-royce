@@ -120,7 +120,7 @@ describe("el catálogo tiene una sola fuente (BR-041, RNF-DATOS-002)", () => {
 
 describe("plantillas CSV de docs/contenido (BR-041, HU-CNT-001)", () => {
   const sheet = Object.fromEntries(
-    CONTENT_TABS.map((tab) => [tab, readFileSync(resolve(root, "docs/contenido", `${tab}.csv`), "utf8")]),
+    CONTENT_TABS.map((tab) => [tab, readFileSync(resolve(root, "docs/contenido", `${tab}.csv`), "utf8").replace(/\r\n/g, "\n")]),
   ) as SheetCsv;
   const emptyFallback: SiteContent = { services: [], products: [], team: [], faq: [], texts: {} };
 
