@@ -845,3 +845,43 @@ servido con `vite preview` y Chrome real:
   (Production); **validar el texto de `/privacidad` y del aviso**; volver
   a desplegar; confirmar en el preview que no hay peticiones a Google
   hasta aceptar y que no aparecen violaciones de CSP en la consola.
+
+---
+
+<a id="br-045"></a>
+
+## BR-045 — Títulos invisibles sobre fondo oscuro (404, error de página, privacidad)
+
+**Notas de construcción (2026-10-12):**
+- Cómo apareció: la captura del aviso de consentimiento (`BR-037`) no
+  mostraba su título. Se midió el color calculado en la 404 de producción
+  (`rgb(23,23,23)` sobre `rgb(23,23,23)`) y se confirmó. Una auditoría de
+  contraste de encabezados con Chrome real en las 9 rutas encontró además
+  la página de privacidad (mi supuesto de fondo claro era falso) y, como
+  falsos positivos, tres `h3` de la home sobre tarjetas con degradado,
+  que sí se ven.
+- Causa: `h1`-`h6` globales con color oscuro y `.title` sin color propio.
+- Arreglo: `color: var(--color-white)` en `NotFoundPage`, `PageError` y
+  `ConsentBanner`; `PrivacyPage` con texto, títulos y enlaces claros.
+- **Lighthouse no lo ve:** `color-contrast` dio "OK" en la 404 de
+  producción (a11y 93) con el título invisible. Se anota como límite en
+  `BR-031`.
+- Test de contraste en Chrome real (`src/test/contrast.e2e.test.ts`):
+  construye el sitio, lo sirve con `vite preview` y, para cada ruta de
+  `ROUTES` más una inexistente, calcula el contraste de títulos, párrafos,
+  enlaces, botones, etiquetas y ítems contra su fondo sólido, ignorando
+  los textos sobre degradados o imágenes y el texto con
+  `background-clip: text`; falla si algo baja de 1,5. Con los CSS
+  anteriores falla en `/privacidad` (9 textos) y en la 404 (el `h1`);
+  con los nuevos pasa (9 rutas, ~37 s). Se ejecuta con `puppeteer-core`
+  (devDependency explícita, antes solo llegaba por Lighthouse) y se salta
+  si no encuentra Chrome (`CHROME_PATH` o rutas habituales); el CI
+  verifica que `google-chrome` existe para que no se salte sin avisar.
+- `darkSurfaceTitles.test.ts`: guarda estática del `.title` de `PageError`
+  (solo aparece cuando una página falla), de la 404 y del aviso.
+- Se refactoriza `src/test/buildOutput.ts`: `buildToTempDir` (construye y
+  devuelve la carpeta) y `buildSite` (lee los archivos).
+- Fuera de alcance, anotado en `BR-033`: el título "Barber Royce" del
+  footer sigue casi ilegible (su fondo es degradado y el test no lo
+  evalúa) y el `h2` rojo de `CTA2` mide 2,72.
+- Verificación local: lint, tipos y tests OK.

@@ -391,6 +391,45 @@ Criterios de aceptación:
 
 ---
 
+#### BR-045 — Títulos invisibles sobre fondo oscuro (404, error de página, privacidad)
+
+- Prioridad: P0 · Esfuerzo: S · Depende de: —
+- Estado: En curso (rama `fix/br-045-titulos-ilegibles`; hecho en local; el defecto de la 404 sigue en producción hasta integrarlo)
+- Historia de usuario: HU-EXP-003 (CA-02, CA-03), HU-EXP-002
+- RF/RNF: `RF-NAV-002`, `RF-NAV-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-12):** al verificar visualmente el aviso de consentimiento
+(`BR-037`) apareció que su título no se veía. Una captura de la 404 de
+producción confirmó el mismo defecto: `h1` en `rgb(23,23,23)` sobre fondo
+`rgb(23,23,23)` (contraste 1,0). Es un error mío de `BR-003` y `BR-019`.
+
+**Causa:** `styles/global.css` fija el color de `h1`-`h6` con
+`var(--color-text-primary)` (oscuro). Los títulos de `NotFoundPage`,
+`PageError` y `ConsentBanner` viven sobre un fondo oscuro y su `.title` no
+redefinía el color. La página de privacidad (`BR-044`) tenía el mismo
+problema en el título y en los párrafos: supuse un fondo claro y es oscuro
+(`--color-brand-background`).
+
+**Arreglo:**
+1. `color: var(--color-white)` en el `.title` de `NotFoundPage`, `PageError`
+   y `ConsentBanner`.
+2. `PrivacyPage`: texto, títulos y enlaces claros sobre el fondo oscuro.
+3. Test de contraste en Chrome real, ruta por ruta (`contrast.e2e.test.ts`),
+   y guarda estática del CSS de `PageError` (no se alcanza desde ninguna
+   ruta).
+
+> **Lección:** Lighthouse **no** detectó este defecto: el audit
+> `color-contrast` de la 404 de producción dio "OK" (axe lo deja como
+> "incompleto" por la animación). El gate de accesibilidad de `BR-031` no
+> sustituye a este test.
+
+Criterios de aceptación:
+1. Ningún texto de ninguna ruta tiene contraste < 1,5 con su fondo sólido
+   (`contrast.e2e.test.ts`).
+2. Con los CSS anteriores el test falla en la 404 y en la privacidad.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-045).
+
 ### Épica D — Sistema de estilos (ADR-002)
 
 #### BR-021 — Una sola fuente de tokens de diseño
@@ -754,7 +793,9 @@ Criterios de aceptación:
 
 > **Hallazgo (2026-10-12):** en el footer, el título "Barber Royce" se ve
 > oscuro sobre fondo oscuro (casi ilegible; incumple `RNF-A11Y-004`).
-> Corregir su color en este ticket.
+> Corregir su color en este ticket. También el `h2` rojo "¿Ya te decidiste
+> a andar con el flow?" de `CTA2` mide contraste 2,72 sobre su fondo
+> (WCAG pide 3 para texto grande).
 
 #### BR-034 — Spike: prerender de rutas para SEO
 
@@ -926,6 +967,9 @@ Alcance:
    en las 7 rutas, perfil móvil.
 2. Accesibilidad y SEO ≥ 0,95 bloquean; rendimiento avisa (patrón de
    RadarOP).
+   **Límite conocido (2026-10-12, `BR-045`):** el audit de contraste de
+   Lighthouse no detectó un título invisible en producción; este gate no
+   reemplaza a `contrast.e2e.test.ts`.
 
 Criterios de aceptación:
 1. Un PR que baja la accesibilidad de 0,95 queda en rojo.
@@ -1256,6 +1300,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-042 | Textos y títulos desde la hoja | J | P3 | M | Propuesta | BR-041 |
 | BR-043 | Guía para publicar desde la hoja | J | P2 | S | Propuesta | BR-040 |
 | BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |
+| BR-045 | Títulos invisibles sobre fondo oscuro | C | P0 | S | En curso | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

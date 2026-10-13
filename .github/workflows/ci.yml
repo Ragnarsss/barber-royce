@@ -37,6 +37,10 @@ jobs:
       - name: Tipos
         run: npx tsc -b
 
+      # contrast.e2e.test.ts abre el sitio en Chrome real; sin Chrome el test se saltaría en silencio.
+      - name: Verificar que hay Chrome
+        run: google-chrome --version
+
       - name: Tests con cobertura
         run: npm run test:coverage
 

@@ -221,6 +221,10 @@ umbrales están en `rf-rnf-catalogo.md` (`RNF-PERF-*`).
 - JSX sin ternarios anidados: con más de una condición, una variable con
   nombre o un componente.
 - SVG inline repetidos → `lucide-react` o `src/components/icons`.
+- **Todo título (`h1`-`h6`) sobre un fondo oscuro fija su color** en su
+  clase: los globales son oscuros y, sin esto, el texto desaparece
+  (`BR-045`). Lo vigilan `contrast.e2e.test.ts` (Chrome real, todas las
+  rutas) y `darkSurfaceTitles.test.ts`.
 - Formato: Prettier y `.editorconfig` (`BR-028`). Imports con el alias
   `@/`, sin `../`.
 
