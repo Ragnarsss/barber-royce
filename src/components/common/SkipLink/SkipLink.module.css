@@ -8,8 +8,8 @@
   left: 0;
   z-index: 9999;
   padding: 1rem 1.5rem;
-  background-color: var(--color-primary);
-  color: var(--color-background);
+  background-color: var(--color-dark);
+  color: var(--color-white);
   font-weight: 600;
   text-decoration: none;
   border-radius: 0 0 0.5rem 0;
@@ -20,12 +20,4 @@
   top: 0;
   outline: 3px solid var(--color-accent);
   outline-offset: 2px;
-}
-
-/* Asegurar contraste accesible */
-@media (prefers-color-scheme: dark) {
-  .skipLink {
-    background-color: var(--color-accent);
-    color: var(--color-text);
-  }
 }

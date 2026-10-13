@@ -61,6 +61,7 @@ describe.skipIf(!chromePath)("texto legible en todas las rutas (BR-045, RNF-A11Y
   it.each(routes)("%s: ningún texto se confunde con su fondo", async (route) => {
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
+    await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "dark" }]);
     await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle0" });
     // Baja por la página para que se disparen las animaciones de entrada.
     const height = await page.evaluate(() => document.documentElement.scrollHeight);
