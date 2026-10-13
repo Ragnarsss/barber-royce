@@ -14,7 +14,8 @@ citan.
 
 - **ID:** `HU-<MOD>-NNN`. Módulos: `RES` (reserva y contacto), `INFO`
   (contenido del negocio), `SEO` (búsqueda local), `EXP` (experiencia:
-  rendimiento, accesibilidad, errores), `OPS` (despliegue y calidad).
+  rendimiento, accesibilidad, errores), `OPS` (despliegue y calidad),
+  `MED` (medición y privacidad), `CNT` (contenido editable por el dueño).
 - **Prioridad:** Alta · Media · Baja.
 - **Estimación:** story points de Fibonacci (1, 2, 3, 5, 8, 13).
 - **Estado:** `Propuesta` · `Aprobada` · `En desarrollo` · `Cerrada`.
@@ -29,7 +30,7 @@ citan.
 | Actor | Descripción |
 |---|---|
 | Cliente | Persona que visita el sitio, casi siempre desde el celular, para decidir si reserva y dónde. |
-| Dueño | Administra la barbería. No edita el sitio directamente: pide cambios de contenido. |
+| Dueño | Administra la barbería. Hasta ahora no edita el sitio: pide los cambios. Con `HU-CNT-001` edita el contenido en una hoja de cálculo. |
 | Desarrollador | Mantiene y despliega el sitio. |
 | Buscador | Google y otros crawlers que indexan el sitio. |
 
@@ -49,6 +50,11 @@ citan.
 | HU-EXP-002 | EXP | Sitio accesible y respetuoso con el movimiento | Media | 4 | 5 | — | Aprobada |
 | HU-EXP-003 | EXP | Mensaje claro si algo falla o la página no existe | Alta | 4 | 3 | — | Aprobada |
 | HU-OPS-001 | OPS | Desplegar cambios verificados sin romper producción | Alta | 5 | 5 | — | Aprobada |
+| HU-MED-001 | MED | Ver cuántas personas visitan el sitio | Media | 4 | 2 | HU-OPS-001 | Propuesta |
+| HU-MED-002 | MED | Saber cuántos visitantes tocan "Reservar" y de dónde llegan | Media | 4 | 5 | HU-MED-003, HU-RES-001 | Propuesta |
+| HU-MED-003 | MED | Decidir si acepto que midan mi visita | Alta | 5 | 5 | — | Propuesta |
+| HU-CNT-001 | CNT | Cambiar servicios, productos, equipo y preguntas desde una hoja | Alta | 5 | 8 | HU-INFO-001 | Propuesta |
+| HU-CNT-002 | CNT | Cambiar títulos y textos del sitio desde la misma hoja | Baja | 3 | 5 | HU-CNT-001 | Propuesta |
 
 ## Épicas
 
@@ -59,6 +65,8 @@ citan.
 | Visibilidad local | HU-SEO-001 |
 | Experiencia | HU-EXP-001, HU-EXP-002, HU-EXP-003 |
 | Operación | HU-OPS-001 |
+| Medición y privacidad | HU-MED-001, HU-MED-002, HU-MED-003 |
+| Contenido editable | HU-CNT-001, HU-CNT-002 |
 
 ---
 
@@ -506,6 +514,260 @@ sin miedo y volver atrás rápido si algo sale mal.
   producción queda con el cambio y las cabeceras de seguridad activas.
 - CA-04: Given un despliegue rompe producción, When lo detecto, Then puedo
   volver al despliegue anterior en menos de 5 minutos.
+
+---
+
+## HU-MED-001 - Ver cuántas personas visitan el sitio
+
+> Origen (2026-10-12): pedido del usuario. Sale del ítem diferido
+> "Analítica" de `backlog.md` §4, cuyo disparador (primer despliegue en
+> producción) ya se cumplió.
+
+Como dueño, quiero ver cuántas personas visitan el sitio y qué páginas
+miran, para saber si la web trae gente sin tener que preguntarlo.
+
+- Epic: Medición y privacidad
+- Actor / Persona: Dueño
+- Prioridad: Media
+- Estimación: 2 SP
+- Fuente: pedido del usuario (2026-10-12); `docs/archivo/WEB_REQUIREMENTS_CHECKLIST.md` §6.
+- Dependencias: HU-OPS-001 (se activa en Vercel).
+- Riesgo: Bajo — Vercel Analytics no usa cookies ni identifica personas.
+  Si no está habilitado en el panel de Vercel, el script responde 404 y
+  ensucia la consola; por eso se carga solo con una variable explícita.
+- Decisiones cerradas (2026-10-12, por defecto, **por confirmar con el
+  usuario**): es opt-in con `VITE_VERCEL_ANALYTICS=true`; solo páginas
+  vistas (los eventos personalizados de Vercel requieren plan de pago).
+- RF relacionados: RF-MED-001.
+- RNF impactados: RNF-PRIV-001, RNF-PERF-007, RNF-SEG-004.
+- Casos de uso relacionados: —
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given `VITE_VERCEL_ANALYTICS` no está definida o no es `true`,
+  When abro el sitio, Then no se carga ningún script de analítica ni se
+  hace ninguna petición a `/_vercel/insights`.
+- CA-02: Given la variable es `true` y Analytics está habilitado en Vercel,
+  When un visitante abre cualquier página, Then el panel de Vercel
+  Analytics cuenta la visita y la ruta.
+- CA-03: Given la variable es `true`, When Lighthouse mide la home, Then
+  LCP y TBT no empeoran respecto a la medición sin analítica.
+
+### Reglas de negocio asociadas:
+
+- RN-01: No se envían datos personales ni se guardan cookies.
+
+### Datos:
+
+- Entrada: variable de entorno de build.
+- Salida: visitas y rutas en el panel de Vercel.
+
+---
+
+## HU-MED-002 - Saber cuántos visitantes tocan "Reservar" y de dónde llegan
+
+Como dueño, quiero saber cuántos visitantes tocan los botones de reserva,
+WhatsApp y teléfono, y de dónde llegaron, para medir si la web capta
+clientes y qué canal funciona mejor.
+
+- Epic: Medición y privacidad
+- Actor / Persona: Dueño
+- Prioridad: Media
+- Estimación: 5 SP
+- Fuente: pedido del usuario (2026-10-12); checklist §6.3 (conversion tracking).
+- Dependencias: HU-MED-003 (sin consentimiento no se mide), HU-RES-001.
+- Riesgo: Medio — Google Analytics usa cookies y envía datos a Google:
+  exige consentimiento previo y una política de privacidad. La reserva
+  ocurre en AgendaPro (otro dominio), así que solo se mide el clic, no la
+  reserva completada.
+- Decisiones cerradas (2026-10-12, por defecto, **por confirmar**): GA4 con
+  Consent Mode v2 en `denied` por defecto; el script de Google no se
+  descarga hasta que el visitante acepta; se activa solo con
+  `VITE_GA_MEASUREMENT_ID`.
+- RF relacionados: RF-MED-002, RF-MED-004.
+- RNF impactados: RNF-PRIV-001, RNF-PERF-007, RNF-SEG-004.
+- Casos de uso relacionados: CU-MED-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given `VITE_GA_MEASUREMENT_ID` no está definida, When abro el
+  sitio, Then no se carga nada de Google ni aparece ningún aviso.
+- CA-02: Given el visitante aceptó, When navega entre páginas, Then GA4
+  recibe un `page_view` por cada cambio de ruta (la app es una SPA).
+- CA-03: Given el visitante aceptó, When toca un botón de reserva,
+  WhatsApp o teléfono, Then GA4 recibe un evento (`reserve_click`,
+  `whatsapp_click`, `phone_click`) con la sección donde estaba el botón.
+- CA-04: Given el visitante rechazó o no ha decidido, When usa el sitio,
+  Then no se envía ningún evento y el sitio funciona igual.
+
+### Reglas de negocio asociadas:
+
+- RN-01: Los eventos no llevan datos personales (sin teléfono, sin
+  nombre, sin texto escrito por el visitante).
+- RN-02: El clic en un enlace nunca se retrasa ni se bloquea por la
+  analítica.
+
+### Datos:
+
+- Entrada: `VITE_GA_MEASUREMENT_ID` y el consentimiento del visitante.
+- Salida: eventos en GA4.
+
+---
+
+## HU-MED-003 - Decidir si acepto que midan mi visita
+
+Como visitante, quiero elegir si acepto o rechazo que midan mi visita y
+poder leer qué datos se recogen, para decidir con información y cambiar de
+opinión cuando quiera.
+
+- Epic: Medición y privacidad
+- Actor / Persona: Cliente
+- Prioridad: Alta
+- Estimación: 5 SP
+- Fuente: pedido del usuario (2026-10-12); Ley 19.628 de Chile (protección
+  de la vida privada) y su actualización (Ley 21.719); buenas prácticas
+  de consentimiento.
+- Dependencias: Ninguna.
+- Riesgo: Medio — el texto de la política de privacidad es legal y lo debe
+  validar el dueño o un abogado; el borrador del repo no es asesoría
+  legal. El aviso no puede tapar el botón de reserva ni empeorar el CLS.
+- Decisiones cerradas (2026-10-12, por defecto, **por confirmar**): el
+  aviso solo aparece si GA está configurado; "Aceptar" y "Rechazar" con la
+  misma prominencia; la elección se guarda en el navegador y se puede
+  cambiar desde el footer; no hay ningún "rechazar" escondido.
+- RF relacionados: RF-MED-003, RF-MED-005.
+- RNF impactados: RNF-PRIV-001, RNF-A11Y-002, RNF-PERF-002.
+- Casos de uso relacionados: CU-MED-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given GA está configurado y es mi primera visita, When abro el
+  sitio, Then veo un aviso con "Aceptar" y "Rechazar" del mismo tamaño y
+  un enlace a la política de privacidad.
+- CA-02: Given hago clic en "Rechazar", When sigo navegando, Then no se
+  descarga ningún script de Google y no se guardan cookies de analítica.
+- CA-03: Given acepté, When abro "Preferencias de privacidad" en el
+  footer y cambio a rechazar, Then la medición se detiene de inmediato.
+- CA-04: Given el aviso está visible, When uso solo el teclado, Then
+  puedo alcanzarlo, decidir y volver al contenido; el aviso no tapa el
+  botón "Reservar" del navbar.
+- CA-05: Given abro `/privacidad`, When leo, Then explica qué datos se
+  recogen, con qué fin, quién los trata y cómo contactar al responsable.
+
+### Reglas de negocio asociadas:
+
+- RN-01: Sin elección explícita, el estado es "no medir".
+- RN-02: La política de privacidad es un borrador a validar antes de
+  activar GA en producción.
+
+### Datos:
+
+- Entrada: elección del visitante (guardada en `localStorage`).
+- Salida: estado de consentimiento que habilita o no la medición.
+
+---
+
+## HU-CNT-001 - Cambiar servicios, productos, equipo y preguntas desde una hoja
+
+Como dueño, quiero cambiar precios, servicios, productos, miembros del
+equipo y preguntas frecuentes en una hoja de cálculo de Google y que el
+sitio se actualice, para no depender de un desarrollador por cada cambio.
+
+- Epic: Contenido editable
+- Actor / Persona: Dueño
+- Prioridad: Alta
+- Estimación: 8 SP
+- Fuente: pedido del usuario (2026-10-12). Hoy el contenido está escrito
+  en `src/data/*.ts` y cada cambio exige un commit y un despliegue.
+- Dependencias: HU-INFO-001 (el catálogo ya existe).
+- Riesgo: Alto — una fila mal escrita (precio vacío, texto de más) no debe
+  romper ni vaciar el sitio publicado; la hoja se publica en internet; un
+  cambio puede tardar unos minutos en verse (hay que reconstruir el sitio).
+- Decisiones cerradas (2026-10-12, por defecto, **por confirmar**): el
+  sitio sigue siendo estático (`ADR-001`): la hoja se lee **al construir**,
+  no en el navegador; la hoja se "publica en la web" como CSV (sin
+  claves); si la hoja falla o es inválida, el sitio se construye con la
+  última copia guardada en el repo; los cambios se publican con un enlace
+  de despliegue de Vercel (`deploy hook`) que el dueño activa o se dispara
+  solo al editar.
+- RF relacionados: RF-CNT-001, RF-CNT-002, RF-CNT-003, RF-CNT-004.
+- RNF impactados: RNF-CONF-003, RNF-DATOS-002, RNF-PERF-001, RNF-SEG-004.
+- Casos de uso relacionados: CU-CNT-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given la hoja está configurada, When se construye el sitio, Then
+  servicios, productos, equipo y preguntas salen de la hoja.
+- CA-02: Given la hoja no está configurada o no responde en 10 s, When se
+  construye el sitio, Then se usa la última copia guardada y el build no
+  falla.
+- CA-03: Given una fila inválida (por ejemplo, un servicio sin precio),
+  When se construye el sitio, Then ese contenido se rechaza, se usa la
+  última copia guardada de esa pestaña y el build deja escrito qué pestaña
+  y qué fila falló.
+- CA-04: Given edito un precio en la hoja y disparo la publicación, When
+  termina el despliegue, Then el sitio muestra el precio nuevo sin
+  cambios de código ni en el repo.
+- CA-05: Given el sitio ya publicado, When un visitante lo abre, Then no
+  hace ninguna petición a Google Sheets (el contenido viaja en el sitio).
+
+### Reglas de negocio asociadas:
+
+- RN-01: Los precios se escriben en pesos chilenos como número entero
+  (`15000`); el sitio los muestra como `$15.000`.
+- RN-02: Hay una sola fuente por contenido: la hoja, o la copia guardada
+  cuando la hoja no está disponible. Nunca se editan a mano ambas.
+- RN-03: Una pestaña inválida no afecta a las demás.
+
+### Datos:
+
+- Entrada: pestañas `servicios`, `productos`, `equipo` y `preguntas` de la
+  hoja publicada.
+- Salida: contenido tipado que reemplaza a `src/data/*.ts`.
+
+---
+
+## HU-CNT-002 - Cambiar títulos y textos del sitio desde la misma hoja
+
+Como dueño, quiero cambiar los títulos y textos principales (por ejemplo,
+el de la portada) desde la hoja, para ajustar el mensaje sin tocar código.
+
+- Epic: Contenido editable
+- Actor / Persona: Dueño
+- Prioridad: Baja
+- Estimación: 5 SP
+- Fuente: pedido del usuario (2026-10-12): "headings, etc.".
+- Dependencias: HU-CNT-001 (misma hoja y mismo mecanismo).
+- Riesgo: Medio — hay textos con saltos de línea y partes en negrita
+  dentro del JSX; hay que definir qué se puede editar como texto simple.
+  Un título muy largo puede romper el diseño.
+- Decisiones cerradas (2026-10-12, por defecto, **por confirmar**): pestaña
+  `textos` con columnas `clave` y `valor`; cada texto tiene un valor por
+  defecto en el código, así que una clave ausente no rompe nada; solo
+  texto plano.
+- RF relacionados: RF-CNT-005.
+- RNF impactados: RNF-CONF-003, RNF-DATOS-002.
+- Casos de uso relacionados: CU-CNT-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given la pestaña `textos` define `hero.titulo`, When se construye
+  el sitio, Then la portada muestra ese título.
+- CA-02: Given una clave no existe en la hoja, When se construye el sitio,
+  Then se muestra el texto por defecto del código.
+- CA-03: Given un valor supera el largo máximo definido para esa clave,
+  When se construye el sitio, Then se rechaza ese valor, se usa el texto
+  por defecto y queda escrito en el build.
+
+### Reglas de negocio asociadas:
+
+- RN-01: Los textos de la hoja son texto plano; nunca se interpretan como
+  HTML.
+
+### Datos:
+
+- Entrada: pestaña `textos` (`clave`, `valor`).
+- Salida: textos que reemplazan a los literales del código.
 
 ---
 

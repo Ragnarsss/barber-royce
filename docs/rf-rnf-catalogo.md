@@ -21,7 +21,7 @@ despliegue. Formato tomado de *Segunda Opinión de Build*.
 
 - **RF:** `RF-<MOD>-NNN`. Módulos: `RES` (reserva y contacto), `INFO`
   (contenido), `NAV` (navegación y errores), `SEO`, `OPS` (despliegue y
-  calidad).
+  calidad), `MED` (medición y privacidad), `CNT` (contenido editable).
 - **RNF:** `RNF-<CAT>-NNN`. Categorías en §3.1.
 - **CP:** `CP-<MOD|CAT>-NNN`, criterio de prueba. Es el caso concreto que
   verifica el requisito. Un ticket lo cita así: "CP-RES-001 pasó en el
@@ -90,6 +90,16 @@ Salvo que el CP diga otra cosa:
 | RF-SEO-003 | SEO | Publicar `sitemap.xml` con todas las rutas públicas y `robots.txt` que lo referencie. | Alta | **CP-SEO-003:** las URLs de `sitemap.xml` coinciden con las rutas de `ROUTES`; `robots.txt` apunta al sitemap con el dominio de producción. | HU-SEO-001 | — | Implementado (defecto: faltan `/nosotros` y `/preguntas-frecuentes`; `BR-006`) |
 | RF-OPS-001 | OPS | Desplegar en Vercel: preview por PR, producción desde `master`, rewrite SPA, cabeceras de seguridad y caché inmutable de assets con hash. | Alta | **CP-OPS-001:** un PR genera una URL de preview; recargar `/servicios` en el preview responde 200; `curl -I` muestra las cabeceras de RNF-SEG-001 y `Cache-Control: public, max-age=31536000, immutable` en `/assets/*`. | HU-OPS-001 | CU-OPS-001 | Verificado (`BR-002`, producción 2026-10-12; el preview por PR está activo) |
 | RF-OPS-002 | OPS | Verificar cada PR con un pipeline que corre lint, chequeo de tipos, tests y build, y bloquea el merge si un paso falla. | Alta | **CP-OPS-002:** un PR con un error de lint, de tipos, un test roto o un build roto queda con el check en rojo y no se puede integrar. | HU-OPS-001 | CU-OPS-001 | Verificado (`BR-029`: PR #10 con error de tipos quedó en rojo en el paso "Tipos", 2026-10-12) |
+| RF-MED-001 | MED | Cargar Vercel Analytics (sin cookies) solo si la variable de build `VITE_VERCEL_ANALYTICS` es `true`; sin ella no se carga ni se solicita nada. | Media | **CP-MED-001:** un build sin la variable no contiene la ruta `/_vercel/insights` en el HTML ni en los chunks; con `true`, la home pide `/_vercel/insights/script.js` y la visita aparece en el panel de Vercel Analytics. | HU-MED-001 | — | Propuesto (`BR-036`) |
+| RF-MED-002 | MED | Cargar Google Analytics 4 solo si existe `VITE_GA_MEASUREMENT_ID` **y** el visitante aceptó, con Consent Mode v2 en `denied` por defecto; sin ID no se carga nada. | Media | **CP-MED-002:** sin ID, o antes de aceptar, hay 0 peticiones a `googletagmanager.com` y `google-analytics.com` y 0 cookies `_ga*`; tras aceptar, GA4 recibe el `page_view` (DebugView). | HU-MED-002 | CU-MED-001 | Propuesto (`BR-037`) |
+| RF-MED-003 | MED | Mostrar, solo si GA está configurado, un aviso de consentimiento con "Aceptar" y "Rechazar" de igual prominencia, cuya elección se conserva en el navegador. | Alta | **CP-MED-003:** la primera visita muestra el aviso; los dos botones tienen el mismo tamaño y contraste; "Rechazar" lo cierra sin cargar Google; al recargar no reaparece; con `localStorage` bloqueado reaparece en cada visita y no falla. | HU-MED-003 | CU-MED-001 | Propuesto (`BR-037`) |
+| RF-MED-004 | MED | Con consentimiento, enviar a GA4 un `page_view` por cada cambio de ruta y los eventos `reserve_click`, `whatsapp_click` y `phone_click` con el parámetro `section`, sin datos personales y sin retrasar el enlace. | Media | **CP-MED-004:** con consentimiento, navegar 3 rutas genera 3 `page_view`; cada clic genera su evento con `section`; ningún parámetro lleva teléfono ni texto del visitante; sin consentimiento, 0 eventos. | HU-MED-002 | CU-MED-001 | Propuesto (`BR-038`) |
+| RF-MED-005 | MED | Ofrecer "Preferencias de privacidad" en el footer para cambiar la elección, y publicar `/privacidad` con qué datos se recogen, para qué, quién los trata y cómo contactar. | Alta | **CP-MED-005:** el enlace del footer reabre el aviso; cambiar a rechazar detiene la medición y borra las cookies `_ga*`; `/privacidad` existe, lleva `noindex` y tiene los 4 apartados. | HU-MED-003 | CU-MED-001 | Propuesto (`BR-037`, `BR-044`) |
+| RF-CNT-001 | CNT | Descargar en el build cada pestaña publicada de la hoja (CSV), con un tiempo máximo de 10 s y sin claves, y generar el contenido del sitio. | Alta | **CP-CNT-001:** con las variables definidas, `npm run build` descarga las pestañas y el sitio muestra los valores de la hoja; sin variables no hace ninguna petición. | HU-CNT-001 | CU-CNT-001 | Propuesto (`BR-040`) |
+| RF-CNT-002 | CNT | Validar cada pestaña (campos obligatorios, tipos, precio entero en CLP, largos máximos, ids únicos) y rechazarla completa si una fila falla, informando pestaña, fila y campo. | Alta | **CP-CNT-002:** una fila de servicios sin precio rechaza la pestaña; el log dice `servicios fila 4: precio requerido`; las demás pestañas siguen. | HU-CNT-001 | CU-CNT-001 | Propuesto (`BR-039`) |
+| RF-CNT-003 | CNT | Conservar en el repo una copia (`snapshot`) del contenido como respaldo, usada cuando la hoja no está configurada, falla o es inválida; el build nunca la escribe. | Alta | **CP-CNT-003:** sin variables el sitio usa el snapshot y el build termina bien; con la hoja caída, igual más un aviso en el log del build. | HU-CNT-001 | CU-CNT-001 | Propuesto (`BR-039`, `BR-040`) |
+| RF-CNT-004 | CNT | Servicios, productos, equipo y preguntas frecuentes leen el contenido generado en lugar de listas escritas en `src/data`. | Alta | **CP-CNT-004:** los componentes importan el contenido generado; en `src/data` no quedan listas de esos cuatro contenidos salvo el snapshot; el JSON-LD de preguntas sale del mismo contenido. | HU-CNT-001 | — | Propuesto (`BR-041`) |
+| RF-CNT-005 | CNT | Sustituir textos del sitio por clave desde la pestaña `textos`, con valor por defecto en el código y largo máximo por clave. | Baja | **CP-CNT-005:** `hero.titulo` en la hoja cambia la portada; una clave ausente deja el texto por defecto; un valor demasiado largo se rechaza con aviso. | HU-CNT-002 | CU-CNT-001 | Propuesto (`BR-042`) |
 
 ### 2.2 Notas de trazabilidad
 
@@ -112,6 +122,7 @@ Salvo que el CP diga otra cosa:
 - **DATOS:** consistencia de los datos del negocio.
 - **COMP:** compatibilidad de navegadores y dispositivos.
 - **MANT:** mantenibilidad y verificación automática.
+- **PRIV:** privacidad y consentimiento del visitante.
 
 ### 3.2 Tabla
 
@@ -140,6 +151,11 @@ Salvo que el CP diga otra cosa:
 | RNF-MANT-001 | MANT | Ningún cambio llega a `master` sin pasar la verificación automática. | Pasos del pipeline (lint sin warnings, tipos, tests, build) en verde para integrar | 4 de 4 | **CP-MANT-001:** protección de rama en GitHub que exige el check del CI. | Todo el repo | Verificado (`BR-029` + protección de `master` que exige el check, 2026-10-12) |
 | RNF-MANT-002 | MANT | Los tests cubren la lógica del sitio. | Cobertura de líneas de `src/config`, `src/hooks` y funciones puras | Línea base medida al cerrar `BR-030`, redondeada hacia abajo; solo sube | **CP-MANT-002:** `vitest --coverage` con umbral en la configuración; bajar del umbral falla el CI. | `src/` | Implementado (`BR-030`: umbral 4/19/16/4 en el CI; sube con cada ticket) |
 | RNF-MANT-003 | MANT | El repo no acumula código ni dependencias sin uso. | Exportaciones sin consumidores; dependencias declaradas sin importar | 0; 0 | **CP-MANT-003:** agente `deuda-tecnica-auditor` (chequeo de código muerto) sin hallazgos. | `src/`, `package.json` | Propuesto (`BR-025`) |
+| RNF-PRIV-001 | PRIV | Sin consentimiento no se envía información del visitante a terceros. | Peticiones a dominios de Google y cookies de analítica antes de aceptar | 0; 0 | **CP-PRIV-001:** en el preview con una sesión nueva, la pestaña Network y Application → Cookies no muestran peticiones a `googletagmanager.com` ni a `google-analytics.com` ni cookies `_ga*` hasta aceptar; un test automatizado comprueba que el cargador de GA no se ejecuta sin consentimiento. | Todo el sitio | Propuesto |
+| RNF-PERF-007 | PERF | La analítica no empeora la carga de la página. | Diferencia de LCP y de TBT con y sin las variables de analítica (Lighthouse móvil, mediana de 3) | ≤ 0,2 s y ≤ 50 ms | **CP-PERF-007:** Lighthouse contra el preview con y sin las variables; los scripts de analítica se piden después del evento `load`. | Todas las rutas | Propuesto |
+| RNF-SEG-004 | SEG | La CSP permite solo lo necesario para la analítica y nada más. | Directivas de `script-src` con `unsafe-inline` o `unsafe-eval`; orígenes de terceros permitidos | 0; solo `googletagmanager.com`, `google-analytics.com` y `*.analytics.google.com` | **CP-SEG-004:** test sobre `vercel.json` y consola del preview sin violaciones de CSP con GA activo. | Todo el sitio | Propuesto |
+| RNF-CONF-003 | CONF | El contenido de la hoja nunca rompe el build ni deja el sitio incompleto. | Builds que fallan por la hoja; tiempo máximo esperando la hoja | 0; 10 s | **CP-CONF-003:** build con la hoja caída, con una pestaña inválida y con el tiempo de espera agotado: termina bien usando el snapshot de lo que falló. | Build | Propuesto |
+| RNF-DATOS-002 | DATOS | Hay una sola fuente editable por contenido y su formato es verificable. | Contenidos con dos fuentes editables; precios que no son enteros en CLP | 0; 0 | **CP-DATOS-002:** un test valida el snapshot con el mismo esquema que la hoja y comprueba que `src/data` no duplica el contenido. | Catálogo | Propuesto |
 
 ### 3.3 Notas de trazabilidad RNF
 
@@ -167,6 +183,11 @@ Salvo que el CP diga otra cosa:
 | HU-EXP-002 | RF-NAV-001 | RNF-A11Y-001 .. RNF-A11Y-004 |
 | HU-EXP-003 | RF-NAV-002, RF-NAV-003 | RNF-CONF-001, RNF-CONF-002 |
 | HU-OPS-001 | RF-OPS-001, RF-OPS-002 | RNF-SEG-001, RNF-SEG-003, RNF-MANT-001, RNF-MANT-002, RNF-MANT-003 |
+| HU-MED-001 | RF-MED-001 | RNF-PRIV-001, RNF-PERF-007, RNF-SEG-004 |
+| HU-MED-002 | RF-MED-002, RF-MED-004 | RNF-PRIV-001, RNF-PERF-007, RNF-SEG-004 |
+| HU-MED-003 | RF-MED-003, RF-MED-005 | RNF-PRIV-001, RNF-A11Y-002, RNF-PERF-002 |
+| HU-CNT-001 | RF-CNT-001 .. RF-CNT-004 | RNF-CONF-003, RNF-DATOS-002, RNF-PERF-001, RNF-SEG-004 |
+| HU-CNT-002 | RF-CNT-005 | RNF-CONF-003, RNF-DATOS-002 |
 
 ## 5. Documentos relacionados
 

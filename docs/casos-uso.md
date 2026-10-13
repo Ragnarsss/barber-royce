@@ -25,6 +25,8 @@ su HU y sus criterios de aceptación.
 | CU-INFO-002 | Consultar una sucursal | Cliente | HU-INFO-002 | Propuesto |
 | CU-EXP-001 | Llegar a una ruta profunda, inexistente o con error | Cliente | HU-EXP-003 | Propuesto |
 | CU-OPS-001 | Desplegar un cambio | Desarrollador | HU-OPS-001 | Propuesto |
+| CU-MED-001 | Decidir sobre la medición de mi visita | Cliente | HU-MED-002, HU-MED-003 | Propuesto |
+| CU-CNT-001 | Publicar un cambio de contenido desde la hoja | Dueño | HU-CNT-001, HU-CNT-002 | Propuesto |
 
 ---
 
@@ -169,6 +171,88 @@ una pantalla en blanco.
 
 `master` y producción tienen el cambio, el ticket está `Hecho` y la rama
 está borrada.
+
+---
+
+## CU-MED-001 - Decidir sobre la medición de mi visita
+
+- Actor: Cliente
+- Historia de usuario relacionada: HU-MED-003, HU-MED-002
+- Precondición: el sitio se construyó con `VITE_GA_MEASUREMENT_ID` definida.
+
+### Flujo principal
+
+1. El cliente abre el sitio por primera vez.
+2. El sistema no carga nada de Google y muestra el aviso de privacidad con
+   "Aceptar" y "Rechazar" y un enlace a `/privacidad`.
+3. El cliente elige "Aceptar".
+4. El sistema guarda la elección en el navegador, descarga el script de
+   Google, activa la medición y envía el `page_view` de la página actual.
+5. Mientras navega, el sistema envía un `page_view` por ruta y un evento
+   por cada clic en reserva, WhatsApp o teléfono.
+
+### Flujos alternativos
+
+- 3a. El cliente elige "Rechazar": el sistema guarda la elección, no
+  descarga nada de Google, cierra el aviso y termina.
+- 3b. El cliente no elige y sigue navegando: el estado sigue siendo "no
+  medir"; el aviso permanece disponible sin tapar el botón de reserva.
+- 1a. El cliente ya había elegido: el sistema aplica la elección guardada
+  y no muestra el aviso.
+- 1b. El navegador bloquea el almacenamiento local: el sistema trata la
+  elección como "no medir" y muestra el aviso en cada visita.
+- 6. En cualquier momento el cliente abre "Preferencias de privacidad" en
+  el footer y cambia su elección: el sistema la guarda y, si pasa a
+  rechazar, detiene la medición y borra las cookies de analítica.
+- 4a. El script de Google no carga (bloqueador de anuncios, sin red): el
+  sitio sigue funcionando igual y no se muestra ningún error.
+
+### Postcondición
+
+La medición está activa solo si el cliente aceptó; el sitio funciona igual
+en todos los casos.
+
+---
+
+## CU-CNT-001 - Publicar un cambio de contenido desde la hoja
+
+- Actor: Dueño
+- Historia de usuario relacionada: HU-CNT-001, HU-CNT-002
+- Precondición: la hoja está publicada en la web como CSV, sus identificadores
+  están en las variables de Vercel y existe un `deploy hook`.
+
+### Flujo principal
+
+1. El dueño edita una fila de la hoja (por ejemplo, el precio de un
+   servicio).
+2. El dueño dispara la publicación (abre el enlace del `deploy hook`, o se
+   dispara solo al editar si está automatizado).
+3. Vercel construye el sitio; el paso de contenido descarga cada pestaña
+   de la hoja.
+4. El sistema valida cada pestaña, genera el contenido y lo incluye en el
+   sitio.
+5. Vercel publica la versión nueva; el dueño ve el precio actualizado en
+   unos minutos.
+
+### Flujos alternativos
+
+- 3a. La hoja no está configurada o no responde en 10 s: el sistema usa la
+  última copia guardada en el repo, escribe un aviso en el log del build y
+  el despliegue sigue.
+- 4a. Una pestaña tiene una fila inválida: el sistema rechaza esa pestaña
+  completa, usa la copia guardada de esa pestaña, escribe en el log qué
+  pestaña, qué fila y qué campo falló, y sigue con las demás pestañas.
+- 4b. Todas las pestañas son válidas: el sistema actualiza también la
+  copia guardada para futuros respaldos (la actualización la confirma el
+  desarrollador en el repo; el build no escribe en el repo).
+- 5a. El dueño nota un error después de publicar: corrige la hoja y repite
+  desde el paso 2, o el desarrollador vuelve al despliegue anterior en
+  Vercel.
+
+### Postcondición
+
+El sitio publicado refleja la hoja, o la última copia válida, y nunca queda
+con contenido incompleto.
 
 ---
 

@@ -930,6 +930,256 @@ Alcance:
 Criterios de aceptación:
 1. Un PR que baja la accesibilidad de 0,95 queda en rojo.
 
+### Épica I — Medición y privacidad
+
+> **Origen de la épica (2026-10-12):** pedido del usuario. El ítem diferido
+> "Analítica" de la §4 tenía como disparador el primer despliegue en
+> producción, que ya ocurrió. Decisiones por defecto en `ADR-007`, **por
+> confirmar con el usuario**. Todo es opt-in por variables de entorno: sin
+> variables, el sitio no carga ni muestra nada nuevo.
+
+#### BR-036 — Vercel Analytics, activable por variable
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-010
+- Estado: Propuesta
+- Historia de usuario: HU-MED-001 (CA-01, CA-02, CA-03)
+- RF/RNF: `RF-MED-001`, `RNF-PRIV-001`, `RNF-PERF-007`, `RNF-SEG-004`
+
+**Origen (2026-10-12):** pedido del usuario: ver cuántas personas visitan
+el sitio.
+
+Alcance:
+1. Dependencia `@vercel/analytics`.
+2. Un componente que carga Analytics solo si `VITE_VERCEL_ANALYTICS` es
+   `true`, de forma diferida (después del evento `load`), para no afectar el
+   LCP. Sin la variable, el código de Analytics no entra al bundle de
+   producción.
+3. `.env.example` documenta la variable.
+
+Criterios de aceptación:
+1. Un build sin la variable no contiene `/_vercel/insights` (HU-MED-001 CA-01).
+2. Con la variable `true`, la home pide el script de insights y la visita se
+   ve en el panel (CA-02). **Manual:** habilitar Analytics en Vercel.
+3. LCP y TBT dentro de los umbrales de `RNF-PERF-007` (CA-03).
+
+**Pasos manuales (del usuario):** Vercel → proyecto → Analytics → Enable;
+definir `VITE_VERCEL_ANALYTICS=true` en Settings → Environment Variables
+(Production) y volver a desplegar.
+
+#### BR-044 — Política de privacidad (borrador)
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: —
+- Estado: Propuesta
+- Historia de usuario: HU-MED-003 (CA-05)
+- RF/RNF: `RF-MED-005`
+
+**Origen (2026-10-12):** el consentimiento de `BR-037` necesita una página
+a la que enlazar.
+
+Alcance:
+1. Página `/privacidad` con `noindex`, enlazada desde el footer: qué datos
+   se recogen (solo si GA está activo), para qué, quién los trata, cookies
+   y cómo cambiar la elección, y contacto.
+2. Los datos del responsable (razón social, correo) salen de
+   `src/config/constants.ts`.
+
+> **Pendiente de validación:** el texto es un borrador técnico, no
+> asesoría legal. Debe revisarlo el dueño o un abogado antes de activar
+> Google Analytics en producción (Ley 19.628 y su actualización, Ley
+> 21.719).
+
+Criterios de aceptación:
+1. `/privacidad` carga, tiene `noindex` y los 4 apartados (CP-MED-005).
+2. Test de render.
+
+#### BR-037 — Consentimiento y Google Analytics 4
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-044, BR-030
+- Estado: Propuesta
+- Historia de usuario: HU-MED-003 (CA-01, CA-02, CA-03, CA-04), HU-MED-002 (CA-01, CA-02)
+- RF/RNF: `RF-MED-002`, `RF-MED-003`, `RF-MED-005`, `RNF-PRIV-001`, `RNF-PERF-007`, `RNF-SEG-004`, `RNF-A11Y-002`
+
+**Origen (2026-10-12):** pedido del usuario: Google Analytics.
+
+Alcance:
+1. Estado de consentimiento (`aceptado` | `rechazado` | `sin decidir`) en
+   `localStorage` con degradación sin storage, expuesto con un hook y
+   `useSyncExternalStore`.
+2. Cargador de GA4: solo si existe `VITE_GA_MEASUREMENT_ID` **y** hay
+   consentimiento; Consent Mode v2 en `denied` por defecto; el script se
+   inyecta con el DOM (sin script inline) para no abrir la CSP.
+3. Aviso de consentimiento accesible, con "Aceptar" y "Rechazar" del mismo
+   peso, que no tapa el navbar ni mueve el contenido (CLS 0); solo se
+   monta si GA está configurado.
+4. "Preferencias de privacidad" en el footer; al rechazar se detiene la
+   medición y se borran las cookies `_ga*`.
+5. CSP: `script-src` suma `https://www.googletagmanager.com`;
+   `connect-src` suma `https://www.google-analytics.com` y
+   `https://*.analytics.google.com`; `img-src` suma
+   `https://www.google-analytics.com`. Sigue sin `unsafe-inline`.
+
+Criterios de aceptación:
+1. Sin ID, o sin aceptar: 0 peticiones a Google y 0 cookies `_ga*`
+   (CP-MED-002, CP-PRIV-001), con tests.
+2. El aviso tiene los dos botones iguales y se usa solo con teclado
+   (CP-MED-003).
+3. CSP sin `unsafe-inline` ni `unsafe-eval` (CP-SEG-004).
+
+**Pasos manuales (del usuario):** crear la propiedad GA4 y copiar el ID
+`G-XXXXXXXXXX`; definir `VITE_GA_MEASUREMENT_ID` en Vercel (Production);
+validar el texto de `/privacidad`; volver a desplegar.
+
+#### BR-038 — Eventos de conversión y vistas por ruta
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-037
+- Estado: Propuesta
+- Historia de usuario: HU-MED-002 (CA-02, CA-03, CA-04)
+- RF/RNF: `RF-MED-004`, `RNF-PRIV-001`
+
+**Origen (2026-10-12):** medir si la web capta clientes.
+
+Alcance:
+1. `trackEvent(nombre, params)` que no hace nada sin consentimiento.
+2. `page_view` por cada cambio de ruta (la app es una SPA y GA4 no lo
+   detecta solo).
+3. `reserve_click`, `whatsapp_click` y `phone_click` con `section` (navbar,
+   hero, cta1, cta2, footer, ubicación, 404), sin datos personales y sin
+   retrasar la navegación del enlace.
+
+Criterios de aceptación:
+1. Con consentimiento, 3 rutas = 3 `page_view`; cada clic genera su evento
+   (CP-MED-004), con tests.
+2. Sin consentimiento, 0 eventos.
+
+### Épica J — Contenido editable desde una hoja de cálculo
+
+> **Origen de la épica (2026-10-12):** pedido del usuario: actualizar la
+> información estática (catálogo de servicios y productos, títulos)
+> desde una hoja de Google. Diseño y alternativas descartadas en
+> `ADR-008`: la hoja se lee **al construir** (el sitio sigue siendo
+> estático, `ADR-001`), publicada como CSV, con un respaldo versionado.
+
+#### BR-039 — Núcleo de contenido: CSV, validación y respaldo
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-030
+- Estado: Propuesta
+- Historia de usuario: HU-CNT-001 (CA-02, CA-03)
+- RF/RNF: `RF-CNT-002`, `RF-CNT-003`, `RNF-CONF-003`, `RNF-DATOS-002`
+
+**Origen (2026-10-12):** base común de la épica, sin red ni Vite, para
+poder probarla entera.
+
+Alcance:
+1. Lector de CSV (comillas, comas y saltos de línea dentro de una celda).
+2. Esquemas de `servicios`, `productos`, `equipo`, `preguntas` y `textos`
+   (campos obligatorios, precio entero CLP, largos máximos, ids únicos).
+3. Función pura `resolveContent(csvPorPestaña, snapshot)` que valida cada
+   pestaña por separado, usa el respaldo de las inválidas o ausentes y
+   devuelve también los avisos (pestaña, fila, campo).
+4. Respaldo (`snapshot`) inicial con el contenido actual de `src/data`.
+
+Criterios de aceptación:
+1. Una fila sin precio rechaza solo esa pestaña y el aviso nombra pestaña,
+   fila y campo (CP-CNT-002).
+2. Con pestañas ausentes, el resultado es igual al respaldo (CP-CNT-003).
+3. El respaldo cumple el mismo esquema (CP-DATOS-002).
+
+#### BR-040 — Descarga de la hoja al construir
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-039
+- Estado: Propuesta
+- Historia de usuario: HU-CNT-001 (CA-01, CA-02, CA-05)
+- RF/RNF: `RF-CNT-001`, `RF-CNT-003`, `RNF-CONF-003`, `RNF-SEG-004`
+
+**Origen (2026-10-12):** conectar la hoja sin romper el build.
+
+Alcance:
+1. Plugin de Vite que, al construir, descarga cada pestaña publicada
+   (`CONTENT_SHEET_ID` y un `gid` por pestaña, **no** `VITE_*`: son de
+   build), con tiempo máximo de 10 s por pestaña.
+2. Pasa los CSV a `resolveContent` y expone el resultado como módulo
+   virtual (`virtual:site-content`) que consumen los componentes.
+3. Cualquier fallo (red, 404, timeout, hoja inválida) cae al respaldo y
+   deja el aviso en el log; el build nunca falla por la hoja. Sin las
+   variables, no hace ninguna petición.
+4. El sitio publicado no habla con Google Sheets (CA-05).
+
+Criterios de aceptación:
+1. Con la hoja caída, con una pestaña inválida y con timeout, el build
+   termina bien (CP-CONF-003), con tests del plugin y un servidor falso.
+2. Sin variables: 0 peticiones (CP-CNT-001).
+
+**Pasos manuales (del usuario):** crear la hoja con las pestañas de las
+plantillas (`BR-041`); Archivo → Compartir → Publicar en la web (cada
+pestaña en CSV); copiar el id de publicación y los `gid`; definir las
+variables en Vercel.
+
+#### BR-041 — Servicios, productos, equipo y preguntas desde el contenido generado
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-040
+- Estado: Propuesta
+- Historia de usuario: HU-CNT-001 (CA-01, CA-04)
+- RF/RNF: `RF-CNT-004`, `RNF-DATOS-002`, `RNF-PERF-001`
+
+**Origen (2026-10-12):** que los componentes lean la hoja y no listas
+escritas a mano.
+
+Alcance:
+1. Servicios, productos, equipo y preguntas frecuentes leen el contenido
+   generado; `src/data` deja de tener esas listas.
+2. Formato de precio `$15.000` a partir del entero CLP (cierra el
+   formato USD de productos, `BR-009`, en su parte de formato).
+3. Plantillas CSV en `docs/contenido/` (una por pestaña) para importarlas
+   en Google Sheets.
+4. El JSON-LD de preguntas sale del mismo contenido (adelanta parte de
+   `BR-006`).
+
+Criterios de aceptación:
+1. Cambiar el respaldo cambia lo que muestra el sitio (CP-CNT-004).
+2. Las plantillas CSV pasan el esquema.
+
+#### BR-042 — Textos y títulos desde la pestaña `textos`
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-041
+- Estado: Propuesta
+- Historia de usuario: HU-CNT-002 (CA-01, CA-02, CA-03)
+- RF/RNF: `RF-CNT-005`, `RNF-CONF-003`
+
+**Origen (2026-10-12):** "headings, etc." del pedido.
+
+Alcance:
+1. `text(clave, porDefecto)` sobre el contenido generado; largo máximo por
+   clave.
+2. Empezar con un conjunto acotado de claves (título y subtítulo de la
+   portada y títulos de sección). Los textos con saltos de línea o
+   negritas dentro del JSX quedan fuera hasta definir cómo se editan.
+
+Criterios de aceptación:
+1. Una clave en la hoja cambia el texto; una ausente deja el original; una
+   demasiado larga se rechaza con aviso (CP-CNT-005).
+
+#### BR-043 — Guía para publicar contenido desde la hoja
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-040
+- Estado: Propuesta
+- Historia de usuario: HU-CNT-001 (CA-04)
+- RF/RNF: no aplica — documentación de un proceso manual.
+
+**Origen (2026-10-12):** el usuario ejecuta los pasos manuales al volver.
+
+Alcance:
+1. `docs/contenido-hoja.md`: cómo crear la hoja desde las plantillas,
+   publicarla como CSV, obtener los identificadores, definir las
+   variables en Vercel y crear el `deploy hook`.
+2. Publicación automática opcional con Google Apps Script
+   (`onEdit` → `deploy hook`) con límite de frecuencia, como bloque de
+   código dentro de la guía (no se versiona como script del repo).
+3. Qué hacer cuando el log del build avisa de una fila inválida.
+
+Criterios de aceptación:
+1. Siguiendo solo la guía, el dueño cambia un precio y lo ve publicado
+   (CU-CNT-001).
+
 ## 4. Diferido — no forma parte del despliegue
 
 Cada ítem tiene su **disparador**: la condición que obliga a revisarlo.
@@ -937,7 +1187,8 @@ Cada ítem tiene su **disparador**: la condición que obliga a revisarlo.
 | Tema | Origen | Disparador |
 |---|---|---|
 | Reserva propia (TanStack Query, Zustand, react-hook-form + zod, `AppError` completo de RadarOP, confeti de "reserva confirmada") | ADR-001 | Se decide dejar AgendaPro. |
-| Analítica (GA4 o Vercel Analytics) y Search Console | ex checklist §6 | Primer despliegue en producción; requiere decidir proveedor y aviso de cookies. |
+| Search Console y monitoreo de uso en tiempo real | ex checklist §6 | Cuando haya datos de analítica (`BR-036`..`BR-038`) que justifiquen revisar la indexación. |
+| ~~Analítica (GA4 o Vercel Analytics)~~ | ex checklist §6 | **Disparador cumplido (2026-10-12):** pasa a la épica I (`BR-036`..`BR-038`, `BR-044`). |
 | Monitoreo de errores (Sentry o similar) | ADR-005 | Primer error reportado por un cliente que no se vio en los logs. |
 | Galería de Instagram en SocialProof2 | ex `B001` | El dueño la pide y hay una cuenta con publicaciones constantes. |
 | PWA (manifest completo, service worker, offline, instalación) | ex `W001`..`W005` | Evidencia de visitas recurrentes que justifiquen la instalación. |
@@ -990,6 +1241,15 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-032 | Actualizar README | A | P2 | S | Propuesta | BR-001 |
 | BR-033 | Accesibilidad | G | P2 | S | Propuesta | — |
 | BR-034 | Spike prerender | G | P1 | M | Propuesta (spike) | BR-006 |
+| BR-036 | Vercel Analytics por variable | I | P2 | S | Propuesta | BR-010 |
+| BR-037 | Consentimiento y Google Analytics 4 | I | P2 | M | Propuesta | BR-044, BR-030 |
+| BR-038 | Eventos de conversión y vistas por ruta | I | P2 | S | Propuesta | BR-037 |
+| BR-039 | Núcleo de contenido: CSV, validación y respaldo | J | P2 | M | Propuesta | BR-030 |
+| BR-040 | Descarga de la hoja al construir | J | P2 | M | Propuesta | BR-039 |
+| BR-041 | Catálogo desde el contenido generado | J | P2 | M | Propuesta | BR-040 |
+| BR-042 | Textos y títulos desde la hoja | J | P3 | M | Propuesta | BR-041 |
+| BR-043 | Guía para publicar desde la hoja | J | P2 | S | Propuesta | BR-040 |
+| BR-044 | Política de privacidad (borrador) | I | P2 | S | Propuesta | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
