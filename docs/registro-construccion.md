@@ -714,3 +714,38 @@ servido con `vite preview` y Chrome real:
   documentada allí.
 - Verificación local: 81 tests, lint y tipos OK. Al ser un cambio de
   configuración del repo, no tiene nada que comprobar en el preview.
+
+---
+
+<a id="br-036"></a>
+
+## BR-036 — Vercel Analytics, activable por variable
+
+**Notas de construcción (2026-10-12):**
+- Dependencia nueva: `@vercel/analytics` 2.0.1 (`npm audit --omit=dev`: 0
+  vulnerabilidades).
+- `main.tsx` carga `src/analytics/vercelAnalytics.ts` **solo si**
+  `import.meta.env.VITE_VERCEL_ANALYTICS === "true"`. Con la variable
+  ausente la condición es constante en el build y Rollup elimina el bloque:
+  el código de Analytics no llega al sitio. Comprobado con el build real:
+  sin la variable, 0 archivos contienen `_vercel/insights`; con ella, 1
+  chunk aparte (`vercelAnalytics-*.js`).
+- `installVercelAnalytics` espera al evento `load` antes de importar
+  `@vercel/analytics`, para no competir con el LCP (`RNF-PERF-007`);
+  `inject` ya detecta los cambios de ruta de la SPA.
+- `src/env.d.ts` tipa las dos variables públicas (`VITE_VERCEL_ANALYTICS`,
+  `VITE_GA_MEASUREMENT_ID`); `.env.example` las documenta.
+- La CSP no cambia: el script y los envíos son del mismo origen
+  (`/_vercel/insights/*`), cubierto por `'self'`.
+- Tests: `vercelAnalytics.test.ts` (espera a `load`, una sola carga,
+  carga inmediata si la página ya cargó) y `analytics.build.test.ts`, que
+  **construye el sitio de verdad** dos veces (sin y con la variable) con el
+  nuevo helper `src/test/buildOutput.ts`. El de "sin la variable" se
+  verificó contra una fuga forzada: falla. Corren en entorno `node`
+  (esbuild no funciona bajo `jsdom`) y suman ~11 s a la suite.
+- Cobertura: 20,32 / 55,08 / 36,55 / 20,32 → umbral 20/55/36/20.
+- Verificación local: 86 tests, lint, tipos y build OK.
+- **Pasos manuales pendientes (usuario):** habilitar Analytics en Vercel
+  (proyecto → Analytics → Enable), definir `VITE_VERCEL_ANALYTICS=true` en
+  Production y volver a desplegar; confirmar en el preview que la home
+  pide `/_vercel/insights/script.js` y que la visita aparece en el panel.

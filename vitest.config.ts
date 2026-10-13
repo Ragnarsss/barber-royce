@@ -24,7 +24,7 @@ export default defineConfig({
       reporter: ["text-summary", "html"],
       // Línea base del 2026-10-12 redondeada hacia abajo (BR-030). Solo sube:
       // al cerrar un ticket que agregue tests, se ajusta al nuevo valor.
-      thresholds: { statements: 20, branches: 53, functions: 35, lines: 20 },
+      thresholds: { statements: 20, branches: 55, functions: 36, lines: 20 },
     },
   },
 });
