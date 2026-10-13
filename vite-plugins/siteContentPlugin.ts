@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import process from "node:process";
-import { createServer, type Plugin, type ResolvedConfig } from "vite";
+import { createServer, loadEnv, type Plugin, type ResolvedConfig } from "vite";
 import type { SiteContent, TabReport } from "../src/content/types";
 import { fetchSheet, type SheetCsv, type SheetEnv } from "./siteContentSource";
 
@@ -16,9 +16,9 @@ interface ResolverModule {
  *
  *   import siteContent from "virtual:site-content";
  *
- * - **Sin `CONTENT_SHEET_ID`** (o en desarrollo): el módulo es el respaldo del repo. No se hace ninguna
+ * - **Sin `CONTENT_SHEET_ID`**: el módulo es el respaldo del repo. No se hace ninguna
  *   petición y el build es idéntico al de siempre.
- * - **Con la hoja configurada**, al construir: se descargan las pestañas, se validan con
+ * - **Con la hoja configurada**, al construir o al arrancar `npm run dev`: se descargan las pestañas, se validan con
  *   `resolveContent` (el mismo código que prueban los tests) y el resultado queda escrito como datos
  *   en el módulo. El navegador nunca habla con Google Sheets ni recibe el código de validación.
  * - **Nada rompe el build**: si la hoja falla, usa el respaldo de la pestaña afectada y deja el motivo
@@ -32,13 +32,24 @@ interface Options {
   fetchImpl?: typeof fetch;
 }
 
-export function siteContentPlugin({ env = process.env as SheetEnv, fetchImpl = fetch }: Options = {}): Plugin {
+export function siteContentPlugin({ env, fetchImpl = fetch }: Options = {}): Plugin {
   let config: ResolvedConfig;
   let generated: string | undefined;
 
+  /**
+   * Las variables salen del sistema (Vercel, el CI) y, en tu máquina, de `.env` / `.env.local` (BR-046).
+   * Las del sistema ganan (si no están vacías). En los tests no se lee ningún archivo: tienen que dar lo mismo en cualquier máquina.
+   */
+  function currentEnv(): SheetEnv {
+    if (env) return env;
+    const fromFiles = process.env.VITEST ? {} : loadEnv(config.mode, config.root, "");
+    const fromSystem = Object.fromEntries(Object.entries(process.env).filter(([, value]) => value));
+    return { ...fromFiles, ...fromSystem } as SheetEnv;
+  }
+
   /** `resolveContent` y el respaldo son código de la app (TypeScript con alias `@/`): se cargan con Vite, no con `import`. */
   async function resolveFromSheet(): Promise<string | undefined> {
-    const outcome = await fetchSheet(env, fetchImpl);
+    const outcome = await fetchSheet(currentEnv(), fetchImpl);
     if (!outcome.configured) return undefined;
 
     config.logger.info("[contenido] leyendo la hoja de cálculo…");
@@ -80,7 +91,9 @@ export function siteContentPlugin({ env = process.env as SheetEnv, fetchImpl = f
     },
 
     async buildStart() {
-      if (config.command !== "build") return;
+      // En desarrollo también se lee la hoja, una vez al arrancar (el contenido nuevo pide reiniciar `npm run dev`).
+      // Los tests nunca salen a la red.
+      if (config.command !== "build" && process.env.VITEST) return;
       try {
         generated = await resolveFromSheet();
       } catch (error) {
