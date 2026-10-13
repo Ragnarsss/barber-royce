@@ -33,4 +33,9 @@ describe("variables de entorno (BR-010)", () => {
 
     expect(undocumented).toEqual([]);
   });
+
+  it("los tests no leen el .env de quien los corre: las variables de analítica llegan vacías salvo que el test las defina", () => {
+    expect(import.meta.env.VITE_GA_MEASUREMENT_ID).toBeUndefined();
+    expect(import.meta.env.VITE_VERCEL_ANALYTICS).toBeUndefined();
+  });
 });
