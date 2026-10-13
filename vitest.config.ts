@@ -9,6 +9,9 @@ import { siteContentPlugin } from "./vite-plugins/siteContentPlugin";
 export default defineConfig({
   // El módulo virtual `virtual:site-content` (con el respaldo) tiene que existir también en los tests.
   plugins: [react(), siteContentPlugin()],
+  // Los tests no leen `.env`: tienen que dar lo mismo en cualquier máquina, tengas o no las variables de analítica o de
+  // la hoja en tu archivo local (BR-046). Cada test que necesita una variable la define él (`vi.stubEnv`).
+  envDir: false,
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

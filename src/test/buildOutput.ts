@@ -26,6 +26,8 @@ export async function buildToTempDir(env: Record<string, string> = {}, options: 
     await build({
       ...config,
       configFile: false,
+      // Igual que en vitest.config.ts: los builds de prueba no leen el `.env` de quien los corre.
+      envDir: false,
       logLevel: "silent",
       // El optimizador de imágenes no aporta a estas pruebas y tarda varios segundos.
       plugins: (config.plugins ?? []).flat().filter((plugin) => !(plugin && "name" in plugin && String(plugin.name).includes("image-optimizer"))),
