@@ -6,16 +6,22 @@ import cta1400w from "@/assets/optimized/cta1_model_1400w.webp";
 import ctaAvif from "@/assets/optimized/cta1_model_700w.avif";
 import ctaImage from "@/assets/cta1_model.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useParallaxLayers } from "@/hooks/useParallaxLayers";
+import { useParallaxProgress, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { fadeInLeft, fadeInRight } from "@/config/animations.config";
 import { Link } from "react-router-dom";
 
 export function CTA1() {
   const { ref, controls } = useScrollAnimation();
 
-  const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>(undefined, {
+  const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>(undefined, {
     offset: ["start end", "end start"],
   });
+  const layers = {
+    middle: useMiddleLayer(scrollYProgress),
+    foreground: useForegroundLayer(scrollYProgress),
+    slow: useSlowLayer(scrollYProgress),
+    fast: useFastLayer(scrollYProgress),
+  };
 
   return (
     <section id="cta-1" className={styles.cta} ref={sectionRef}>

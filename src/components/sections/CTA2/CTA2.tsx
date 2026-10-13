@@ -4,7 +4,7 @@ import styles from "./CTA2.module.css";
 import backgroundImage from "@/assets/cta2_crew.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useScrollDirection } from "@/hooks/useScrollMotion";
-import { useParallaxLayers } from "@/hooks/useParallaxLayers";
+import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
 import { CONTACT } from "@/config/constants";
 import { scaleIn } from "@/config/animations.config";
 import { Link } from "react-router-dom";
@@ -13,9 +13,10 @@ export function CTA2() {
   const { ref, controls } = useScrollAnimation();
   const direction = useScrollDirection();
 
-  const { ref: sectionRef, layers } = useParallaxLayers();
+  const { ref: sectionRef, scrollYProgress } = useParallaxProgress();
+  const layers = { slow: useSlowLayer(scrollYProgress) };
 
-  const imageScale = useTransform(layers.scrollYProgress, [0, 0.5, 1], [1, 1.15, 1.3]);
+  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.15, 1.3]);
   const imageFilter = useTransform(direction, (value) => (value === 1 ? "brightness(1)" : "brightness(0.95)"));
 
   return (

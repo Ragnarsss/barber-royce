@@ -8,7 +8,7 @@ import heroImage1684w from "@/assets/optimized/hero_model_left_profile_1684w.web
 import heroImageAvif from "@/assets/optimized/hero_model_left_profile_842w.avif";
 import backgroundImage from "@/assets/hero_model_left_profile.png";
 
-import { useParallaxLayers } from "@/hooks/useParallaxLayers";
+import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
 import { staggerContainer, fadeInUp, fadeInLeft } from "@/config/animations.config";
@@ -23,9 +23,15 @@ export function Hero() {
   // OPTIMIZACIÓN FASE 3: will-change dinámico (solo durante scroll activo)
   const isScrolling = useLenisScrollActive();
 
-  const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>(undefined, {
+  const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>(undefined, {
     offset: ["start start", "end start"],
   });
+  const layers = {
+    background: useBackgroundLayer(scrollYProgress),
+    middle: useMiddleLayer(scrollYProgress),
+    foreground: useForegroundLayer(scrollYProgress),
+    fast: useFastLayer(scrollYProgress),
+  };
 
   const handleImageLoad = useCallback(() => {
     refreshLenis();

@@ -2,7 +2,7 @@ import { motion, useTransform } from "framer-motion";
 import { Camera } from "lucide-react";
 import styles from "./SocialProof2.module.css";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useParallaxLayers } from "@/hooks/useParallaxLayers";
+import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
 import { SCROLL_SPEED_FASTER } from "@/utils/scrollMotion";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
@@ -13,7 +13,14 @@ export function SocialProof2() {
   const speed = useScrollSpeed();
 
   // Usar hook optimizado para parallax en lugar de recrear transforms manualmente
-  const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>();
+  const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>();
+  const layers = {
+    background: useBackgroundLayer(scrollYProgress),
+    middle: useMiddleLayer(scrollYProgress),
+    foreground: useForegroundLayer(scrollYProgress),
+    slow: useSlowLayer(scrollYProgress),
+    fast: useFastLayer(scrollYProgress),
+  };
 
   // Derivados de MotionValue: cambian sin re-renderizar (BR-015)
   const hexMiddle2Style = { opacity: useTransform(direction, (value) => (value === 1 ? 0.6 : 0.4)) };

@@ -6,7 +6,7 @@ import socialProof1680w from "@/assets/optimized/social_proof_1680w.webp";
 import socialProofAvif from "@/assets/optimized/social_proof_560w.avif";
 import socialProofImage from "@/assets/social_proof_1.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useParallaxLayers } from "@/hooks/useParallaxLayers";
+import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
 import { SCROLL_SPEED_FAST } from "@/utils/scrollMotion";
 import { useRefreshLenis } from "@/hooks/useLenisContext";
@@ -19,33 +19,34 @@ export function SocialProof1() {
   const refreshLenis = useRefreshLenis();
 
   // Usar hook optimizado para parallax
-  const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>();
+  const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>();
+  const layers = {
+    background: useBackgroundLayer(scrollYProgress),
+    middle: useMiddleLayer(scrollYProgress),
+    foreground: useForegroundLayer(scrollYProgress),
+    slow: useSlowLayer(scrollYProgress),
+    fast: useFastLayer(scrollYProgress),
+  };
 
-  // Rayos láser diagonales - configuraciones centralizadas
+  // Rayos láser diagonales. Los que se mueven igual en x e y comparten un solo transform (BR-016)
   const diagonal1 = {
-    x: useTransform(layers.scrollYProgress, [0, 1], ["-100%", "100%"]),
-    y: useTransform(layers.scrollYProgress, [0, 1], ["100%", "-100%"]),
+    x: useTransform(scrollYProgress, [0, 1], ["-100%", "100%"]),
+    y: useTransform(scrollYProgress, [0, 1], ["100%", "-100%"]),
   };
-  const diagonal2 = {
-    x: useTransform(layers.scrollYProgress, [0, 1], ["-80%", "120%"]),
-    y: useTransform(layers.scrollYProgress, [0, 1], ["-80%", "120%"]),
-  };
-  const diagonal3 = {
-    x: useTransform(layers.scrollYProgress, [0, 1], ["120%", "-120%"]),
-    y: useTransform(layers.scrollYProgress, [0, 1], ["120%", "-120%"]),
-  };
-  const diagonal4 = {
-    x: useTransform(layers.scrollYProgress, [0, 1], ["-60%", "140%"]),
-    y: useTransform(layers.scrollYProgress, [0, 1], ["-60%", "140%"]),
-  };
+  const diagonal2Offset = useTransform(scrollYProgress, [0, 1], ["-80%", "120%"]);
+  const diagonal2 = { x: diagonal2Offset, y: diagonal2Offset };
+  const diagonal3Offset = useTransform(scrollYProgress, [0, 1], ["120%", "-120%"]);
+  const diagonal3 = { x: diagonal3Offset, y: diagonal3Offset };
+  const diagonal4Offset = useTransform(scrollYProgress, [0, 1], ["-60%", "140%"]);
+  const diagonal4 = { x: diagonal4Offset, y: diagonal4Offset };
   const diagonal5 = {
-    x: useTransform(layers.scrollYProgress, [0, 1], ["100%", "-100%"]),
-    y: useTransform(layers.scrollYProgress, [0, 1], ["150%", "-150%"]),
+    x: useTransform(scrollYProgress, [0, 1], ["100%", "-100%"]),
+    y: useTransform(scrollYProgress, [0, 1], ["150%", "-150%"]),
   };
 
   // Movimiento personalizado para testimonial
   const testimonialY = useTransform(
-    layers.scrollYProgress,
+    scrollYProgress,
     [0, 1],
     ["0%", "8%"],
   );

@@ -413,3 +413,47 @@ responden 200 y el bundle publicado contiene `PageError`.
   final, en el preview): Profiler de React DevTools haciendo scroll por
   toda la home (CP-PERF-006); la barra de progreso sigue el scroll; los
   hexágonos de SocialProof reaccionan a la dirección.
+
+---
+
+<a id="br-016"></a>
+
+## BR-016 — Parallax liviano y variantes compartidas
+
+**Notas de construcción (2026-10-12):**
+- Causa: `useParallaxLayers` creaba siempre 12 `useTransform` por
+  sección, aunque la sección usara 2 (`AnimatedGridSection` y `CTA2`
+  usan una sola propiedad).
+- Arreglo (`src/hooks/useParallaxLayers.ts`): el hook único se reemplaza
+  por `useParallaxProgress` (ref + `scrollYProgress`) y un hook por capa
+  (`useBackgroundLayer`, `useMiddleLayer`, `useForegroundLayer`,
+  `useSlowLayer`, `useFastLayer`). Cada sección arma un objeto `layers`
+  con las capas que usa, así que el JSX no cambió. Cada capa crea 2
+  transforms, solo de las propiedades que alguna sección anima.
+- Transforms por sección: Hero 12 → 8; CTA1 12 → 8; CTA2 12 → 2;
+  `AnimatedGridSection` 12 → 2 (×2 instancias); SocialProof1 12 → 10 (y 3
+  menos en los rayos diagonales); SocialProof2 12 → 10. Total de las 7
+  instancias: 84 → 42, más los 3 de SocialProof1 compartidos.
+- Se quitaron del config `middle.scale` y `foreground.rotate`: ninguna
+  sección los usaba. Se eliminó `useOptimizedParallax.ts` (código muerto
+  que los referenciaba; adelanta `BR-025`).
+- SocialProof1: los rayos 2, 3 y 4 mueven x e y con el mismo rango, así
+  que comparten un solo transform. Visualmente idéntico.
+- Reduced motion (BR-017) ahora vive en cada valor de capa
+  (`useLayerValue` + `calmRange`) y **sí tiene test**, que antes no era
+  posible.
+- Variantes compartidas: ya existían en `animations.config.ts`
+  (`fadeInUp`, `fadeIn`, `scaleIn`, `staggerContainer`, con
+  `smoothTransition` común y `defaultViewport` con `once: true`),
+  usadas con `whileInView`. No hubo nada que agregar.
+- **No hecho:** reducir los hexágonos decorativos de `SocialProof1`
+  (25 `motion.div`). Quitar elementos exige ver la sección; se deja como
+  decisión del usuario.
+- Tests (`useParallaxLayers.test.tsx`, 7): interpolación de la capa de
+  fondo, capas quietas con reduced motion, y conteo de `useTransform` por
+  capa (2) y por sección de 2 capas (4, no 12).
+- Cobertura: 19,52 / 53,09 / 35,16 / 19,52 → umbral 19/53/35/19.
+- Verificación local: 46 tests, lint, tipos y build OK. Pendiente (al
+  final, en el preview): que el parallax se vea igual en Hero, CTA1, CTA2,
+  SocialProof1/2 y las secciones de Features/Reviews, y Profiler/Performance
+  con CPU 4x (CP-PERF-003, CP-PERF-006).

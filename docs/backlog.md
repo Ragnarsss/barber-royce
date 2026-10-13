@@ -523,7 +523,7 @@ Criterios de aceptación:
 #### BR-016 — Parallax liviano y variantes compartidas
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-015
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-016-parallax-liviano`; parte 1 y 2 hechas en local; falta medir en el preview; parte 3 pendiente de decisión)
 - Historia de usuario: HU-EXP-001 (CA-01, CA-02)
 - RF/RNF: `RNF-PERF-003`, `RNF-PERF-006`
 
@@ -537,9 +537,15 @@ Alcance:
    con una curva común, entrada con `whileInView` + `once` (patrón de
    RadarOP) en `animations.config.ts`.
 3. Reducir los decorativos de `SocialProof1` a los que se ven.
+   **Pendiente (2026-10-12):** requiere ver la sección renderizada para
+   decidir cuáles se pueden quitar sin cambiar el diseño; no se hizo a
+   ciegas. Se redujo lo que es visualmente idéntico (transforms
+   compartidos en x e y).
 
 Criterios de aceptación:
 1. CP-PERF-003 y CP-PERF-006 pasan en la home.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-016).
 
 #### BR-017 — Respetar `prefers-reduced-motion` en JavaScript
 
@@ -875,7 +881,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-013 | CSS crítico | F | P1 | S | Propuesta | — |
 | BR-014 | Lenis sin fugas | E | P1 | M | En curso | BR-004 |
 | BR-015 | Cero re-renders por scroll | E | P1 | M | En curso | BR-014 |
-| BR-016 | Parallax liviano y variantes | E | P1 | M | Propuesta | BR-015 |
+| BR-016 | Parallax liviano y variantes | E | P1 | M | En curso | BR-015 |
 | BR-017 | Reduced motion en JS | E | P1 | S | En curso | — |
 | BR-018 | Transiciones de página | E | P3 | S | Propuesta | BR-017 |
 | BR-019 | Error boundaries | C | P1 | S | Hecho | — |

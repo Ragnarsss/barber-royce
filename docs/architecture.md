@@ -105,8 +105,10 @@ Reglas (vinculantes desde `BR-014`..`BR-017`):
   (`useScrollDirection`, `useScrollSpeed` en `src/hooks/useScrollMotion.ts`)
   y los estilos se derivan con `useTransform`: el scroll no re-renderiza
   ningún componente (`BR-015`).
-- **Gap:** `useParallaxLayers` crea 12 transforms por sección
-  (`BR-016`). Resueltos: `MutationObserver` global, `window.lenis` y fugas
+- El parallax por capas se arma pidiendo solo las capas que la sección
+  usa (`useParallaxProgress` + `useBackgroundLayer`, `useMiddleLayer`,
+  `useForegroundLayer`, `useSlowLayer`, `useFastLayer`; `BR-016`).
+- Resueltos: `MutationObserver` global, `window.lenis` y fugas
   de listeners (`BR-014`); `prefers-reduced-motion` en JavaScript
   (`BR-017`); re-renders por scroll (`BR-015`).
 
