@@ -3,7 +3,7 @@ import { Calendar } from "lucide-react";
 import styles from "./CTA2.module.css";
 import backgroundImage from "@/assets/cta2_crew.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useLenisScroll } from "@/hooks/useLenisScroll";
+import { useScrollDirection } from "@/hooks/useScrollMotion";
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
 import { CONTACT } from "@/config/constants";
 import { scaleIn } from "@/config/animations.config";
@@ -11,11 +11,12 @@ import { Link } from "react-router-dom";
 
 export function CTA2() {
   const { ref, controls } = useScrollAnimation();
-  const { direction } = useLenisScroll();
+  const direction = useScrollDirection();
 
   const { ref: sectionRef, layers } = useParallaxLayers();
 
   const imageScale = useTransform(layers.scrollYProgress, [0, 0.5, 1], [1, 1.15, 1.3]);
+  const imageFilter = useTransform(direction, (value) => (value === 1 ? "brightness(1)" : "brightness(0.95)"));
 
   return (
     <section id="cta-2" ref={sectionRef} className={styles.cta}>
@@ -29,7 +30,7 @@ export function CTA2() {
         height="1080"
         style={{
           scale: imageScale,
-          filter: direction === 1 ? "brightness(1)" : "brightness(0.95)",
+          filter: imageFilter,
         }}
       />
       <div className={styles.overlay}></div>

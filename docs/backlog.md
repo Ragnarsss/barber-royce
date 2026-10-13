@@ -500,7 +500,7 @@ Criterios de aceptación:
 #### BR-015 — Cero re-renders por scroll
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-014
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-015-sin-rerender-scroll`; hecho en local, falta medir en el preview)
 - Historia de usuario: HU-EXP-001 (CA-02)
 - RF/RNF: `RNF-PERF-006`
 
@@ -517,6 +517,8 @@ Alcance:
 Criterios de aceptación:
 1. CP-PERF-006: el Profiler no registra renders de esos componentes
    mientras se hace scroll.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-015).
 
 #### BR-016 — Parallax liviano y variantes compartidas
 
@@ -872,7 +874,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-012 | Imágenes pendientes | F | P1 | S | Propuesta | BR-011 |
 | BR-013 | CSS crítico | F | P1 | S | Propuesta | — |
 | BR-014 | Lenis sin fugas | E | P1 | M | En curso | BR-004 |
-| BR-015 | Cero re-renders por scroll | E | P1 | M | Propuesta | BR-014 |
+| BR-015 | Cero re-renders por scroll | E | P1 | M | En curso | BR-014 |
 | BR-016 | Parallax liviano y variantes | E | P1 | M | Propuesta | BR-015 |
 | BR-017 | Reduced motion en JS | E | P1 | S | En curso | — |
 | BR-018 | Transiciones de página | E | P3 | S | Propuesta | BR-017 |

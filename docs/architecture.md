@@ -101,11 +101,14 @@ Reglas (vinculantes desde `BR-014`..`BR-017`):
 5. Nadie lee `window.lenis` (ya no existe): la instancia llega por
    `LenisContext` (`useLenisInstance`).
 
-- **Gap:** `useLenisScroll` hace `setState` por scroll (re-render a
-  ~60 fps en 4 componentes) y `useParallaxLayers` crea 12 transforms por
-  sección (`BR-015`, `BR-016`). Resueltos: `MutationObserver` global,
-  `window.lenis` y fugas de listeners (`BR-014`); `prefers-reduced-motion`
-  en JavaScript (`BR-017`).
+- La dirección y la velocidad del scroll son `MotionValue`
+  (`useScrollDirection`, `useScrollSpeed` en `src/hooks/useScrollMotion.ts`)
+  y los estilos se derivan con `useTransform`: el scroll no re-renderiza
+  ningún componente (`BR-015`).
+- **Gap:** `useParallaxLayers` crea 12 transforms por sección
+  (`BR-016`). Resueltos: `MutationObserver` global, `window.lenis` y fugas
+  de listeners (`BR-014`); `prefers-reduced-motion` en JavaScript
+  (`BR-017`); re-renders por scroll (`BR-015`).
 
 ## 6. Estado
 

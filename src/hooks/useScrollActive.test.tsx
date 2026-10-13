@@ -3,7 +3,6 @@ import { renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
 import type Lenis from "lenis";
 import { LenisContext } from "@/contexts/lenisContextValue";
-import { useLenisScroll } from "./useLenisScroll";
 import { useLenisScrollActive } from "./useScrollActive";
 
 function fakeLenis() {
@@ -18,10 +17,9 @@ const withLenis = (lenis: Lenis | null) =>
     return <LenisContext.Provider value={{ lenis, isReady: lenis !== null }}>{children}</LenisContext.Provider>;
   };
 
-describe.each([
-  ["useLenisScroll", useLenisScroll],
-  ["useLenisScrollActive", useLenisScrollActive],
-])("%s (BR-014)", (_name, useHook) => {
+const useHook = useLenisScrollActive;
+
+describe("useLenisScrollActive (BR-014)", () => {
   it("se suscribe al scroll de la instancia del contexto", () => {
     const lenis = fakeLenis();
 

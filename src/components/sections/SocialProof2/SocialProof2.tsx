@@ -1,22 +1,24 @@
-import { motion } from "framer-motion";
+import { motion, useTransform } from "framer-motion";
 import { Camera } from "lucide-react";
 import styles from "./SocialProof2.module.css";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
-import { useLenisScroll } from "@/hooks/useLenisScroll";
+import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
+import { SCROLL_SPEED_FASTER } from "@/utils/scrollMotion";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
 
 export function SocialProof2() {
   const { ref, controls } = useScrollAnimation();
-  const { direction, velocity } = useLenisScroll();
+  const direction = useScrollDirection();
+  const speed = useScrollSpeed();
 
   // Usar hook optimizado para parallax en lugar de recrear transforms manualmente
   const { ref: sectionRef, layers } = useParallaxLayers<HTMLElement>();
 
-  // React 19: Estilos condicionales optimizados automáticamente por el compiler
-  const hexMiddle2Style = { opacity: direction === 1 ? 0.6 : 0.4 };
-  const hexFast1Style = { scale: velocity > 2 ? 1.1 : 1 };
-  const hexFg2Style = { x: direction === 1 ? "10px" : "-10px" };
+  // Derivados de MotionValue: cambian sin re-renderizar (BR-015)
+  const hexMiddle2Style = { opacity: useTransform(direction, (value) => (value === 1 ? 0.6 : 0.4)) };
+  const hexFast1Style = { scale: useTransform(speed, (value) => (value > SCROLL_SPEED_FASTER ? 1.1 : 1)) };
+  const hexFg2Style = { x: useTransform(direction, (value) => (value === 1 ? "10px" : "-10px")) };
 
   return (
     <section

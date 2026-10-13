@@ -7,13 +7,15 @@ import socialProofAvif from "@/assets/optimized/social_proof_560w.avif";
 import socialProofImage from "@/assets/social_proof_1.png";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxLayers } from "@/hooks/useParallaxLayers";
-import { useLenisScroll } from "@/hooks/useLenisScroll";
+import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
+import { SCROLL_SPEED_FAST } from "@/utils/scrollMotion";
 import { useRefreshLenis } from "@/hooks/useLenisContext";
 import { fadeInUp, fadeInLeft, fadeInRight } from "@/config/animations.config";
 
 export function SocialProof1() {
   const { ref, controls } = useScrollAnimation();
-  const { direction, velocity } = useLenisScroll();
+  const direction = useScrollDirection();
+  const speed = useScrollSpeed();
   const refreshLenis = useRefreshLenis();
 
   // Usar hook optimizado para parallax
@@ -48,9 +50,9 @@ export function SocialProof1() {
     ["0%", "8%"],
   );
 
-  // React 19: Estilos condicionales optimizados automáticamente por el compiler
-  const hexMiddle2Style = { opacity: direction === 1 ? 0.6 : 0.5 };
-  const hexFg1Style = { scale: velocity > 1 ? 1.1 : 1 };
+  // Derivados de MotionValue: cambian sin re-renderizar (BR-015)
+  const hexMiddle2Style = { opacity: useTransform(direction, (value) => (value === 1 ? 0.6 : 0.5)) };
+  const hexFg1Style = { scale: useTransform(speed, (value) => (value > SCROLL_SPEED_FAST ? 1.1 : 1)) };
 
   return (
     <section

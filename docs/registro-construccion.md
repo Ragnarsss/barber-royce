@@ -367,3 +367,49 @@ responden 200 y el bundle publicado contiene `PageError`.
   aparece, el botón de logo vuelve arriba, y no hay errores en consola.
 - `useLenisScroll` sigue haciendo `setState` por evento de scroll; eso es
   `BR-015`.
+
+---
+
+<a id="br-015"></a>
+
+## BR-015 — Cero re-renders por scroll
+
+**Notas de construcción (2026-10-12):**
+- Causa: `useLenisScroll` guardaba el scroll en un `useState` y lo
+  actualizaba en cada evento; `ScrollProgressBar`, `SocialProof1`,
+  `SocialProof2` y `CTA2` se re-renderizaban a ~60 fps solo para cambiar
+  un estilo.
+- Arreglo: `src/hooks/useScrollMotion.ts` con `useScrollDirection()` y
+  `useScrollSpeed()`, ambos `MotionValue` (sobre el `useScroll` de
+  framer-motion). Los componentes derivan sus estilos con `useTransform`
+  y framer-motion escribe el DOM directo, sin pasar por React.
+  - `ScrollProgressBar`: `scaleX: scrollYProgress` (patrón de RadarOP).
+  - `CTA2`: el `filter` sale de la dirección.
+  - `SocialProof1` y `SocialProof2`: opacidad, escala y desplazamiento de
+    los hexágonos decorativos salen de la dirección y la velocidad.
+  - Lógica pura en `src/utils/scrollMotion.ts` (`nextDirection` y los
+    umbrales de velocidad).
+- Cambio de unidad, a revisar a ojo: los umbrales de velocidad pasan de
+  los 1 y 2 de Lenis (px por frame) a 60 y 120 px/s (equivalentes a 60
+  fps). Los efectos afectados son decorativos (escala 1,1 de dos
+  hexágonos).
+- Eliminados por código muerto o reemplazado: `useLenisScroll.ts`
+  (incluido el `useLenisInView`, que nadie usaba) y
+  `components/animations/DirectionAwareElement.tsx` (adelanta parte de
+  `BR-025`).
+- Tests:
+  - `scrollMotion.test.ts`: dirección hacia abajo, hacia arriba y sin
+    movimiento.
+  - `useScrollMotion.test.tsx`: con `Profiler` de React se cuentan los
+    commits y se comprueba que el scroll no los aumenta **y** que los
+    valores sí cambiaron. jsdom no calcula scroll real
+    (`document.scrollingElement` no es `documentElement`), por eso
+    `useScroll` se reemplaza por un `MotionValue` controlado; una primera
+    versión del test, que simulaba eventos de scroll, pasaba sin probar
+    nada. Se validó con un test de control que usa `useState` y sí sube el
+    contador (no se conserva).
+- Cobertura: 11,88 / 49,07 / 30,23 / 11,88 → umbral 11/49/30/11.
+- Verificación local: 38 tests, lint, tipos y build OK. Pendiente (al
+  final, en el preview): Profiler de React DevTools haciendo scroll por
+  toda la home (CP-PERF-006); la barra de progreso sigue el scroll; los
+  hexágonos de SocialProof reaccionan a la dirección.
