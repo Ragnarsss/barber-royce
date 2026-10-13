@@ -637,3 +637,29 @@ responden 200 y el bundle publicado contiene `PageError`.
 - Verificación local: 73 tests, lint, tipos y build OK. Pendiente (al
   final): comprobar en el segundo despliegue que el hash de
   `react-vendor` no cambia si solo cambia el código de la app.
+
+---
+
+## Verificación visual local de BR-017 a BR-035 (2026-10-12)
+
+Antes de subir nada, con el build de la rama `perf/br-035-js-inicial-home`
+servido con `vite preview` y Chrome real:
+
+- **Lighthouse en tiempo real** (escritorio, sin throttling): LCP 0,4 s y
+  el elemento del LCP es la imagen del Hero; la captura final muestra el
+  Hero completo (título, tarjetas, imagen).
+- **Recorrido con `puppeteer-core`** (viene con Lighthouse) a 4 posiciones
+  de scroll de la home, en modo normal y con `prefers-reduced-motion:
+  reduce`: se ven `SocialProof1` (rayos, hexágonos, testimonio), `CTA2` con
+  su fondo en WebP y el footer; **0 errores de consola** en los dos
+  modos; la barra de progreso aplica `scaleX` según el scroll.
+- **Falso positivo a tener en cuenta:** `chrome --headless --screenshot
+  --virtual-time-budget` muestra el Hero **en blanco** en modo normal
+  (incluso con `master`), porque con tiempo virtual no avanzan los frames
+  de animación que el Hero necesita para aparecer. Con tiempo real se ve
+  bien. No sirve para verificar animaciones.
+- No verificado en esta pasada (queda para el preview de Vercel): la
+  consola sin violaciones de CSP, el comportamiento en un celular real y
+  el scroll suave de Lenis a mano.
+- Hallazgos de contenido que no son de estos tickets: foto de `CTA2` de
+  455 px estirada (→ `BR-008`) y título del footer ilegible (→ `BR-033`).

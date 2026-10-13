@@ -289,6 +289,11 @@ Alcance:
 Criterios de aceptación:
 1. Ninguna petición a `images.unsplash.com` en el preview (CP-PERF-004).
 
+> **Hallazgo (2026-10-12):** la foto de `CTA2` (`cta2_crew.png`) mide solo
+> 455 × 705 px y se muestra estirada como fondo a pantalla completa
+> (1280 px y más): se ve borrosa. Al pedir las fotos propias, incluir una
+> versión de al menos 1920 px de ancho para esa sección.
+
 #### BR-009 — Decidir qué hace el botón "Comprar" de productos
 
 - Prioridad: P1 · Esfuerzo: XS · Depende de: —
@@ -736,6 +741,10 @@ Alcance:
 
 Criterios de aceptación:
 1. CP-A11Y-001 y CP-A11Y-002 pasan.
+
+> **Hallazgo (2026-10-12):** en el footer, el título "Barber Royce" se ve
+> oscuro sobre fondo oscuro (casi ilegible; incumple `RNF-A11Y-004`).
+> Corregir su color en este ticket.
 
 #### BR-034 — Spike: prerender de rutas para SEO
 
