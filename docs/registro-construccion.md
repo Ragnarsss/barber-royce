@@ -780,3 +780,68 @@ servido con `vite preview` y Chrome real:
   valor por defecto de GA4 al 2026-10-12; confirmar contra la
   documentación vigente de Google.
 - Verificación local: lint, tipos y tests OK.
+
+---
+
+<a id="br-037"></a>
+
+## BR-037 — Consentimiento y Google Analytics 4
+
+**Notas de construcción (2026-10-12):**
+- Carpeta nueva `src/analytics/`:
+  - `consent.ts`: estado `unset | granted | denied` en un store mínimo
+    (`useSyncExternalStore`, sin librerías, `ADR-004`), guardado en
+    `localStorage` con degradación: si el almacenamiento está bloqueado la
+    elección vive en memoria y la siguiente visita empieza sin decidir.
+    Un valor desconocido se lee como `unset`, nunca como `granted`.
+  - `googleAnalytics.ts`: `enableGoogleAnalytics` define `gtag`, manda
+    Consent Mode `default: denied`, luego `update: granted`, `js` y
+    `config` con `send_page_view: false`, y recién entonces inyecta el
+    script de `googletagmanager.com` con el DOM (sin código inline: la CSP
+    no abre `unsafe-inline`). `disableGoogleAnalytics` pone
+    `ga-disable-<ID>`, avisa `denied` y borra las cookies `_ga*`.
+  - `ConsentBanner` (+ CSS): Aceptar y Rechazar son botones con **el mismo
+    estilo**; el aviso es fijo (no mueve el contenido) y no roba el foco al
+    cargar; solo lo toma si el visitante lo reabre a propósito.
+  - `AnalyticsRoot`: orquesta consentimiento y carga; Google se pide
+    después del evento `load` (`runAfterLoad`, extraído y compartido con
+    `BR-036`).
+  - `PrivacyPreferencesButton`: "Preferencias de privacidad" en el
+    footer; reabre el aviso (vuelve a `unset`), detiene la medición, borra
+    cookies y lleva el foco a "Rechazar".
+- Opt-in por variable: `Layout` carga `AnalyticsRoot` con `lazy()` solo si
+  `VITE_GA_MEASUREMENT_ID` existe, y el footer muestra el botón solo en ese
+  caso. Comprobado con el build real: **sin ID no llega nada de Google, ni
+  el aviso, ni el código de consentimiento**; con ID, todo va en un chunk
+  aparte que el HTML no menciona.
+- CSP (`vercel.json`): `script-src` suma `https://www.googletagmanager.com`;
+  `connect-src` suma `google-analytics.com`, `*.google-analytics.com`,
+  `*.analytics.google.com` y `*.googletagmanager.com`; `img-src` suma
+  `google-analytics.com` y `googletagmanager.com`. Sigue sin
+  `unsafe-inline` ni `unsafe-eval`.
+- Tests: 32 en `src/analytics/` (consentimiento, cargador, aviso en
+  pantalla), 3 del footer y 2 del build real. Se verificó que **detectan
+  fallos provocados a propósito**: cargar Google sin consentimiento,
+  botones con estilos distintos y conceder antes del `default: denied`.
+- Verificación en Chrome real (`puppeteer-core`, con las peticiones a
+  Google interceptadas y bloqueadas para no enviar datos): primera visita →
+  aviso visible y **0 peticiones a Google**; Aceptar → 1 petición a
+  `gtag/js`, `localStorage=granted`; recargar → sin aviso; Preferencias →
+  aviso de vuelta, foco en "Rechazar", elección borrada; Rechazar →
+  `denied`. Sin errores de página.
+- Lighthouse móvil local (2 corridas por variante; `RNF-PERF-007`): LCP
+  3,6 s con y sin ID, CLS 0, TBT 70-130 ms con ID y 110 ms sin él (ruido).
+- **Error encontrado en la verificación visual:** el título del aviso era
+  invisible (el `h2` global tiene color oscuro y el CSS no lo
+  sobrescribía). Corregido aquí. Al revisarlo se comprobó que **la 404 de
+  producción tiene el mismo defecto** (`BR-003`) y probablemente
+  `PageError` (`BR-019`): se abre `BR-045`.
+- **Decisiones por defecto, por confirmar con el usuario:** el aviso
+  aparece abajo y centrado (en escritorio tapa parte del Hero mientras no
+  se decide); "Rechazar" va antes que "Aceptar"; el texto del aviso y la
+  política de privacidad son borradores.
+- **Pasos manuales pendientes (usuario):** crear la propiedad GA4 y copiar
+  el ID `G-XXXXXXXXXX`; definir `VITE_GA_MEASUREMENT_ID` en Vercel
+  (Production); **validar el texto de `/privacidad` y del aviso**; volver
+  a desplegar; confirmar en el preview que no hay peticiones a Google
+  hasta aceptar y que no aparecen violaciones de CSP en la consola.

@@ -999,7 +999,7 @@ Criterios de aceptación:
 #### BR-037 — Consentimiento y Google Analytics 4
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-044, BR-030
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-037-consentimiento-ga4`; código hecho en local, faltan los pasos manuales del usuario)
 - Historia de usuario: HU-MED-003 (CA-01, CA-02, CA-03, CA-04), HU-MED-002 (CA-01, CA-02)
 - RF/RNF: `RF-MED-002`, `RF-MED-003`, `RF-MED-005`, `RNF-PRIV-001`, `RNF-PERF-007`, `RNF-SEG-004`, `RNF-A11Y-002`
 
@@ -1032,6 +1032,8 @@ Criterios de aceptación:
 **Pasos manuales (del usuario):** crear la propiedad GA4 y copiar el ID
 `G-XXXXXXXXXX`; definir `VITE_GA_MEASUREMENT_ID` en Vercel (Production);
 validar el texto de `/privacidad`; volver a desplegar.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-037).
 
 #### BR-038 — Eventos de conversión y vistas por ruta
 
@@ -1246,7 +1248,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-033 | Accesibilidad | G | P2 | S | Propuesta | — |
 | BR-034 | Spike prerender | G | P1 | M | Propuesta (spike) | BR-006 |
 | BR-036 | Vercel Analytics por variable | I | P2 | S | En curso | BR-010 |
-| BR-037 | Consentimiento y Google Analytics 4 | I | P2 | M | Propuesta | BR-044, BR-030 |
+| BR-037 | Consentimiento y Google Analytics 4 | I | P2 | M | En curso | BR-044, BR-030 |
 | BR-038 | Eventos de conversión y vistas por ruta | I | P2 | S | Propuesta | BR-037 |
 | BR-039 | Núcleo de contenido: CSV, validación y respaldo | J | P2 | M | Propuesta | BR-030 |
 | BR-040 | Descarga de la hoja al construir | J | P2 | M | Propuesta | BR-039 |

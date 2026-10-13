@@ -36,8 +36,17 @@ describe("vercel.json (BR-002, BR-013)", () => {
     }
   });
 
-  it("la CSP solo permite scripts propios: sin unsafe-inline, unsafe-eval ni hashes", () => {
-    expect(directive(csp, "script-src")).toBe("script-src 'self'");
+  it("RNF-SEG-004: los scripts solo pueden ser propios o de Google Tag Manager; sin unsafe-inline, unsafe-eval ni hashes", () => {
+    expect(directive(csp, "script-src")).toBe("script-src 'self' https://www.googletagmanager.com");
+  });
+
+  it("RNF-SEG-004: los únicos orígenes de terceros nuevos son los de Google Analytics", () => {
+    const googleOrigins = /^https:\/\/(www\.googletagmanager\.com|\*\.googletagmanager\.com|www\.google-analytics\.com|\*\.google-analytics\.com|\*\.analytics\.google\.com)$/;
+    const extra = ["script-src", "connect-src", "img-src"]
+      .flatMap((name) => (directive(csp, name) ?? "").split(" ").slice(1))
+      .filter((source) => source.startsWith("https://") && !googleOrigins.test(source) && source !== "https://images.unsplash.com");
+
+    expect(extra).toEqual([]);
   });
 
   it("ningún HTML de origen trae manejadores inline (onload=, onclick=…) que la CSP bloquearía", () => {

@@ -11,6 +11,7 @@ import {
 } from "@/components/icons";
 import { getFooterRoutes } from "@/config/routes";
 import { CONTACT, SCHEDULE, SOCIAL_MEDIA } from "@/config/constants";
+import { PrivacyPreferencesButton } from "@/analytics/PrivacyPreferencesButton";
 import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
 import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
 
@@ -118,6 +119,7 @@ export const Footer = () => {
 
         <div className={styles.bottom}>
           <p>&copy; 2026 Barber Royce. Todos los derechos reservados.</p>
+          {import.meta.env.VITE_GA_MEASUREMENT_ID && <PrivacyPreferencesButton className={styles.privacyButton} />}
         </div>
       </div>
     </footer>
