@@ -5,9 +5,8 @@ import backgroundImage from "@/assets/optimized/cta2_crew_455w.webp";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useScrollDirection } from "@/hooks/useScrollMotion";
 import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
-import { CONTACT } from "@/config/constants";
+import { BOOKING, CONTACT } from "@/config/constants";
 import { scaleIn } from "@/config/animations.config";
-import { Link } from "react-router-dom";
 
 export function CTA2() {
   const { ref, controls } = useScrollAnimation();
@@ -52,10 +51,10 @@ export function CTA2() {
           <strong> confianza en nuestra calidad.</strong>
         </p>
         <div className={styles.ctaButtons}>
-          <Link target="_blank" to="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965" className={styles.ctaButton}>
+          <a className={styles.ctaButton} href={BOOKING.url} target="_blank" rel="noopener noreferrer">
             <Calendar size={20} />
             Agendar Ahora
-          </Link>
+          </a>
           <a
             href={CONTACT.whatsapp.link}
             target="_blank"

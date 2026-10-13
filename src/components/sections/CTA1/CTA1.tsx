@@ -7,6 +7,7 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { fadeInLeft, fadeInRight } from "@/config/animations.config";
 import { Link } from "react-router-dom";
+import { BOOKING } from "@/config/constants";
 
 export function CTA1() {
   const { ref, controls } = useScrollAnimation();
@@ -73,17 +74,14 @@ export function CTA1() {
               qué somos la barbería de elección para quienes buscan lo mejor.
             </p>
             <div className={styles.ctaButtons}>
-              <Link className={styles.ctaButton} to="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965" target="_blank">
+              <a className={styles.ctaButton} href={BOOKING.url} target="_blank" rel="noopener noreferrer">
                 <Calendar size={20} />
                 Agendar Ahora
-              </Link>
-              <a
-                href="/servicios"
-                className={styles.ctaButtonGhost}
-              >
+              </a>
+              <Link to="/servicios" className={styles.ctaButtonGhost}>
                 Conocer Servicios
                 <ArrowRight size={18} />
-              </a>
+              </Link>
             </div>
           </div>
         </motion.div>

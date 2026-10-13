@@ -6,6 +6,7 @@ import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
 import { useNavbarScroll } from "@/hooks/useNavbarScroll";
 import { useLenisInstance } from "@/hooks/useLenisContext";
 import { getNavRoutes } from "@/config/routes";
+import { BOOKING } from "@/config/constants";
 
 export const Navbar = () => {
   const { isScrolled } = useNavbarScroll();
@@ -82,7 +83,7 @@ export const Navbar = () => {
         <div className={styles.actions}>
           <a
             className={styles.ctaButton}
-            href="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965"
+            href={BOOKING.url}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -123,7 +124,7 @@ export const Navbar = () => {
           </NavLink>
         ))}
         <a
-          href="https://barberiaroyc.site.agendapro.com/cl/sucursal/400965"
+          href={BOOKING.url}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.ctaButton}

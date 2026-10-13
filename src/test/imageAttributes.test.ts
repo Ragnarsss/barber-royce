@@ -1,44 +1,27 @@
-import { readdirSync, readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { jsxElements, readComponentSources } from "./sourceFiles";
 
-// Lee el código fuente de todos los componentes (sin ejecutarlos) para proteger dos
-// reglas de rendimiento de imágenes (BR-011, BR-012, RNF-PERF-002, RNF-PERF-004).
-// Se lee con fs y no con import.meta.glob("?raw"): ese import hace que Vitest cuente
-// cada archivo como cubierto y la cobertura del proyecto queda inflada.
-// (Sin `new URL(ruta, import.meta.url)`: Vite lo reescribe como si fuera un asset.)
-const srcDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-
-const files = (readdirSync(srcDir, { recursive: true }) as string[])
-  .filter((file) => file.endsWith(".tsx") && !file.endsWith(".test.tsx"))
-  .map((file) => [file.replaceAll("\\", "/"), readFileSync(resolve(srcDir, file), "utf8")] as const);
+const files = readComponentSources();
+const images = files.flatMap(([file, code]) =>
+  jsxElements(code)
+    .filter(({ tag }) => tag === "img" || tag === "motion.img")
+    .map((element) => ({ file, ...element })),
+);
 
 describe("imágenes del sitio (BR-012)", () => {
-  it("encuentra el código de los componentes", () => {
+  it("encuentra el código de los componentes y sus imágenes", () => {
     expect(files.length).toBeGreaterThan(20);
+    expect(images.length).toBeGreaterThan(5);
   });
 
   it("RNF-PERF-002: toda <img> declara width y height (evita saltos de diseño)", () => {
-    const missing: string[] = [];
-    for (const [file, code] of files) {
-      for (const tag of code.matchAll(/<(?:motion\.)?img\b[\s\S]*?\/>/g)) {
-        if (!/\bwidth=/.test(tag[0]) || !/\bheight=/.test(tag[0])) {
-          missing.push(`${file}: ${tag[0].replace(/\s+/g, " ").slice(0, 70)}`);
-        }
-      }
-    }
+    const missing = images.filter(({ attrs }) => !attrs.has("width") || !attrs.has("height")).map(({ file }) => file);
 
     expect(missing).toEqual([]);
   });
 
   it("toda <img> tiene alt", () => {
-    const missing: string[] = [];
-    for (const [file, code] of files) {
-      for (const tag of code.matchAll(/<(?:motion\.)?img\b[\s\S]*?\/>/g)) {
-        if (!/\balt=/.test(tag[0])) missing.push(file);
-      }
-    }
+    const missing = images.filter(({ attrs }) => !attrs.has("alt")).map(({ file }) => file);
 
     expect(missing).toEqual([]);
   });

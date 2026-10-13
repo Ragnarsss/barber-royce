@@ -663,3 +663,32 @@ servido con `vite preview` y Chrome real:
   el scroll suave de Lenis a mano.
 - Hallazgos de contenido que no son de estos tickets: foto de `CTA2` de
   455 px estirada (→ `BR-008`) y título del footer ilegible (→ `BR-033`).
+
+---
+
+<a id="br-007"></a>
+
+## BR-007 — Enlaces externos y de reserva seguros y correctos
+
+**Notas de construcción (2026-10-12):**
+- `CTA1` y `CTA2` usaban `<Link to="https://…" target="_blank">` sin `rel`
+  (un enlace externo no debe pasar por React Router); ahora son `<a>` con
+  `rel="noopener noreferrer"`. `CTA1` tenía `<a href="/servicios">`, que
+  recarga toda la página; ahora es `<Link to="/servicios">`.
+- La URL de AgendaPro (4 literales: 2 en `Navbar`, 1 en `CTA1`, 1 en
+  `CTA2`) pasa a `BOOKING.url` de `src/config/constants.ts`. Adelanta el
+  punto 5 de `BR-005`.
+- Tests (`externalLinks.test.ts`, 5 casos; 4 fallan contra los componentes
+  anteriores y nombran `CTA1` y `CTA2`): `rel` en todo enlace con
+  `target`, ningún `<Link>` a una URL externa, ningún `<a href="/ruta">`
+  interno, y la URL de AgendaPro solo en `config/constants.ts`.
+- Los tests leen el JSX con el analizador de TypeScript
+  (`src/test/sourceFiles.ts`: `jsxElements`), no con expresiones
+  regulares. Una primera versión con un regex quedó mal escapada y el
+  test **pasaba sin comprobar nada**; se detectó al correrlo contra el
+  código anterior y no fallar. Regla práctica: todo test de este tipo se
+  corre también contra el código sin arreglar. `imageAttributes.test.ts`
+  usa el mismo helper.
+- Verificación local: 78 tests, lint, tipos y build OK. Pendiente (al
+  final, en el preview): que "Agendar Ahora" abra AgendaPro en pestaña
+  nueva y "Conocer Servicios" navegue sin recargar.

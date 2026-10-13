@@ -211,6 +211,8 @@ Alcance:
 4. Test que falla si aparece un literal de teléfono, email o
    `agendapro.com` fuera de `src/config/` y `locationsData.ts`.
 5. Navbar, CTA1 y CTA2 usan la constante `BOOKING` (creada en `BR-003`).
+   **Hecho en `BR-007`** (2026-10-12); la URL de AgendaPro ya existe una
+   sola vez en `src/config/constants.ts`, con test.
 
 > **Alcance ajustado (2026-10-12):** al revisar los orígenes para la CSP
 > (`BR-002`) apareció que el `mapUrl` de la sucursal de Coquimbo en
@@ -252,8 +254,8 @@ Criterios de aceptación:
 
 #### BR-007 — Enlaces externos y de reserva seguros y correctos
 
-- Prioridad: P0 · Esfuerzo: XS · Depende de: BR-005
-- Estado: Propuesta
+- Prioridad: P0 · Esfuerzo: XS · Depende de: —
+- Estado: En curso (rama `fix/br-007-enlaces-seguros`; hecho en local, falta confirmar en el preview)
 - Historia de usuario: HU-RES-001 (CA-02)
 - RF/RNF: `RF-RES-001`, `RNF-SEG-002`
 
@@ -268,6 +270,12 @@ Alcance:
 Criterios de aceptación:
 1. Ningún `target="_blank"` sin `rel` en `src/` (CP-SEG-002).
 2. Ir de la home a `/servicios` desde CTA1 no recarga la página.
+
+> **Alcance ajustado (2026-10-12):** ya no depende de `BR-005`: la URL de
+> AgendaPro ya existe como `BOOKING.url` (creada en `BR-003`), así que se
+> usa aquí. Los datos de contacto reales siguen en `BR-005`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-007).
 
 #### BR-008 — Reemplazar imágenes de Unsplash por fotos propias optimizadas
 
@@ -951,7 +959,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-004 | Lint sin errores | B | P0 | S | Hecho | BR-001 |
 | BR-005 | Datos del negocio: fuente única y reales | B | P0 | M | Bloqueada | — |
 | BR-006 | SEO técnico | B | P0 | S | Propuesta | BR-005 |
-| BR-007 | Enlaces externos seguros | B | P0 | XS | Propuesta | BR-005 |
+| BR-007 | Enlaces externos seguros | B | P0 | XS | En curso | — |
 | BR-008 | Fotos propias en lugar de Unsplash | B | P0 | M | Bloqueada | — |
 | BR-009 | Decidir botón "Comprar" | B | P1 | XS | Propuesta | — |
 | BR-010 | Variables de entorno | B | P1 | XS | Propuesta | — |
