@@ -4,7 +4,8 @@
  */
 
 import { useEffect, useState } from "react";
-import Lenis from "lenis";
+import type Lenis from "lenis";
+import { useLenisInstance } from "@/hooks/useLenisContext";
 
 interface ScrollData {
   scroll: number; // Posición actual del scroll (px)
@@ -19,6 +20,7 @@ interface ScrollData {
  * y retorna información útil sobre el estado del scroll
  */
 export const useLenisScroll = () => {
+  const lenis = useLenisInstance();
   const [scrollData, setScrollData] = useState<ScrollData>({
     scroll: 0,
     limit: 0,
@@ -28,41 +30,25 @@ export const useLenisScroll = () => {
   });
 
   useEffect(() => {
-    // Esperar a que Lenis esté inicializado
-    const checkLenis = () => {
-      const lenis = window.lenis as Lenis | undefined;
+    // Sin Lenis (aún no listo, o scroll nativo) no hay a qué suscribirse;
+    // cuando la instancia llega por el contexto, el efecto vuelve a correr.
+    if (!lenis) return;
 
-      if (!lenis) {
-        // Reintentar después de un frame
-        requestAnimationFrame(checkLenis);
-        return;
-      }
-
-      // Callback que se ejecuta en cada frame de scroll
-      const handleScroll = (e: Lenis) => {
-        setScrollData({
-          scroll: e.scroll,
-          limit: e.limit,
-          velocity: e.velocity,
-          direction: e.direction,
-          progress: e.progress,
-        });
-      };
-
-      // Suscribirse al evento de scroll
-      lenis.on("scroll", handleScroll);
-
-      // Cleanup: desuscribirse cuando el componente se desmonte
-      return () => {
-        lenis.off("scroll", handleScroll);
-      };
+    const handleScroll = (e: Lenis) => {
+      setScrollData({
+        scroll: e.scroll,
+        limit: e.limit,
+        velocity: e.velocity,
+        direction: e.direction,
+        progress: e.progress,
+      });
     };
 
-    const cleanup = checkLenis();
+    lenis.on("scroll", handleScroll);
     return () => {
-      if (cleanup) cleanup();
+      lenis.off("scroll", handleScroll);
     };
-  }, []);
+  }, [lenis]);
 
   return scrollData;
 };

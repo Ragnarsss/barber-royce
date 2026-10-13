@@ -328,3 +328,42 @@ responden 200 y el bundle publicado contiene `PageError`.
   final, en el preview): emular `prefers-reduced-motion: reduce` en
   DevTools y recorrer las 7 rutas (CP-A11Y-003); comprobar que el Hero se
   ve y que el scroll es nativo.
+
+---
+
+<a id="br-014"></a>
+
+## BR-014 — Lenis sin fugas ni observadores globales
+
+**Notas de construcción (2026-10-12):**
+- `useLenis` reescrito (de ~110 a ~65 líneas):
+  - Sin `MutationObserver` sobre el `body`: recalculaba con
+    `lenis.resize()` en cada cambio de `style`/`class`, y framer-motion
+    cambia `style` en cada frame. Queda un solo `ResizeObserver` sobre el
+    `body`, que cubre imágenes y secciones lazy.
+  - Sin `window.lenis` ni su `declare global` (borrado `src/types/index.ts`,
+    que solo contenía eso). Se quitaron también los listeners de `resize`
+    (Lenis ya lo hace con `autoResize`) y `load` (el `ResizeObserver` lo
+    cubre).
+  - Se cancela el frame de "instancia lista": antes, en StrictMode, el
+    primer efecto destruido llamaba `resize()` y publicaba una instancia
+    destruida.
+  - Se quitó el parámetro `options`: el único llamador no lo usa y, como
+    objeto inline, recreaba Lenis en cada render. La configuración es una
+    constante del módulo.
+- `useLenisScroll` y `useLenisScrollActive` leen la instancia con
+  `useLenisInstance()` y la tienen como dependencia del efecto. Eso
+  elimina los dos fallos: el reintento con `requestAnimationFrame` cuyo
+  cleanup se perdía, y no suscribirse nunca si Lenis aún no existía al
+  montar.
+- Tests (`useLenis.test.tsx`, `useLenisScroll.test.tsx`): 3 de los casos
+  nuevos fallan contra el código anterior y pasan con el nuevo (sin
+  `window.lenis`, sin `MutationObserver`, cleanup completo). Suscripción,
+  desuscripción con el mismo handler, sin Lenis y Lenis tardío, para los
+  dos hooks.
+- Cobertura: 11,66 / 46,6 / 27,58 / 11,66 → umbral 11/46/27/11.
+- Verificación local: 35 tests, lint, tipos y build OK. Pendiente (al
+  final, en el preview): la home se desplaza igual de suave, el Hero
+  aparece, el botón de logo vuelve arriba, y no hay errores en consola.
+- `useLenisScroll` sigue haciendo `setState` por evento de scroll; eso es
+  `BR-015`.

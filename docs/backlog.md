@@ -473,7 +473,7 @@ Criterios de aceptación:
 #### BR-014 — Lenis sin fugas ni observadores globales
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-004
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-014-lenis-sin-fugas`; hecho en local, falta verificar en el preview)
 - Historia de usuario: HU-EXP-001 (CA-02)
 - RF/RNF: `RNF-PERF-006`
 
@@ -494,6 +494,8 @@ Alcance:
 Criterios de aceptación:
 1. Ningún listener ni observer queda vivo tras desmontar (test del hook).
 2. Una búsqueda de `window.lenis` en `src/` no devuelve resultados.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-014).
 
 #### BR-015 — Cero re-renders por scroll
 
@@ -869,7 +871,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-011 | Ruta crítica del LCP | F | P1 | S | Propuesta | — |
 | BR-012 | Imágenes pendientes | F | P1 | S | Propuesta | BR-011 |
 | BR-013 | CSS crítico | F | P1 | S | Propuesta | — |
-| BR-014 | Lenis sin fugas | E | P1 | M | Propuesta | BR-004 |
+| BR-014 | Lenis sin fugas | E | P1 | M | En curso | BR-004 |
 | BR-015 | Cero re-renders por scroll | E | P1 | M | Propuesta | BR-014 |
 | BR-016 | Parallax liviano y variantes | E | P1 | M | Propuesta | BR-015 |
 | BR-017 | Reduced motion en JS | E | P1 | S | En curso | — |

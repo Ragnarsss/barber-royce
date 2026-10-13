@@ -17,6 +17,7 @@
 
 import { useState, useEffect } from 'react';
 import { SCROLL_VELOCITY_THRESHOLD } from '@/config/performance.constants';
+import { useLenisInstance } from '@/hooks/useLenisContext';
 
 /**
  * Hook que detecta scroll activo con threshold de velocidad
@@ -113,13 +114,12 @@ export const useScrollActive = (
 export const useLenisScrollActive = (): boolean => {
   const [isScrolling, setIsScrolling] = useState(false);
 
+  const lenis = useLenisInstance();
+
   useEffect(() => {
-    // Verificar si Lenis está disponible
-    const lenis = (window as unknown as { lenis?: { on: (event: string, handler: (e: { velocity: number }) => void) => void; off: (event: string, handler: (e: { velocity: number }) => void) => void } }).lenis;
-    if (!lenis) {
-      // Fallback a scroll nativo
-      return;
-    }
+    // Sin Lenis (aún no listo, o scroll nativo) no hay a qué suscribirse;
+    // cuando la instancia llega por el contexto, el efecto vuelve a correr.
+    if (!lenis) return;
 
     let timeoutId: number | null = null;
 
@@ -148,7 +148,7 @@ export const useLenisScrollActive = (): boolean => {
         clearTimeout(timeoutId);
       }
     };
-  }, []);
+  }, [lenis]);
 
   return isScrolling;
 };

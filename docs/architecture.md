@@ -98,12 +98,14 @@ Reglas (vinculantes desde `BR-014`..`BR-017`):
    RadarOP.
 4. `MotionConfig reducedMotion="user"` en la raíz; con
    `prefers-reduced-motion: reduce` no hay parallax ni scroll suave.
-5. Nadie lee `window.lenis`: se usa el contexto.
+5. Nadie lee `window.lenis` (ya no existe): la instancia llega por
+   `LenisContext` (`useLenisInstance`).
 
-- **Gap:** hoy `useLenisScroll` hace `setState` por scroll (re-render a
-  ~60 fps en 4 componentes), `useLenis` observa todo `document.body` con
-  un `MutationObserver`, `useParallaxLayers` crea 12 transforms por
-  sección, y el parallax ignora `prefers-reduced-motion` (`BR-014`..`BR-017`).
+- **Gap:** `useLenisScroll` hace `setState` por scroll (re-render a
+  ~60 fps en 4 componentes) y `useParallaxLayers` crea 12 transforms por
+  sección (`BR-015`, `BR-016`). Resueltos: `MutationObserver` global,
+  `window.lenis` y fugas de listeners (`BR-014`); `prefers-reduced-motion`
+  en JavaScript (`BR-017`).
 
 ## 6. Estado
 
