@@ -2,7 +2,7 @@ import { join } from "node:path";
 import process from "node:process";
 import { createServer, loadEnv, type Plugin, type ResolvedConfig } from "vite";
 import type { SiteContent, TabReport } from "../src/content/types";
-import { fetchSheet, type SheetCsv, type SheetEnv } from "./siteContentSource";
+import { fetchSheet, sheetSourceFromEnv, type SheetCsv, type SheetEnv, type SheetSource } from "../src/content/sheetSource";
 
 // Forma de lo que se usa de `src/content/resolveContent.ts`. No se importa su tipo: eso arrastraría el
 // código de la app (con alias `@/`) al proyecto de TypeScript de Node.
@@ -26,6 +26,9 @@ interface ResolverModule {
  */
 const VIRTUAL_ID = "virtual:site-content";
 const RESOLVED_ID = `\0${VIRTUAL_ID}`;
+/** De dónde puede el navegador volver a leer la hoja (BR-047): `SheetSource` o `null` si no hay hoja. */
+const SOURCE_ID = "virtual:site-sheet";
+const RESOLVED_SOURCE_ID = `\0${SOURCE_ID}`;
 
 interface Options {
   env?: SheetEnv;
@@ -35,6 +38,7 @@ interface Options {
 export function siteContentPlugin({ env, fetchImpl = fetch }: Options = {}): Plugin {
   let config: ResolvedConfig;
   let generated: string | undefined;
+  let source: SheetSource | null = null;
 
   /**
    * Las variables salen del sistema (Vercel, el CI) y, en tu máquina, de `.env` / `.env.local` (BR-046).
@@ -87,13 +91,15 @@ export function siteContentPlugin({ env, fetchImpl = fetch }: Options = {}): Plu
     },
 
     resolveId(id) {
-      return id === VIRTUAL_ID ? RESOLVED_ID : undefined;
+      if (id === VIRTUAL_ID) return RESOLVED_ID;
+      return id === SOURCE_ID ? RESOLVED_SOURCE_ID : undefined;
     },
 
     async buildStart() {
       // En desarrollo también se lee la hoja, una vez al arrancar (el contenido nuevo pide reiniciar `npm run dev`).
       // Los tests nunca salen a la red.
       if (config.command !== "build" && process.env.VITEST) return;
+      source = sheetSourceFromEnv(currentEnv());
       try {
         generated = await resolveFromSheet();
       } catch (error) {
@@ -104,6 +110,7 @@ export function siteContentPlugin({ env, fetchImpl = fetch }: Options = {}): Plu
     },
 
     load(id) {
+      if (id === RESOLVED_SOURCE_ID) return `export default ${JSON.stringify(source)};`;
       if (id !== RESOLVED_ID) return undefined;
       if (generated !== undefined) return generated;
       const snapshotPath = join(config.root, "src/content/snapshot.ts").replaceAll("\\", "/");

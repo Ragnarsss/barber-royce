@@ -1,13 +1,14 @@
-import { CONTENT_TABS, type ContentTab } from "../src/content/types";
+import { CONTENT_TABS, type ContentTab } from "./types";
 
 /**
- * Descarga de la hoja de cálculo al construir (BR-040, ADR-008). Solo texto y red: no conoce Vite ni el
- * esquema del contenido, así que se puede probar con un `fetch` falso.
+ * Descarga de la hoja de cálculo (BR-040, BR-047, ADR-008): la usan el plugin al construir y el navegador
+ * al refrescar el contenido. Solo texto y red: no conoce Vite ni el esquema del contenido, así que se puede
+ * probar con un `fetch` falso.
  *
  * La hoja se "publica en la web" desde Google Sheets (Archivo → Compartir → Publicar en la web, por
  * pestaña, como CSV). Eso da un identificador de publicación (`2PACX-…`) y un `gid` por pestaña, y no
- * requiere claves ni cuentas de servicio. Las variables NO llevan el prefijo `VITE_`: son del build y no
- * llegan al navegador.
+ * requiere claves ni cuentas de servicio. Las variables NO llevan el prefijo `VITE_`: las lee el plugin y
+ * entrega al navegador solo el identificador y los gid (`SheetSource`), que son públicos de todos modos.
  */
 export interface SheetEnv {
   /** Identificador de publicación de la hoja (`2PACX-…`). Sin él, no se hace ninguna petición. */
@@ -81,25 +82,53 @@ async function fetchTab(url: string, timeoutMs: number, fetchImpl: typeof fetch)
   }
 }
 
-/** Descarga las pestañas configuradas en paralelo. Nunca lanza: cada falla queda en `problems`. */
+/**
+ * Lo mínimo que el navegador necesita para volver a leer la hoja (BR-047). Es público: el identificador de
+ * una hoja "publicada en la web" no da acceso de edición, y cualquiera que tenga el enlace puede leer el CSV.
+ */
+export interface SheetSource {
+  id: string;
+  gids: Partial<Record<ContentTab, string>>;
+  baseUrl: string;
+  timeoutMs: number;
+}
+
+function timeoutFrom(env: SheetEnv): number {
+  return Number(env.CONTENT_FETCH_TIMEOUT_MS) > 0 ? Number(env.CONTENT_FETCH_TIMEOUT_MS) : DEFAULT_TIMEOUT_MS;
+}
+
+/** La fuente configurada en las variables, o `null` si falta el identificador o no hay ninguna pestaña válida. */
+export function sheetSourceFromEnv(env: SheetEnv): SheetSource | null {
+  const id = env.CONTENT_SHEET_ID?.trim();
+  if (!id) return null;
+  const { gids } = parseGids(env.CONTENT_SHEET_GIDS);
+  if (Object.keys(gids).length === 0) return null;
+  return { id, gids, baseUrl: env.CONTENT_SHEET_BASE_URL?.trim() || DEFAULT_BASE_URL, timeoutMs: timeoutFrom(env) };
+}
+
+/** Descarga en paralelo las pestañas de una fuente. Nunca lanza: cada falla queda en `problems`. */
+export async function fetchSheetTabs(source: SheetSource, fetchImpl: typeof fetch = fetch): Promise<{ sheet: SheetCsv; problems: string[] }> {
+  const sheet: SheetCsv = {};
+  const problems: string[] = [];
+  await Promise.all(
+    (Object.entries(source.gids) as [ContentTab, string][]).map(async ([tab, gid]) => {
+      const { csv, problem } = await fetchTab(sheetUrl(source.baseUrl, source.id, gid), source.timeoutMs, fetchImpl);
+      if (csv !== undefined) sheet[tab] = csv;
+      else problems.push(`${tab}: ${problem}`);
+    }),
+  );
+  return { sheet, problems };
+}
+
+/** Descarga las pestañas configuradas en las variables de entorno (el build). Nunca lanza. */
 export async function fetchSheet(env: SheetEnv, fetchImpl: typeof fetch = fetch): Promise<SheetFetchOutcome> {
   const sheetId = env.CONTENT_SHEET_ID?.trim();
   if (!sheetId) return { configured: false, sheet: {}, problems: [] };
 
   const { gids, problems } = parseGids(env.CONTENT_SHEET_GIDS);
-  const timeoutMs = Number(env.CONTENT_FETCH_TIMEOUT_MS) > 0 ? Number(env.CONTENT_FETCH_TIMEOUT_MS) : DEFAULT_TIMEOUT_MS;
-  const baseUrl = env.CONTENT_SHEET_BASE_URL?.trim() || DEFAULT_BASE_URL;
-
   if (Object.keys(gids).length === 0) problems.push("CONTENT_SHEET_GIDS no define ninguna pestaña: se usa el respaldo");
 
-  const sheet: SheetCsv = {};
-  await Promise.all(
-    (Object.entries(gids) as [ContentTab, string][]).map(async ([tab, gid]) => {
-      const { csv, problem } = await fetchTab(sheetUrl(baseUrl, sheetId, gid), timeoutMs, fetchImpl);
-      if (csv !== undefined) sheet[tab] = csv;
-      else problems.push(`${tab}: ${problem}`);
-    }),
-  );
-
-  return { configured: true, sheet, problems };
+  const source: SheetSource = { id: sheetId, gids, baseUrl: env.CONTENT_SHEET_BASE_URL?.trim() || DEFAULT_BASE_URL, timeoutMs: timeoutFrom(env) };
+  const fetched = await fetchSheetTabs(source, fetchImpl);
+  return { configured: true, sheet: fetched.sheet, problems: [...problems, ...fetched.problems] };
 }

@@ -5,10 +5,11 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
 import { SCROLL_SPEED_FASTER } from "@/utils/scrollMotion";
-import { siteText } from "@/content/siteContent";
+import { useSiteText } from "@/content/useSiteContent";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
 
 export function SocialProof2() {
+  const siteText = useSiteText();
   const { ref, controls } = useScrollAnimation();
   const direction = useScrollDirection();
   const speed = useScrollSpeed();

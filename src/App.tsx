@@ -10,6 +10,7 @@ import { useLenis } from "./hooks/useLenis";
 import { LenisProvider } from "./contexts/LenisContext";
 import { CatastrophicError, reportError } from "./components/common/ErrorBoundary";
 import { analyticsEnabled } from "./analytics/enabled";
+import { ContentProvider } from "./content/ContentProvider";
 import "./styles/global.css";
 import "./styles/variables.css";
 
@@ -31,6 +32,7 @@ function App() {
     // Los errores de una página los contiene RouteErrorBoundary dentro del Layout (BR-019).
     <ErrorBoundary fallback={<CatastrophicError />} onError={reportError}>
       <HelmetProvider>
+        <ContentProvider>
         {/* Con "reducir movimiento" framer-motion omite las animaciones de transformación (BR-017) */}
         <MotionConfig reducedMotion="user">
         <LenisProvider lenis={lenis}>
@@ -54,6 +56,7 @@ function App() {
           </BrowserRouter>
         </LenisProvider>
         </MotionConfig>
+        </ContentProvider>
       </HelmetProvider>
     </ErrorBoundary>
   );

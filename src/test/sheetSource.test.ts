@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it, vi } from "vitest";
-import { DEFAULT_BASE_URL, MAX_CSV_BYTES, fetchSheet, parseGids, sheetUrl } from "../../vite-plugins/siteContentSource";
+import { DEFAULT_BASE_URL, MAX_CSV_BYTES, fetchSheet, fetchSheetTabs, parseGids, sheetSourceFromEnv, sheetUrl } from "../content/sheetSource";
 
 const csvResponse = (body: string, init: { status?: number; type?: string; headers?: Record<string, string> } = {}) =>
   new Response(body, { status: init.status ?? 200, headers: { "content-type": init.type ?? "text/csv; charset=utf-8", ...init.headers } });
@@ -183,5 +183,47 @@ describe("fetchSheet (BR-040, HU-CNT-001 CA-02, RNF-CONF-003)", () => {
 
       expect(outcome.sheet.servicios).toBe("a\n");
     });
+  });
+});
+
+describe("sheetSourceFromEnv (BR-047)", () => {
+  it("con identificador y pestañas válidas devuelve lo que el navegador necesita", () => {
+    expect(sheetSourceFromEnv(ENV)).toEqual({
+      id: "2PACX-abc",
+      gids: { servicios: "0", productos: "123" },
+      baseUrl: DEFAULT_BASE_URL,
+      timeoutMs: 10_000,
+    });
+  });
+
+  it("respeta el tiempo máximo y la base de pruebas", () => {
+    const source = sheetSourceFromEnv({ ...ENV, CONTENT_FETCH_TIMEOUT_MS: "3000", CONTENT_SHEET_BASE_URL: "http://127.0.0.1:9/d/e" });
+
+    expect(source?.timeoutMs).toBe(3000);
+    expect(source?.baseUrl).toBe("http://127.0.0.1:9/d/e");
+  });
+
+  it.each([
+    ["sin identificador", { CONTENT_SHEET_GIDS: "servicios:0" }],
+    ["identificador vacío", { CONTENT_SHEET_ID: "  ", CONTENT_SHEET_GIDS: "servicios:0" }],
+    ["sin pestañas", { CONTENT_SHEET_ID: "2PACX-abc" }],
+    ["solo pestañas inválidas", { CONTENT_SHEET_ID: "2PACX-abc", CONTENT_SHEET_GIDS: "peluqueria:5,servicios:abc" }],
+  ])("%s → no hay fuente", (_name, env) => {
+    expect(sheetSourceFromEnv(env)).toBeNull();
+  });
+});
+
+describe("fetchSheetTabs (BR-047)", () => {
+  const source = { id: "2PACX-abc", gids: { servicios: "0", equipo: "9" }, baseUrl: DEFAULT_BASE_URL, timeoutMs: 1000 };
+
+  it("descarga cada pestaña con su gid y devuelve lo que no pudo como problema", async () => {
+    const fetchImpl = vi.fn(async (url: string | URL | Request) =>
+      String(url).includes("gid=0") ? csvResponse("id,uno") : csvResponse("no", { status: 404 }),
+    ) as unknown as typeof fetch;
+
+    const { sheet, problems } = await fetchSheetTabs(source, fetchImpl);
+
+    expect(sheet).toEqual({ servicios: "id,uno" });
+    expect(problems).toEqual(["equipo: la hoja respondió HTTP 404"]);
   });
 });

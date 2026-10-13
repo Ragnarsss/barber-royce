@@ -10,9 +10,10 @@ import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundL
 import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
 import { staggerContainer, fadeInUp, fadeInLeft } from "@/config/animations.config";
-import { siteText } from "@/content/siteContent";
+import { useSiteText } from "@/content/useSiteContent";
 
 export function Hero() {
+  const siteText = useSiteText();
   const isLenisReady = useLenisReady();
   const reducedMotion = useReducedMotion() ?? false;
   // Con "reducir movimiento" no hay Lenis: el Hero se muestra sin esperarlo (BR-017)

@@ -1,12 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import styles from "./Reviews.module.css";
-import { siteText } from "@/content/siteContent";
+import { useSiteText } from "@/content/useSiteContent";
 import { reviewsList } from "@/data/reviewsData";
 import type { Review } from "@/types/review.types";
 import { AnimatedGridSection } from "@/components/common/AnimatedGridSection/AnimatedGridSection";
 
 // ✅ React 19: memo() eliminado - bailout automático mejorado
 export function Reviews() {
+  const siteText = useSiteText();
   return (
     <AnimatedGridSection<Review>
       id="reviews"

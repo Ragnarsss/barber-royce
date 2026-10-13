@@ -1,11 +1,12 @@
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import styles from "./Features.module.css";
-import { siteText } from "@/content/siteContent";
+import { useSiteText } from "@/content/useSiteContent";
 import { FEATURES_VIEW_DATA } from "@/data/featuresData.tsx";
 import { AnimatedGridSection } from "@/components/common/AnimatedGridSection/AnimatedGridSection";
 
 // ✅ React 19: memo() eliminado - bailout automático mejorado
 export function Features() {
+  const siteText = useSiteText();
   // ✅ React 19: useMemo eliminado - datos pre-transformados en import
   return (
     <AnimatedGridSection
