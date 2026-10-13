@@ -210,6 +210,7 @@
 }
 
 .title {
+  white-space: pre-line; /* los saltos de línea del texto editable de la hoja se respetan (BR-042) */
   font-size: clamp(2rem, 4.5vw, 2.75rem);
   font-weight: 700;
   color: #ffffff;

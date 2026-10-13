@@ -7,6 +7,7 @@ import { useScrollDirection } from "@/hooks/useScrollMotion";
 import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
 import { BOOKING, CONTACT } from "@/config/constants";
 import { trackReserve, trackWhatsApp } from "@/analytics/track";
+import { siteText } from "@/content/siteContent";
 import { scaleIn } from "@/config/animations.config";
 
 export function CTA2() {
@@ -43,9 +44,7 @@ export function CTA2() {
         variants={scaleIn}
         style={{ y: layers.slow.y }}
       >
-        <h2 className={styles.title}>
-          ¿Ya te decidiste a andar con el flow?
-        </h2>
+        <h2 className={styles.title}>{siteText("cta2.titulo")}</h2>
         <p className={styles.subtitle}>
           <strong>Agenda tu hora rápido.</strong> Estamos semanalmente llenando
           agenda a un ritmo increíble, gracias a que nuestros clientes tienen

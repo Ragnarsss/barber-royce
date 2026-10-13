@@ -10,6 +10,7 @@ import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundL
 import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
 import { staggerContainer, fadeInUp, fadeInLeft } from "@/config/animations.config";
+import { siteText } from "@/content/siteContent";
 
 export function Hero() {
   const isLenisReady = useLenisReady();
@@ -99,9 +100,7 @@ export function Hero() {
       <div className={styles.container}>
         <div className={styles.content}>
           <motion.h1 className={styles.title} variants={fadeInUp}>
-            Barbería Royce,
-            <br />
-            profesionalismo, pasión y arte.
+            {siteText("hero.titulo")}
           </motion.h1>
           <motion.p className={styles.subtitle} variants={fadeInUp}>
             Donde el estilo se encuentra con la excelencia. <strong>Un servicio dedicado, detallista y a tu altura.</strong> ¡Descubre una experiencia única en cada visita!

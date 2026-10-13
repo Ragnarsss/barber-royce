@@ -27,8 +27,8 @@ const READERS: Record<ContentTab, (table: ReturnType<typeof toTable>) => TabResu
   textos: readTexts,
 };
 
-function backup(tab: ContentTab, reason: string, issues: ContentIssue[] = []): TabReport {
-  return { tab, source: "respaldo", reason, issues };
+function backup(tab: ContentTab, reason: string, issues: ContentIssue[] = [], warnings: ContentIssue[] = []): TabReport {
+  return { tab, source: "respaldo", reason, issues, warnings };
 }
 
 /**
@@ -64,15 +64,15 @@ export function resolveContent(sheet: SheetCsv, snapshot: SiteContent): Resolved
       continue;
     }
 
-    const { items, issues } = READERS[tab](table);
+    const { items, issues, warnings } = READERS[tab](table);
     if (issues.length > 0) {
-      reports.push(backup(tab, `${issues.length} problema${issues.length === 1 ? "" : "s"} en la hoja`, issues));
+      reports.push(backup(tab, `${issues.length} problema${issues.length === 1 ? "" : "s"} en la hoja`, issues, warnings));
     } else if (items.length === 0 && tab !== "textos") {
       // Una pestaña sin filas activas dejaría el sitio sin servicios, productos, equipo o preguntas.
-      reports.push(backup(tab, "no tiene ninguna fila activa"));
+      reports.push(backup(tab, "no tiene ninguna fila activa", [], warnings));
     } else {
       APPLY[tab](content, items as never[]);
-      reports.push({ tab, source: "hoja", count: items.length, issues: [] });
+      reports.push({ tab, source: "hoja", count: items.length, issues: [], warnings });
     }
   }
 
@@ -85,6 +85,7 @@ export function formatReports(reports: TabReport[]): string[] {
     const head =
       report.source === "hoja" ? `${report.tab}: hoja (${report.count} fila${report.count === 1 ? "" : "s"})` : `${report.tab}: respaldo (${report.reason})`;
     const details = report.issues.map((issue) => `  - ${issue.tab} fila ${issue.row}, ${issue.field}: ${issue.message}`);
-    return [head, ...details];
+    const notices = report.warnings.map((warning) => `  ! ${warning.tab} fila ${warning.row}, ${warning.field}: ${warning.message}`);
+    return [head, ...details, ...notices];
   });
 }

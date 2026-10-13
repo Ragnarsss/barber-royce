@@ -1,5 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import styles from "./Benefits.module.css";
+import { siteText } from "@/content/siteContent";
 import { BENEFITS_VIEW_DATA } from "@/data/benefitsData.tsx";
 import barberBack954w from "@/assets/optimized/barber_background_954w.webp";
 import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
@@ -27,7 +28,7 @@ export function Benefits() {
       <div className={styles.container}>
         <div className={styles.content}>
           <div className={styles.header}>
-            <h2 className={styles.title}>Estilo que te acompaña, donde sea que vayas</h2>
+            <h2 className={styles.title}>{siteText("benefits.titulo")}</h2>
             <p className={styles.subtitle}>
               En Royce Barbería ofrecemos una experiencia para realzar tu estilo. Nos enfocamos en la calidad y la exclusividad, ofreciendo
             </p>

@@ -45,4 +45,6 @@ export interface TabReport {
   /** Por qué se usó el respaldo (cuando `source` es `respaldo`). */
   reason?: string;
   issues: ContentIssue[];
+  /** Avisos que no impiden usar la hoja (por ejemplo, una clave de texto que el sitio no conoce). */
+  warnings: ContentIssue[];
 }

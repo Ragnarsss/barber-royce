@@ -157,6 +157,38 @@ describe("resolveContent: hoja o respaldo (BR-039, HU-CNT-001, RNF-CONF-003)", (
   });
 });
 
+describe("avisos de la pestaña textos (BR-042)", () => {
+  const withTypo: SheetCsv = { textos: "clave,valor\nhero.titulo,Nuevo\nhero.titlo,Con error\n" };
+
+  it("una clave desconocida no impide usar la hoja y queda como aviso en el informe", () => {
+    const { content, reports } = resolveContent(withTypo, OTHER);
+    const report = reports.find((r) => r.tab === "textos");
+
+    expect(report?.source).toBe("hoja");
+    expect(content.texts).toEqual({ "hero.titulo": "Nuevo" });
+    expect(report?.warnings).toHaveLength(1);
+    expect(report?.issues).toEqual([]);
+  });
+
+  it("formatReports muestra los avisos con «!» para distinguirlos de los problemas", () => {
+    const lines = formatReports(resolveContent(withTypo, OTHER).reports);
+
+    expect(lines).toContain('  ! textos fila 3, clave: "hero.titlo" no es un texto que use el sitio (¿error de escritura?): se ignora');
+  });
+
+  it("con la pestaña válida, los textos son los de la hoja: los que no define usan el texto por defecto del código", () => {
+    const { content } = resolveContent({ textos: "clave,valor\nhero.titulo,Nuevo\n" }, OTHER);
+
+    expect(content.texts).toEqual({ "hero.titulo": "Nuevo" });
+  });
+
+  it("si la pestaña es inválida, los textos son los del respaldo", () => {
+    const { content } = resolveContent({ textos: `clave,valor\nhero.titulo,${"x".repeat(500)}\n` }, OTHER);
+
+    expect(content.texts).toEqual(OTHER.texts);
+  });
+});
+
 describe("formatReports: líneas para el log del build", () => {
   it("una línea por pestaña y una por problema, con pestaña, fila y campo", () => {
     const { reports } = resolveContent(

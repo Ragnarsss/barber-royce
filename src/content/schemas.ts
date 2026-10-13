@@ -7,12 +7,15 @@ import type { Service } from "@/types/service.types";
 import type { TeamMember } from "@/types/team.types";
 import type { CsvTable } from "./csv";
 import { formatClp } from "./format";
+import { TEXTS, isTextKey } from "./texts";
 import type { ContentIssue, ContentTab } from "./types";
 
 /** Resultado de validar una pestaña: o todas sus filas son válidas, o no se acepta ninguna (RN-03). */
 export interface TabResult<T> {
   items: T[];
   issues: ContentIssue[];
+  /** Avisos que no rechazan la pestaña. */
+  warnings: ContentIssue[];
 }
 
 const MAX_PRICE = 1_000_000;
@@ -26,12 +29,25 @@ class RowReader {
   private readonly row: number;
   private readonly values: Record<string, string>;
   private readonly issues: ContentIssue[];
+  private readonly warnings: ContentIssue[];
 
-  constructor(tab: ContentTab, row: number, values: Record<string, string>, issues: ContentIssue[]) {
+  constructor(tab: ContentTab, row: number, values: Record<string, string>, issues: ContentIssue[], warnings: ContentIssue[]) {
     this.tab = tab;
     this.row = row;
     this.values = values;
     this.issues = issues;
+    this.warnings = warnings;
+  }
+
+  /** Registra un aviso (no rechaza la pestaña) y devuelve `undefined`. */
+  warn(field: string, message: string): undefined {
+    this.warnings.push({ tab: this.tab, row: this.row, field, message });
+    return undefined;
+  }
+
+  /** Lo que escribió el dueño en una celda, sin validar. */
+  raw(field: string): string {
+    return this.values[field] ?? "";
   }
 
   /** Registra un problema de esta fila y devuelve `undefined`, para poder usarlo como valor de retorno. */
@@ -114,17 +130,18 @@ interface TabSpec<T> {
 /** Recorre las filas de una pestaña aplicando su especificación; comunes: `activo`, `orden`, `id` único. */
 function readTab<T>(tab: ContentTab, table: CsvTable, spec: TabSpec<T>, options: { unique: string }): TabResult<T> {
   const issues: ContentIssue[] = [];
+  const warnings: ContentIssue[] = [];
 
   const missing = spec.required.filter((column) => !table.headers.includes(column));
   if (missing.length > 0) {
-    return { items: [], issues: missing.map((field) => ({ tab, row: 1, field, message: "falta esta columna en el encabezado" })) };
+    return { items: [], issues: missing.map((field) => ({ tab, row: 1, field, message: "falta esta columna en el encabezado" })), warnings };
   }
 
   const collected: { item: T; order: number | undefined; position: number }[] = [];
   const seen = new Map<string, number>();
 
   table.records.forEach(({ row, values }, position) => {
-    const reader = new RowReader(tab, row, values, issues);
+    const reader = new RowReader(tab, row, values, issues, warnings);
     if (!reader.flag("activo", true)) return; // fila oculta: no se valida ni se publica
 
     const key = values[options.unique] ?? "";
@@ -142,7 +159,7 @@ function readTab<T>(tab: ContentTab, table: CsvTable, spec: TabSpec<T>, options:
 
   // `orden` primero; las filas sin `orden` conservan su posición en la hoja y van después.
   collected.sort((a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER) || a.position - b.position);
-  return { items: collected.map(({ item }) => item), issues };
+  return { items: collected.map(({ item }) => item), issues, warnings };
 }
 
 export function readServices(table: CsvTable): TabResult<Service> {
@@ -237,9 +254,13 @@ export function readFaq(table: CsvTable): TabResult<FAQ> {
 }
 
 const TEXT_KEY = /^[a-z0-9]+(?:\.[a-z0-9]+)+$/;
-const MAX_TEXT = 300;
 
-/** Pestaña `textos`: pares clave → valor. Una clave repetida o un valor largo rechaza la pestaña. */
+/**
+ * Pestaña `textos`: pares clave → valor (HU-CNT-002).
+ * - Una clave que el sitio no usa (un error de escritura) se ignora con un aviso: no rechaza la pestaña.
+ * - Un valor más largo que el máximo de su clave rechaza la pestaña.
+ * - Un valor vacío significa "usar el texto por defecto": el dueño puede borrar la celda para volver atrás.
+ */
 export function readTexts(table: CsvTable): TabResult<[string, string]> {
   return readTab(
     "textos",
@@ -248,11 +269,17 @@ export function readTexts(table: CsvTable): TabResult<[string, string]> {
       required: ["clave", "valor"],
       read: (r) => {
         const key = r.text("clave", 60);
-        const value = r.text("valor", MAX_TEXT);
-        if (key !== undefined && !TEXT_KEY.test(key)) {
+        if (key === undefined) return undefined;
+        if (!TEXT_KEY.test(key)) {
           return r.report("clave", `"${key}" no es válida; usa minúsculas, números y puntos (por ejemplo: hero.titulo)`);
         }
-        return key === undefined || value === undefined ? undefined : [key, value];
+        if (!isTextKey(key)) return r.warn("clave", `"${key}" no es un texto que use el sitio (¿error de escritura?): se ignora`);
+
+        const value = r.raw("valor");
+        if (value === "") return undefined;
+        const max = TEXTS[key].max;
+        if (value.length > max) return r.report("valor", `tiene ${value.length} caracteres y el máximo para "${key}" es ${max}`);
+        return [key, value];
       },
     },
     { unique: "clave" },

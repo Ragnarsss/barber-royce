@@ -59,7 +59,7 @@ export function siteContentPlugin({ env = process.env as SheetEnv, fetchImpl = f
       const { content, reports } = resolveContent(outcome.sheet, snapshot);
 
       for (const line of formatReports(reports)) {
-        const isProblem = line.startsWith("  -") || line.includes(": respaldo");
+        const isProblem = line.startsWith("  -") || line.startsWith("  !") || line.includes(": respaldo");
         (isProblem ? config.logger.warn : config.logger.info)(`[contenido] ${line}`);
       }
       return `export default ${JSON.stringify(content)};`;

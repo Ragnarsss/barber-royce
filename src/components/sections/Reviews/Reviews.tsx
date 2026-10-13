@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import styles from "./Reviews.module.css";
+import { siteText } from "@/content/siteContent";
 import { reviewsList } from "@/data/reviewsData";
 import type { Review } from "@/types/review.types";
 import { AnimatedGridSection } from "@/components/common/AnimatedGridSection/AnimatedGridSection";
@@ -15,8 +16,8 @@ export function Reviews() {
       titleClassName={styles.title}
       subtitleClassName={styles.subtitle}
       gridClassName={styles.grid}
-      title="Lo Que Dicen Nuestros Clientes"
-      subtitle="Testimonios reales de quienes confían en nosotros"
+      title={siteText("reviews.titulo")}
+      subtitle={siteText("reviews.subtitulo")}
       items={reviewsList}
       renderItem={(review) => (
         <Card className={styles.card}>

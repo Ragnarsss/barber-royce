@@ -7,6 +7,7 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
 import { SCROLL_SPEED_FAST } from "@/utils/scrollMotion";
+import { siteText } from "@/content/siteContent";
 import { useRefreshLenis } from "@/hooks/useLenisContext";
 import { fadeInUp, fadeInLeft, fadeInRight } from "@/config/animations.config";
 
@@ -170,13 +171,8 @@ export function SocialProof1() {
           animate={controls}
           variants={fadeInUp}
         >
-          <h2 className={styles.title}>Respaldados por los mejores</h2>
-          <p className={styles.subtitle}>
-            Sabemos lo importante que es el cuidado e imagen para quienes viven
-            de ella. Desde hace años somos casa de destacados Artistas musicales
-            y Deportistas, quienes nos eligen por nuestro talento y elogian la
-            calidad y profesionalismo de nuestro servicio
-          </p>
+          <h2 className={styles.title}>{siteText("socialproof1.titulo")}</h2>
+          <p className={styles.subtitle}>{siteText("socialproof1.subtitulo")}</p>
         </motion.div>
 
         <div className={styles.content}>

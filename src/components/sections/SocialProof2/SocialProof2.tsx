@@ -5,6 +5,7 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
 import { SCROLL_SPEED_FASTER } from "@/utils/scrollMotion";
+import { siteText } from "@/content/siteContent";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
 
 export function SocialProof2() {
@@ -131,16 +132,8 @@ export function SocialProof2() {
             animate={controls}
             variants={fadeInUp}
           >
-            <h2 className={styles.title}>
-              Clientes Felices,
-              <br />
-              Estilos Impecables.
-            </h2>
-            <p className={styles.subtitle}>
-              El trabajo realizado y la felicidad en nuestros clientes es el
-              verdadero pago. Tu satisfacción es nuestra mejor carta de
-              presentación.
-            </p>
+            <h2 className={styles.title}>{siteText("socialproof2.titulo")}</h2>
+            <p className={styles.subtitle}>{siteText("socialproof2.subtitulo")}</p>
           </motion.div>
 
           <motion.div

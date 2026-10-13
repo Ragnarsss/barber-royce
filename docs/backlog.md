@@ -1207,7 +1207,7 @@ Criterios de aceptación:
 #### BR-042 — Textos y títulos desde la pestaña `textos`
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-041
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-042-textos-desde-hoja`; hecho en local; sin pasos manuales)
 - Historia de usuario: HU-CNT-002 (CA-01, CA-02, CA-03)
 - RF/RNF: `RF-CNT-005`, `RNF-CONF-003`
 
@@ -1223,6 +1223,17 @@ Alcance:
 Criterios de aceptación:
 1. Una clave en la hoja cambia el texto; una ausente deja el original; una
    demasiado larga se rechaza con aviso (CP-CNT-005).
+
+> **Alcance ajustado (2026-10-12):** el conjunto inicial son las 13 claves
+> de la home (`src/content/texts.ts`): título del Hero, título y subtítulo
+> de `CTA1`, `SocialProof1/2`, `Reviews` y `Features`, título de
+> `Benefits` y de `CTA2`. Quedan fuera los textos con formato dentro de la
+> frase (el subtítulo del Hero y el de `CTA2`, con negritas) y el
+> subtítulo de `Benefits` (es una frase abierta que continúa en las
+> tarjetas). Los títulos de las demás páginas (`PageHero`) quedan para una
+> segunda tanda.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-042).
 
 #### BR-043 — Guía para publicar contenido desde la hoja
 
@@ -1313,7 +1324,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-039 | Núcleo de contenido: CSV, validación y respaldo | J | P2 | M | En curso | BR-030 |
 | BR-040 | Descarga de la hoja al construir | J | P2 | M | En curso | BR-039 |
 | BR-041 | Catálogo desde el contenido generado | J | P2 | M | En curso | BR-040 |
-| BR-042 | Textos y títulos desde la hoja | J | P3 | M | Propuesta | BR-041 |
+| BR-042 | Textos y títulos desde la hoja | J | P3 | M | En curso | BR-041 |
 | BR-043 | Guía para publicar desde la hoja | J | P2 | S | Propuesta | BR-040 |
 | BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |
 | BR-045 | Títulos invisibles sobre fondo oscuro | C | P0 | S | En curso | — |

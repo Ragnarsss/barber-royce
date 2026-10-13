@@ -8,6 +8,7 @@ import type { ReactNode } from "react";
 import { LenisContext } from "@/contexts/lenisContextValue";
 import { resolveContent, type SheetCsv } from "@/content/resolveContent";
 import { snapshot } from "@/content/snapshot";
+import { TEXTS } from "@/content/texts";
 import { CONTENT_TABS, type SiteContent } from "@/content/types";
 import { renderWithProviders } from "./renderWithProviders";
 import { readAllSources } from "./sourceFiles";
@@ -132,6 +133,12 @@ describe("plantillas CSV de docs/contenido (BR-041, HU-CNT-001)", () => {
 
     expect(reports.flatMap((report) => report.issues)).toEqual([]);
     expect(reports.map((report) => `${report.tab}:${report.source}`)).toEqual(CONTENT_TABS.map((tab) => `${tab}:hoja`));
+  });
+
+  it("la plantilla de textos lista todas las claves editables con el texto que el sitio muestra hoy", () => {
+    const { content } = resolveContent(sheet, emptyFallback);
+
+    expect(content.texts).toEqual(Object.fromEntries(Object.entries(TEXTS).map(([key, { default: text }]) => [key, text])));
   });
 
   it("reproducen el contenido actual del sitio: importarlas en la hoja no cambia nada", () => {

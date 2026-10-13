@@ -9,6 +9,7 @@ import { fadeInLeft, fadeInRight } from "@/config/animations.config";
 import { Link } from "react-router-dom";
 import { BOOKING } from "@/config/constants";
 import { trackReserve } from "@/analytics/track";
+import { siteText } from "@/content/siteContent";
 
 export function CTA1() {
   const { ref, controls } = useScrollAnimation();
@@ -63,17 +64,8 @@ export function CTA1() {
           variants={fadeInLeft}
         >
           <div className={styles.textContent}>
-            <h2 className={styles.title}>
-              Reserva tu
-              <br />
-              Experiencia
-              <br />
-              Premium Hoy.
-            </h2>
-            <p className={styles.subtitle}>
-              ¿Listo para un cambio que te defina? Agenda tu cita y descubre por
-              qué somos la barbería de elección para quienes buscan lo mejor.
-            </p>
+            <h2 className={styles.title}>{siteText("cta1.titulo")}</h2>
+            <p className={styles.subtitle}>{siteText("cta1.subtitulo")}</p>
             <div className={styles.ctaButtons}>
               <a className={styles.ctaButton} href={BOOKING.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta1")}>
                 <Calendar size={20} />
