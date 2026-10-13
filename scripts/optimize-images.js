@@ -28,6 +28,11 @@ const images = [
     displayName: "cta1_model",
   },
   {
+    input: "cta2_crew.png",
+    sizes: [455], // Tamano original (455x705): se muestra como fondo con object-fit: cover
+    displayName: "cta2_crew",
+  },
+  {
     input: "royce-barber-logo.png",
     sizes: [46, 92], // Actual display size (46x56) + 2x
     displayName: "royce-barber-logo",

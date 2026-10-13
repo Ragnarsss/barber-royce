@@ -507,3 +507,44 @@ responden 200 y el bundle publicado contiene `PageError`.
 - Cobertura sin cambio de umbral (19,64 / 53,09 / 35,16 / 19,64).
 - Verificación local: 51 tests, lint, tipos y build OK; `dist/` pasa de
   incluir PNG de ~6 MB a 2,8 MB en total.
+
+---
+
+<a id="br-012"></a>
+
+## BR-012 — Optimizar las imágenes que quedaron fuera
+
+**Notas de construcción (2026-10-12):**
+- `cta2_crew.png` pasa por `scripts/optimize-images.js`: 518,89 KB → 55,18
+  KB en WebP (`cta2_crew_455w.webp`). La imagen original mide solo
+  455 × 705 px y se muestra como fondo a pantalla completa; no tiene
+  sentido generar más anchos. Se corrigen sus atributos (decían
+  1920 × 1080).
+- Footer: el logo usa los WebP 46w/92w ya existentes con `srcSet` 1x/2x,
+  `width`/`height` 48 (el tamaño que fija su CSS) y `alt` descriptivo en
+  lugar de "Logo".
+- `ProductsPage` y `TeamPage`: `width`/`height` (400 × 300 y 400 × 400, los
+  que piden las URLs) y `loading="lazy"`. Siguen siendo imágenes de
+  Unsplash hasta `BR-008`.
+- Eliminados: `service1.png` (950 KB, sin uso), `react.svg` y la sección
+  `Services` completa (código muerto desde el commit `49e46d8`; adelanta
+  `BR-025`).
+- `npm run optimize:images` (script nuevo en `package.json`; el script ya
+  existía pero no tenía comando). Al volver a ejecutarlo, los demás WebP
+  salieron idénticos byte a byte; solo cambió el nuevo.
+- Resultado: `dist/` ya no contiene ningún PNG (antes: `cta2_crew` 175 KB y
+  el logo) y pasa de 2,8 MB a 2,6 MB. Los originales de `src/assets/*.png`
+  quedan solo como fuente del script.
+- Test (`src/test/imageAttributes.test.ts`, 4 casos; 2 fallan contra el
+  Footer anterior): toda `<img>` tiene `width`/`height` y `alt`, y ningún
+  componente importa un PNG o JPG original.
+- Lección de herramientas: una primera versión del test leía los `.tsx`
+  con `import.meta.glob("?raw")`. Eso hacía que Vitest los contara como
+  cubiertos y **bajaba el denominador de la cobertura de 3.782 a 1.631
+  sentencias** (45 % en vez de 20 %), inflando el umbral. Se cambió a
+  `fs`. Tampoco sirve `new URL("../", import.meta.url)`: Vite lo reescribe
+  como asset.
+- Cobertura: 20,07 / 53,57 / 35,55 / 20,07 → umbral 20/53/35/20.
+- Verificación local: 55 tests, lint, tipos y build OK. Pendiente (al
+  final, en el preview): Lighthouse móvil en las 7 rutas (CP-PERF-002) y la
+  pestaña Network (CP-PERF-004), con la salvedad de Unsplash.

@@ -1,7 +1,7 @@
 import { motion, useTransform } from "framer-motion";
 import { Calendar } from "lucide-react";
 import styles from "./CTA2.module.css";
-import backgroundImage from "@/assets/cta2_crew.png";
+import backgroundImage from "@/assets/optimized/cta2_crew_455w.webp";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useScrollDirection } from "@/hooks/useScrollMotion";
 import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
@@ -27,8 +27,8 @@ export function CTA2() {
         alt="Equipo profesional de barberos de Royce Barbería trabajando en un ambiente moderno y exclusivo"
         className={styles.backgroundImage}
         loading="lazy"
-        width="1920"
-        height="1080"
+        width="455"
+        height="705"
         style={{
           scale: imageScale,
           filter: imageFilter,

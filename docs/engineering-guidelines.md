@@ -166,10 +166,13 @@ Nunca se hace commit directo a `master`. El merge es el del PR aprobado.
 Es una web de captación: el rendimiento en móvil **es** el producto. Los
 umbrales están en `rf-rnf-catalogo.md` (`RNF-PERF-*`).
 
-- **Imágenes:** toda imagen de contenido sale optimizada (AVIF y WebP, en
-  ese orden dentro de `<picture>`), con `width`/`height`, `loading="lazy"`
-  salvo la del LCP, que lleva `fetchpriority="high"`. Ningún PNG original
-  de más de 300 KB llega al navegador.
+- **Imágenes:** toda imagen de contenido sale optimizada en **WebP**
+  (`npm run optimize:images`; el AVIF se descartó porque pesaba más que el
+  WebP, `BR-011`), con `srcset`/`sizes` cuando hay varios anchos,
+  `width`/`height`, `loading="lazy"` salvo la del LCP, que lleva
+  `fetchpriority="high"`. Ningún PNG o JPG original se importa desde un
+  componente. Dos tests lo vigilan (`imageAttributes.test.ts`,
+  `lcpPreload.test.ts`).
 - **Animación:** nunca `setState` por evento de scroll. Lo que depende del
   scroll se calcula con `MotionValue` (`useScroll`/`useTransform`), que no
   re-renderiza. Solo se crean los `useTransform` que se usan.

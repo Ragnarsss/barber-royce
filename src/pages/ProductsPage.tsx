@@ -137,6 +137,9 @@ export function ProductsPage() {
                         src={product.image}
                         alt={product.name}
                         className={styles.productImage}
+                        width="400"
+                        height="300"
+                        loading="lazy"
                       />
                     </div>
 

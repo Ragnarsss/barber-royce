@@ -656,7 +656,7 @@ Criterios de aceptación:
 #### BR-012 — Optimizar las imágenes que quedaron fuera
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: BR-011
-- Estado: Propuesta
+- Estado: En curso (rama `perf/br-012-imagenes-pendientes`; hecho en local, falta confirmar en el preview)
 - Historia de usuario: HU-EXP-001 (CA-01)
 - RF/RNF: `RNF-PERF-002`, `RNF-PERF-004`
 
@@ -671,7 +671,12 @@ Alcance:
 3. Borrar los assets sin uso.
 
 Criterios de aceptación:
-1. CP-PERF-002 y CP-PERF-004 pasan en las 7 rutas.
+1. CP-PERF-002 y CP-PERF-004 pasan en las 7 rutas. **Salvedad:** las
+   imágenes de servicios, productos y equipo siguen viniendo de
+   Unsplash hasta `BR-008`, así que esa parte de CP-PERF-004 (ninguna
+   petición a dominios de terceros) no puede cumplirse aquí.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-012).
 
 #### BR-013 — CSS crítico sin parpadeo
 
@@ -921,7 +926,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-009 | Decidir botón "Comprar" | B | P1 | XS | Propuesta | — |
 | BR-010 | Variables de entorno | B | P1 | XS | Propuesta | — |
 | BR-011 | Ruta crítica del LCP | F | P1 | S | En curso | — |
-| BR-012 | Imágenes pendientes | F | P1 | S | Propuesta | BR-011 |
+| BR-012 | Imágenes pendientes | F | P1 | S | En curso | BR-011 |
 | BR-035 | JavaScript inicial de la home | F | P1 | M | Propuesta | BR-011, BR-013 |
 | BR-013 | CSS crítico | F | P1 | S | Propuesta | — |
 | BR-014 | Lenis sin fugas | E | P1 | M | En curso | BR-004 |

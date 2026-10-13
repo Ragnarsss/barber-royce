@@ -40,6 +40,9 @@ export const TeamPage = () => {
                         src={member.image}
                         alt={member.name}
                         className={styles.hexImage}
+                        width="400"
+                        height="400"
+                        loading="lazy"
                       />
                     </div>
                     <div className={styles.hexOverlay}>

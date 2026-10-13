@@ -15,7 +15,8 @@
     "perf:bundle": "vite-bundle-visualizer",
     "test": "vitest",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "optimize:images": "node scripts/optimize-images.js"
   },
   "dependencies": {
     "@fontsource-variable/montserrat": "^5.2.8",

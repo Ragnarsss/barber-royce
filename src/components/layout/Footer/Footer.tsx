@@ -11,7 +11,8 @@ import {
 } from "@/components/icons";
 import { getFooterRoutes } from "@/config/routes";
 import { CONTACT, SCHEDULE, SOCIAL_MEDIA } from "@/config/constants";
-import logo from "@/assets/royce-barber-logo.png";
+import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
+import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
 
 export const Footer = () => {
   const footerRoutes = getFooterRoutes();
@@ -24,7 +25,15 @@ export const Footer = () => {
           <div className={styles.column}>
             <div className={styles.brand}>
               <h3 className={styles.title}>Barber Royce</h3>
-              <img src={logo} alt="Logo" className={styles.logoIcon} />
+              <img
+                src={logo46w}
+                srcSet={`${logo46w} 1x, ${logo92w} 2x`}
+                alt="Logo de Barbería Royce"
+                className={styles.logoIcon}
+                width="48"
+                height="48"
+                loading="lazy"
+              />
             </div>
             <p className={styles.description}>
               Estilo y elegancia para el hombre moderno. Más de 10 años de experiencia creando los mejores looks.
