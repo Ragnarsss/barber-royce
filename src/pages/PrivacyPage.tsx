@@ -9,8 +9,11 @@ import styles from "./PrivacyPage.module.css";
  * Política de privacidad y cookies (BR-044, HU-MED-003).
  *
  * BORRADOR TÉCNICO: describe lo que el sitio hace, pero no es asesoría legal.
- * Debe revisarlo el dueño o un abogado antes de activar Google Analytics en
+ * Debe revisarlo el dueño o un abogado antes de activar la analítica en
  * producción (Ley 19.628 y su actualización, Ley 21.719).
+ *
+ * El texto es genérico a propósito (decisión del usuario, 2026-10-13): habla de "servicios de medición" y no
+ * nombra a los proveedores.
  */
 export const PrivacyPage = () => {
   const { business } = useSiteContent();
@@ -31,8 +34,8 @@ export const PrivacyPage = () => {
             teléfono ni nada que escribas.
           </p>
           <p>
-            Para medir, Google Analytics guarda dos cookies en tu navegador (<code>_ga</code> y <code>_ga_*</code>), que
-            duran hasta 2 años. Si rechazas, no se guarda ninguna.
+            Para medir, el servicio de medición guarda cookies en tu navegador, que pueden durar hasta 2 años. Si
+            rechazas, no se guarda ninguna.
           </p>
         </section>
 
@@ -47,9 +50,11 @@ export const PrivacyPage = () => {
         <section aria-labelledby="privacidad-responsable">
           <h2 id="privacidad-responsable">3. Quién trata los datos</h2>
           <p>
-            El responsable es {SITE.name}. Los datos de medición los procesa Google (Google Analytics 4) y, para contar
-            visitas sin cookies, Vercel (Vercel Analytics). Al reservar, pasas a AgendaPro, que tiene su propia política
-            de privacidad.
+            El responsable es {SITE.name}. Los datos de medición los procesan proveedores externos de analítica web: uno
+            que usa cookies, solo si lo aceptas, y otro que cuenta visitas sin cookies. Para mantener al día los precios y
+            los datos de contacto, tu navegador también consulta un servicio externo de hojas de cálculo; esa consulta no
+            lleva datos tuyos, pero el proveedor puede ver tu dirección IP. Al reservar, pasas a AgendaPro, que tiene su
+            propia política de privacidad.
           </p>
         </section>
 

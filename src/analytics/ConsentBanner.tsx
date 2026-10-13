@@ -28,7 +28,7 @@ export function ConsentBanner({ onAccept, onReject }: ConsentBannerProps) {
         Tu privacidad
       </h2>
       <p className={styles.text}>
-        Usamos Google Analytics para saber cuántas personas visitan el sitio y qué botones tocan. No guardamos tu nombre
+        Usamos un servicio de medición para saber cuántas personas visitan el sitio y qué botones tocan. No guardamos tu nombre
         ni tu teléfono. ¿Aceptas la medición?{" "}
         <Link to={ROUTES.privacy.path} className={styles.link}>
           Más información

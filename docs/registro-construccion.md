@@ -1268,3 +1268,6 @@ servido con `vite preview` y Chrome real:
 - **Lo que la hoja no cambia:** `index.html` (JSON-LD, meta) y el sitemap son estáticos; se renuevan al desplegar. Quedan con los datos de `constants.ts`.
 - **Por confirmar (usuario):** las decisiones por defecto del ticket (dos pestañas, validaciones, SEO estático) y el cambio del número de WhatsApp mostrado.
 - **Pendiente (usuario):** crear las pestañas `negocio` y `sucursales` desde las plantillas, publicarlas y sumar sus `gid` a `CONTENT_SHEET_GIDS`.
+
+**Actualización (2026-10-13, decisión del usuario):** el texto de `/privacidad` y el del aviso de cookies pasan a ser **genéricos**: hablan de «servicio de medición» y de «proveedores externos de analítica web» sin nombrar a Google Analytics, Vercel ni las cookies `_ga`. Dos pruebas lo vigilan (`PrivacyPage.test.tsx`). Se agregó una frase sobre la consulta a la hoja (`BR-047`): el navegador consulta un servicio externo de hojas de cálculo, sin datos del visitante, pero el proveedor puede ver su IP.
+- **Por confirmar con quien valide el texto:** un texto genérico informa menos que uno con nombres (qué proveedor, qué cookies, qué país). Muchas políticas nombran a los proveedores; la ley chilena exige informar las finalidades y los destinatarios, y esto sigue siendo un borrador sin validación legal.
