@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { useCallback } from "react";
 import styles from "./Hero.module.css";
 import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData.tsx";
@@ -14,7 +14,10 @@ import { useLenisScrollActive } from "@/hooks/useScrollActive";
 import { staggerContainer, fadeInUp, fadeInLeft } from "@/config/animations.config";
 
 export function Hero() {
-  const isReady = useLenisReady();
+  const isLenisReady = useLenisReady();
+  const reducedMotion = useReducedMotion() ?? false;
+  // Con "reducir movimiento" no hay Lenis: el Hero se muestra sin esperarlo (BR-017)
+  const isReady = isLenisReady || reducedMotion;
   const refreshLenis = useRefreshLenis();
 
   // OPTIMIZACIÓN FASE 3: will-change dinámico (solo durante scroll activo)

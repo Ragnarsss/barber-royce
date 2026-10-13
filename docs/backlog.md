@@ -357,7 +357,7 @@ Criterios de aceptación:
 #### BR-020 — Recuperación ante un chunk inexistente tras un despliegue
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: BR-019
-- Estado: En curso (rama `feat/br-020-recuperacion-chunks`)
+- Estado: Hecho (2026-10-12, rama `feat/br-020-recuperacion-chunks` → master, PR #12; CP-CONF-002 se comprueba en el próximo despliegue)
 - Historia de usuario: HU-EXP-003 (CA-04)
 - RF/RNF: `RF-NAV-003`, `RNF-CONF-002`
 
@@ -540,7 +540,7 @@ Criterios de aceptación:
 #### BR-017 — Respetar `prefers-reduced-motion` en JavaScript
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-017-reduced-motion`; hecho en local, falta verificar en el preview)
 - Historia de usuario: HU-EXP-002 (CA-02)
 - RF/RNF: `RNF-A11Y-003`
 
@@ -553,6 +553,8 @@ Alcance:
 
 Criterios de aceptación:
 1. CP-A11Y-003 pasa en las 7 rutas.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-017).
 
 #### BR-018 — Transiciones de página
 
@@ -870,10 +872,10 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-014 | Lenis sin fugas | E | P1 | M | Propuesta | BR-004 |
 | BR-015 | Cero re-renders por scroll | E | P1 | M | Propuesta | BR-014 |
 | BR-016 | Parallax liviano y variantes | E | P1 | M | Propuesta | BR-015 |
-| BR-017 | Reduced motion en JS | E | P1 | S | Propuesta | — |
+| BR-017 | Reduced motion en JS | E | P1 | S | En curso | — |
 | BR-018 | Transiciones de página | E | P3 | S | Propuesta | BR-017 |
 | BR-019 | Error boundaries | C | P1 | S | Hecho | — |
-| BR-020 | Recuperación de chunks | C | P1 | S | En curso | BR-019 |
+| BR-020 | Recuperación de chunks | C | P1 | S | Hecho | BR-019 |
 | BR-021 | Fuente única de tokens | D | P2 | M | Propuesta | — |
 | BR-022 | Hex → tokens | D | P2 | M | Propuesta | BR-021 |
 | BR-023 | Retirar Tailwind y shadcn | D | P2 | L | Propuesta | BR-021 |

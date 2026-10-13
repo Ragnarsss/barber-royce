@@ -5,6 +5,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Lenis from "lenis";
+import { useReducedMotion } from "framer-motion";
 
 // Extender el tipo Window para incluir la instancia de Lenis
 declare global {
@@ -21,8 +22,12 @@ declare global {
 export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
   const [lenisInstance, setLenisInstance] = useState<Lenis | null>(null);
   const rafIdRef = useRef<number | null>(null);
+  // Con "reducir movimiento" no hay smooth scroll: se usa el scroll nativo (BR-017)
+  const reducedMotion = useReducedMotion() ?? false;
 
   useEffect(() => {
+    if (reducedMotion) return;
+
     // Crear instancia de Lenis con configuración personalizada
     const lenis = new Lenis({
       duration: 0.25,
@@ -102,7 +107,7 @@ export const useLenis = (options?: ConstructorParameters<typeof Lenis>[0]) => {
       window.lenis = undefined;
       setLenisInstance(null);
     };
-  }, [options]);
+  }, [options, reducedMotion]);
 
   return lenisInstance;
 };

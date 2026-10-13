@@ -292,3 +292,39 @@ responden 200 y el bundle publicado contiene `PageError`.
 - Verificación local: 18 tests, lint, tipos y build OK. CP-CONF-002 en
   real: con el sitio abierto, desplegar otra versión y navegar a una ruta
   no visitada (se comprueba en el próximo despliegue).
+
+**Cierre (2026-10-12):** BR-020 integrado en el PR #12.
+
+---
+
+<a id="br-017"></a>
+
+## BR-017 — Respetar `prefers-reduced-motion` en JavaScript
+
+**Notas de construcción (2026-10-12):**
+- `MotionConfig reducedMotion="user"` en `App.tsx`: framer-motion omite
+  las animaciones de transformación de los `motion.*` (la opacidad se
+  mantiene).
+- Eso **no** frena el parallax: sus `MotionValue` se calculan desde el
+  scroll, no son animaciones. `useParallaxLayers` lee
+  `useReducedMotion()` y aplana cada rango de salida con
+  `calmRange` (`src/utils/reducedMotion.ts`): las capas no se desplazan,
+  no escalan y no rotan. Se aplana el rango en vez de omitir los hooks
+  para respetar la regla de los hooks y no cambiar el tipo de retorno.
+- `useLenis` no crea Lenis con la preferencia activa (scroll nativo);
+  `ScrollToTop`, `Navbar` y `useScrollContainer` ya manejaban la
+  instancia nula.
+- Hallazgo: el `Hero` solo se anima cuando `useLenisReady()` es verdadero;
+  sin Lenis habría quedado **invisible**. Ahora `isReady = isLenisReady ||
+  reducedMotion`. Sin este cambio el ticket habría roto el sitio para
+  quien activa la preferencia.
+- Tests: `reducedMotion.test.ts` (helper) y `useLenis.test.tsx` (con
+  `framer-motion` y `lenis` simulados: crea Lenis por defecto, no lo crea
+  con la preferencia). El aplanado dentro de `useParallaxLayers` y la
+  visibilidad del Hero no tienen test: `useScroll` no calcula en jsdom;
+  se verifica en el navegador.
+- Cobertura: 8,45 / 38,29 / 23,8 / 8,45 → umbral 8/38/23/8.
+- Verificación local: 23 tests, lint, tipos y build OK. Pendiente (al
+  final, en el preview): emular `prefers-reduced-motion: reduce` en
+  DevTools y recorrer las 7 rutas (CP-A11Y-003); comprobar que el Hero se
+  ve y que el scroll es nativo.

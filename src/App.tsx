@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ErrorBoundary } from "react-error-boundary";
+import { MotionConfig } from "framer-motion";
 import { Layout } from "./components/layout/Layout/Layout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import { HomePage } from "./pages/HomePage";
@@ -28,6 +29,8 @@ function App() {
     // Los errores de una página los contiene RouteErrorBoundary dentro del Layout (BR-019).
     <ErrorBoundary fallback={<CatastrophicError />} onError={reportError}>
       <HelmetProvider>
+        {/* Con "reducir movimiento" framer-motion omite las animaciones de transformación (BR-017) */}
+        <MotionConfig reducedMotion="user">
         <LenisProvider lenis={lenis}>
           <BrowserRouter>
             <ScrollToTop />
@@ -46,6 +49,7 @@ function App() {
             </Routes>
           </BrowserRouter>
         </LenisProvider>
+        </MotionConfig>
       </HelmetProvider>
     </ErrorBoundary>
   );
