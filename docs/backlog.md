@@ -1238,7 +1238,7 @@ Criterios de aceptación:
 #### BR-043 — Guía para publicar contenido desde la hoja
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: BR-040
-- Estado: Propuesta
+- Estado: En curso (rama `docs/br-043-guia-contenido-hoja`; guía escrita; faltan los pasos manuales del usuario)
 - Historia de usuario: HU-CNT-001 (CA-04)
 - RF/RNF: no aplica — documentación de un proceso manual.
 
@@ -1255,7 +1255,10 @@ Alcance:
 
 Criterios de aceptación:
 1. Siguiendo solo la guía, el dueño cambia un precio y lo ve publicado
-   (CU-CNT-001).
+   (CU-CNT-001). **Esta prueba la hace el usuario** al volver (es el cierre
+   de la épica J).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-043).
 
 ## 4. Diferido — no forma parte del despliegue
 
@@ -1325,7 +1328,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-040 | Descarga de la hoja al construir | J | P2 | M | En curso | BR-039 |
 | BR-041 | Catálogo desde el contenido generado | J | P2 | M | En curso | BR-040 |
 | BR-042 | Textos y títulos desde la hoja | J | P3 | M | En curso | BR-041 |
-| BR-043 | Guía para publicar desde la hoja | J | P2 | S | Propuesta | BR-040 |
+| BR-043 | Guía para publicar desde la hoja | J | P2 | S | En curso | BR-040 |
 | BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |
 | BR-045 | Títulos invisibles sobre fondo oscuro | C | P0 | S | En curso | — |
 

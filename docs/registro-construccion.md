@@ -1149,3 +1149,46 @@ servido con `vite preview` y Chrome real:
   ramas que los tests aún no recorren todas. Se anota aquí en vez de dejar
   que el CI falle; las sentencias y funciones subieron (de 56 a 73 % y de
   68 a 77 %).
+
+---
+
+<a id="br-043"></a>
+
+## BR-043 — Guía para publicar contenido desde la hoja
+
+**Notas de construcción (2026-10-12):**
+- `docs/contenido-hoja.md`, escrita para el dueño (no técnico), en tuteo:
+  1. qué se puede editar: las cinco pestañas, columnas obligatorias y
+     opcionales (`activo`, `orden`, `imagen`, `incluye`, `lider`), reglas
+     por campo, categorías permitidas y las 13 claves de `textos` con su
+     máximo;
+  2. crear la hoja importando las plantillas de `docs/contenido/`;
+  3. publicar cada pestaña en la web como CSV y sacar el identificador
+     `2PACX-…` y los `gid` (con el aviso de que lo publicado es público);
+  4. definir `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` en Vercel;
+  5. publicar un cambio: redeploy desde Vercel o un menú «Sitio web →
+     Publicar cambios» con Google Apps Script (la dirección del `deploy
+     hook` va en las propiedades del proyecto, no en el código; se
+     desaconseja publicar en cada edición por el límite de builds);
+  6. cómo leer el registro del build y una tabla de 15 mensajes de error con
+     su causa y su arreglo;
+  7. volver atrás (Promote en Vercel e historial de versiones de Google);
+  8. sección para quien mantiene el sitio.
+- Los mensajes de la tabla de errores se copiaron de los que producen
+  `schemas.ts`, `resolveContent.ts` y `siteContentSource.ts`.
+- **El Apps Script va como texto de la guía, no como archivo del repo**
+  (decisión: no se versionan scripts que corren fuera del sitio).
+- Test (`contentGuide.test.ts`, 17): la guía menciona cada clave de
+  `TEXTS` y cada categoría de `src/types`, no ofrece «Todos», nombra las
+  pestañas, las variables y las plantillas, y no contiene ninguna dirección
+  de `deploy hook` real. Evita que el código cambie y la guía quede mal.
+- **Pasos manuales pendientes (usuario)** — son los que cierran el
+  trabajo; están ordenados en la guía, secciones 2 a 6:
+  1. crear la hoja desde las plantillas y **reemplazar los precios de
+     muestra de los productos**;
+  2. publicar las cinco pestañas como CSV y anotar el identificador y los
+     `gid`;
+  3. definir `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` en Vercel;
+  4. (opcional) crear el `deploy hook` y pegar el Apps Script;
+  5. cambiar un precio, publicar y ver el resultado: es el criterio de
+     aceptación del ticket y de `HU-CNT-001` CA-04.
