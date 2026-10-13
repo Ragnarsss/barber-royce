@@ -10,6 +10,8 @@ export interface RouteConfig {
     description: string; // Para meta description
     showInNav: boolean;
     showInFooter: boolean;
+    /** false = la página lleva noindex y no va en el sitemap (por defecto, true) */
+    indexable?: boolean;
 }
 
 export const ROUTES: Record<string, RouteConfig> = {
@@ -60,6 +62,15 @@ export const ROUTES: Record<string, RouteConfig> = {
         description: "Visítanos en Coquimbo. Horarios, ubicación, mapa y datos de contacto. Agenda tu cita en la mejor barbería de la región.",
         showInNav: true,
         showInFooter: true,
+    },
+    privacy: {
+        path: "/privacidad",
+        label: "PRIVACIDAD",
+        title: "Política de Privacidad y Cookies | Royce Barbería",
+        description: "Qué datos recoge este sitio, para qué se usan y cómo puedes aceptar o rechazar la medición de visitas.",
+        showInNav: false,
+        showInFooter: true,
+        indexable: false,
     },
     faq: {
         path: "/preguntas-frecuentes",

@@ -971,7 +971,7 @@ definir `VITE_VERCEL_ANALYTICS=true` en Settings → Environment Variables
 #### BR-044 — Política de privacidad (borrador)
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-044-politica-privacidad`; hecho en local; el texto está por validar)
 - Historia de usuario: HU-MED-003 (CA-05)
 - RF/RNF: `RF-MED-005`
 
@@ -993,6 +993,8 @@ Alcance:
 Criterios de aceptación:
 1. `/privacidad` carga, tiene `noindex` y los 4 apartados (CP-MED-005).
 2. Test de render.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-044).
 
 #### BR-037 — Consentimiento y Google Analytics 4
 
@@ -1251,7 +1253,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-041 | Catálogo desde el contenido generado | J | P2 | M | Propuesta | BR-040 |
 | BR-042 | Textos y títulos desde la hoja | J | P3 | M | Propuesta | BR-041 |
 | BR-043 | Guía para publicar desde la hoja | J | P2 | S | Propuesta | BR-040 |
-| BR-044 | Política de privacidad (borrador) | I | P2 | S | Propuesta | — |
+| BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

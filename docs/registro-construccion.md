@@ -749,3 +749,34 @@ servido con `vite preview` y Chrome real:
   (proyecto → Analytics → Enable), definir `VITE_VERCEL_ANALYTICS=true` en
   Production y volver a desplegar; confirmar en el preview que la home
   pide `/_vercel/insights/script.js` y que la visita aparece en el panel.
+
+---
+
+<a id="br-044"></a>
+
+## BR-044 — Política de privacidad (borrador)
+
+**Notas de construcción (2026-10-12):**
+- `src/pages/PrivacyPage.tsx` (+ `.module.css`): `/privacidad` con los 4
+  apartados de `RF-MED-005` (datos, finalidad, responsable, derechos y
+  cómo cambiar la elección), en tuteo. Usa `SITE.name` y `CONTACT.email`
+  de `src/config/`, no literales (el correo actual es el de ejemplo de
+  `BR-005`). Cargada con `lazy()` como las demás páginas.
+- El texto dice "por defecto no recogemos datos" y describe la medición
+  como condicional a que esté activada **y** aceptada, para que sea cierto
+  tanto con GA apagado (hoy) como encendido.
+- `SEOHelmet` gana la opción `noindex` (`<meta name="robots"
+  content="noindex, follow">`), reutilizable. `RouteConfig` gana
+  `indexable?: boolean`; `privacy` la marca en `false` para que `BR-006`
+  (sitemap desde `ROUTES`) la excluya. Aparece en el footer (que se arma
+  desde `ROUTES`) y no en el navbar.
+- Tests (`PrivacyPage.test.tsx`, 4): los 4 apartados, un solo `h1` y el
+  enlace de contacto, `noindex` real en el `<head>` (con `waitFor`: el
+  contexto de Helmet solo se llena en SSR, así que una primera versión
+  del test falló) y su lugar en `ROUTES`.
+- **Pendiente de validación (usuario/abogado):** el texto es un borrador
+  técnico, no asesoría legal. Debe revisarse antes de activar Google
+  Analytics (`BR-037`). El plazo de 2 años de las cookies `_ga` es el
+  valor por defecto de GA4 al 2026-10-12; confirmar contra la
+  documentación vigente de Google.
+- Verificación local: lint, tipos y tests OK.

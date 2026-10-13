@@ -19,6 +19,7 @@ const ServicesPage = lazy(() => import("./pages/ServicesPage").then(m => ({ defa
 const TeamPage = lazy(() => import("./pages/TeamPage").then(m => ({ default: m.TeamPage })));
 const AboutPage = lazy(() => import("./pages/AboutPage").then(m => ({ default: m.AboutPage })));
 const FAQPage = lazy(() => import("./pages/FAQPage").then(m => ({ default: m.FAQPage })));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage").then(m => ({ default: m.PrivacyPage })));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
                 <Route path="ubicacion" element={<LocationPage />} />
                 <Route path="nosotros" element={<AboutPage />} />
                 <Route path="preguntas-frecuentes" element={<FAQPage />} />
+                <Route path="privacidad" element={<PrivacyPage />} />
                 {/* Cualquier ruta inexistente (BR-003) */}
                 <Route path="*" element={<NotFoundPage />} />
               </Route>
