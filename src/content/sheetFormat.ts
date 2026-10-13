@@ -1,3 +1,4 @@
+import { businessToEntries } from "./business";
 import { toCsv } from "./csv";
 import { parseClp } from "./format";
 import type { SheetCsv } from "./resolveContent";
@@ -41,6 +42,7 @@ export function contentToSheet(content: SiteContent): SheetCsv {
   const productIds = uniqueIds(content.products.map((p) => p.name));
   const teamIds = uniqueIds(content.team.map((m) => m.name));
   const faqIds = uniqueIds(content.faq.map((q) => q.question));
+  const locationIds = uniqueIds(content.locations.map((l) => l.name));
 
   return {
     servicios: toCsv([
@@ -60,5 +62,13 @@ export function contentToSheet(content: SiteContent): SheetCsv {
       ...content.faq.map((q, i) => [faqIds[i], q.category, q.question, q.answer, "SI", String(i + 1)]),
     ]),
     textos: toCsv([["clave", "valor"], ...Object.entries(content.texts)]),
+    negocio: toCsv([["clave", "valor"], ...businessToEntries(content.business)]),
+    sucursales: toCsv([
+      ["id", "nombre", "direccion", "ciudad", "telefono", "email", "whatsapp", "mapa", "horario_semana", "horario_sabado", "horario_domingo", "activo", "orden"],
+      ...content.locations.map((l, i) => [
+        locationIds[i], l.name, l.address, l.city, l.phone, l.email, l.whatsapp, l.mapUrl,
+        l.schedule[0]?.hours ?? "", l.schedule[1]?.hours ?? "", l.schedule[2]?.hours ?? "", "SI", String(i + 1),
+      ]),
+    ]),
   };
 }

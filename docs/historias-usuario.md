@@ -807,9 +807,10 @@ un dato de contacto sin pedir un cambio de código.
   actualizan al construir; **cambia la regla de `CLAUDE.md` 4 y `RNF-DATOS-001`**
   (los datos del negocio vivían solo en `src/config/`).
 - Decisión del usuario (2026-10-13): estos datos también salen de la hoja.
-  Qué datos exactos, qué se valida y qué pasa con el SEO estático se resuelven
-  al empezar `BR-048`.
-- RF relacionados: RF-CNT-007 (por escribir con `BR-048`).
+  Decisiones por defecto al construir `BR-048`, **por confirmar**: pestañas
+  `negocio` y `sucursales`; el SEO estático (`index.html`, sitemap) no cambia
+  con la hoja; un valor inválido rechaza la pestaña entera.
+- RF relacionados: RF-CNT-007.
 - RNF impactados: RNF-DATOS-001, RNF-CONF-003, RNF-SEG-004.
 - Casos de uso relacionados: CU-CNT-001.
 

@@ -2,9 +2,11 @@ import { FAQ_CATEGORIES } from "@/types/faq.types";
 import { PRODUCT_CATEGORIES } from "@/types/product.types";
 import { SERVICE_CATEGORIES } from "@/types/service.types";
 import type { FAQ } from "@/types/faq.types";
+import type { Location } from "@/types/location.types";
 import type { Product } from "@/types/product.types";
 import type { Service } from "@/types/service.types";
 import type { TeamMember } from "@/types/team.types";
+import { BUSINESS_FIELDS, businessValueProblem, emailProblem, isBusinessKey, mapUrlProblem, phoneProblem } from "./business";
 import type { CsvTable } from "./csv";
 import { formatClp } from "./format";
 import { TEXTS, isTextKey } from "./texts";
@@ -284,4 +286,81 @@ export function readTexts(table: CsvTable): TabResult<[string, string]> {
     },
     { unique: "clave" },
   );
+}
+
+/**
+ * Pestaña `negocio` (HU-CNT-003): pares clave → valor con los datos de contacto, reservas, horarios y redes.
+ * Igual que `textos`: una clave desconocida se ignora con un aviso, un valor vacío deja el dato de siempre y un
+ * valor inválido (teléfono, correo o enlace mal escritos) rechaza la pestaña para no publicar un contacto roto.
+ */
+export function readBusiness(table: CsvTable): TabResult<[string, string]> {
+  return readTab(
+    "negocio",
+    table,
+    {
+      required: ["clave", "valor"],
+      read: (r) => {
+        const key = r.text("clave", 60);
+        if (key === undefined) return undefined;
+        if (!isBusinessKey(key)) {
+          return r.warn("clave", `"${key}" no es un dato que use el sitio (¿error de escritura?; usa: ${Object.keys(BUSINESS_FIELDS).join(", ")}): se ignora`);
+        }
+
+        const value = r.raw("valor");
+        if (value === "") return undefined;
+        const problem = businessValueProblem(key, value);
+        if (problem) return r.report("valor", `${key}: ${problem}`);
+        return [key, value];
+      },
+    },
+    { unique: "clave" },
+  );
+}
+
+/** Pestaña `sucursales` (HU-CNT-003): una fila por sucursal, con sus horarios en tres columnas. */
+export function readLocations(table: CsvTable): TabResult<Location> {
+  return readTab(
+    "sucursales",
+    table,
+    {
+      required: ["id", "nombre", "direccion", "ciudad", "telefono", "email", "whatsapp", "mapa", "horario_semana", "horario_sabado", "horario_domingo"],
+      read: (r) => {
+        r.slug("id");
+        const name = r.text("nombre", 60);
+        const address = r.text("direccion", 80);
+        const city = r.text("ciudad", 60);
+        const phone = checked(r, "telefono", 30, phoneProblem);
+        const email = checked(r, "email", 80, emailProblem);
+        const whatsapp = checked(r, "whatsapp", 30, phoneProblem);
+        const mapUrl = checked(r, "mapa", 1000, mapUrlProblem);
+        const weekdays = r.text("horario_semana", 40);
+        const saturday = r.text("horario_sabado", 40);
+        const sunday = r.text("horario_domingo", 40);
+        if ([name, address, city, phone, email, whatsapp, mapUrl, weekdays, saturday, sunday].some((value) => value === undefined)) return undefined;
+        return {
+          name: name!,
+          address: address!,
+          city: city!,
+          phone: phone!,
+          email: email!,
+          whatsapp: whatsapp!,
+          mapUrl: mapUrl!,
+          schedule: [
+            { day: "Lunes - Viernes", hours: weekdays! },
+            { day: "Sábado", hours: saturday! },
+            { day: "Domingo", hours: sunday! },
+          ],
+        };
+      },
+    },
+    { unique: "id" },
+  );
+}
+
+/** Texto obligatorio con largo máximo y una validación de formato propia. */
+function checked(reader: RowReader, field: string, max: number, problemOf: (value: string) => string | undefined): string | undefined {
+  const value = reader.text(field, max);
+  if (value === undefined) return undefined;
+  const problem = problemOf(value);
+  return problem ? reader.report(field, problem) : value;
 }

@@ -17,8 +17,10 @@ export async function refreshContent(
     const { sheet, problems } = await fetchSheetTabs(source, fetchImpl);
     const { content, reports } = resolveContent(sheet, base);
 
-    if (problems.length > 0 || reports.some((report) => report.source === "respaldo")) {
-      console.warn(["[contenido] la hoja no se pudo usar completa:", ...problems.map((p) => `  - ${p}`), ...formatReports(reports)].join("\n"));
+    // Una pestaña sin `gid` configurado no se pidió: no es un problema que no venga de la hoja.
+    const asked = reports.filter((report) => report.tab in source.gids);
+    if (problems.length > 0 || asked.some((report) => report.source === "respaldo")) {
+      console.warn(["[contenido] la hoja no se pudo usar completa:", ...problems.map((p) => `  - ${p}`), ...formatReports(asked)].join("\n"));
     }
     return reports.some((report) => report.source === "hoja") ? content : undefined;
   } catch (error) {

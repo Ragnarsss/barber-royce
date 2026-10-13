@@ -10,6 +10,8 @@ const OTHER: SiteContent = {
   team: [{ name: "Respaldo", role: "r", experience: "e", image: "", isLead: false }],
   faq: [{ category: "Otros", question: "¿Respaldo?", answer: "Sí" }],
   texts: { "hero.titulo": "Respaldo" },
+  business: snapshot.business,
+  locations: snapshot.locations,
 };
 
 const goodSheet: SheetCsv = {
@@ -18,6 +20,10 @@ const goodSheet: SheetCsv = {
   equipo: "id,nombre,cargo,experiencia\nc,Carlos,Master,15 años\n",
   preguntas: "id,categoria,pregunta,respuesta\np,Otros,¿Algo?,Sí\n",
   textos: "clave,valor\nhero.titulo,Nuevo título\n",
+  negocio: "clave,valor\ntelefono,+56 9 5555 4444\n",
+  sucursales:
+    "id,nombre,direccion,ciudad,telefono,email,whatsapp,mapa,horario_semana,horario_sabado,horario_domingo\n" +
+    "s,Sucursal,Calle 1,Ciudad,+56 9 5555 4444,a@b.cl,+56 9 5555 4444,https://www.google.com/maps/embed?pb=1,09:00,09:00,Cerrado\n",
 };
 
 describe("resolveContent: hoja o respaldo (BR-039, HU-CNT-001, RNF-CONF-003)", () => {
@@ -49,6 +55,8 @@ describe("resolveContent: hoja o respaldo (BR-039, HU-CNT-001, RNF-CONF-003)", (
       expect(content.team.map((m) => m.name)).toEqual(["Carlos"]);
       expect(content.faq.map((q) => q.question)).toEqual(["¿Algo?"]);
       expect(content.texts).toEqual({ "hero.titulo": "Nuevo título" });
+      expect(content.business.contact.phone).toEqual({ display: "+56 9 5555 4444", link: "tel:+56955554444" });
+      expect(content.locations.map((l) => l.name)).toEqual(["Sucursal"]);
       expect(reports.every((report) => report.source === "hoja" && report.issues.length === 0)).toBe(true);
     });
 

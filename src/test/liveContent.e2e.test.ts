@@ -24,6 +24,7 @@ const CHROME_CANDIDATES = [
 ];
 const chromePath = CHROME_CANDIDATES.find((candidate) => candidate && existsSync(candidate));
 
+const tabla = (...filas: string[]) => ["clave,valor", ...filas, ""].join(String.fromCharCode(10));
 const team = (name: string) => `id,nombre,cargo,experiencia\nbarbero-uno,${name},Master Barber,10 años\n`;
 
 describe.skipIf(!chromePath)("el contenido de la hoja llega al sitio sin reconstruirlo (BR-047)", () => {
@@ -33,23 +34,27 @@ describe.skipIf(!chromePath)("el contenido de la hoja llega al sitio sin reconst
   let siteUrl: string;
   let cleanup: () => void;
   let equipo: string | undefined;
+  let negocio: string | undefined;
 
   beforeAll(async () => {
-    sheet = createServer((_request, response) => {
-      if (equipo === undefined) {
+    sheet = createServer((request, response) => {
+      const gid = new URL(request.url ?? "", "http://localhost").searchParams.get("gid");
+      const body = gid === "5" ? negocio : equipo;
+      if (body === undefined) {
         response.writeHead(500, { "access-control-allow-origin": "*" }).end("caído");
         return;
       }
-      response.writeHead(200, { "content-type": "text/csv; charset=utf-8", "access-control-allow-origin": "*" }).end(equipo);
+      response.writeHead(200, { "content-type": "text/csv; charset=utf-8", "access-control-allow-origin": "*" }).end(body);
     });
     await new Promise<void>((done) => sheet.listen(0, "127.0.0.1", done));
     const sheetUrl = `http://127.0.0.1:${(sheet.address() as AddressInfo).port}/d/e`;
 
     // El build lee la hoja una vez: ese es el contenido "de fábrica" del sitio.
     equipo = team("Barbero Del Build");
+    negocio = tabla("telefono,+56 9 1000 2000");
     const built = await buildToTempDir({
       CONTENT_SHEET_ID: "2PACX-prueba",
-      CONTENT_SHEET_GIDS: "equipo:2",
+      CONTENT_SHEET_GIDS: "equipo:2,negocio:5",
       CONTENT_SHEET_BASE_URL: sheetUrl,
       CONTENT_FETCH_TIMEOUT_MS: "3000",
     });
@@ -90,6 +95,26 @@ describe.skipIf(!chromePath)("el contenido de la hoja llega al sitio sin reconst
 
     expect(next).toContain("barbero tres");
     expect(next).not.toContain("barbero en vivo");
+  }, 60_000);
+
+  it("BR-048: un cambio en la pestaña negocio (teléfono, correo, enlaces) aparece en el footer sin reconstruir", async () => {
+    equipo = team("Barbero Del Build");
+    negocio = tabla("telefono,+56 9 5555 4444", "email,hola@hoja.test", "reservas.etiqueta,Agenda con la hoja");
+
+    const text = await teamNames("/equipo", "+56 9 5555 4444");
+
+    expect(text).toContain("+56 9 5555 4444");
+    expect(text).toContain("hola@hoja.test");
+    expect(text).not.toContain("+56 9 1000 2000");
+  }, 60_000);
+
+  it("BR-048: un teléfono mal escrito en la hoja no se publica: queda el del build", async () => {
+    negocio = tabla("telefono,llámanos");
+
+    const text = await teamNames("/equipo", "+56 9 1000 2000");
+
+    expect(text).toContain("+56 9 1000 2000");
+    expect(text).not.toContain("llámanos");
   }, 60_000);
 
   it("si la hoja se cae, el sitio sigue mostrando el contenido del build", async () => {

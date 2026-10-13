@@ -1,23 +1,23 @@
 # Cambiar el contenido del sitio desde una hoja de Google
 
 Guía para el dueño (y, al final, para quien mantiene el sitio). Con esto puedes
-cambiar **precios, servicios, productos, equipo, preguntas frecuentes y los
-títulos de la portada** editando una hoja de cálculo, sin pedirle nada a un
-desarrollador.
+cambiar **precios, servicios, productos, equipo, preguntas frecuentes, los
+títulos de la portada, los datos de contacto, las sucursales y las redes
+sociales** editando una hoja de cálculo, sin pedirle nada a un desarrollador.
 
-> **Antes de empezar:** el sitio sigue siendo una página fija. La hoja se lee
-> **cuando se publica un cambio** (tarda 1 o 2 minutos), no cada vez que alguien
-> entra. Si la hoja falla o tiene un error, el sitio **no se rompe**: sigue
-> mostrando la última versión buena de lo que falló.
+> **Antes de empezar:** el sitio lee la hoja cada vez que alguien lo abre, así que
+> un cambio se ve **a los 5 o 6 minutos, sin pedir un despliegue** (ver la sección
+> 5). Si la hoja falla o tiene un error, el sitio **no se rompe**: sigue mostrando
+> la última versión buena de lo que falló.
 
 Decisión de diseño y alternativas descartadas: [`architecture.md`](./architecture.md),
-`ADR-008`. Historia de usuario: `HU-CNT-001` y `HU-CNT-002`.
+`ADR-008`. Historias de usuario: `HU-CNT-001`, `HU-CNT-002` y `HU-CNT-003`.
 
 ---
 
 ## 1. Qué se puede editar
 
-La hoja tiene **cinco pestañas**. Los nombres tienen que ser exactamente estos, en
+La hoja tiene **siete pestañas**. Los nombres tienen que ser exactamente estos, en
 minúsculas.
 
 | Pestaña | Qué controla | Columnas obligatorias |
@@ -27,6 +27,8 @@ minúsculas.
 | `equipo` | La página del equipo | `id`, `nombre`, `cargo`, `experiencia` |
 | `preguntas` | Las preguntas frecuentes | `id`, `categoria`, `pregunta`, `respuesta` |
 | `textos` | Títulos y textos de la portada | `clave`, `valor` |
+| `negocio` | Teléfono, WhatsApp, correo, enlace de reservas, horarios y redes sociales | `clave`, `valor` |
+| `sucursales` | La página de ubicación: dirección, contacto, horarios y mapa de cada sucursal | `id`, `nombre`, `direccion`, `ciudad`, `telefono`, `email`, `whatsapp`, `mapa`, `horario_semana`, `horario_sabado`, `horario_domingo` |
 
 Cada fila es un servicio, un producto, un barbero, una pregunta o un texto. La
 **primera fila** de cada pestaña es el encabezado: no la borres ni cambies sus
@@ -87,6 +89,56 @@ Notas:
 - Si te equivocas al escribir una clave (por ejemplo `hero.titlo`), el sitio la
   **ignora** y lo avisa en el registro de la publicación (sección 6).
 
+
+### La pestaña `negocio`
+
+Funciona como `textos`: cada fila es **un dato**. En `clave` va el nombre y en
+`valor` lo que quieres que diga. Escribe los datos **como los vería una persona**
+(un teléfono, una dirección de internet): el sitio arma solo los enlaces de
+llamar, escribir por WhatsApp o enviar un correo. Un valor **vacío** deja el dato
+de siempre.
+
+| Clave | Qué es | Cómo escribirlo |
+|---|---|---|
+| `telefono` | Teléfono de contacto | `+56 9 1234 5678` (de 8 a 15 dígitos) |
+| `whatsapp` | Número de WhatsApp | `+56 9 1234 5678` |
+| `whatsapp.mensaje` | Mensaje con que empieza el chat | Texto de hasta 200 caracteres |
+| `email` | Correo de contacto | `contacto@tudominio.cl` |
+| `reservas.url` | Enlace de reservas (AgendaPro) | Dirección completa que empiece con `https://` |
+| `reservas.etiqueta` | Texto de los botones de reservar | Hasta 30 caracteres, por ejemplo `Reservar hora` |
+| `horario.semana` | Horario de lunes a viernes | `Lun - Vie: 10:00 - 20:00` |
+| `horario.sabado` | Horario del sábado | `Sáb: 10:00 - 18:00` |
+| `horario.domingo` | Horario del domingo | `Dom: Cerrado` |
+| `horario.resumen` | Horario resumido del pie de página | `Lun - Sáb: 9:00 - 20:00` |
+| `instagram.url` | Instagram | `https://` + la dirección de tu perfil |
+| `facebook.url` | Facebook | ídem |
+| `tiktok.url` | TikTok | ídem |
+
+**Un teléfono, un correo o un enlace mal escrito hace que el sitio ignore toda la
+pestaña `negocio`** (y siga con los datos anteriores) para no publicar un contacto
+roto; el motivo queda en el registro. Si escribes mal una clave (`telefon`), esa
+fila se ignora y se avisa.
+
+### La pestaña `sucursales`
+
+Una fila por sucursal; el orden de las filas (o la columna `orden`) es el orden de las
+pestañas en la página de ubicación. `activo = NO` oculta una sucursal.
+
+| Columna | Qué es |
+|---|---|
+| `id` | Nombre interno, único (`la-serena`): minúsculas, números y guiones |
+| `nombre`, `direccion`, `ciudad` | Lo que se muestra (hasta 60, 80 y 60 caracteres) |
+| `telefono`, `whatsapp` | Como en `negocio`: `+56 9 1234 5678` |
+| `email` | Correo de la sucursal |
+| `mapa` | La dirección que da Google Maps en **Compartir → Insertar un mapa** (solo la parte `https://www.google.com/maps/embed?…` del `src`) |
+| `horario_semana`, `horario_sabado`, `horario_domingo` | Por ejemplo `09:00 - 20:00` o `Cerrado` |
+
+Si una sola fila tiene un teléfono, un correo o un mapa mal escritos, el sitio ignora
+**toda** la pestaña `sucursales` y sigue con las sucursales anteriores.
+
+> **Lo que la hoja no cambia:** los datos que ven los buscadores (el resumen del
+> negocio en el código de la página, el mapa del sitio) se renuevan cuando se vuelve a
+> desplegar el sitio, no con cada cambio de la hoja.
 ---
 
 ## 2. Crear la hoja (una sola vez)
@@ -95,7 +147,7 @@ Notas:
    (por ejemplo, «Contenido Royce Barbería»).
 2. Por cada pestaña, importa su plantilla desde la carpeta
    [`docs/contenido/`](./contenido/) de este repositorio:
-   `servicios.csv`, `productos.csv`, `equipo.csv`, `preguntas.csv` y `textos.csv`.
+   `servicios.csv`, `productos.csv`, `equipo.csv`, `preguntas.csv`, `textos.csv`, `negocio.csv` y `sucursales.csv`.
    - **Archivo → Importar → Subir**, elige el archivo y, en «Ubicación de
      importación», **«Insertar hoja(s) nueva(s)»**.
    - Renombra cada pestaña con el nombre exacto de la tabla de arriba.
@@ -117,7 +169,7 @@ que sea público.
 1. **Archivo → Compartir → Publicar en la web**.
 2. En «Vínculo», elige **la pestaña** (no «Documento completo») y el formato
    **«Valores separados por comas (.csv)»**. Pulsa **Publicar**.
-3. Repite para cada una de las cinco pestañas.
+3. Repite para cada una de las siete pestañas.
 4. De la dirección que aparece, anota dos cosas:
 
 ```
@@ -142,7 +194,7 @@ publicar, también **Preview**):
 | Nombre | Valor |
 |---|---|
 | `CONTENT_SHEET_ID` | El identificador `2PACX-…` |
-| `CONTENT_SHEET_GIDS` | `servicios:0,productos:111,equipo:222,preguntas:333,textos:444` (cambia los números por los `gid` reales de cada pestaña) |
+| `CONTENT_SHEET_GIDS` | `servicios:0,productos:111,equipo:222,preguntas:333,textos:444,negocio:555,sucursales:666` (cambia los números por los `gid` reales de cada pestaña) |
 
 Luego **vuelve a desplegar** el sitio una vez (Deployments → los tres puntos del
 último → Redeploy) para que las lea.

@@ -2,6 +2,8 @@ import { servicesList } from "./snapshot/services";
 import { productsList } from "./snapshot/products";
 import { teamMembersList } from "./snapshot/team";
 import { FAQ_LIST } from "./snapshot/faq";
+import { business } from "./snapshot/business";
+import { locations } from "./snapshot/locations";
 import type { SiteContent } from "./types";
 
 /**
@@ -16,4 +18,6 @@ export const snapshot: SiteContent = {
   team: teamMembersList,
   faq: FAQ_LIST,
   texts: {},
+  business,
+  locations,
 };

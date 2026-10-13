@@ -7,6 +7,7 @@ import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { LenisContext } from "@/contexts/lenisContextValue";
 import { resolveContent, type SheetCsv } from "@/content/resolveContent";
+import { contentToSheet } from "@/content/sheetFormat";
 import { snapshot } from "@/content/snapshot";
 import { TEXTS } from "@/content/texts";
 import { CONTENT_TABS, type SiteContent } from "@/content/types";
@@ -24,7 +25,11 @@ const hoja = vi.hoisted(() => ({
     texts: {},
   },
 }));
-vi.mock("virtual:site-content", () => ({ default: hoja.content }));
+vi.mock("virtual:site-content", async () => {
+  // Los datos del negocio y las sucursales son los de siempre: estas pruebas miran el catálogo.
+  const { snapshot: base } = await import("@/content/snapshot");
+  return { default: { ...hoja.content, business: base.business, locations: base.locations } };
+});
 
 import { FAQPage } from "@/pages/FAQPage";
 import { ProductsPage } from "@/pages/ProductsPage";
@@ -122,7 +127,7 @@ describe("plantillas CSV de docs/contenido (BR-041, HU-CNT-001)", () => {
   const sheet = Object.fromEntries(
     CONTENT_TABS.map((tab) => [tab, readFileSync(resolve(root, "docs/contenido", `${tab}.csv`), "utf8").replace(/\r\n/g, "\n")]),
   ) as SheetCsv;
-  const emptyFallback: SiteContent = { services: [], products: [], team: [], faq: [], texts: {} };
+  const emptyFallback: SiteContent = { services: [], products: [], team: [], faq: [], texts: {}, business: snapshot.business, locations: [] };
 
   it("existe una plantilla por pestaña", () => {
     for (const tab of CONTENT_TABS) expect(existsSync(resolve(root, "docs/contenido", `${tab}.csv`)), tab).toBe(true);
@@ -148,5 +153,19 @@ describe("plantillas CSV de docs/contenido (BR-041, HU-CNT-001)", () => {
     expect(content.products).toEqual(snapshot.products);
     expect(content.team).toEqual(snapshot.team);
     expect(content.faq).toEqual(snapshot.faq);
+  });
+
+  it("BR-048: las de negocio y sucursales también reproducen los datos actuales, con los enlaces armados igual", () => {
+    const { content } = resolveContent(sheet, emptyFallback);
+
+    expect(content.business).toEqual(snapshot.business);
+    expect(content.locations).toEqual(snapshot.locations);
+  });
+
+  it("BR-048: cada plantilla es exactamente lo que se genera del respaldo (si cambia un dato, se regenera la plantilla)", () => {
+    const generated = contentToSheet(snapshot);
+
+    // `textos` lista los textos por defecto del código (`texts.ts`), no el respaldo: se prueba aparte.
+    for (const tab of CONTENT_TABS.filter((tab) => tab !== "textos")) expect(sheet[tab], tab).toBe(generated[tab]?.replace(/\r\n/g, "\n"));
   });
 });

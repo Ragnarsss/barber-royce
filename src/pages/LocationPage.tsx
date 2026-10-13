@@ -1,6 +1,6 @@
 import { ROUTES } from "@/config/routes";
 import styles from "./LocationPage.module.css";
-import { locationsList } from "@/data/locationsData";
+import { useSiteContent } from "@/content/useSiteContent";
 import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
 import { PageHero } from "@/components/common/PageHero/PageHero";
 import { LocationTabs } from "@/components/sections/Location/LocationTabs";
@@ -14,6 +14,7 @@ import { LocationTabs } from "@/components/sections/Location/LocationTabs";
  * @returns Contenido principal de la pagina de ubicacion.
  */
 export const LocationPage = () => {
+  const { locations } = useSiteContent();
   const route = ROUTES.location;
 
   return (
@@ -27,7 +28,7 @@ export const LocationPage = () => {
 
       <div className={styles.content}>
         <div className={styles.container}>
-          <LocationTabs locations={locationsList} />
+          <LocationTabs locations={locations} />
         </div>
       </div>
     </div>
