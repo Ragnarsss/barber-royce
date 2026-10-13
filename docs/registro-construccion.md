@@ -548,3 +548,46 @@ responden 200 y el bundle publicado contiene `PageError`.
 - Verificación local: 55 tests, lint, tipos y build OK. Pendiente (al
   final, en el preview): Lighthouse móvil en las 7 rutas (CP-PERF-002) y la
   pestaña Network (CP-PERF-004), con la salvedad de Unsplash.
+
+---
+
+<a id="br-013"></a>
+
+## BR-013 — CSS crítico sin parpadeo
+
+**Notas de construcción (2026-10-12):**
+- El `asyncCSSPlugin` de `vite.config.ts` solo reescribía el
+  `<link rel="stylesheet">` del `index.html`, que en este proyecto es el
+  CSS principal (el que estiliza la home). Los CSS de las rutas lazy los
+  inyecta Vite desde el JavaScript y nunca pasaron por el plugin, así que
+  la idea de "diferir solo los de rutas lazy" no aplicaba.
+- Medición (Lighthouse 12, móvil, `vite preview` local, 2 corridas cada
+  variante):
+
+  | | Con plugin | Sin plugin |
+  |---|---|---|
+  | Rendimiento | 86 / 86 | 85 / 86 |
+  | LCP | 3,5 / 3,5 s | 3,7 / 3,5 s |
+  | FCP | 2,6 / 2,6 s | 2,5 / 2,6 s |
+  | TBT | 100 / 100 ms | 120 / 110 ms |
+  | CLS | 0 / 0 | 0 / 0 |
+
+  Sin diferencia medible. En una SPA no hay nada que pintar hasta que el
+  JavaScript monte, así que el CSS en paralelo no retrasa nada, y el
+  patrón `preload` + `onload` solo agregaba riesgo de contenido sin estilo.
+- Una primera comparación resultó inválida: `npm run build` falló por
+  TypeScript (la función quedó sin usar) y las corridas "sin plugin"
+  midieron el `dist` anterior. Se repitió con `vite build` y se verificó el
+  `<link rel="stylesheet">` en el HTML generado.
+- Cambios: se elimina `asyncCSSPlugin` de `vite.config.ts`, y la CSP de
+  `vercel.json` queda con `script-src 'self'` (ya no hace falta el
+  `'unsafe-hashes'` ni el hash `sha256-…` que `BR-002` había agregado para
+  el `onload` inline).
+- Test (`src/test/vercelConfig.test.ts`, 5 casos; el de la CSP falla con
+  el `vercel.json` anterior): las 6 cabeceras presentes, `script-src
+  'self'` exacto, `index.html` sin manejadores inline, rewrite que excluye
+  `/assets` (cierra el hueco de test de `BR-002`) y caché inmutable.
+- Verificación local: 60 tests, lint, tipos y build OK; el `dist/index.html`
+  trae un `<link rel="stylesheet">` normal y ningún `onload`. Pendiente
+  (al final, en el preview): la consola sin violaciones de CSP y la página
+  con estilos desde la primera pintura con CPU 4x.

@@ -681,7 +681,7 @@ Criterios de aceptación:
 #### BR-013 — CSS crítico sin parpadeo
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (rama `perf/br-013-css-critico`; hecho en local, falta confirmar en el preview)
 - Historia de usuario: HU-EXP-001 (CA-01)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`
 
@@ -693,13 +693,18 @@ ex `P015` (critical CSS).
 Alcance:
 1. Medir con y sin el plugin.
 2. Dejar bloqueante el CSS de la carga inicial y diferir solo el de rutas
-   lazy, o retirar el plugin si no aporta.
+   lazy, o retirar el plugin si no aporta. **Resultado: se retira** (el
+   plugin solo tocaba el CSS principal del `index.html`; los CSS de rutas
+   lazy los gestiona Vite aparte).
 3. Si cambia o se retira el `onload` inline del plugin, actualizar o
-   quitar su hash en la CSP de `vercel.json` (`BR-002`).
+   quitar su hash en la CSP de `vercel.json` (`BR-002`). **Hecho:**
+   `script-src 'self'`.
 
 Criterios de aceptación:
 1. Sin FOUC visible en una carga con CPU 4x y 4G lenta; CP-PERF-001 y
    CP-PERF-002 no empeoran.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-013).
 
 ---
 
@@ -928,7 +933,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-011 | Ruta crítica del LCP | F | P1 | S | En curso | — |
 | BR-012 | Imágenes pendientes | F | P1 | S | En curso | BR-011 |
 | BR-035 | JavaScript inicial de la home | F | P1 | M | Propuesta | BR-011, BR-013 |
-| BR-013 | CSS crítico | F | P1 | S | Propuesta | — |
+| BR-013 | CSS crítico | F | P1 | S | En curso | — |
 | BR-014 | Lenis sin fugas | E | P1 | M | En curso | BR-004 |
 | BR-015 | Cero re-renders por scroll | E | P1 | M | En curso | BR-014 |
 | BR-016 | Parallax liviano y variantes | E | P1 | M | En curso | BR-015 |

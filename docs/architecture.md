@@ -233,7 +233,7 @@ No hay gestor de estado global (ADR-004).
 | Unas 1000 líneas de código muerto (hooks de rendimiento, `ScrollProgressContext`, `SmoothParallax`, `Button` propio, `Services`) | Abierta | `BR-025` |
 | Datos del negocio inconsistentes o de ejemplo (teléfono, email, horarios, redes) | Abierta, bloqueada por datos reales | `BR-005` |
 | Imágenes de productos y servicios desde Unsplash | Abierta, bloqueada por fotos reales | `BR-008` |
-| `asyncCSSPlugin` aplica carga diferida a todo el CSS, incluido el crítico | Abierta | `BR-013` |
+| ~~`asyncCSSPlugin` difería todo el CSS, incluido el crítico~~ | Cerrada: plugin retirado, CSP sin hashes | `BR-013` |
 | Prerender / SSG | Spike | `BR-034` |
 | Analítica y monitoreo de errores | Diferida | backlog §4 |
 
