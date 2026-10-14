@@ -1438,3 +1438,16 @@ servido con `vite preview` y Chrome real:
 - Test primero: `magneticOffset` (centro, fracción, tope) y el conteo de destellos de `lightBarIgnite`. Después: `CTA1.test.tsx` (foto dentro de la figura, rojo sólido, barras con y sin reducir movimiento, sin literal de marca, sin hex, sin `will-change`, sin CSS muerto, foco fuera del chaflán, contraste del blanco sobre el rojo).
 
 **Verificación:** 525 tests en verde, lint y tipos limpios. Capturas con `puppeteer-core` en escritorio (con el cursor sobre el botón) y móvil emulado a 390 px. **Lighthouse móvil, `master` contra BR-058 alternados ×5:** TBT 182 → 166 ms (mediana; dispersión de 128 a 341 en ambas), LCP 6,4 → 6,3 s, CLS 0. Una primera comparación daba +50 ms, pero el build de `master` en el worktree no tenía el `.env` (sin analítica ni hoja en vivo); se anotó como trampa en la skill. **Pendiente (usuario):** ver en movimiento el encendido de las barras, el botón magnético y el parallax de la figura.
+
+---
+
+<a id="br-059"></a>
+
+## BR-059 — Navbar: resplandor de neón blanco al pasar el cursor
+
+**Notas de construcción (2026-10-14):**
+- Pedido del usuario al ver las barras de luz de CTA1: el hover de los enlaces pasaba de rojo a un rojo más brillante. Ahora, al pasar el cursor o con foco de teclado, el texto pasa a blanco con un resplandor de neón (`--nav-glow`: núcleo blanco, halo blanco y dos capas de halo rojo), todo con `color-mix` sobre tokens. El foco de teclado del menú móvil se ilumina igual. Con reducir movimiento, sin transición.
+- La primera versión del resplandor era demasiado discreta frente a los tubos de CTA1; se reforzó tras verla en una captura.
+- Test primero (`navbarNeon.test.ts`): hover y foco comparten el resplandor, el menú móvil también, sin colores escritos a mano, sin transición con reducir movimiento.
+
+**Verificación:** captura con el cursor sobre «Servicios». Texto blanco sobre la navbar negra: contraste máximo. **Pendiente (usuario):** verlo en movimiento.
