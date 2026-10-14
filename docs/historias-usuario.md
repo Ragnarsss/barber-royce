@@ -50,6 +50,7 @@ citan.
 | HU-EXP-001 | EXP | Sitio rápido y fluido en el celular | Alta | 5 | 8 | — | Aprobada |
 | HU-EXP-002 | EXP | Sitio accesible y respetuoso con el movimiento | Media | 4 | 5 | — | Aprobada |
 | HU-EXP-003 | EXP | Mensaje claro si algo falla o la página no existe | Alta | 4 | 3 | — | Aprobada |
+| HU-EXP-004 | EXP | Una primera impresión visual que se recuerde | Media | 4 | 8 | HU-EXP-001, HU-EXP-002 | Propuesta |
 | HU-OPS-001 | OPS | Desplegar cambios verificados sin romper producción | Alta | 5 | 5 | — | Aprobada |
 | HU-MED-001 | MED | Ver cuántas personas visitan el sitio | Media | 4 | 2 | HU-OPS-001 | Propuesta |
 | HU-MED-002 | MED | Saber cuántos visitantes tocan "Reservar" y de dónde llegan | Media | 4 | 5 | HU-MED-003, HU-RES-001 | Propuesta |
@@ -65,7 +66,7 @@ citan.
 | Captación y reserva | HU-RES-001, HU-RES-002 |
 | Contenido del negocio | HU-INFO-001 .. HU-INFO-005 |
 | Visibilidad local | HU-SEO-001 |
-| Experiencia | HU-EXP-001, HU-EXP-002, HU-EXP-003 |
+| Experiencia | HU-EXP-001 .. HU-EXP-004 |
 | Operación | HU-OPS-001 |
 | Medición y privacidad | HU-MED-001, HU-MED-002, HU-MED-003 |
 | Contenido editable | HU-CNT-001, HU-CNT-002, HU-CNT-003 |
@@ -555,6 +556,50 @@ frente a una pantalla en blanco.
 
 ---
 
+## HU-EXP-004 - Una primera impresión visual que se recuerde
+
+Como persona que llega al sitio por primera vez, quiero que lo primero que
+vea transmita la marca con carácter (tipografía propia, fondos con
+profundidad y pequeñas reacciones a mi cursor), para recordar la barbería
+y confiar en que el servicio está a la altura.
+
+- Epic: Experiencia
+- Actor / Persona: Cliente que llega por primera vez
+- Prioridad: Media
+- Estimación: 8 SP (se entrega por secciones, empezando por el hero)
+- Fuente: pedido del dueño del sitio (2026-10-14): lograr un sitio más
+  llamativo con efectos visuales, micro-interacciones y fondos trabajados,
+  sección por sección.
+- Dependencias: HU-EXP-001 (el efecto no puede costar velocidad),
+  HU-EXP-002 (ni accesibilidad ni respeto a reducir el movimiento).
+- Riesgo: Medio — una tipografía de display y las animaciones de entrada
+  pueden empeorar LCP, CLS y TBT; las animaciones son un riesgo para quien
+  tiene activada la reducción de movimiento.
+- RF relacionados: —
+- RNF impactados: RNF-PERF-001, RNF-PERF-002, RNF-PERF-003, RNF-A11Y-003,
+  RNF-A11Y-004.
+- Casos de uso relacionados: —
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given abro la portada, When carga, Then el nombre de la marca es el
+  elemento tipográfico dominante y el lema queda en un segundo nivel
+  jerárquico claro.
+- CA-02: Given abro la portada en un celular de gama media, When mido con
+  Lighthouse móvil, Then LCP ≤ 2,5 s y CLS ≤ 0,1 no empeoran frente al estado
+  anterior, y la fuente nueva no produce saltos de texto al cargar.
+- CA-03: Given tengo activada la reducción de movimiento, When abro la
+  portada, Then el texto aparece completo y estático, sin animación de
+  entrada ni destellos.
+- CA-04: Given el dueño cambia el lema en la hoja, When se publica, Then el
+  diseño se mantiene sin desbordar ni romperse, y el nombre de la marca no
+  depende de la hoja.
+- CA-05: Given cada ancho de pantalla (móvil, tablet, escritorio), When veo
+  la portada, Then el nombre cabe sin desbordar y el contraste del texto
+  sobre el fondo cumple RNF-A11Y-004.
+
+---
+
 ## HU-OPS-001 - Desplegar cambios verificados sin romper producción
 
 Como desarrollador, quiero que cada cambio se verifique automáticamente y
@@ -835,7 +880,7 @@ el de la portada) desde la hoja, para ajustar el mensaje sin tocar código.
 
 ### Criterios de aceptación (Given/When/Then)
 
-- CA-01: Given la pestaña `textos` define `hero.titulo`, When se construye
+- CA-01: Given la pestaña `textos` define `hero.lema`, When se construye
   el sitio, Then la portada muestra ese título.
 - CA-02: Given una clave no existe en la hoja, When se construye el sitio,
   Then se muestra el texto por defecto del código.

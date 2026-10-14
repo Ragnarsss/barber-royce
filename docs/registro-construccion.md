@@ -1315,3 +1315,11 @@ servido con `vite preview` y Chrome real:
 **Lo que verifiqué yo en producción (2026-10-13, Chrome real, sin aceptar el aviso):** 7 rutas responden 200; en cada página el navegador pide las 7 pestañas a Google (redirección 307 y 200), sin avisos de CSP ni de CORS; Google Analytics no se carga sin consentimiento; `/privacidad` existe.
 
 **Queda fuera de estos tickets:** el texto de `/privacidad` es un borrador sin validación legal (`BR-044`); los datos del negocio de las plantillas siguen siendo de muestra (`BR-005`).
+
+---
+
+## Cierre de BR-042 y BR-043 (2026-10-14)
+
+**Lo que verificó y reportó el usuario:** el 2026-10-14 dio por hechas las pruebas manuales de ambos tickets («ya está todo hecho»): cambiar un texto desde la pestaña `textos` y publicar contenido siguiendo `docs/contenido-hoja.md` (cierre de la épica J). No detalló qué texto ni qué dato cambió, así que el criterio 1 de `BR-043` (cambiar un precio solo con la guía) queda cubierto por su confirmación general, junto con la prueba de `BR-047` (un cambio en la hoja visto en producción sin volver a desplegar).
+
+**Cierre manual:** por decisión del usuario no se corrió la skill `cerrar-ticket` completa; el código de ambos ya estaba en `master` desde el PR #13.
