@@ -1273,3 +1273,32 @@ servido con `vite preview` y Chrome real:
 - **Por confirmar con quien valide el texto:** un texto genérico informa menos que uno con nombres (qué proveedor, qué cookies, qué país). Muchas políticas nombran a los proveedores; la ley chilena exige informar las finalidades y los destinatarios, y esto sigue siendo un borrador sin validación legal.
 
 - **Pruebas independientes del `.env` (2026-10-13):** al poner los IDs de analítica en el `.env` local, 3 tests fallaban porque leían esas variables (no fallaban en el CI, que no tiene `.env`). `vitest.config.ts` y los builds de prueba (`buildOutput.ts`) usan ahora `envDir: false`; un test lo fija.
+
+---
+
+<a id="br-049"></a>
+
+## BR-049 — El smooth scroll no se percibe y su implementación tiene redundancias
+
+**Notas de construcción (2026-10-13):**
+- Origen: el scroll se sentía igual que el nativo. Causa: `duration: 0.25` (250 ms no se distingue del nativo), `scroll-behavior: smooth` en `reset.css` sumándose al de Lenis y `lenis.css` sin importar.
+- `useLenis` pasa a `useCreateLenis` (el nombre `useLenisInstance` ya era el del consumidor en `useLenisContext.ts`). `duration: 1.2`, `autoRaf: true` y `autoResize: true`: se van el loop de `requestAnimationFrame` y el `ResizeObserver` sobre el `body` (`Dimensions` de Lenis 1.3.17 ya observa ventana y contenido).
+- Se elimina `LenisProvider`: solo envolvía un `Provider` y un `setTimeout` de 100 ms con un segundo `resize()`. El contexto guarda la instancia o `null` y `useLenisReady` es `lenis !== null`.
+- Se mantiene `setLenisInstance(null)` en el cleanup: sin él, al activar reducir movimiento en caliente el contexto retendría una instancia destruida (un test lo cubre).
+- Se quita `scroll-behavior: smooth` del reset y el bloque vacío de `global.css`; `App.tsx` importa `lenis/dist/lenis.css`. `smoothScrollCss.test.ts` vigila ambos.
+- Config tipada con `LenisOptions`. Práctica registrada en `engineering-guidelines.md` §14 y en `calidad-codigo-auditor` (decisión del usuario, 2026-10-13). También se agrega a la §6 cómo se aplica la DoD: la IA guía el paso a paso y la persona ejecuta las verificaciones.
+- Test primero: `useCreateLenis.test.tsx` (duración ≥ 1, `autoRaf`, sin `ResizeObserver` ni `MutationObserver`, destrucción al desmontar y al activar reducir movimiento), `useLenisContext.test.tsx` (triangulado: sin instancia / con instancia / sin proveedor) y `smoothScrollCss.test.ts`. Los 457 tests, lint y tipos pasaron antes de integrar.
+- Renumeración: el ticket nació como BR-046, ID que `master` ya usaba para otro ticket; se pasó a BR-049 antes de integrar.
+
+**Verificación (la ejecutó el usuario en el navegador):**
+- CA-01: efecto percibido, con la clase `lenis` en `html`. ✔
+- CA-02: con `prefers-reduced-motion: reduce` emulado y recarga, `lenis` da `false`. Comprobado en la home. ✔
+- CA-03: test del hook. ✔
+- CA-04: rutas y anclas recorridas. ✔
+- CA-05: en el build de producción (`localhost:4173`), CPU 4x, contador de `longtask` durante el scroll completo de la home. Primera medición: `[86]` (una tarea de 86 ms); medición repetida: `[]`. La de 86 ms se toma como caso aislado. La grabación en el servidor de desarrollo (`:8888`) no se usó para decidir.
+
+**Pendiente (usuario):** probar el scroll en un celular real o emulado desde el preview de Vercel antes de integrar este cierre; el recorrido de reducir movimiento en las otras 6 rutas. En móvil Lenis no suaviza el dedo (`syncTouch` es `false`), así que ahí el efecto no existe y se espera el scroll nativo.
+
+**Derivado:** `touchMultiplier: 2` en `useCreateLenis` no tiene efecto sin `syncTouch`; queda por decidir si se quita o se suaviza el toque. `ScrollToTop.tsx` hace `resize()` más un `setTimeout` de 300 ms, otra redundancia fuera del alcance.
+
+**Observación al cerrar (2026-10-14, medida en producción con Chrome sin pantalla):** home y `/ubicacion` avanzan lo esperado con la rueda (600 de 600 px, clase `lenis` presente, sin errores de consola). En `/servicios`, con el puntero sobre el carrusel horizontal de tarjetas (`overflow-x: auto`), la página avanzó 60 px (otra posición, 398 px); fuera del carrusel, 600 px. No se sabe si lo causa este ticket o el carrusel con scroll propio, y la rueda simulada no es una real. **Por verificar (usuario):** con una rueda real, ¿la página sigue al desplazarse con el puntero sobre el carrusel de `/servicios`? Si no, abrir un ticket (posible `data-lenis-prevent` o ajuste del carrusel).

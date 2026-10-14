@@ -749,7 +749,7 @@ Criterios de aceptación:
 #### BR-049 — El smooth scroll no se percibe y su implementación tiene redundancias
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: BR-014, BR-017
-- Estado: En curso (rama `fix/br-049-smooth-scroll`; hecho en local, falta verificar en el preview)
+- Estado: Hecho (2026-10-13, rama `fix/br-049-smooth-scroll` → master, PR #19)
 - Historia de usuario: HU-EXP-001 (CA-02)
 - RF/RNF: `RNF-PERF-006`, `RNF-A11Y-003`
 
@@ -802,6 +802,8 @@ Criterios de aceptación:
 4. `ScrollToTop` y la navegación por anclas siguen funcionando en las 7
    rutas.
 5. CP-PERF-006 no empeora.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-049).
 
 ---
 
@@ -1496,7 +1498,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-046 | Leer la hoja desde `.env` y en desarrollo | J | P2 | S | En curso | BR-040 |
 | BR-047 | El navegador relee la hoja: cambios sin desplegar | J | P1 | M | En curso | BR-040 |
 | BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | En curso | BR-047 |
-| BR-049 | Smooth scroll imperceptible y redundante | E | P1 | S | En curso | BR-014, BR-017 |
+| BR-049 | Smooth scroll imperceptible y redundante | E | P1 | S | Hecho | BR-014, BR-017 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
