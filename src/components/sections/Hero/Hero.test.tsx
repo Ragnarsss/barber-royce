@@ -196,3 +196,65 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
     expect(layers).not.toMatch(/#[0-9a-fA-F]{3,6}\b|rgba?\(/);
   });
 });
+
+describe("Hero: tarjetas de beneficios (BR-056, HU-EXP-004 CA-09)", () => {
+  const withScreen = (wide: boolean) =>
+    vi.stubGlobal("matchMedia", (query: string) => ({ matches: wide && query === "(min-width: 769px)", media: query, addEventListener() {}, removeEventListener() {} }));
+
+  beforeAll(() => {
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      },
+    );
+  });
+
+  beforeEach(() => {
+    state.texts = {};
+    state.reducedMotion = false;
+  });
+
+  it("CA-09: en escritorio las tres tarjetas tienen profundidad ligada al scroll", () => {
+    withScreen(true);
+    renderHero();
+
+    const cards = [...document.querySelectorAll("[data-benefit]")];
+    expect(cards).toHaveLength(3);
+    for (const card of cards) expect(card.getAttribute("data-depth")).toBe("on");
+  });
+
+  it("en móvil no hay profundidad: las tarjetas quedan bajo el pliegue y se montarían sobre el texto", () => {
+    withScreen(false);
+    renderHero();
+
+    for (const card of document.querySelectorAll("[data-benefit]")) expect(card.getAttribute("data-depth")).toBe("off");
+  });
+
+  it("CP-A11Y-003: con reducir movimiento no hay profundidad ni luz que barre", () => {
+    withScreen(true);
+    state.reducedMotion = true;
+    renderHero();
+
+    for (const card of document.querySelectorAll("[data-benefit]")) expect(card.getAttribute("data-depth")).toBe("off");
+    expect(heroCss).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{[^@]*\.benefit::after\s*\{\s*display:\s*none/);
+  });
+
+  it("la tarjeta tiene las esquinas cortadas y la luz que barre solo existe con ratón", () => {
+    expect(heroCss).toMatch(/\n\.benefit\s*\{[^}]*clip-path:\s*polygon\(/);
+    expect(heroCss).toMatch(/@media \(hover: hover\) and \(pointer: fine\)\s*\{[^@]*\.benefit:hover::after/);
+  });
+
+  it("ADR-002: las tarjetas no traen colores escritos a mano ni prometen un clic que no existe", () => {
+    const cards = heroCss.match(/\n\.benefit\s*\{[\s\S]*?\n\.heroImage\s*\{/)?.[0] ?? "";
+
+    expect(cards.length).toBeGreaterThan(0);
+    expect(cards).not.toMatch(/#[0-9a-fA-F]{3,6}\b|rgba?\(/);
+    expect(cards).not.toMatch(/cursor:\s*pointer/);
+  });
+});

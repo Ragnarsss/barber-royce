@@ -1365,3 +1365,48 @@ servido con `vite preview` y Chrome real:
 - Las 7 carpetas de `.claude/skills/` tienen `SKILL.md` y aparecen en `AGENTS.md` (criterio 2). ✔
 - Las dos skills aparecen en la lista de skills disponibles de la sesión (la lista se recarga al iniciar o refrescar la sesión; recién creadas, `Skill` respondía «Unknown skill»). ✔
 - Criterio 1 (que la skill proponga tres direcciones antes de escribir código): **se comprueba en su primer uso real**, con `BR-054`.
+
+---
+
+<a id="br-054"></a>
+
+## BR-054 — Loader de neón (letrero «Barber Royce»)
+
+**Notas de construcción (2026-10-14):**
+- Primer uso real de la skill `diseno-visual`: diagnóstico, tres direcciones (neón en el HTML, secuencia en React, letrero que se vuelve el hero) y elección del usuario (A). Del uso salieron dos ajustes a la skill: el marcador de argumento que se comía el signo peso y mirar la película de carga de Lighthouse en el paso 1.
+- Inspiración: el letrero de neón real de la barbería (foto del usuario). Asset **provisorio**: «Barber Royce» en Sacramento (OFL, línea fina: rellena se lee como un solo tubo), convertido a trazados con `opentype.js` en una carpeta temporal, fuera del repo; tijera de `lucide-react`; marco a mano. Coordenadas redondeadas a enteros: ~5 KB comprimidos en `index.html`. El definitivo (calcado del letrero) es `BR-057`.
+- Todo en línea en `index.html` (la CSP permite estilos en línea, no scripts): tres capas por pieza (tubo apagado, halo borroso, núcleo), encendido y parpadeo con keyframes `steps`, una letra defectuosa con su propio ritmo, retiro de seguridad por CSS a los 8 s.
+- `src/loader/neonLoader.ts`: lo apaga al montar React (mínimo de 1,2 s solo la primera carga de la sesión, `sessionStorage` con `try/catch`), lo acorta con cualquier interacción y avisa al hero (`useSyncExternalStore`), cuya entrada espera `isLoaderDone`.
+- **Premisa corregida al medir:** el CSS que bloquea el render frena también al letrero; el FCP móvil sigue en 3,0 s. El letrero tapa el tramo corto entre su aparición (~0,4 s) y la del sitio (~0,75 s), no «3 s de pantalla vacía». El usuario aceptó por escrito la regresión de LCP en la primera visita de la sesión (ver la ficha).
+- Bug encontrado: el aviso de privacidad (`z-index: 10000`) se dibujaba encima del letrero; el letrero pasó a 10001.
+- Test primero: `neonLoader.test.ts` (mínimo triangulado, salida, retiro, interacciones, sesión, almacenamiento que falla, limpieza) y `neonLoaderHtml.test.ts` (posición antes de `#root`, sin scripts, tiempos CSS = constantes, retiro de seguridad, ≤ 3 destellos por segundo contando los keyframes, reducir movimiento, colores = tokens, SVG válido). Se vieron fallar tres defectos introducidos a propósito.
+
+**Verificación:** lint, tipos y suite en verde. Capturas del letrero (escritorio y 390 px reales en un iframe). Lighthouse móvil local, mediana de 3, BR-050 → BR-054: FCP 2,9 → 3,0 s; LCP 5,0 → 6,5 s (aceptado, primera visita); CLS 0; TBT 140 → 130 ms. **Pendiente (usuario):** ver el encendido y el parpadeo en movimiento en el preview o producción, en escritorio y en un celular.
+
+---
+
+<a id="br-055"></a>
+
+## BR-055 — Hero: fondos con profundidad
+
+**Notas de construcción (2026-10-14):**
+- Triángulos con degradado (luz arriba a la izquierda) y filo de luz de 1 px en la diagonal como **segundo fondo del mismo elemento**: con `to bottom right`, la línea del 50 % pasa por las esquinas que corta el `clip-path`, así que el filo sigue al parallax sin DOM extra. Los colores escritos a mano de los triángulos pasaron a tokens con `color-mix`.
+- Grano: ruido de SVG (`feTurbulence`, escala de grises) como `data:` URI (la CSP permite `data:` en imágenes). Primero con `mix-blend-mode: overlay`: TBT móvil subió a una mediana de 230 ms porque cada fotograma de la entrada recomponía la mezcla. Sin la mezcla y con opacidad simple: 180 ms.
+- Haz de luz (`spotlight.ts`): círculo de tamaño fijo movido con `transform` (MotionValue + resorte), opacidad que aparece al primer movimiento y se apaga al salir del hero. Solo con `(pointer: fine)` y sin reducir movimiento. Test primero de `spotlightOffset` (triangulado) y `shouldTrackPointer`.
+- Móvil: queda el triángulo principal a todo el ancho en vez de un fondo plano.
+- Se descubrió que `chrome --headless --window-size=390` no baja de ~500 px: las capturas «móviles» de `BR-050` no eran de 390 reales. Desde aquí, móvil con `puppeteer-core` (`emulate`) o un `iframe` de 390 px. Anotado en la skill.
+
+**Verificación:** tests de render (haz con ratón, sin haz en táctil ni con reducir movimiento, forma en móvil, sin hex). Capturas con `puppeteer-core`: escritorio con el ratón encima y móvil emulado a 390 px. Lighthouse en la medición conjunta de abajo.
+
+---
+
+<a id="br-056"></a>
+
+## BR-056 — Hero: tarjetas de beneficios (vidrio con esquinas cortadas)
+
+**Notas de construcción (2026-10-14):**
+- Vidrio oscuro (`--card-glass`) como `::before` 1 px dentro de la tarjeta, cuyo fondo es el borde: así el chaflán (`clip-path`) también lleva borde. Al pasar el ratón el borde se enciende en rojo y una luz (`::after`) barre la tarjeta; ícono con chaflán. `backdrop-filter` solo en escritorio. Se quitó `cursor: pointer` (no son enlaces).
+- Entrada: la de carga (escalonada, tras el letrero). El scroll les da profundidad al salir (`cardDepthRange`, test primero triangulado) en `BenefitCard.tsx` (un componente por tarjeta, para no llamar hooks en el `map`); sin profundidad en móvil ni con reducir movimiento.
+- El e2e de contraste ignora fondos translúcidos y no mediría las tarjetas: `cards.test.ts` calcula el peor caso (vidrio sobre el borde sobre el rojo claro del degradado) en reposo y con hover, leyendo los porcentajes del CSS y los hex de los tokens. Se vio fallar con el vidrio al 10 %.
+
+**Verificación:** 510 tests en verde, lint y tipos limpios. Capturas: hover en escritorio y móvil emulado. **Lighthouse móvil local, mediana de 5, con BR-054..056:** FCP 3,1 s; LCP 6,4 s; CLS 0; TBT 180 ms (≤ 200 de `RNF-PERF-003`, pero ~50 ms sobre BR-054; parte es el triángulo que ahora se pinta en móvil). **Pendiente (usuario):** decidir si se acepta ese TBT; ver en movimiento el haz, la luz de las tarjetas y la profundidad al hacer scroll.

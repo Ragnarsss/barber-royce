@@ -1791,6 +1791,8 @@ Criterios de aceptación:
    (CP-PERF-001, CP-PERF-002, CP-PERF-003).
 6. La entrada del hero arranca cuando el loader sale, sin pantalla vacía.
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-054).
+
 #### BR-055 — Hero: fondos con profundidad
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-050
@@ -1819,16 +1821,29 @@ Criterios de aceptación:
 3. LCP, CLS y TBT móviles no empeoran frente a la línea base (CP-PERF-001,
    CP-PERF-003).
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-055).
+
 #### BR-056 — Hero: tarjetas de beneficios (vidrio con esquinas cortadas)
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-050, BR-055
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-056-tarjetas-hero`)
 - Historia de usuario: HU-EXP-004 (CA-09)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`
 
 **Origen (2026-10-14):** las tres tarjetas son píldoras blancas lisas
 (`.benefit`, `Hero.module.css`) entre formas angulares: legibles pero genéricas.
 El usuario eligió la dirección **A** entre dos propuestas.
+
+> **Alcance ajustado (2026-10-14):** en escritorio las tarjetas ya están en
+> pantalla al cargar, así que una entrada «ligada al scroll» no se vería. La
+> entrada sigue siendo la de carga (escalonada, tras el letrero de `BR-054`) y
+> el scroll les da **profundidad al salir**: cada tarjeta sube un poco más que la
+> anterior (`cardDepthRange`). En móvil no hay profundidad (quedan bajo el
+> pliegue y se montarían sobre el texto). El `backdrop-filter` queda solo en
+> escritorio. El vidrio se compone sobre el borde de la propia tarjeta (blanco
+> translúcido en reposo, rojo con el cursor): el test de contraste modela esa
+> capa en los dos estados. Se quitó `cursor: pointer`: las tarjetas no son
+> enlaces.
 
 Alcance:
 1. Chaflán con `clip-path` en las esquinas, fondo translúcido y borde fino; el
@@ -1844,6 +1859,8 @@ Criterios de aceptación:
 2. El texto cumple contraste ≥ 4,5:1 sobre el fondo en escritorio y móvil, en
    ambos esquemas (CP-A11Y-004, `contrast.e2e.test.ts`).
 3. TBT y fluidez de scroll no empeoran (CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-056).
 
 #### BR-057 — Loader con el letrero real en vector
 
@@ -1953,7 +1970,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-053 | Skill `diseno-visual` y flujo de SVG | K | P2 | S | Hecho | BR-050 |
 | BR-054 | Loader de neón (letrero «Barber Royce») | K | P3 | M | En curso | BR-050, BR-053 |
 | BR-055 | Hero: fondos con profundidad | K | P3 | M | En curso | BR-050 |
-| BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Propuesta | BR-050, BR-055 |
+| BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | En curso | BR-050, BR-055 |
 | BR-057 | Loader con el letrero real en vector | K | P3 | S | Bloqueada | BR-054 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
