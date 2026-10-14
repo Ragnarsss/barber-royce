@@ -1935,6 +1935,34 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-058).
 
+
+#### BR-059 — Navbar: resplandor de neón blanco al pasar el cursor
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: BR-058
+- Estado: En curso (rama `feat/br-059-navbar-neon`)
+- Historia de usuario: HU-EXP-004 (CA-11)
+- RF/RNF: `RNF-A11Y-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-14):** al ver las barras de luz hexagonales de CTA1 (`BR-058`),
+el usuario pidió que los enlaces de la navbar tengan ese mismo resplandor de
+neón blanco al pasar el cursor. Hoy el hover solo cambia el rojo por un rojo más
+brillante (`Navbar.module.css:99`).
+
+Alcance:
+1. Hover y foco de teclado en los enlaces de escritorio: el texto pasa a blanco
+   con un resplandor de neón (núcleo blanco y halo rojo), con transición corta.
+2. El mismo resplandor con foco de teclado en el menú móvil.
+3. Con `prefers-reduced-motion`, sin transición. Colores en tokens.
+
+Criterios de aceptación:
+1. Al pasar el cursor o enfocar con teclado un enlace, se ve el resplandor
+   blanco (HU-EXP-004 CA-11).
+2. El texto en hover y foco cumple contraste ≥ 4,5:1 sobre la navbar
+   (CP-A11Y-004).
+3. Con reducir movimiento no hay transición (CP-A11Y-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-059).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2021,6 +2049,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Hecho | BR-050, BR-055 |
 | BR-057 | Loader con el letrero real en vector | K | P3 | S | Bloqueada | BR-054 |
 | BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | En curso | BR-054, BR-056 |
+| BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | En curso | BR-058 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

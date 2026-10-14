@@ -618,6 +618,9 @@ y confiar en que el servicio está a la altura.
   de la barbería) se encienden una vez, la foto queda enmarcada en su figura,
   el botón de reservar es el elemento que más destaca y, en móvil, la foto no
   tapa el título.
+- CA-11: Given paso el cursor o enfoco con teclado un enlace de la navegación,
+  When se resalta, Then se ilumina con un resplandor de neón blanco, como las
+  luces del techo, y su texto se sigue leyendo.
 
 ---
 
