@@ -1451,3 +1451,21 @@ servido con `vite preview` y Chrome real:
 - Test primero (`navbarNeon.test.ts`): hover y foco comparten el resplandor, el menú móvil también, sin colores escritos a mano, sin transición con reducir movimiento.
 
 **Verificación:** captura con el cursor sobre «Servicios». Texto blanco sobre la navbar negra: contraste máximo. **Pendiente (usuario):** verlo en movimiento.
+
+---
+
+<a id="br-062"></a>
+
+## BR-062 — SocialProof1: corte láser cinematográfico y disparos por pistas
+
+**Notas de construcción (2026-10-14):**
+- **Bug de origen:** los 5 rayos tenían `transform: rotate(...)` en el CSS y `style={{ x, y }}` de framer-motion, que escribe su propio `transform` en línea y pisa la rotación: se veían horizontales. Los hexágonos de la sección tienen el mismo bug (su `rotate` del CSS tampoco se aplica); no se tocaron porque al usuario le gusta cómo se ven, y queda anotado aquí.
+- Pistas: la pista rota por CSS y **no** lleva estilo de framer; el haz, su hijo, se mueve con `x` en el eje de la pista (`LaserBolt`). Un test impide que la pista vuelva a llevar `transform` en línea.
+- Corte: un panel del color del fondo con un láser en su borde de ataque se retira en diagonal. La inclinación va por framer (`skewX`), no por CSS, por la misma razón. Foto y tarjeta se cortan desde lados opuestos (dibujan una X); el marco rojo se enciende una vez al terminar el corte de la foto.
+- **Ajuste tras ver las capturas:** con el avance medido sobre toda la sección, el corte ocurría antes de que la foto entrara en pantalla. Cada corte se mide ahora con `useScroll` sobre su propio elemento (de asomar por abajo a llegar al centro).
+- Móvil: el corte ocurre una vez al entrar (`laserCutOneShot`). Reducir movimiento: sin paneles, sin haces ni destello.
+- `as const` en la coreografía hacía que `useTransform` eligiera la firma de mapa de salidas: se tipó con arreglos normales.
+- Deuda: 52 colores a tokens (todos eran la paleta de marca con transparencia), sin `will-change` fijo, la marca de la cita y del `alt` desde `SITE.name`, y el gris del distintivo (2,8:1 sobre blanco) a `--color-neutral-600`.
+- Test primero: `laserCut.test.ts` (tiempos del revelado, orden de los cortes, un solo destello, ventanas de los haces trianguladas). Después: `SocialProof1.test.tsx` (paneles, pistas con su haz, regresión del bug, reducir movimiento, marca, tokens, contraste del distintivo). jsdom no trae `element.animate`: el test lo sustituye.
+
+**Verificación:** 543 tests en verde, lint y tipos limpios. Tira de capturas con `puppeteer-core` en cuatro posiciones: el corte a mitad de camino con la foto a 250 px del borde inferior y todo revelado (con el destello del marco) a 450 px. **Lighthouse móvil, `master` (mismo `.env`) contra BR-062 alternados ×5:** TBT mediana 185 → 198 ms con rangos superpuestos (133–337 y 157–316), LCP 6,4 → 6,4 s, CLS 0. **Pendiente (usuario):** ver el scrub en movimiento, en escritorio y en el celular.

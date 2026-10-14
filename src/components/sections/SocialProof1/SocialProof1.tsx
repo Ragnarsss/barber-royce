@@ -1,4 +1,5 @@
-import { motion, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } from "framer-motion";
 import styles from "./SocialProof1.module.css";
 import socialProof560w from "@/assets/optimized/social_proof_560w.webp";
 import socialProof1120w from "@/assets/optimized/social_proof_1120w.webp";
@@ -9,7 +10,15 @@ import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
 import { SCROLL_SPEED_FAST } from "@/utils/scrollMotion";
 import { useSiteText } from "@/content/useSiteContent";
 import { useRefreshLenis } from "@/hooks/useLenisContext";
-import { fadeInUp, fadeInLeft, fadeInRight } from "@/config/animations.config";
+import { fadeInUp, fadeInLeft, fadeInRight, laserCutOneShot } from "@/config/animations.config";
+import { SITE } from "@/config/constants";
+import { BOLT, LASER_CUT, boltWindow } from "./laserCut";
+
+/** Haz corto que viaja por su pista diagonal con el scroll (BR-062). La pista rota por CSS; el haz se mueve en su eje. */
+function LaserBolt({ index, progress }: { index: number; progress: MotionValue<number> }) {
+  const x = useTransform(progress, boltWindow(index), BOLT.TRAVEL);
+  return <motion.span className={styles.bolt} style={{ x }} />;
+}
 
 export function SocialProof1() {
   const siteText = useSiteText();
@@ -28,21 +37,20 @@ export function SocialProof1() {
     fast: useFastLayer(scrollYProgress),
   };
 
-  // Rayos láser diagonales. Los que se mueven igual en x e y comparten un solo transform (BR-016)
-  const diagonal1 = {
-    x: useTransform(scrollYProgress, [0, 1], ["-100%", "100%"]),
-    y: useTransform(scrollYProgress, [0, 1], ["100%", "-100%"]),
-  };
-  const diagonal2Offset = useTransform(scrollYProgress, [0, 1], ["-80%", "120%"]);
-  const diagonal2 = { x: diagonal2Offset, y: diagonal2Offset };
-  const diagonal3Offset = useTransform(scrollYProgress, [0, 1], ["120%", "-120%"]);
-  const diagonal3 = { x: diagonal3Offset, y: diagonal3Offset };
-  const diagonal4Offset = useTransform(scrollYProgress, [0, 1], ["-60%", "140%"]);
-  const diagonal4 = { x: diagonal4Offset, y: diagonal4Offset };
-  const diagonal5 = {
-    x: useTransform(scrollYProgress, [0, 1], ["100%", "-100%"]),
-    y: useTransform(scrollYProgress, [0, 1], ["150%", "-150%"]),
-  };
+  // Corte láser cinematográfico con scrub (BR-062). En pantallas chicas los rayos se ocultan y el corte ocurre una
+  // vez al entrar; con reducir movimiento, todo aparece revelado.
+  const reducedMotion = useReducedMotion() ?? false;
+  const [isWide] = useState(() => typeof window !== "undefined" && window.matchMedia?.("(min-width: 769px)").matches === true);
+  const scrub = isWide && !reducedMotion;
+  // Cada corte sigue el scroll de su propio elemento: de asomar por abajo a llegar al centro de la pantalla
+  const photoRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: photoProgress } = useScroll({ target: photoRef, offset: ["start end", "center center"] });
+  const { scrollYProgress: cardProgress } = useScroll({ target: cardRef, offset: ["start end", "center center"] });
+  const photoCutX = useTransform(photoProgress, LASER_CUT.PHOTO, ["0%", LASER_CUT.COVER_TRAVEL]);
+  const cardCutX = useTransform(cardProgress, LASER_CUT.CARD, ["0%", LASER_CUT.COVER_TRAVEL_BACK]);
+  const frameFlash = useTransform(photoProgress, LASER_CUT.FLASH, [0, 1, 0]);
+  const underline = useTransform(scrollYProgress, LASER_CUT.UNDERLINE, [0, 1]);
 
   // Movimiento personalizado para testimonial
   const testimonialY = useTransform(
@@ -61,33 +69,12 @@ export function SocialProof1() {
       className={styles.socialProof}
       ref={sectionRef}
     >
-      {/* ═══════════════════════════════════════════════
-          RAYOS LÁSER DIAGONALES - Cruzados / y \
-      ═══════════════════════════════════════════════ */}
-
-      {/* Rayos tipo "/" - ascendentes de izquierda a derecha */}
-      <motion.div
-        className={styles.diagonalLaser1}
-        style={{ x: diagonal1.x, y: diagonal1.y }}
-      />
-      <motion.div
-        className={styles.diagonalLaser3}
-        style={{ x: diagonal3.x, y: diagonal3.y }}
-      />
-      <motion.div
-        className={styles.diagonalLaser5}
-        style={{ x: diagonal5.x, y: diagonal5.y }}
-      />
-
-      {/* Rayos tipo "\" - descendentes de izquierda a derecha */}
-      <motion.div
-        className={styles.diagonalLaser2}
-        style={{ x: diagonal2.x, y: diagonal2.y }}
-      />
-      <motion.div
-        className={styles.diagonalLaser4}
-        style={{ x: diagonal4.x, y: diagonal4.y }}
-      />
+      {/* Pistas láser diagonales con un haz que viaja por cada una al hacer scroll (BR-062) */}
+      {Array.from({ length: BOLT.TRACKS }, (_, index) => (
+        <div key={index} className={`${styles.laserTrack} ${styles[`laserTrack${index + 1}`]}`} aria-hidden="true" data-laser-track>
+          {!reducedMotion && <LaserBolt index={index} progress={scrollYProgress} />}
+        </div>
+      ))}
 
       {/* ═══════════════════════════════════════════════
           CAPA DE FONDO - Hexágonos grandes
@@ -173,6 +160,13 @@ export function SocialProof1() {
           variants={fadeInUp}
         >
           <h2 className={styles.title}>{siteText("socialproof1.titulo")}</h2>
+          {/* Subrayado láser que se dibuja con el scroll (BR-062) */}
+          <motion.span
+            className={styles.titleUnderline}
+            aria-hidden="true"
+            data-title-underline
+            style={reducedMotion ? undefined : { scaleX: underline }}
+          />
           <p className={styles.subtitle}>{siteText("socialproof1.subtitulo")}</p>
         </motion.div>
 
@@ -184,7 +178,12 @@ export function SocialProof1() {
             variants={fadeInLeft}
             style={{ y: layers.slow.y }}
           >
-            <div className={styles.imageFrame}>
+            <div className={styles.imageFrame} ref={photoRef}>
+              {/* El marco rojo se enciende una vez cuando el láser termina de cortar la foto */}
+              {!reducedMotion && (
+                <motion.div className={styles.frameFlash} aria-hidden="true" style={{ opacity: scrub ? frameFlash : 0 }} />
+              )}
+              <div className={styles.imageClip}>
               <picture>
                 <source
                   srcSet={`${socialProof560w} 560w, ${socialProof1120w} 1120w, ${socialProof1680w} 1680w`}
@@ -195,27 +194,52 @@ export function SocialProof1() {
                   src={socialProof560w}
                   className={styles.image}
                   loading="lazy"
-                  alt="Cliente satisfecho en Royce Barbería"
+                  alt={`Cliente satisfecho en ${SITE.name}`}
                   width="560"
                   height="330"
                   onLoad={refreshLenis}
                 />
               </picture>
+              {/* Panel del color del fondo que se retira en diagonal, con el láser en su borde (BR-062) */}
+              {!reducedMotion && (
+                <motion.div
+                  className={styles.cutCover}
+                  aria-hidden="true"
+                  data-cut="photo"
+                  style={scrub ? { x: photoCutX, skewX: -18 } : { skewX: -18 }}
+                  initial={scrub ? false : "hidden"}
+                  animate={scrub ? undefined : controls}
+                  variants={scrub ? undefined : laserCutOneShot(LASER_CUT.COVER_TRAVEL)}
+                />
+              )}
+              </div>
             </div>
           </motion.div>
 
           <motion.div
+            ref={cardRef}
             className={styles.testimonialCard}
             initial="hidden"
             animate={controls}
             variants={fadeInRight}
             style={{ y: testimonialY }}
           >
+            {/* Corte cruzado de la tarjeta, desde el lado contrario: con el de la foto dibujan una X (BR-062) */}
+            {!reducedMotion && (
+              <motion.div
+                className={`${styles.cutCover} ${styles.cutCoverCard}`}
+                aria-hidden="true"
+                data-cut="card"
+                style={scrub ? { x: cardCutX, skewX: 18 } : { skewX: 18 }}
+                initial={scrub ? false : "hidden"}
+                animate={scrub ? undefined : controls}
+                variants={scrub ? undefined : laserCutOneShot(LASER_CUT.COVER_TRAVEL_BACK)}
+              />
+            )}
             <div className={styles.testimonialContent}>
               <p className={styles.testimonialText}>
-                "Cuando necesito un corte que hable por sí solo, confío en Royce
-                Barbería. Su profesionalismo y atención al detalle son
-                inigualables."
+                "Cuando necesito un corte que hable por sí solo, confío en {SITE.name}. Su profesionalismo y atención
+                al detalle son inigualables."
               </p>
               <div className={styles.author}>
                 <strong>DrefQuila</strong>

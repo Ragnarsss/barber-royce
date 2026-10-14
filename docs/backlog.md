@@ -1963,6 +1963,54 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-059).
 
+
+#### BR-062 — SocialProof1: corte láser cinematográfico y disparos por pistas
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-058
+- Estado: En curso (rama `feat/br-062-social-proof-laser`)
+- Historia de usuario: HU-EXP-004 (CA-14)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-A11Y-005`, `RNF-DATOS-001`
+
+**Origen (2026-10-14):** el usuario siente que al efecto láser de SocialProof1
+«le falta». Diagnóstico con `diseno-visual`: los 5 rayos se diseñaron como
+diagonales cruzadas (`rotate(-45deg)`, `SocialProof1.module.css:247`), pero
+`style={{ x, y }}` de framer-motion escribe su propio `transform` y pisa la
+rotación, así que se ven horizontales y su desplazamiento casi no se percibe.
+Deuda: 52 colores escritos a mano, 5 `will-change` fijos, la marca literal en
+la cita y en el `alt`, y `#999999` sobre blanco (2,8:1, bajo el mínimo).
+
+Decisiones del usuario (2026-10-14): dirección **B** (disparos por pistas) más un
+**revelado cinematográfico con scrub** (avanza y retrocede con el scroll).
+
+Alcance:
+1. Corte de la foto: un panel del color del fondo la cubre y se retira en
+   diagonal con un láser en su borde, ligado al scroll; después, el corte
+   cruzado de la tarjeta desde el lado contrario (juntos dibujan una X).
+2. Al terminar el corte de la foto, su marco rojo se enciende una vez.
+3. Ambiente: haces cortos viajan por pistas diagonales tenues con el scroll
+   (la pista rota por CSS y el haz se mueve en su eje: sin pisar la rotación).
+4. Subrayado láser del título que se dibuja al entrar.
+5. Solo `transform` y `opacity` (nada de `clip-path` animado). En móvil, el
+   corte ocurre una vez al entrar en pantalla. Con reducir movimiento, todo
+   revelado y quieto.
+6. Deuda: colores a tokens, sin `will-change` fijo, sin la marca literal, el
+   gris del distintivo con contraste suficiente.
+
+Criterios de aceptación:
+1. Con el scroll, la foto y la tarjeta se revelan con el corte láser y se
+   vuelven a tapar al subir; a mitad de la sección ya están reveladas
+   (HU-EXP-004 CA-14).
+2. Los rayos se ven diagonales y sus haces viajan por las pistas.
+3. Con reducir movimiento todo aparece revelado, sin haces ni destellos
+   (CP-A11Y-003); el encendido del marco no pasa de 3 destellos por segundo
+   (CP-A11Y-005).
+4. Sin colores escritos a mano ni marca literal (tests; `RNF-DATOS-001`); el
+   texto de la tarjeta cumple 4,5:1 (CP-A11Y-004).
+5. TBT y CLS móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-062).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2050,6 +2098,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-057 | Loader con el letrero real en vector | K | P3 | S | Bloqueada | BR-054 |
 | BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | En curso | BR-054, BR-056 |
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | En curso | BR-058 |
+| BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | En curso | BR-058 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
