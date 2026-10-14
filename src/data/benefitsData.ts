@@ -1,23 +1,30 @@
-import { Scissors, Armchair, User } from "lucide-react";
+/**
+ * Beneficios de la sección «Estilo que te acompaña» (BR-064), con los textos del Figma «Beneficios v2».
+ * La descripción es texto plano con partes en negrita (`{ strong }`): así no hace falta interpretar HTML.
+ */
+export type BenefitIconName = "scissors" | "barberChair" | "userStar";
+export type RichText = Array<string | { strong: string }>;
 
-export const benefitsList = [
+export interface Benefit {
+  icon: BenefitIconName;
+  title: string;
+  description: RichText;
+}
+
+export const benefitsList: Benefit[] = [
   {
-    icon: Scissors,
+    icon: "scissors",
     title: "Cortes Expertos",
-    description:
-      "Nuestros barberos dominan cada técnica, tu oficio, garantizando un corte perfecto cada vez.",
+    description: ["Nuestros barberos son ", { strong: "maestros en su oficio" }, ", garantizando un corte perfecto cada vez."],
   },
   {
-    icon: Armchair,
+    icon: "barberChair",
     title: "Ambiente Exclusivo",
-    description:
-      "Disfruta de un espacio donde la comodidad y el buen gusto se encuentran.",
+    description: ["Disfruta de un espacio donde la ", { strong: "comodidad y el buen gusto" }, " se encuentran."],
   },
   {
-    icon: User,
+    icon: "userStar",
     title: "Atención Personalizada",
-    description:
-      "Te escuchamos y adaptamos cada servicio a tu corte refleje tu personalidad.",
+    description: ["Te ", { strong: "escuchamos y asesoramos" }, " para que tu corte refleje tu personalidad."],
   },
 ];
-

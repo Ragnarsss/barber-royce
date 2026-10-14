@@ -1469,3 +1469,20 @@ servido con `vite preview` y Chrome real:
 - Test primero: `laserCut.test.ts` (tiempos del revelado, orden de los cortes, un solo destello, ventanas de los haces trianguladas). Después: `SocialProof1.test.tsx` (paneles, pistas con su haz, regresión del bug, reducir movimiento, marca, tokens, contraste del distintivo). jsdom no trae `element.animate`: el test lo sustituye.
 
 **Verificación:** 543 tests en verde, lint y tipos limpios. Tira de capturas con `puppeteer-core` en cuatro posiciones: el corte a mitad de camino con la foto a 250 px del borde inferior y todo revelado (con el destello del marco) a 450 px. **Lighthouse móvil, `master` (mismo `.env`) contra BR-062 alternados ×5:** TBT mediana 185 → 198 ms con rangos superpuestos (133–337 y 157–316), LCP 6,4 → 6,4 s, CLS 0. **Pendiente (usuario):** ver el scrub en movimiento, en escritorio y en el celular.
+
+---
+
+<a id="br-064"></a>
+
+## BR-064 — Benefits: fiel al Figma («Beneficios v2») con íconos que se dibujan
+
+**Notas de construcción (2026-10-14):**
+- El usuario compartió el Figma «Beneficios v2»: la sección no era mala de diseño, sino de implementación. La foto estaba tapada por un rojo al 85 % (en Figma el rojo es una franja diagonal y se lee la chaqueta «BARBER RR ROYCE»), el fondo era un gris fuera de la paleta, los textos estaban mal copiados del Figma («dominan cada técnica, tu oficio,», «adaptamos cada servicio a tu corte refleje…») y sin sus negritas, y los íconos no eran los del diseño. Se descartó la reescritura que yo había propuesto: los textos correctos son los del Figma, leídos de una captura de baja resolución (**a confirmar por el usuario**).
+- Tarjetas blancas como en Figma, sin la `Card` de shadcn (`BR-023`). Datos en `src/data/benefitsData.ts` con negritas como partes `{ strong }` (sin interpretar HTML); se borró `benefitsData.tsx`.
+- Íconos de trazo (`DrawnIcon.tsx`): tijera y persona de lucide (ISC); silla de barbero y estrella dibujadas a mano, porque lucide no las tiene. Se dibujan con `pathLength` (`iconDraw`) al entrar la tarjeta; con reducir movimiento aparecen dibujados.
+- El hover de la tarjeta usa `translate` y no `transform`: la entrada de framer escribe el transform en línea (la lección de `BR-062`).
+- «ofreciendo:» con dos puntos (la frase continúa en las tarjetas); la marca del subtítulo desde `SITE.name`; colores a tokens.
+- Móvil: la foto va debajo, en el flujo, con una cuña roja diagonal arriba y anclada abajo para que se lea el logo de la chaqueta (se ajustó dos veces mirando las capturas).
+- Los textos de las tarjetas quedan en el código (opción por defecto; el usuario no eligió pasarlos a la hoja).
+
+**Verificación:** 550 tests en verde (incluido `Benefits.test.tsx`: títulos y negritas, trazos con `stroke-dasharray`, reducir movimiento, marca, sin shadcn ni hex, franja aparte, hover con `translate`), lint y tipos limpios. Capturas en escritorio y móvil emulado. **Lighthouse móvil, `master` (mismo `.env`) contra BR-064 alternados ×5:** TBT mediana 243 → 201 ms (rangos 136–411 y 190–293), LCP 6,4 → 6,4 s, CLS 0. **Pendiente (usuario):** confirmar los textos contra el Figma y ver el trazo de los íconos en movimiento.
