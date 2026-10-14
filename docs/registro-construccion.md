@@ -1348,3 +1348,20 @@ servido con `vite preview` y Chrome real:
 - La verificó el usuario en producción (2026-10-14): el hero se ve como se esperaba («quedó fenomenal») y el lema viene de la hoja (`hero.lema` en vivo, criterio 4). ✔
 
 **Pendiente:** la animación de entrada y el destello solo los vio el usuario a ojo; no hay test automático de la animación en un navegador. Reducir movimiento no se recorrió a mano en producción (hay test de componente y de CSS). Lighthouse móvil contra producción, cuando se quiera cerrar `RNF-PERF-001` (`BR-034`).
+
+---
+
+<a id="br-053"></a>
+
+## BR-053 — Skill `diseno-visual` y flujo de SVG
+
+**Notas de construcción (2026-10-14):**
+- `.claude/skills/diseno-visual/SKILL.md`: el rol de diseñador de marketing, el lenguaje visual de la marca (rojo, charcoal, diagonales, Anton + Montserrat, una sola curva de easing), el proceso por sección (mirar, diagnóstico, tres direcciones con recomendación, ticket, línea base, implementación, verificación, cierre), las reglas del proyecto y las trampas aprendidas en `BR-050`.
+- `.claude/skills/svg-workflow/SKILL.md`: adaptada de la skill homónima de alienskilez-web, sin Tailwind y con tokens. Agrega una tabla de técnicas de animación (trazo que se dibuja, scroll, neón, parpadeo, entrada por letras) y la regla de sacar contornos de fuente con herramientas externas o comandos directos, sin scripts propios en el repo (preferencia del usuario).
+- `AGENTS.md`: las dos skills en la tabla y su origen.
+- Sin test: es documentación de proceso (la ficha dice que no aplica HU ni RF/RNF).
+
+**Verificación:**
+- Las 7 carpetas de `.claude/skills/` tienen `SKILL.md` y aparecen en `AGENTS.md` (criterio 2). ✔
+- Las dos skills aparecen en la lista de skills disponibles de la sesión (la lista se recarga al iniciar o refrescar la sesión; recién creadas, `Skill` respondía «Unknown skill»). ✔
+- Criterio 1 (que la skill proponga tres direcciones antes de escribir código): **se comprueba en su primer uso real**, con `BR-054`.

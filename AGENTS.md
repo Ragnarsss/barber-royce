@@ -18,6 +18,8 @@ marcar `Hecho`, tocar el backlog) queda bajo tu OK.
 | [`iniciar-ticket`](.claude/skills/iniciar-ticket/SKILL.md) | "Empecemos BR-011". | Lee ficha, HU y requisitos; crea la rama; decide test antes/después o medición; arma el esqueleto de tests y anota la línea base. |
 | [`cerrar-ticket`](.claude/skills/cerrar-ticket/SKILL.md) | "Cerrar BR-003", "¿ya está Hecho?". | Checklist de la DoD: lint, build, tests, criterios en el preview, Lighthouse si aplica, trazabilidad, backlog, registro, commits y PR. |
 | [`verificar-despliegue`](.claude/skills/verificar-despliegue/SKILL.md) | "¿Podemos desplegar?", antes de integrar un PR grande o revisar producción. | Bloqueantes P0, rutas, 404, cabeceras, datos del negocio, SEO, Lighthouse y plan de rollback. Termina con un veredicto. |
+| [`diseno-visual`](.claude/skills/diseno-visual/SKILL.md) | "Mejoremos la sección X", "hazlo más llamativo", micro-interacciones, fondos, loaders. | Rol de diseñador de marketing: diagnóstico, tres direcciones con recomendación, ticket, línea base, implementación con las reglas del proyecto (tokens, `MotionValue`, reduced motion, destellos) y verificación. |
+| [`svg-workflow`](.claude/skills/svg-workflow/SKILL.md) | Agregar, animar o revisar un SVG (trazo que se dibuja, neón, scroll). | Origen y limpieza, en línea o imagen estática, técnicas de animación, accesibilidad y test de validación. |
 
 ## Agentes de solo lectura (`.claude/agents/`)
 
@@ -52,6 +54,10 @@ Adaptado de *Segunda Opinión de Build* (2026-10-12). Se tomaron
 `nuevo-ticket`, `analisis-requerimientos`, `cerrar-ticket`,
 `iniciar-ticket-tdd` (aquí `iniciar-ticket`, que suma mediciones y rama),
 `calidad-codigo-auditor`, `deuda-tecnica-auditor` y `backlog-governance`.
+`diseno-visual` (2026-10-14, `BR-053`) nace del pedido recurrente del dueño
+de mejorar la estética sección por sección; `svg-workflow` es una adaptación
+de la skill del mismo nombre de alienskilez-web, sin Tailwind y con los
+tokens y las reglas de este repo.
 Son nuevos de este repo: `verificar-despliegue`, `datos-negocio-auditor`,
 `seo-performance-auditor`, `accesibilidad-auditor` y
 `design-tokens-auditor`, que salen de los problemas encontrados en la
