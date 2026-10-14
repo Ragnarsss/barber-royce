@@ -1,4 +1,5 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import styles from "./Benefits.module.css";
 import { useSiteText } from "@/content/useSiteContent";
 import { benefitsList } from "@/data/benefitsData";
@@ -12,17 +13,31 @@ import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
 /**
  * «Estilo que te acompaña» (BR-064), fiel al Figma «Beneficios v2»: fondo charcoal, franja roja diagonal y la foto
  * clara a la derecha; tarjetas blancas con los textos del diseño. Gesto: las tarjetas entran escalonadas y sus
- * íconos se dibujan con un trazo. Con reducir movimiento, todo aparece visible y dibujado.
+ * íconos se dibujan con un trazo. Con el scroll, la franja entra en diagonal y se asienta, y la foto se acerca hasta
+ * su tamaño; al pasar el ratón, el ícono se vuelve a dibujar (CSS: un whileHover de framer haría que la tarjeta dejara
+ * de heredar la entrada de la grilla). Con reducir movimiento, todo queda en su posición final.
  */
 export function Benefits() {
   const siteText = useSiteText();
   const reducedMotion = useReducedMotion() ?? false;
   const { ref, controls } = useScrollAnimation();
 
+  // Escena ligada al scroll (scrub): de que la sección asoma por abajo a que queda centrada
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "center center"] });
+  const bandX = useTransform(scrollYProgress, [0, 1], ["35%", "0%"]);
+  const bandY = useTransform(scrollYProgress, [0, 1], ["28%", "0%"]);
+  const photoScale = useTransform(scrollYProgress, [0, 1], [1.14, 1]);
+  const photoY = useTransform(scrollYProgress, [0, 1], ["-4%", "0%"]);
+
   return (
-    <section id="benefits" className={styles.benefits}>
+    <section id="benefits" className={styles.benefits} ref={sectionRef}>
       <div className={styles.imageBackground}>
-        <picture>
+        <motion.picture
+          className={styles.photoMotion}
+          data-photo-motion
+          style={reducedMotion ? undefined : { scale: photoScale, y: photoY }}
+        >
           <source
             srcSet={`${barberBack954w} 954w, ${barberBack1908w} 1908w`}
             sizes="(max-width: 768px) 100vw, (max-width: 1400px) 45vw, 954px"
@@ -36,10 +51,15 @@ export function Benefits() {
             width="954"
             height="1304"
           />
-        </picture>
+        </motion.picture>
       </div>
-      {/* Franja roja diagonal entre el contenido y la foto */}
-      <div className={styles.band} aria-hidden="true" />
+      {/* Franja roja diagonal entre el contenido y la foto: entra en diagonal con el scroll y se asienta */}
+      <motion.div
+        className={styles.band}
+        aria-hidden="true"
+        data-band
+        style={reducedMotion ? undefined : { x: bandX, y: bandY }}
+      />
 
       <div className={styles.container}>
         <div className={styles.content}>
@@ -59,7 +79,12 @@ export function Benefits() {
             variants={staggerContainer}
           >
             {benefitsList.map((benefit) => (
-              <motion.article key={benefit.title} className={styles.card} variants={fadeInUp} data-benefit>
+              <motion.article
+                key={benefit.title}
+                className={styles.card}
+                variants={fadeInUp}
+                data-benefit
+              >
                 <h3 className={styles.cardTitle}>{benefit.title}</h3>
                 <div className={styles.cardIcon}>
                   <DrawnIcon name={benefit.icon} animate={!reducedMotion} />
