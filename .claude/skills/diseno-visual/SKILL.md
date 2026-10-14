@@ -28,6 +28,11 @@ sección a la vez** y con el usuario eligiendo la dirección.
    Sin `--force-prefers-reduced-motion` el hero sale en blanco: espera a que
    Lenis esté listo (`opacity: 0`) y con tiempo virtual nunca avanza. La ruta
    de la captura debe ser absoluta o Chrome no escribe.
+   Si la sección está en la carga inicial (hero, loader, fuentes), mira
+   también **la película de carga** de Lighthouse móvil: los fotogramas de
+   `screenshot-thumbnails` y el FCP dicen qué ve el visitante y cuándo. En
+   `BR-054` eso cambió el diagnóstico: el hueco estaba antes del JavaScript, no
+   después.
 2. **Diagnóstico** corto: qué jerarquía hay, qué se lee como genérico, qué
    pasa en móvil, qué es plano. Con evidencia (captura o `archivo:línea`).
 3. **Tres direcciones**, de la segura a la audaz. Para cada una: la idea, qué
@@ -72,8 +77,10 @@ sección a la vez** y con el usuario eligiendo la dirección.
 - **Dependencias:** nada de kits de UI ni librerías de estado (regla 7). Una
   fuente de `@fontsource` o una librería de animación se justifica en el
   ticket.
-- **Texto visible:** español de Chile con tuteo, precios `$15.000`, horas de
-  24 horas.
+- **Texto visible:** español de Chile con tuteo, precios con signo peso y punto
+  de miles, horas de 24 horas (`engineering-guidelines.md` §16). En este
+  archivo no escribas un signo peso seguido de un dígito: Claude Code lo toma
+  como marcador de argumento y lo reemplaza.
 
 ## Trampas ya conocidas
 
@@ -84,6 +91,8 @@ sección a la vez** y con el usuario eligiendo la dirección.
 - Si una clave de la hoja cambia de significado, usa una **clave nueva**: la
   celda vieja se ignora con un aviso, y no hay una ventana en producción con
   el contenido duplicado (`BR-050`).
+- Chrome sin pantalla no baja de ~500 px de ancho con `--window-size`: para ver un móvil de 390 px reales, mete la página en un `<iframe width="390">` dentro de una página suelta y captura esa. Sin eso, las capturas "móviles" no son móviles.
+- Chrome sin pantalla no escribe la captura con ciertas combinaciones de opciones (`--blink-settings`, perfil compartido) y calla: usa un `--user-data-dir` propio, una ruta absoluta y comprueba la fecha del archivo.
 - Lighthouse en Windows avisa `EPERM` al borrar su carpeta temporal: es
   inofensivo, los resultados sí se escriben.
 - Un loader que tapa un contenido que ya carga rápido solo resta tiempo: debe

@@ -600,7 +600,8 @@ y confiar en que el servicio está a la altura.
 - CA-06: Given abro el sitio por primera vez en la sesión, When carga, Then
   veo una entrada de marca de no más de 2 s (el nombre como un letrero de neón
   que se enciende) antes de la portada, y cualquier interacción la salta;
-  si recargo o cambio de ruta en la misma sesión, no se repite.
+  si recargo o cambio de ruta en la misma sesión, el letrero sale en cuanto
+  carga el sitio, sin esperar.
 - CA-07: Given tengo activada la reducción de movimiento, When abro el sitio,
   Then no hay entrada de marca ni parpadeos, y en ninguna animación hay más
   de 3 destellos por segundo (RNF-A11Y-003, RNF-A11Y-005).

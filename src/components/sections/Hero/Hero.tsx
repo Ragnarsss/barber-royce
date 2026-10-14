@@ -12,13 +12,16 @@ import { useLenisScrollActive } from "@/hooks/useScrollActive";
 import { staggerContainer, fadeInUp, fadeInLeft, letterRise, letterStagger } from "@/config/animations.config";
 import { SITE } from "@/config/constants";
 import { useSiteText } from "@/content/useSiteContent";
+import { useNeonLoaderDone } from "@/loader/neonLoader";
 
 export function Hero() {
   const siteText = useSiteText();
   const isLenisReady = useLenisReady();
   const reducedMotion = useReducedMotion() ?? false;
-  // Con "reducir movimiento" no hay Lenis: el Hero se muestra sin esperarlo (BR-017)
-  const isReady = isLenisReady || reducedMotion;
+  // Con "reducir movimiento" no hay Lenis: el Hero se muestra sin esperarlo (BR-017).
+  // Su entrada arranca cuando sale el letrero de neón de index.html (BR-054).
+  const isLoaderDone = useNeonLoaderDone();
+  const isReady = (isLenisReady || reducedMotion) && isLoaderDone;
   const refreshLenis = useRefreshLenis();
 
   // OPTIMIZACIÓN FASE 3: will-change dinámico (solo durante scroll activo)

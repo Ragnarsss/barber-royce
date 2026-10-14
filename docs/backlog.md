@@ -1705,10 +1705,10 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-053).
 
-#### BR-054 — Loader de neón «ROYCE»
+#### BR-054 — Loader de neón (letrero «Barber Royce»)
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-050, BR-053
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-054-loader-neon`)
 - Historia de usuario: HU-EXP-004 (CA-06, CA-07)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
 
@@ -1722,6 +1722,49 @@ usuario no la eligió):
 1. Se usa «ROYCE» y no el monograma «RR» (ver `BR-057`).
 2. Se muestra **una vez por sesión** (`sessionStorage`, con `try/catch`), no en
    cada carga: la web es de captación y cada segundo cuenta.
+
+> **Alcance ajustado (2026-10-14, decisión del usuario):** primer uso de la
+> skill `diseno-visual`. El diagnóstico mostró que el hueco real está **antes
+> del JavaScript**: `index.html` trae un `#root` vacío y el primer pintado móvil
+> llega a 2,9 s (Lighthouse simulado), mientras que con el JS cargado el hero
+> aparece en menos de 1 s. Un loader en React (modelo alienskilez) no taparía
+> ninguna espera. El usuario eligió la **dirección A** de tres:
+> 1. **Neón en línea en `index.html`** (SVG + CSS en línea; la CSP permite
+>    estilos en línea pero no scripts): se pinta antes del JS sobre fondo
+>    charcoal, se enciende y parpadea mientras carga el sitio. Al montar React
+>    da un último parpadeo, sale y dispara la entrada del hero.
+> 2. Dura **lo que la carga real**, con un mínimo (~1 s, para que se lea el
+>    encendido) y un máximo. Si el JS no llega, el CSS lo retira solo al
+>    máximo: nunca tapa el sitio para siempre. Con eso **la frecuencia se
+>    resuelve sola** (con caché casi no se ve) y se descarta `sessionStorage`.
+> 3. **Diseño:** inspirado en el letrero de neón real de la barbería («Barber
+>    Royce» en letra manuscrita, una tijera y un marco de líneas rectas), no en
+>    «ROYCE» en Anton. Asset **provisorio**: una fuente manuscrita libre
+>    convertida a trazados con un comando directo, la tijera de `lucide-react` y
+>    el marco dibujado a mano. El definitivo, calcado del letrero real, pasa a
+>    `BR-057`.
+> 4. Con `prefers-reduced-motion`, el letrero aparece encendido y quieto, y sale
+>    sin parpadeo.
+>
+> Criterios que reemplazan al 1 y al 2: el letrero se ve desde el primer
+> pintado (antes del JS); dura al menos el mínimo y nunca más que el máximo;
+> una interacción lo acorta; sin JS se retira solo al máximo.
+
+> **Alcance ajustado (2026-10-14, decisión del usuario, tras la primera
+> medición):** el diagnóstico tenía una premisa errónea: el CSS que bloquea el
+> render frena también al letrero, así que el FCP móvil sigue en 3,0 s y el
+> letrero no tapa «unos 3 s» de pantalla vacía, sino el tramo corto entre su
+> aparición (~0,4 s) y la del sitio (~0,75 s). Con el mínimo de 1,2 s en cada
+> carga, el LCP móvil de laboratorio pasó de 5,0 s a 6,5 s (FCP 3,0 s y CLS 0
+> iguales; TBT 120–140 ms). El usuario eligió la **opción 1**: el mínimo
+> completo (1,2 s) solo en la **primera carga de la sesión** (`sessionStorage`,
+> con `try/catch`); en las siguientes el letrero sale en cuanto React monta.
+> **Regresión aceptada por escrito:** en la primera visita de una sesión el LCP
+> de laboratorio empeora ~1,5 s (en la vida real, hasta ~0,8 s con conexión
+> rápida y casi nada con conexión lenta, donde el JS tarda más que el mínimo).
+> Se prefirió una entrada con carácter de marca a esa décima de segundo. Lo que
+> pide el criterio 5 pasa a: CLS y TBT no empeoran, y el LCP solo empeora en la
+> primera visita de la sesión, en la medida medida aquí.
 
 Alcance:
 1. SVG de «ROYCE» con contornos sacados de Anton, como asset en `src/assets/`
@@ -1739,12 +1782,12 @@ Alcance:
 
 Criterios de aceptación:
 1. La secuencia se ve y dura ≤ 2 s; una interacción la salta (HU-EXP-004 CA-06).
-2. No se repite al recargar ni al cambiar de ruta en la misma sesión
+2. En la misma sesión, el letrero ya no espera el mínimo: sale en cuanto React monta
    (HU-EXP-004 CA-06).
 3. Con `prefers-reduced-motion: reduce` no se monta y no hay parpadeos
    (HU-EXP-004 CA-07, CP-A11Y-003).
 4. No hay más de 3 destellos por segundo (CP-A11Y-005).
-5. LCP, CLS y TBT móviles no empeoran frente a la línea base medida antes
+5. CLS y TBT móviles no empeoran frente a la línea base medida antes, y el LCP solo empeora en la primera visita de la sesión (ver el ajuste de arriba)
    (CP-PERF-001, CP-PERF-002, CP-PERF-003).
 6. La entrada del hero arranca cuando el loader sale, sin pantalla vacía.
 
@@ -1802,7 +1845,7 @@ Criterios de aceptación:
    ambos esquemas (CP-A11Y-004, `contrast.e2e.test.ts`).
 3. TBT y fluidez de scroll no empeoran (CP-PERF-003).
 
-#### BR-057 — Loader con el monograma «RR» en vector
+#### BR-057 — Loader con el letrero real en vector
 
 - Prioridad: P3 · Esfuerzo: S · Depende de: BR-054
 - Estado: Bloqueada (falta el «RR» en vector: hoy solo hay `royce-barber-logo.png` y un `favicon.svg` de 130 KB trazado de un raster)
@@ -1811,6 +1854,13 @@ Criterios de aceptación:
 
 **Origen (2026-10-14):** el usuario intentará conseguir el monograma «RR» en
 vector; mientras tanto el loader usa «ROYCE» (`BR-054`).
+
+> **Alcance ajustado (2026-10-14, decisión del usuario):** el loader de `BR-054`
+> se inspira en el letrero de neón real («Barber Royce» manuscrito, tijera y
+> marco) con un asset provisorio. Este ticket pasa a ser **el letrero real en
+> vector**: el usuario lo calca a mano (trazos de una sola línea, como los
+> tubos) y lo entrega; el «RR» queda como alternativa si lo consigue. Sigue
+> bloqueado hasta tener el vector.
 
 Alcance:
 1. Reemplazar o acompañar a «ROYCE» por el «RR» en el loader, con el mismo flujo
@@ -1901,10 +1951,10 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-051 | Parrilla de fotos con las publicaciones de Instagram | L | P2 | L | Bloqueada | — |
 | BR-052 | Reseñas reales de Google en la home | L | P2 | M | Bloqueada | BR-006 |
 | BR-053 | Skill `diseno-visual` y flujo de SVG | K | P2 | S | Hecho | BR-050 |
-| BR-054 | Loader de neón «ROYCE» | K | P3 | M | Propuesta | BR-050, BR-053 |
+| BR-054 | Loader de neón (letrero «Barber Royce») | K | P3 | M | En curso | BR-050, BR-053 |
 | BR-055 | Hero: fondos con profundidad | K | P3 | M | Propuesta | BR-050 |
 | BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Propuesta | BR-050, BR-055 |
-| BR-057 | Loader con el monograma «RR» en vector | K | P3 | S | Bloqueada | BR-054 |
+| BR-057 | Loader con el letrero real en vector | K | P3 | S | Bloqueada | BR-054 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
