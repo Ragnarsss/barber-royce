@@ -1410,3 +1410,13 @@ servido con `vite preview` y Chrome real:
 - El e2e de contraste ignora fondos translúcidos y no mediría las tarjetas: `cards.test.ts` calcula el peor caso (vidrio sobre el borde sobre el rojo claro del degradado) en reposo y con hover, leyendo los porcentajes del CSS y los hex de los tokens. Se vio fallar con el vidrio al 10 %.
 
 **Verificación:** 510 tests en verde, lint y tipos limpios. Capturas: hover en escritorio y móvil emulado. **Lighthouse móvil local, mediana de 5, con BR-054..056:** FCP 3,1 s; LCP 6,4 s; CLS 0; TBT 180 ms (≤ 200 de `RNF-PERF-003`, pero ~50 ms sobre BR-054; parte es el triángulo que ahora se pinta en móvil). **Pendiente (usuario):** decidir si se acepta ese TBT; ver en movimiento el haz, la luz de las tarjetas y la profundidad al hacer scroll.
+
+---
+
+## Cierre de BR-054, BR-055 y BR-056 (2026-10-14)
+
+**Lo que verificó y reportó el usuario en producción:** el letrero de neón «se ve bien» y basta hasta el SVG definitivo (`BR-057`); las tarjetas «geniales»; los cambios de los fondos «se notan» (degradado, filo de luz, grano, haz); el grano «hace que se vea más artístico». **Aceptó el TBT móvil de 180 ms** (≤ 200 de `RNF-PERF-003`, ~40 ms sobre la línea base) y, antes, la regresión de LCP en la primera visita de la sesión (`BR-054`).
+
+**Integración:** PR #26, #27 y #28 con el CI (lint, tipos, tests, build) y Vercel en verde, fusionados en orden.
+
+**Queda fuera:** el SVG definitivo del letrero (`BR-057`, bloqueado); la grabación en Chrome real del conteo de destellos (`CP-A11Y-005`); el ajuste fino de la intensidad del grano, que el usuario quiere probar a mano (`.grain` en `Hero.module.css`).

@@ -1708,7 +1708,7 @@ Criterios de aceptación:
 #### BR-054 — Loader de neón (letrero «Barber Royce»)
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-050, BR-053
-- Estado: En curso (rama `feat/br-054-loader-neon`)
+- Estado: Hecho (2026-10-14, rama `feat/br-054-loader-neon` → master, PR #26)
 - Historia de usuario: HU-EXP-004 (CA-06, CA-07)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
 
@@ -1796,7 +1796,7 @@ Criterios de aceptación:
 #### BR-055 — Hero: fondos con profundidad
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-050
-- Estado: En curso (rama `feat/br-055-fondos-hero`)
+- Estado: Hecho (2026-10-14, rama `feat/br-055-fondos-hero` → master, PR #27)
 - Historia de usuario: HU-EXP-004 (CA-08)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-003`, `RNF-A11Y-003`
 
@@ -1826,7 +1826,7 @@ Criterios de aceptación:
 #### BR-056 — Hero: tarjetas de beneficios (vidrio con esquinas cortadas)
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-050, BR-055
-- Estado: En curso (rama `feat/br-056-tarjetas-hero`)
+- Estado: Hecho (2026-10-14, rama `feat/br-056-tarjetas-hero` → master, PR #28)
 - Historia de usuario: HU-EXP-004 (CA-09)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`
 
@@ -1968,9 +1968,9 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-051 | Parrilla de fotos con las publicaciones de Instagram | L | P2 | L | Bloqueada | — |
 | BR-052 | Reseñas reales de Google en la home | L | P2 | M | Bloqueada | BR-006 |
 | BR-053 | Skill `diseno-visual` y flujo de SVG | K | P2 | S | Hecho | BR-050 |
-| BR-054 | Loader de neón (letrero «Barber Royce») | K | P3 | M | En curso | BR-050, BR-053 |
-| BR-055 | Hero: fondos con profundidad | K | P3 | M | En curso | BR-050 |
-| BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | En curso | BR-050, BR-055 |
+| BR-054 | Loader de neón (letrero «Barber Royce») | K | P3 | M | Hecho | BR-050, BR-053 |
+| BR-055 | Hero: fondos con profundidad | K | P3 | M | Hecho | BR-050 |
+| BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Hecho | BR-050, BR-055 |
 | BR-057 | Loader con el letrero real en vector | K | P3 | S | Bloqueada | BR-054 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
