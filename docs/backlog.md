@@ -1677,7 +1677,7 @@ queda para cuando lo consiga.
 #### BR-053 — Skill `diseno-visual` y flujo de SVG
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: BR-050
-- Estado: Propuesta
+- Estado: En curso (rama `docs/br-053-skill-diseno-visual`)
 - Historia de usuario: no aplica — proceso y herramientas de trabajo.
 - RF/RNF: no aplica — documentación de un proceso.
 
@@ -1898,7 +1898,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-050 | Hero: tipografía de marca | K | P3 | M | Hecho | BR-042, BR-043 |
 | BR-051 | Parrilla de fotos con las publicaciones de Instagram | L | P2 | L | Bloqueada | — |
 | BR-052 | Reseñas reales de Google en la home | L | P2 | M | Bloqueada | BR-006 |
-| BR-053 | Skill `diseno-visual` y flujo de SVG | K | P2 | S | Propuesta | BR-050 |
+| BR-053 | Skill `diseno-visual` y flujo de SVG | K | P2 | S | En curso | BR-050 |
 | BR-054 | Loader de neón «ROYCE» | K | P3 | M | Propuesta | BR-050, BR-053 |
 | BR-055 | Hero: fondos con profundidad | K | P3 | M | Propuesta | BR-050 |
 | BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Propuesta | BR-050, BR-055 |
