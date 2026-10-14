@@ -50,7 +50,7 @@ citan.
 | HU-EXP-001 | EXP | Sitio rápido y fluido en el celular | Alta | 5 | 8 | — | Aprobada |
 | HU-EXP-002 | EXP | Sitio accesible y respetuoso con el movimiento | Media | 4 | 5 | — | Aprobada |
 | HU-EXP-003 | EXP | Mensaje claro si algo falla o la página no existe | Alta | 4 | 3 | — | Aprobada |
-| HU-EXP-004 | EXP | Una primera impresión visual que se recuerde | Media | 4 | 8 | HU-EXP-001, HU-EXP-002 | Propuesta |
+| HU-EXP-004 | EXP | Una primera impresión visual que se recuerde | Media | 4 | 13 | HU-EXP-001, HU-EXP-002 | Propuesta |
 | HU-OPS-001 | OPS | Desplegar cambios verificados sin romper producción | Alta | 5 | 5 | — | Aprobada |
 | HU-MED-001 | MED | Ver cuántas personas visitan el sitio | Media | 4 | 2 | HU-OPS-001 | Propuesta |
 | HU-MED-002 | MED | Saber cuántos visitantes tocan "Reservar" y de dónde llegan | Media | 4 | 5 | HU-MED-003, HU-RES-001 | Propuesta |
@@ -566,7 +566,7 @@ y confiar en que el servicio está a la altura.
 - Epic: Experiencia
 - Actor / Persona: Cliente que llega por primera vez
 - Prioridad: Media
-- Estimación: 8 SP (se entrega por secciones, empezando por el hero)
+- Estimación: 13 SP (se entrega por secciones: tipografía, loader, fondos y tarjetas)
 - Fuente: pedido del dueño del sitio (2026-10-14): lograr un sitio más
   llamativo con efectos visuales, micro-interacciones y fondos trabajados,
   sección por sección.
@@ -577,7 +577,7 @@ y confiar en que el servicio está a la altura.
   tiene activada la reducción de movimiento.
 - RF relacionados: —
 - RNF impactados: RNF-PERF-001, RNF-PERF-002, RNF-PERF-003, RNF-A11Y-003,
-  RNF-A11Y-004.
+  RNF-A11Y-004, RNF-A11Y-005.
 - Casos de uso relacionados: —
 
 ### Criterios de aceptación (Given/When/Then)
@@ -597,6 +597,21 @@ y confiar en que el servicio está a la altura.
 - CA-05: Given cada ancho de pantalla (móvil, tablet, escritorio), When veo
   la portada, Then el nombre cabe sin desbordar y el contraste del texto
   sobre el fondo cumple RNF-A11Y-004.
+- CA-06: Given abro el sitio por primera vez en la sesión, When carga, Then
+  veo una entrada de marca de no más de 2 s (el nombre como un letrero de neón
+  que se enciende) antes de la portada, y cualquier interacción la salta;
+  si recargo o cambio de ruta en la misma sesión, no se repite.
+- CA-07: Given tengo activada la reducción de movimiento, When abro el sitio,
+  Then no hay entrada de marca ni parpadeos, y en ninguna animación hay más
+  de 3 destellos por segundo (RNF-A11Y-003, RNF-A11Y-005).
+- CA-08: Given abro la portada con ratón en escritorio, When muevo el cursor,
+  Then un haz de luz suave sigue al cursor sobre el fondo sin que React vuelva
+  a renderizar; en móvil o sin cursor fino el fondo es una forma geométrica
+  simple y estática, no un color plano.
+- CA-09: Given veo las tarjetas de beneficios de la portada, When entran en
+  pantalla (o paso el cursor en escritorio), Then reaccionan con una animación
+  ligada al scroll o al cursor, y su texto cumple el contraste de
+  RNF-A11Y-004 en escritorio y móvil.
 
 ---
 

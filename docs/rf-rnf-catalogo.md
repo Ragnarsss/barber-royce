@@ -142,6 +142,7 @@ Salvo que el CP diga otra cosa:
 | RNF-A11Y-002 | A11Y | Sin barreras graves para teclado y lector de pantalla. | Violaciones de axe con impacto `critical` o `serious` | 0 | **CP-A11Y-002:** axe DevTools en cada ruta y en el menú móvil abierto; recorrido manual solo con teclado. | Todas las rutas | Propuesto (menú móvil, `alt` del logo, buscador sin label; `BR-033`) |
 | RNF-A11Y-003 | A11Y | Se respeta la preferencia de reducir el movimiento. | Animaciones de desplazamiento o parallax activas con `prefers-reduced-motion: reduce` | 0 | **CP-A11Y-003:** emular `prefers-reduced-motion: reduce` en DevTools y recorrer cada ruta. | Todas las rutas | Implementado (`BR-017`, `BR-049`: sin Lenis con reducir movimiento, comprobado en la home; falta el recorrido de las 7 rutas) |
 | RNF-A11Y-004 | A11Y | El texto se puede leer sobre su fondo. | Contraste texto/fondo | ≥ 4,5:1 texto normal; ≥ 3:1 texto grande y componentes de UI | **CP-A11Y-004:** auditoría de contraste de Lighthouse y axe, **más** `contrast.e2e.test.ts` (estilos calculados en Chrome real, ruta por ruta): axe deja como "incompleto" el texto sobre fondos animados y no detectó un título invisible en la 404 (`BR-045`). | Todas las rutas | Propuesto |
+| RNF-A11Y-005 | A11Y | Ninguna animación del sitio puede provocar una crisis por destellos (WCAG 2.3.1). | Destellos por segundo en cualquier secuencia animada | ≤ 3 por segundo, en un área pequeña de la pantalla; 0 con `prefers-reduced-motion: reduce` | **CP-A11Y-005:** capturar la secuencia (fotogramas o grabación en Chrome) y contar los cambios fuertes de luminancia por segundo; con `prefers-reduced-motion: reduce` emulado, la secuencia no se monta. | Loader de neón (`BR-054`) y toda animación nueva con parpadeo | Propuesto |
 | RNF-SEO-001 | SEO | Cada ruta cumple las buenas prácticas de SEO automatizables. | Puntuación SEO de Lighthouse | ≥ 95 en cada ruta | **CP-SEO-001-N:** Lighthouse contra el preview. | Todas las rutas | Propuesto |
 | RNF-SEO-002 | SEO | Los datos que Google recibe del negocio son correctos y válidos. | Errores en la prueba de resultados enriquecidos; datos del JSON-LD distintos a los de `src/config/` | 0; 0 | **CP-SEO-002-N:** prueba de resultados enriquecidos de Google sobre la URL de producción; test que compara el JSON-LD con `src/config/` (`BR-006`). | Home, FAQ | Propuesto |
 | RNF-SEO-003 | SEO | Los metadatos de cada ruta son visibles sin ejecutar JavaScript. | Rutas cuyo HTML inicial trae su propio `<title>` y `description` | 7 de 7 | **CP-SEO-003-N:** `curl` a cada ruta del preview y lectura del `<head>`. | Todas las rutas | Propuesto (spike de prerender; `BR-034`) |
@@ -187,7 +188,7 @@ Salvo que el CP diga otra cosa:
 | HU-EXP-001 | — | RNF-PERF-001 .. RNF-PERF-006, RNF-COMP-001 |
 | HU-EXP-002 | RF-NAV-001 | RNF-A11Y-001 .. RNF-A11Y-004 |
 | HU-EXP-003 | RF-NAV-002, RF-NAV-003 | RNF-CONF-001, RNF-CONF-002 |
-| HU-EXP-004 | — | RNF-PERF-001 .. RNF-PERF-003, RNF-A11Y-003, RNF-A11Y-004 |
+| HU-EXP-004 | — | RNF-PERF-001 .. RNF-PERF-003, RNF-A11Y-003 .. RNF-A11Y-005 |
 | HU-OPS-001 | RF-OPS-001, RF-OPS-002 | RNF-SEG-001, RNF-SEG-003, RNF-MANT-001, RNF-MANT-002, RNF-MANT-003 |
 | HU-MED-001 | RF-MED-001 | RNF-PRIV-001, RNF-PERF-007, RNF-SEG-004 |
 | HU-MED-002 | RF-MED-002, RF-MED-004 | RNF-PRIV-001, RNF-PERF-007, RNF-SEG-004 |
