@@ -273,7 +273,7 @@ export function readTexts(table: CsvTable): TabResult<[string, string]> {
         const key = r.text("clave", 60);
         if (key === undefined) return undefined;
         if (!TEXT_KEY.test(key)) {
-          return r.report("clave", `"${key}" no es válida; usa minúsculas, números y puntos (por ejemplo: hero.titulo)`);
+          return r.report("clave", `"${key}" no es válida; usa minúsculas, números y puntos (por ejemplo: hero.lema)`);
         }
         if (!isTextKey(key)) return r.warn("clave", `"${key}" no es un texto que use el sitio (¿error de escritura?): se ignora`);
 

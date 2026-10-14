@@ -30,14 +30,102 @@
   max-width: 600px;
 }
 
+/* Título en tres niveles (BR-050): prefijo, marca y lema. La marca sale de SITE; el lema, de la hoja. */
 .title {
-  white-space: pre-line; /* los saltos de línea del texto editable de la hoja se respetan (BR-042) */
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 700;
-  line-height: 1.1;
-  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
   margin: 0;
-  text-transform: capitalize;
+  color: var(--color-brand-white);
+  font-weight: var(--font-weight-bold);
+}
+
+.prefix {
+  font-size: clamp(0.85rem, 1.6vw, 1.15rem);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+}
+
+.wordmark {
+  position: relative;
+  /* Alto fijo por línea: cuando la fuente de display termina de cargar el texto no cambia de altura (CLS) */
+  font-family: var(--font-family-display);
+  font-size: clamp(5.5rem, 17vw, 10rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.letters {
+  display: inline-flex;
+  /* El resplandor va aquí y no en cada letra: dentro de la máscara (overflow: hidden) quedaría recortado en un rectángulo */
+  filter: drop-shadow(0 0.04em 0.25em color-mix(in srgb, var(--color-brand-primary) 55%, transparent));
+}
+
+/* La máscara recorta la letra mientras sube; el relleno evita cortar el trazo de las mayúsculas */
+.letterMask {
+  display: inline-block;
+  overflow: hidden;
+  padding: 0.04em 0 0.02em;
+}
+
+.letter {
+  display: inline-block;
+}
+
+/* Destello rojo que cruza la marca una vez, después de que suben las letras */
+.shine {
+  position: absolute;
+  inset: 0;
+  padding: 0.04em 0 0.02em;
+  color: transparent;
+  background-image: linear-gradient(
+    105deg,
+    transparent 42%,
+    var(--color-brand-primary) 50%,
+    transparent 58%
+  );
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  pointer-events: none;
+  animation: shineSweep 1.1s ease-in-out 1.4s 1 both;
+}
+
+@keyframes shineSweep {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.tagline {
+  display: block;
+  max-width: 520px;
+  margin-top: 0.5rem;
+  white-space: pre-line; /* los saltos de línea del texto editable de la hoja se respetan (BR-042) */
+  font-size: clamp(1.1rem, 2.4vw, 1.75rem);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.25;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 .subtitle {
@@ -281,5 +369,12 @@
   .imageWrapper::after {
     width: 100px;
     height: 100px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shine {
+    animation: none;
+    display: none;
   }
 }

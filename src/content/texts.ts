@@ -13,7 +13,8 @@ const TITLE = 120;
 const SUBTITLE = 400;
 
 export const TEXTS = {
-  "hero.titulo": { default: "Barbería Royce,\nprofesionalismo, pasión y arte.", max: TITLE },
+  // Solo el lema: la marca del hero sale de `SITE.brand` (BR-050).
+  "hero.lema": { default: "Profesionalismo, pasión y arte.", max: 60 },
 
   "cta1.titulo": { default: "Reserva tu\nExperiencia\nPremium Hoy.", max: TITLE },
   "cta1.subtitulo": {

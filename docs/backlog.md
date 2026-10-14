@@ -1371,7 +1371,7 @@ Criterios de aceptación:
 #### BR-042 — Textos y títulos desde la pestaña `textos`
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-041
-- Estado: En curso (rama `feat/br-042-textos-desde-hoja`; hecho en local; sin pasos manuales)
+- Estado: Hecho (2026-10-14, rama `feat/br-042-textos-desde-hoja` → master, PR #13)
 - Historia de usuario: HU-CNT-002 (CA-01, CA-02, CA-03)
 - RF/RNF: `RF-CNT-005`, `RNF-CONF-003`
 
@@ -1402,7 +1402,7 @@ Criterios de aceptación:
 #### BR-043 — Guía para publicar contenido desde la hoja
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: BR-040
-- Estado: En curso (rama `docs/br-043-guia-contenido-hoja`; guía escrita; faltan los pasos manuales del usuario)
+- Estado: Hecho (2026-10-14, rama `docs/br-043-guia-contenido-hoja` → master, PR #13)
 - Historia de usuario: HU-CNT-001 (CA-04)
 - RF/RNF: no aplica — documentación de un proceso manual.
 
@@ -1592,6 +1592,85 @@ Preguntas para el usuario (no las resuelvo yo):
 
 ---
 
+### Épica K — Dirección visual y micro-interacciones
+
+Serie de mejoras estéticas sección por sección (tipografía de marca, fondos
+con profundidad, micro-interacciones), pedida por el dueño el 2026-10-14. Cada
+sección es su propio ticket y empieza por el hero.
+
+#### BR-050 — Hero: tipografía de marca
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-042, BR-043
+- Estado: En curso (rama `feat/br-050-hero-tipografia-de-marca`)
+- Historia de usuario: HU-EXP-004 (CA-01 .. CA-05)
+- RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-14):** el dueño quiere un sitio más llamativo y pidió partir
+por el hero, dándole al nombre una fuente y un tamaño especiales. Hoy el
+`<h1>` es una sola cadena de la hoja (`hero.titulo`, valor por defecto en
+`src/content/texts.ts:16`: `"Barbería Royce,\nprofesionalismo, pasión y arte."`)
+con Montserrat 700, `clamp(2.5rem, 5vw, 4rem)` y `text-transform: capitalize`
+(`Hero.module.css:33-41`): la marca pesa lo mismo que el lema y sale
+"Pasión **Y** Arte".
+
+Decisiones tomadas el 2026-10-14 (el usuario respondió «dale vamos»; el
+**tipo de fuente final está por confirmar**):
+1. El nombre de la marca es identidad fija: sale de `src/config/` (`SITE`) y
+   deja de formar parte de `hero.titulo` (ver el ajuste de arriba). La hoja conserva solo el lema.
+2. Dirección tipográfica propuesta: «ROYCE» protagonista en una fuente de
+   display condensada (Anton o Bebas Neue); «Barbería» pequeña en versalitas con
+   tracking encima. Alternativas descartadas por ahora: serif de alto
+   contraste (Playfair Display, Cormorant) y blackletter (Pirata One).
+
+> **Alcance ajustado (2026-10-14):** el lema pasa a una clave nueva,
+> `hero.lema`, en vez de reutilizar `hero.titulo`. La hoja real todavía tiene en
+> `hero.titulo` el título entero («Barbería Royce, …»); si se reutilizara la
+> clave, al desplegar la marca saldría duplicada hasta que el dueño editara la
+> celda. Con una clave nueva la celda vieja se ignora con un aviso y el lema usa
+> su texto por defecto, sin coordinar el orden de nada. Sigue siendo la decisión
+> del 2026-10-14 (marca en config, lema en la hoja); cambia solo el nombre de la
+> clave. Máximo del lema: 60 caracteres (antes 120).
+
+Alcance:
+1. Jerarquía en el hero: marca (clamp ≈ 8–10 rem en escritorio), lema y
+   beneficios. «Barbería» en Montserrat, en versalitas y con tracking.
+2. Fuente de display autoalojada con `@fontsource` (como Montserrat), con
+   `font-display: swap`, subset latino y precarga solo si se mide que
+   ayuda (`P002`/`BR-011`).
+3. El nombre sale de `SITE` en `src/config/constants.ts` (se agregan sus
+   partes: «Barbería» y «Royce»); `hero.lema` es el lema (clave nueva), se
+   quita `text-transform: capitalize` y se ajustan el valor por defecto, el
+   respaldo (`src/content/snapshot/`, lo hace el desarrollador), el
+   `textos.csv` de plantilla y `docs/contenido-hoja.md` (BR-043), con el largo
+   máximo y un aviso de cuánto cabe.
+4. Micro-efecto de entrada: las letras suben desde una máscara y un destello
+   rojo recorre «ROYCE» una vez. `MotionValue`/variants de framer-motion, sin
+   `setState` por scroll; con `prefers-reduced-motion` el texto aparece
+   completo y estático.
+5. Colores y tamaños nuevos como tokens en `src/styles/tokens/`, sin hex en el
+   módulo; el título conserva su `<h1>` semántico y el nombre accesible
+   completo para lectores de pantalla.
+
+Criterios de aceptación:
+1. En la portada el nombre de la marca domina visualmente y el lema queda en
+   segundo nivel (HU-EXP-004 CA-01).
+2. Lighthouse móvil sobre el preview de Vercel: LCP y CLS no empeoran frente
+   a `master` y la fuente no produce saltos de texto (HU-EXP-004 CA-02,
+   CP-PERF-001, CP-PERF-002).
+3. Con `prefers-reduced-motion: reduce` el título aparece completo y sin
+   animación (HU-EXP-004 CA-03, CP-A11Y-003).
+4. Cambiar `hero.lema` en la hoja cambia solo el lema, sin romper el diseño
+   ni tocar la marca; un lema más largo que el máximo se rechaza con aviso
+   (HU-EXP-004 CA-04, CP-CNT-005).
+5. El nombre cabe sin desbordar en 360, 768 y 1440 px y el contraste cumple
+   `contrast.e2e.test.ts` en ambos esquemas (HU-EXP-004 CA-05, CP-A11Y-004).
+6. El nombre de la marca aparece una sola vez en el repo como dato
+   (`SITE`) y un test lo compara con el del hero (`RNF-DATOS-001`).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-050).
+
+---
+
 ## 4. Diferido — no forma parte del despliegue
 
 Cada ítem tiene su **disparador**: la condición que obliga a revisarlo.
@@ -1659,14 +1738,15 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-039 | Núcleo de contenido: CSV, validación y respaldo | J | P2 | M | En curso | BR-030 |
 | BR-040 | Descarga de la hoja al construir | J | P2 | M | En curso | BR-039 |
 | BR-041 | Catálogo desde el contenido generado | J | P2 | M | En curso | BR-040 |
-| BR-042 | Textos y títulos desde la hoja | J | P3 | M | En curso | BR-041 |
-| BR-043 | Guía para publicar desde la hoja | J | P2 | S | En curso | BR-040 |
+| BR-042 | Textos y títulos desde la hoja | J | P3 | M | Hecho | BR-041 |
+| BR-043 | Guía para publicar desde la hoja | J | P2 | S | Hecho | BR-040 |
 | BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |
 | BR-045 | Títulos invisibles sobre fondo oscuro | C | P0 | S | En curso | — |
 | BR-046 | Leer la hoja desde `.env` y en desarrollo | J | P2 | S | Hecho | BR-040 |
 | BR-047 | El navegador relee la hoja: cambios sin desplegar | J | P1 | M | Hecho | BR-040 |
 | BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | Hecho | BR-047 |
 | BR-049 | Smooth scroll imperceptible y redundante | E | P1 | S | Hecho | BR-014, BR-017 |
+| BR-050 | Hero: tipografía de marca | K | P3 | M | En curso | BR-042, BR-043 |
 | BR-051 | Parrilla de fotos con las publicaciones de Instagram | L | P2 | L | Bloqueada | — |
 | BR-052 | Reseñas reales de Google en la home | L | P2 | M | Bloqueada | BR-006 |
 

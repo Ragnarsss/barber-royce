@@ -5,13 +5,13 @@ const keys = Object.keys(TEXTS) as TextKey[];
 
 describe("registro de textos editables (BR-042, HU-CNT-002)", () => {
   it("textOf usa el texto de la hoja si existe y el del código si no (CA-01, CA-02)", () => {
-    expect(textOf({ "hero.titulo": "De la hoja" }, "hero.titulo")).toBe("De la hoja");
-    expect(textOf({}, "hero.titulo")).toBe(TEXTS["hero.titulo"].default);
-    expect(textOf({ "cta2.titulo": "Otro" }, "hero.titulo")).toBe(TEXTS["hero.titulo"].default);
+    expect(textOf({ "hero.lema": "De la hoja" }, "hero.lema")).toBe("De la hoja");
+    expect(textOf({}, "hero.lema")).toBe(TEXTS["hero.lema"].default);
+    expect(textOf({ "cta2.titulo": "Otro" }, "hero.lema")).toBe(TEXTS["hero.lema"].default);
   });
 
   it("isTextKey reconoce solo las claves registradas, también frente a nombres heredados de Object", () => {
-    expect(isTextKey("hero.titulo")).toBe(true);
+    expect(isTextKey("hero.lema")).toBe(true);
     expect(isTextKey("hero.titlo")).toBe(false);
     expect(isTextKey("toString")).toBe(false);
     expect(isTextKey("__proto__")).toBe(false);

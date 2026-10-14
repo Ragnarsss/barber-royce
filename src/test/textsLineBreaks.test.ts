@@ -9,8 +9,9 @@ import { TEXTS, type TextKey } from "../content/texts";
 const srcDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 /** Clave de texto con salto de línea → CSS del componente que la muestra. */
+// `hero.lema` ya no está aquí: desde BR-050 es solo el lema, sin salto de línea por defecto; que el dueño pueda
+// escribir uno (`.tagline` con `pre-line`) lo comprueba `Hero.test.tsx`.
 const MULTILINE: Partial<Record<TextKey, string>> = {
-  "hero.titulo": "components/sections/Hero/Hero.module.css",
   "cta1.titulo": "components/sections/CTA1/CTA1.module.css",
   "socialproof2.titulo": "components/sections/SocialProof2/SocialProof2.module.css",
 };

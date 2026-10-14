@@ -179,26 +179,26 @@ describe("pestaña preguntas", () => {
 
 describe("pestaña textos (BR-042, HU-CNT-002)", () => {
   it("lee pares clave-valor de las claves que usa el sitio", () => {
-    const { items, issues, warnings } = readTexts(table("clave,valor\nhero.titulo,Barbería Royce\ncta2.titulo,¿Listo para tu corte?\n"));
+    const { items, issues, warnings } = readTexts(table("clave,valor\nhero.lema,Barbería Royce\ncta2.titulo,¿Listo para tu corte?\n"));
 
     expect(issues).toEqual([]);
     expect(warnings).toEqual([]);
     expect(items).toEqual([
-      ["hero.titulo", "Barbería Royce"],
+      ["hero.lema", "Barbería Royce"],
       ["cta2.titulo", "¿Listo para tu corte?"],
     ]);
   });
 
   it("CA-02: una clave que el sitio no usa (error de escritura) se ignora con un aviso y NO rechaza la pestaña", () => {
-    const { items, issues, warnings } = readTexts(table("clave,valor\nhero.titulo,Bien\nhero.titlo,Con error\n"));
+    const { items, issues, warnings } = readTexts(table("clave,valor\nhero.lema,Bien\nhero.titlo,Con error\n"));
 
-    expect(items).toEqual([["hero.titulo", "Bien"]]);
+    expect(items).toEqual([["hero.lema", "Bien"]]);
     expect(issues).toEqual([]);
     expect(warnings).toEqual([{ tab: "textos", row: 3, field: "clave", message: '"hero.titlo" no es un texto que use el sitio (¿error de escritura?): se ignora' }]);
   });
 
   it("un valor vacío significa «usar el texto por defecto»: no es un error ni se publica", () => {
-    const { items, issues, warnings } = readTexts(table("clave,valor\nhero.titulo,\n"));
+    const { items, issues, warnings } = readTexts(table("clave,valor\nhero.lema,\n"));
 
     expect(items).toEqual([]);
     expect(issues).toEqual([]);
@@ -206,10 +206,10 @@ describe("pestaña textos (BR-042, HU-CNT-002)", () => {
   });
 
   it("CA-03: un valor más largo que el máximo de su clave rechaza la pestaña y dice cuál es el máximo", () => {
-    const max = TEXTS["hero.titulo"].max;
-    const { issues } = readTexts(table(`clave,valor\nhero.titulo,${"x".repeat(max + 1)}\n`));
+    const max = TEXTS["hero.lema"].max;
+    const { issues } = readTexts(table(`clave,valor\nhero.lema,${"x".repeat(max + 1)}\n`));
 
-    expect(issues).toEqual([{ tab: "textos", row: 2, field: "valor", message: `tiene ${max + 1} caracteres y el máximo para "hero.titulo" es ${max}` }]);
+    expect(issues).toEqual([{ tab: "textos", row: 2, field: "valor", message: `tiene ${max + 1} caracteres y el máximo para "hero.lema" es ${max}` }]);
   });
 
   it("los subtítulos admiten más caracteres que los títulos", () => {
@@ -218,7 +218,7 @@ describe("pestaña textos (BR-042, HU-CNT-002)", () => {
   });
 
   it("una clave con formato inválido o repetida rechaza la pestaña, con su fila", () => {
-    const { issues } = readTexts(table("clave,valor\nHero Titulo,x\nhero.titulo,uno\nhero.titulo,dos\n"));
+    const { issues } = readTexts(table("clave,valor\nHero Titulo,x\nhero.lema,uno\nhero.lema,dos\n"));
 
     expect(issues.map((issue) => `${issue.row}:${issue.field}`)).toEqual(["2:clave", "4:clave"]);
   });
@@ -228,7 +228,7 @@ describe("pestaña textos (BR-042, HU-CNT-002)", () => {
   });
 
   it("conserva los saltos de línea de la celda (los títulos de dos líneas)", () => {
-    const { items } = readTexts(table('clave,valor\nhero.titulo,"Línea uno\nLínea dos"\n'));
+    const { items } = readTexts(table('clave,valor\nhero.lema,"Línea uno\nLínea dos"\n'));
 
     expect(items[0][1]).toBe("Línea uno\nLínea dos");
   });

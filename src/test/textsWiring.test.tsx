@@ -102,7 +102,7 @@ describe("textos editables en la home (BR-042, HU-CNT-002 CA-01 y CA-02)", () =>
   });
 
   it("RN-01: un texto con HTML se muestra como texto, no se interpreta", () => {
-    state.texts = { "hero.titulo": "<img src=x onerror=alert(1)>Hola" };
+    state.texts = { "hero.lema": "<img src=x onerror=alert(1)>Hola" };
 
     const page = render();
 
@@ -111,10 +111,11 @@ describe("textos editables en la home (BR-042, HU-CNT-002 CA-01 y CA-02)", () =>
   });
 
   it("los títulos de dos líneas conservan el salto de línea de la hoja", () => {
-    state.texts = { "hero.titulo": "Línea uno\nLínea dos" };
+    state.texts = { "hero.lema": "Línea uno\nLínea dos" };
 
     render();
 
-    expect(document.querySelector("h1")?.textContent).toBe("Línea uno\nLínea dos");
+    // El `<h1>` lleva además la marca (BR-050); el lema es lo último y conserva el salto.
+    expect(document.querySelector("h1")?.textContent).toMatch(/Línea uno\nLínea dos$/);
   });
 });
