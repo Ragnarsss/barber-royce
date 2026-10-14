@@ -13,6 +13,7 @@ import { staggerContainer, fadeInUp, fadeInLeft, letterRise, letterStagger } fro
 import { SITE } from "@/config/constants";
 import { useSiteText } from "@/content/useSiteContent";
 import { useNeonLoaderDone } from "@/loader/neonLoader";
+import { SPOTLIGHT_SIZE, usePointerSpotlight } from "./spotlight";
 
 export function Hero() {
   const siteText = useSiteText();
@@ -30,6 +31,7 @@ export function Hero() {
   const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>(undefined, {
     offset: ["start start", "end start"],
   });
+  const spotlight = usePointerSpotlight(sectionRef);
   const layers = {
     background: useBackgroundLayer(scrollYProgress),
     middle: useMiddleLayer(scrollYProgress),
@@ -79,6 +81,17 @@ export function Hero() {
         className={`${styles.rightTriangleForeground} ${isScrolling ? 'isAnimating' : ''}`}
         style={isReady ? { y: layers.fast.y, x: layers.fast.x } : {}}
       ></motion.div>
+
+      {/* Grano y haz de luz que sigue al cursor (BR-055): bajo la foto y el texto */}
+      <div className={styles.grain} aria-hidden="true" />
+      {spotlight.enabled && (
+        <motion.div
+          className={styles.spotlight}
+          aria-hidden="true"
+          data-spotlight
+          style={{ x: spotlight.x, y: spotlight.y, opacity: spotlight.opacity, width: SPOTLIGHT_SIZE, height: SPOTLIGHT_SIZE }}
+        />
+      )}
 
       {/* Imagen del modelo - <picture> tag para SEO con parallax y responsive images */}
       <motion.picture
