@@ -613,6 +613,11 @@ y confiar en que el servicio está a la altura.
   pantalla (o paso el cursor en escritorio), Then reaccionan con una animación
   ligada al scroll o al cursor, y su texto cumple el contraste de
   RNF-A11Y-004 en escritorio y móvil.
+- CA-10: Given bajo hasta el bloque de reserva que sigue a la portada, When
+  entra en pantalla, Then las barras de luz hexagonales (como las del techo
+  de la barbería) se encienden una vez, la foto queda enmarcada en su figura,
+  el botón de reservar es el elemento que más destaca y, en móvil, la foto no
+  tapa el título.
 
 ---
 
