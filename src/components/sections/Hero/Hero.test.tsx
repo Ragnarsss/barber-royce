@@ -133,3 +133,66 @@ describe("Hero: tipografía de marca (BR-050, HU-EXP-004)", () => {
     expect(heroCss).not.toMatch(/Royce|Barbería/);
   });
 });
+
+describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
+  const withPointer = (fine: boolean) =>
+    vi.stubGlobal("matchMedia", (query: string) => ({ matches: fine && query === "(pointer: fine)", media: query, addEventListener() {}, removeEventListener() {} }));
+
+  beforeAll(() => {
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      },
+    );
+  });
+
+  beforeEach(() => {
+    state.texts = {};
+    state.reducedMotion = false;
+  });
+
+  it("CA-08: con ratón, el haz de luz que sigue al cursor está montado y es decorativo", () => {
+    withPointer(true);
+    renderHero();
+
+    const spot = document.querySelector("[data-spotlight]");
+    expect(spot).not.toBeNull();
+    expect(spot?.getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("CA-08: en pantallas táctiles no hay haz", () => {
+    withPointer(false);
+    renderHero();
+
+    expect(document.querySelector("[data-spotlight]")).toBeNull();
+  });
+
+  it("CP-A11Y-003: con reducir movimiento no hay haz aunque haya ratón", () => {
+    withPointer(true);
+    state.reducedMotion = true;
+    renderHero();
+
+    expect(document.querySelector("[data-spotlight]")).toBeNull();
+  });
+
+  it("CA-08: en móvil queda una forma geométrica, no un fondo plano", () => {
+    const mobile = heroCss.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+    const hidden = mobile.match(/([^{}]*)\{\s*display:\s*none;?\s*\}/)?.[1] ?? "";
+
+    expect(hidden).not.toMatch(/\.leftTriangle\s*(,|$)/m);
+    expect(mobile).toMatch(/\.leftTriangle\s*\{[^}]*width:/);
+  });
+
+  it("ADR-002: los triángulos, el grano y el haz no traen colores escritos a mano", () => {
+    const layers = heroCss.match(/\/\* ===== CAPAS DE TRIÁNGULOS PARALLAX ===== \*\/([\s\S]*?)@media/)?.[1] ?? "";
+
+    expect(layers.length).toBeGreaterThan(0);
+    expect(layers).not.toMatch(/#[0-9a-fA-F]{3,6}\b|rgba?\(/);
+  });
+});

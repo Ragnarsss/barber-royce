@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   padding: 0;
-  background: #332b2b;
+  background: var(--color-brand-section-bg);
   position: relative;
   overflow: hidden;
   margin-top: 0;
@@ -225,12 +225,24 @@
 
 /* ===== CAPAS DE TRIÁNGULOS PARALLAX ===== */
 
+/*
+ * Profundidad del fondo (BR-055): los triángulos llevan un degradado con la luz arriba a la izquierda y un filo de
+ * luz de 1 px en su diagonal. El filo es un segundo fondo del mismo triángulo: con `to bottom right`, la línea del
+ * 50 % del degradado pasa justo por las esquinas superior derecha e inferior izquierda, que es la diagonal que corta
+ * el `clip-path`. Así el filo se mueve con el parallax sin un elemento extra.
+ */
+.hero {
+  --hero-edge-light: color-mix(in srgb, var(--color-brand-white) 55%, transparent);
+  --hero-red-light: color-mix(in srgb, var(--color-brand-primary) 82%, var(--color-brand-white));
+  --hero-red-deep: color-mix(in srgb, var(--color-brand-primary) 62%, var(--color-brand-background));
+}
+
 /* Capa de fondo - triángulos semi-transparentes más grandes */
 .leftTriangleBackground {
   position: absolute;
   top: -10%;
   left: 0;
-  background: rgba(213, 35, 35, 0.3);
+  background: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
   clip-path: polygon(0 0, 95% 5%, 5% 95%);
   width: 50vw;
   height: 110vh;
@@ -241,7 +253,7 @@
   position: absolute;
   right: 0;
   bottom: -10%;
-  background: rgba(213, 35, 35, 0.35);
+  background: color-mix(in srgb, var(--color-brand-primary) 35%, transparent);
   clip-path: polygon(95% 5%, 100% 100%, 5% 95%);
   width: 50vw;
   height: 110vh;
@@ -255,7 +267,9 @@
   left: 0;
   right: 50%;
   bottom: 0;
-  background: #d52323;
+  background:
+    linear-gradient(to bottom right, transparent calc(50% - 1.5px), var(--hero-edge-light) 50%, transparent calc(50% + 0.5px)),
+    linear-gradient(150deg, var(--hero-red-light) 0%, var(--color-brand-primary) 40%, var(--hero-red-deep) 100%);
   clip-path: polygon(0 0, 100% 0, 0 100%);
   width: 50vw;
   height: 100vh;
@@ -268,7 +282,9 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  background: #d52323;
+  background:
+    linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--hero-edge-light) 50%, transparent calc(50% + 1.5px)),
+    linear-gradient(150deg, var(--color-brand-primary) 0%, var(--hero-red-deep) 100%);
   clip-path: polygon(100% 0, 100% 100%, 0 100%);
   width: 50vw;
   height: 100vh;
@@ -280,7 +296,7 @@
   position: absolute;
   top: 10%;
   left: 0;
-  background: rgba(170, 57, 57, 0.6);
+  background: color-mix(in srgb, var(--color-accent-600) 60%, transparent);
   clip-path: polygon(0 0, 100% 10%, 10% 100%);
   width: 35vw;
   height: 70vh;
@@ -295,13 +311,44 @@
   position: absolute;
   right: 0;
   bottom: 10%;
-  background: rgba(254, 0, 0, 0.4);
+  background: color-mix(in srgb, var(--color-brand-primary-hover) 40%, transparent);
   clip-path: polygon(90% 0, 100% 100%, 0 90%);
   width: 40vw;
   height: 65vh;
   max-width: 700px;
   z-index: 1;
   pointer-events: none;
+}
+
+/* Grano fino sobre todo el fondo (BR-055): ruido de SVG en escala de grises, sin colores escritos. Es estático. */
+.grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.14;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/*
+ * Haz de luz que sigue al cursor (BR-055): un círculo de tamaño fijo que se mueve con transform (usePointerSpotlight).
+ * Va bajo la foto y el texto. Solo existe con un puntero fino y sin reducir movimiento.
+ */
+.spotlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand-white) 16%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand-white) 6%, transparent) 35%,
+    transparent 68%
+  );
 }
 
 @media (max-width: 1024px) {
@@ -315,8 +362,10 @@
 }
 
 @media (max-width: 768px) {
-  /* Ocultar todas las capas de triángulos en mobile */
-  .leftTriangle,
+  /*
+   * En móvil queda una sola forma (BR-055): el triángulo principal izquierdo, a todo el ancho y en la parte de
+   * arriba, en vez de un fondo de un solo color. Las demás capas se ocultan.
+   */
   .rightTriangle,
   .leftTriangleBackground,
   .rightTriangleBackground,
@@ -325,9 +374,9 @@
     display: none;
   }
 
-  .hero::before {
-    clip-path: polygon(0 0, 100% 0, 100% 60%, 0% 50%);
-    right: 0;
+  .leftTriangle {
+    width: 100vw;
+    height: 58%;
   }
 
   .hero {
