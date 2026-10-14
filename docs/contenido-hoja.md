@@ -72,7 +72,7 @@ de siempre. Para un salto de línea dentro de la celda, presiona **Alt + Enter**
 
 | Clave | Dónde aparece | Máximo |
 |---|---|---|
-| `hero.titulo` | Título grande de la portada | 120 |
+| `hero.lema` | Lema bajo el nombre de la portada (el nombre «Barbería Royce» no se edita aquí: es parte del diseño) | 60 |
 | `cta1.titulo`, `cta1.subtitulo` | Primer bloque de reserva | 120 / 400 |
 | `socialproof1.titulo`, `socialproof1.subtitulo` | «Respaldados por los mejores» | 120 / 400 |
 | `benefits.titulo` | Título de la sección de beneficios | 120 |
@@ -84,9 +84,15 @@ de siempre. Para un salto de línea dentro de la celda, presiona **Alt + Enter**
 Notas:
 
 - Es **texto plano**: no uses HTML, negritas ni enlaces; se mostrarían tal cual.
-- Algunos títulos se muestran con **cada palabra en mayúscula inicial** (por ejemplo
-  el de la portada): es el diseño, no un error.
-- Si te equivocas al escribir una clave (por ejemplo `hero.titlo`), el sitio la
+- El lema de la portada (`hero.lema`) se muestra **tal como lo escribes**, con tus
+  mayúsculas. Escríbelo corto (hasta unas 40 letras se ve mejor): el máximo son 60.
+- Algunos otros títulos se muestran con **cada palabra en mayúscula inicial**: es el
+  diseño, no un error.
+- Antes de este cambio el título de la portada era la clave `hero.titulo` e incluía
+  el nombre de la barbería. Esa clave **ya no se usa**: si la tienes en la hoja, el
+  sitio la ignora y avisa en el registro. El nombre «Barbería Royce» ahora es parte
+  del diseño; si quieres cambiar el lema, escribe una fila nueva con `hero.lema`.
+- Si te equivocas al escribir una clave (por ejemplo `hero.lemma`), el sitio la
   **ignora** y lo avisa en el registro de la publicación (sección 6).
 
 
@@ -307,7 +313,7 @@ pestañas sí se actualizaron. Busca la línea con `-` o `!` debajo para ver qu�
 | `no se obtuvo de la hoja` / `respondió HTTP 404` | La pestaña no está publicada, o el `gid` está mal | Repite la sección 3 y revisa `CONTENT_SHEET_GIDS` |
 | `la respuesta no es CSV sino "text/html"` | El enlace no es de publicación en CSV | Repite la sección 3 con formato `.csv` |
 | `no respondió en 10 s` / `no se pudo conectar` | Google no respondió | Vuelve a publicar en unos minutos |
-| `! textos fila 3, clave: "hero.titlo" no es un texto que use el sitio` | Error de escritura en una clave | Corrige la clave (aviso: no impide publicar) |
+| `! textos fila 3, clave: "hero.lemma" no es un texto que use el sitio` | Error de escritura en una clave | Corrige la clave (aviso: no impide publicar) |
 
 **Una sola fila con error rechaza esa pestaña completa** (así nunca se publica contenido
 a medias). Corrige la fila y publica de nuevo.

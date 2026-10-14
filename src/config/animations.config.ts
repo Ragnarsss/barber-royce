@@ -66,6 +66,28 @@ export const fadeInUp: Variants = {
 };
 
 /**
+ * Contenedor de una palabra cuyas letras suben una a una (BR-050).
+ * Hereda `hidden`/`visible` del padre; solo reparte el retraso entre las letras.
+ */
+export const letterStagger: Variants = {
+    hidden: {},
+    visible: {
+        transition: { staggerChildren: 0.07, delayChildren: 0.1 }
+    }
+};
+
+/**
+ * Una letra que sube desde detrás de una máscara (el padre recorta con `overflow: hidden`).
+ */
+export const letterRise: Variants = {
+    hidden: { y: "110%" },
+    visible: {
+        y: "0%",
+        transition: { type: "tween", duration: 0.7, ease: [0.22, 1, 0.36, 1] }
+    }
+};
+
+/**
  * Fade in desde la izquierda
  */
 export const fadeInLeft: Variants = {

@@ -59,6 +59,8 @@ export const SOCIAL_MEDIA = {
 // URLs y SEO
 export const SITE = {
     name: "Royce Barbería",
+    // El hero dibuja la marca en dos partes (BR-050); no se edita desde la hoja.
+    brand: { prefix: "Barbería", name: "Royce" },
     domain: "https://roycebarber.com",
     description: "Barbería premium en Coquimbo. Cortes clásicos y modernos, afeitado tradicional, tratamientos capilares de calidad.",
     tagline: "Estilo y elegancia para el hombre moderno",

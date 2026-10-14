@@ -9,7 +9,8 @@ import heroImage1684w from "@/assets/optimized/hero_model_left_profile_1684w.web
 import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
-import { staggerContainer, fadeInUp, fadeInLeft } from "@/config/animations.config";
+import { staggerContainer, fadeInUp, fadeInLeft, letterRise, letterStagger } from "@/config/animations.config";
+import { SITE } from "@/config/constants";
 import { useSiteText } from "@/content/useSiteContent";
 
 export function Hero() {
@@ -88,7 +89,7 @@ export function Hero() {
         />
         <motion.img
           src={heroImage842w}
-          alt="Barbero profesional mostrando corte moderno premium en Royce Barbería"
+          alt={`Barbero profesional mostrando corte moderno premium en ${SITE.name}`}
           loading="eager"
           fetchPriority="high"
           width="842"
@@ -100,9 +101,36 @@ export function Hero() {
 
       <div className={styles.container}>
         <div className={styles.content}>
-          <motion.h1 className={styles.title} variants={fadeInUp}>
-            {siteText("hero.titulo")}
-          </motion.h1>
+          <h1 className={styles.title}>
+            <motion.span className={styles.prefix} variants={fadeInUp}>
+              {SITE.brand.prefix}
+            </motion.span>{" "}
+            <span className={styles.wordmark}>
+              {/* Las letras se separan solo para animarlas: el lector de pantalla lee la palabra entera */}
+              <span className={styles.srOnly}>{SITE.brand.name}</span>
+              <motion.span className={styles.letters} aria-hidden="true" variants={letterStagger}>
+                {[...SITE.brand.name].map((letter, index) =>
+                  reducedMotion ? (
+                    <span key={index} className={styles.letterMask}>
+                      <span className={styles.letter} data-letter>{letter}</span>
+                    </span>
+                  ) : (
+                    <span key={index} className={styles.letterMask}>
+                      <motion.span className={styles.letter} variants={letterRise} data-letter>{letter}</motion.span>
+                    </span>
+                  ),
+                )}
+              </motion.span>
+              {!reducedMotion && (
+                <span className={styles.shine} aria-hidden="true" data-shine>
+                  {SITE.brand.name}
+                </span>
+              )}
+            </span>{" "}
+            <motion.span className={styles.tagline} variants={fadeInUp}>
+              {siteText("hero.lema")}
+            </motion.span>
+          </h1>
           <motion.p className={styles.subtitle} variants={fadeInUp}>
             Donde el estilo se encuentra con la excelencia. <strong>Un servicio dedicado, detallista y a tu altura.</strong> ¡Descubre una experiencia única en cada visita!
           </motion.p>

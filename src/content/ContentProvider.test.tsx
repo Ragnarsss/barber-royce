@@ -17,7 +17,7 @@ const SOURCE: SheetSource = {
 };
 
 const EQUIPO = "id,nombre,cargo,experiencia\ncarlos-mendozzz,Carlos Mendozzz,Master Barber,18 años\n";
-const TEXTOS = "clave,valor\nhero.titulo,Título desde la hoja\n";
+const TEXTOS = "clave,valor\nhero.lema,Título desde la hoja\n";
 const SERVICIOS_INVALIDOS = "id,nombre,descripcion,precio,duracion,categoria\ncorte,Corte,Descripción,,45 min,Barba\n";
 
 function sheetFetch(tabs: Record<string, string>) {
@@ -36,7 +36,7 @@ function Probe() {
     <div>
       <p data-testid="team">{team[0].name}</p>
       <p data-testid="service">{services[0].name}</p>
-      <p data-testid="hero">{siteText("hero.titulo")}</p>
+      <p data-testid="hero">{siteText("hero.lema")}</p>
     </div>
   );
 }

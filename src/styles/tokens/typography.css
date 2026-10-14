@@ -11,6 +11,8 @@
     "Helvetica Neue", sans-serif;
 
   --font-family-heading: "Montserrat", var(--font-family-primary);
+  /* Marca del hero (BR-050): condensada de display, con la pesada del sistema como respaldo mientras carga */
+  --font-family-display: "Anton", "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
   --font-family-mono: "Courier New", Courier, monospace;
 
   /* Font Sizes - Escala tipográfica (1.25 - Major Third) */

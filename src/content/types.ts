@@ -35,7 +35,7 @@ export interface SiteContent {
   products: Product[];
   team: TeamMember[];
   faq: FAQ[];
-  /** Textos sueltos por clave (`hero.titulo`). */
+  /** Textos sueltos por clave (`hero.lema`). */
   texts: Record<string, string>;
   /** Contacto, reservas, horarios y redes (pestaña `negocio`). */
   business: Business;

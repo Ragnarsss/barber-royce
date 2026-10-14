@@ -9,7 +9,7 @@ const OTHER: SiteContent = {
   products: [{ name: "Respaldo", description: "d", price: "$1.000", image: "", category: "Styling" }],
   team: [{ name: "Respaldo", role: "r", experience: "e", image: "", isLead: false }],
   faq: [{ category: "Otros", question: "¿Respaldo?", answer: "Sí" }],
-  texts: { "hero.titulo": "Respaldo" },
+  texts: { "hero.lema": "Respaldo" },
   business: snapshot.business,
   locations: snapshot.locations,
 };
@@ -19,7 +19,7 @@ const goodSheet: SheetCsv = {
   productos: "id,nombre,descripcion,precio,categoria\npomada,Pomada,Hold fuerte,15990,Styling\n",
   equipo: "id,nombre,cargo,experiencia\nc,Carlos,Master,15 años\n",
   preguntas: "id,categoria,pregunta,respuesta\np,Otros,¿Algo?,Sí\n",
-  textos: "clave,valor\nhero.titulo,Nuevo título\n",
+  textos: "clave,valor\nhero.lema,Nuevo título\n",
   negocio: "clave,valor\ntelefono,+56 9 5555 4444\n",
   sucursales:
     "id,nombre,direccion,ciudad,telefono,email,whatsapp,mapa,horario_semana,horario_sabado,horario_domingo\n" +
@@ -42,7 +42,7 @@ describe("resolveContent: hoja o respaldo (BR-039, HU-CNT-001, RNF-CONF-003)", (
       content.texts.otro = "x";
 
       expect(OTHER.services).toHaveLength(1);
-      expect(OTHER.texts).toEqual({ "hero.titulo": "Respaldo" });
+      expect(OTHER.texts).toEqual({ "hero.lema": "Respaldo" });
     });
   });
 
@@ -54,7 +54,7 @@ describe("resolveContent: hoja o respaldo (BR-039, HU-CNT-001, RNF-CONF-003)", (
       expect(content.products.map((p) => p.price)).toEqual(["$15.990"]);
       expect(content.team.map((m) => m.name)).toEqual(["Carlos"]);
       expect(content.faq.map((q) => q.question)).toEqual(["¿Algo?"]);
-      expect(content.texts).toEqual({ "hero.titulo": "Nuevo título" });
+      expect(content.texts).toEqual({ "hero.lema": "Nuevo título" });
       expect(content.business.contact.phone).toEqual({ display: "+56 9 5555 4444", link: "tel:+56955554444" });
       expect(content.locations.map((l) => l.name)).toEqual(["Sucursal"]);
       expect(reports.every((report) => report.source === "hoja" && report.issues.length === 0)).toBe(true);
@@ -138,9 +138,9 @@ describe("resolveContent: hoja o respaldo (BR-039, HU-CNT-001, RNF-CONF-003)", (
     });
 
     it("un texto con HTML se conserva como texto: el sitio nunca lo interpreta como código (RN-01 de HU-CNT-002)", () => {
-      const { content } = resolveContent({ textos: 'clave,valor\nhero.titulo,"<script>alert(1)</script>"\n' }, OTHER);
+      const { content } = resolveContent({ textos: 'clave,valor\nhero.lema,"<script>alert(1)</script>"\n' }, OTHER);
 
-      expect(content.texts["hero.titulo"]).toBe("<script>alert(1)</script>");
+      expect(content.texts["hero.lema"]).toBe("<script>alert(1)</script>");
     });
   });
 
@@ -166,14 +166,14 @@ describe("resolveContent: hoja o respaldo (BR-039, HU-CNT-001, RNF-CONF-003)", (
 });
 
 describe("avisos de la pestaña textos (BR-042)", () => {
-  const withTypo: SheetCsv = { textos: "clave,valor\nhero.titulo,Nuevo\nhero.titlo,Con error\n" };
+  const withTypo: SheetCsv = { textos: "clave,valor\nhero.lema,Nuevo\nhero.titlo,Con error\n" };
 
   it("una clave desconocida no impide usar la hoja y queda como aviso en el informe", () => {
     const { content, reports } = resolveContent(withTypo, OTHER);
     const report = reports.find((r) => r.tab === "textos");
 
     expect(report?.source).toBe("hoja");
-    expect(content.texts).toEqual({ "hero.titulo": "Nuevo" });
+    expect(content.texts).toEqual({ "hero.lema": "Nuevo" });
     expect(report?.warnings).toHaveLength(1);
     expect(report?.issues).toEqual([]);
   });
@@ -185,13 +185,13 @@ describe("avisos de la pestaña textos (BR-042)", () => {
   });
 
   it("con la pestaña válida, los textos son los de la hoja: los que no define usan el texto por defecto del código", () => {
-    const { content } = resolveContent({ textos: "clave,valor\nhero.titulo,Nuevo\n" }, OTHER);
+    const { content } = resolveContent({ textos: "clave,valor\nhero.lema,Nuevo\n" }, OTHER);
 
-    expect(content.texts).toEqual({ "hero.titulo": "Nuevo" });
+    expect(content.texts).toEqual({ "hero.lema": "Nuevo" });
   });
 
   it("si la pestaña es inválida, los textos son los del respaldo", () => {
-    const { content } = resolveContent({ textos: `clave,valor\nhero.titulo,${"x".repeat(500)}\n` }, OTHER);
+    const { content } = resolveContent({ textos: `clave,valor\nhero.lema,${"x".repeat(500)}\n` }, OTHER);
 
     expect(content.texts).toEqual(OTHER.texts);
   });
