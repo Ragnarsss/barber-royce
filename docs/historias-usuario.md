@@ -621,6 +621,10 @@ y confiar en que el servicio está a la altura.
 - CA-11: Given paso el cursor o enfoco con teclado un enlace de la navegación,
   When se resalta, Then se ilumina con un resplandor de neón blanco, como las
   luces del techo, y su texto se sigue leyendo.
+- CA-14: Given bajo hasta «Respaldados por los mejores», When avanzo con el
+  scroll, Then un láser corta en diagonal y revela la foto y luego la tarjeta
+  del testimonio, y si subo se vuelven a tapar; con reducir movimiento todo
+  aparece revelado.
 
 ---
 

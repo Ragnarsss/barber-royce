@@ -101,6 +101,15 @@ export const lightBarIgnite: Variants = {
 };
 
 /**
+ * Corte láser de una sola vez (BR-062): en pantallas chicas, el panel que tapa la foto o la tarjeta se retira al
+ * entrar la sección, en vez de seguir el scroll. `to` es cuánto se corre (de su propio ancho) y hacia qué lado.
+ */
+export const laserCutOneShot = (to: string): Variants => ({
+    hidden: { x: "0%" },
+    visible: { x: to, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } }
+});
+
+/**
  * Fade in desde la izquierda
  */
 export const fadeInLeft: Variants = {
