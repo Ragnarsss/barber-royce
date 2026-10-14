@@ -27,6 +27,13 @@
   overflow: hidden;
 }
 
+/* Capa que se acerca con el scroll (escala y desplazamiento con framer); la imagen va dentro */
+.photoMotion {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .backgroundImage {
   display: block;
   width: 100%;
@@ -118,6 +125,21 @@
 
   .card:hover .accent {
     width: 64px;
+  }
+
+  /* El ícono se vuelve a dibujar: anima el stroke-dashoffset que framer dejó en cada trazo (pathLength = 1) */
+  .card:hover .cardIcon [data-stroke] {
+    animation: iconRedraw 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes iconRedraw {
+  from {
+    stroke-dashoffset: 1px;
+  }
+
+  to {
+    stroke-dashoffset: 0;
   }
 }
 
@@ -227,5 +249,9 @@
   .card,
   .accent {
     transition: none;
+  }
+
+  .card:hover .cardIcon [data-stroke] {
+    animation: none;
   }
 }

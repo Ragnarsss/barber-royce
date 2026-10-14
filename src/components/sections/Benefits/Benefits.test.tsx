@@ -23,6 +23,18 @@ const here = dirname(fileURLToPath(import.meta.url));
 const css = readFileSync(resolve(here, "Benefits.module.css"), "utf8");
 const source = readFileSync(resolve(here, "Benefits.tsx"), "utf8");
 
+/** jsdom no trae la API de animaciones web; framer-motion la usa para lo ligado al scroll. Solo para esos tests:
+ *  en los demás cambiaría cómo framer aplica el trazo de los íconos. */
+const withAnimateStub = (run: () => void) => {
+  const original = Element.prototype.animate;
+  Element.prototype.animate = vi.fn(() => ({ cancel() {}, finish() {}, play() {}, pause() {}, commitStyles() {}, finished: Promise.resolve(), currentTime: 0, playbackRate: 1, onfinish: null })) as unknown as Element["animate"];
+  try {
+    run();
+  } finally {
+    Element.prototype.animate = original;
+  }
+};
+
 describe("Benefits (BR-064, HU-EXP-004 CA-16)", () => {
   beforeAll(() => {
     vi.stubGlobal(
@@ -93,5 +105,27 @@ describe("Benefits (BR-064, HU-EXP-004 CA-16)", () => {
   it("el hover de la tarjeta usa translate: un transform del CSS lo pisaría la entrada de framer", () => {
     expect(css).toMatch(/\.card:hover\s*\{[^}]*translate:/);
     expect(css).not.toMatch(/\.card:hover\s*\{[^}]*transform:/);
+  });
+
+  it("escena de scroll: la franja y la foto se mueven ligadas al scroll", () => {
+    withAnimateStub(() => {
+      renderWithProviders(<Benefits />);
+
+      expect(document.querySelector("[data-band]")?.getAttribute("style") ?? "").toMatch(/transform/);
+      expect(document.querySelector("[data-photo-motion]")?.getAttribute("style") ?? "").toMatch(/transform/);
+    });
+  });
+
+  it("CP-A11Y-003: con reducir movimiento, la franja y la foto quedan quietas en su lugar", () => {
+    state.reducedMotion = true;
+    renderWithProviders(<Benefits />);
+
+    expect(document.querySelector("[data-band]")?.getAttribute("style")).toBeNull();
+    expect(document.querySelector("[data-photo-motion]")?.getAttribute("style")).toBeNull();
+  });
+
+  it("al pasar el ratón, el ícono se vuelve a dibujar por CSS (un whileHover rompería la herencia de la entrada)", () => {
+    expect(css).toMatch(/\.card:hover \.cardIcon \[data-stroke\]\s*\{[^}]*animation:\s*iconRedraw/);
+    expect(source).not.toMatch(/whileHover=/);
   });
 });

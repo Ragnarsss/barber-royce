@@ -2044,6 +2044,14 @@ Alcance:
    `SITE.name`; colores a tokens.
 5. Móvil: la foto con la franja también se ve.
 
+> **Alcance ajustado (2026-10-14, decisión del usuario):** más deleite con el
+> scroll. (1) La franja roja entra deslizándose en diagonal desde abajo y se
+> asienta cuando la sección queda centrada; (2) la foto parte un poco ampliada y
+> se asienta a su tamaño (Ken Burns ligado al scroll); (3) al pasar el ratón por
+> una tarjeta, su ícono se vuelve a dibujar. Scrub (avanza y retrocede), solo
+> `transform`; con reducir movimiento todo queda quieto en su posición final.
+> Se descartó la inclinación 3D de las tarjetas para no recargar.
+
 Criterios de aceptación:
 1. La foto se ve clara, con la franja roja diagonal, en escritorio y en móvil
    (HU-EXP-004 CA-16).
