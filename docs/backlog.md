@@ -1601,7 +1601,7 @@ sección es su propio ticket y empieza por el hero.
 #### BR-050 — Hero: tipografía de marca
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-042, BR-043
-- Estado: En curso (rama `feat/br-050-hero-tipografia-de-marca`)
+- Estado: Hecho (2026-10-14, rama `feat/br-050-hero-tipografia-de-marca` → master, PR #22)
 - Historia de usuario: HU-EXP-004 (CA-01 .. CA-05)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`
 
@@ -1746,7 +1746,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-047 | El navegador relee la hoja: cambios sin desplegar | J | P1 | M | Hecho | BR-040 |
 | BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | Hecho | BR-047 |
 | BR-049 | Smooth scroll imperceptible y redundante | E | P1 | S | Hecho | BR-014, BR-017 |
-| BR-050 | Hero: tipografía de marca | K | P3 | M | En curso | BR-042, BR-043 |
+| BR-050 | Hero: tipografía de marca | K | P3 | M | Hecho | BR-042, BR-043 |
 | BR-051 | Parrilla de fotos con las publicaciones de Instagram | L | P2 | L | Bloqueada | — |
 | BR-052 | Reseñas reales de Google en la home | L | P2 | M | Bloqueada | BR-006 |
 

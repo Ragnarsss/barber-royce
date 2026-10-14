@@ -1323,3 +1323,28 @@ servido con `vite preview` y Chrome real:
 **Lo que verificó y reportó el usuario:** el 2026-10-14 dio por hechas las pruebas manuales de ambos tickets («ya está todo hecho»): cambiar un texto desde la pestaña `textos` y publicar contenido siguiendo `docs/contenido-hoja.md` (cierre de la épica J). No detalló qué texto ni qué dato cambió, así que el criterio 1 de `BR-043` (cambiar un precio solo con la guía) queda cubierto por su confirmación general, junto con la prueba de `BR-047` (un cambio en la hoja visto en producción sin volver a desplegar).
 
 **Cierre manual:** por decisión del usuario no se corrió la skill `cerrar-ticket` completa; el código de ambos ya estaba en `master` desde el PR #13.
+
+---
+
+<a id="br-050"></a>
+
+## BR-050 — Hero: tipografía de marca
+
+**Notas de construcción (2026-10-14):**
+- Origen: el dueño quiso un sitio más llamativo y pidió empezar por el hero, dándole al nombre una fuente y un tamaño especiales. Serie de mejoras visuales en la épica K (nueva).
+- El `<h1>` pasa a tres niveles: «Barbería» (versalitas, tracking amplio), «Royce» (Anton, `clamp(5.5rem, 17vw, 10rem)`) y el lema. La marca sale de `SITE.brand` en `src/config/constants.ts`; los tests prohíben el literal en `Hero.tsx` y en su CSS (`RNF-DATOS-001`). El `alt` de la foto usa `SITE.name`.
+- Animación: las letras suben desde una máscara (`letterStagger`/`letterRise` en `animations.config.ts`) y un destello rojo (capa duplicada con `background-clip: text`, una sola vez por CSS) cruza la palabra. Con `useReducedMotion` las letras salen sin `motion` y sin destello; el CSS lo apaga además con `prefers-reduced-motion`. Sin `setState` por scroll.
+- Accesibilidad: el lector de pantalla lee «Royce» desde un `.srOnly`; las letras sueltas y el destello van en `aria-hidden`. El `<h1>` sigue siendo uno solo con marca y lema (conserva la palabra clave para SEO).
+- **Decisión de alcance (2026-10-14):** el lema pasó a una clave nueva, `hero.lema` (máx. 60), en vez de reutilizar `hero.titulo`. La hoja real aún tenía en `hero.titulo` el título entero y, con la misma clave, la marca habría salido duplicada al desplegar. Con la clave nueva la celda vieja se ignora con un aviso. Lo anotó la ficha como «Alcance ajustado».
+- El resplandor rojo de las letras se hizo con `drop-shadow` en el contenedor: con `text-shadow` en cada letra, la máscara (`overflow: hidden`) lo recortaba en un rectángulo visible en móvil.
+- Fuente: `@fontsource/anton` autoalojada (ADR-001/002 no la descartan: la regla 7 habla de estado de servidor, formularios y kits de UI). Token `--font-family-display`. Sin preload: la medición no mostró cambios en LCP, y el alto de línea fijo evita CLS al cambiar la fuente.
+- Test primero para `SITE.brand` y el hero (`brand.test.ts`, `Hero.test.tsx`, 9 casos); se ajustaron `textsLineBreaks.test.ts` y `textsWiring.test.tsx`, que suponían el título entero en el `<h1>`.
+- Docs: guía del dueño (`contenido-hoja.md`), plantilla `textos.csv`, HU-EXP-004 y el CP-CNT-005 del catálogo.
+
+**Verificación:**
+- Lint, `tsc -b` y 467 tests (incluido el e2e de contraste en Chrome real, ambos esquemas): ✔ (CI del PR #22 en verde).
+- Lighthouse móvil, **build local** (`vite preview`), mediana de 3, antes → después: LCP 5,1 → 5,0 s · CLS 0 → 0 · TBT 140 → 140 ms. Sin regresión. El LCP sigue sobre el umbral de 2,5 s de `RNF-PERF-001`, como ya estaba antes (depende de `BR-034`). **No se midió contra el preview de Vercel.**
+- Capturas con Chrome en escritorio (1440) y móvil (390): jerarquía y encaje correctos tras corregir el resplandor. ✔
+- La verificó el usuario en producción (2026-10-14): el hero se ve como se esperaba («quedó fenomenal») y el lema viene de la hoja (`hero.lema` en vivo, criterio 4). ✔
+
+**Pendiente:** la animación de entrada y el destello solo los vio el usuario a ojo; no hay test automático de la animación en un navegador. Reducir movimiento no se recorrió a mano en producción (hay test de componente y de CSS). Lighthouse móvil contra producción, cuando se quiera cerrar `RNF-PERF-001` (`BR-034`).
