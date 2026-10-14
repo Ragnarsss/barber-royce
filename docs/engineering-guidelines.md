@@ -125,6 +125,15 @@ Un ticket está `Hecho` cuando se cumple **todo** esto:
    despliegue de producción que dispara ese merge revisado (la home y la
    ruta tocada cargan).
 
+**Cómo se aplica la DoD (decisión del usuario, 2026-10-13, `BR-049`):** la IA
+guía y la persona ejecuta. La IA arma el checklist del ticket, explica cada
+verificación paso a paso (qué abrir, qué comando pegar, qué resultado
+esperar) y registra el resultado. Las verificaciones del punto 4 y de las
+mediciones del punto 5 las **ejecuta una persona** en el navegador real; la
+IA no las da por hechas ni las infiere de los tests. Cada criterio se
+marca verificado solo con el resultado que la persona reportó. Mientras
+quede uno sin reportar, el ticket no pasa a `Hecho`.
+
 ## 7. Convención de commits y ramas
 
 Conventional Commits con el ID del ticket:
