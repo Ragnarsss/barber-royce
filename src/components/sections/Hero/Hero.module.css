@@ -144,25 +144,74 @@
   margin-top: 0.5rem;
 }
 
+/*
+ * Tarjetas de beneficios (BR-056): vidrio oscuro con dos esquinas cortadas, como el corte de la navaja. El borde
+ * es el fondo de la tarjeta y el vidrio un ::before 1 px adentro, así el chaflán también lleva borde. Al pasar el
+ * cursor (solo con ratón) una luz barre la tarjeta y el borde se enciende en rojo. Texto blanco: el contraste
+ * contra el vidrio sobre el fondo más claro posible lo verifica cards.test.ts.
+ */
+.hero {
+  --card-glass: color-mix(in srgb, var(--color-brand-background) 62%, transparent);
+  --card-edge: color-mix(in srgb, var(--color-brand-white) 18%, transparent);
+  --card-edge-hot: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);
+  --card-sweep: color-mix(in srgb, var(--color-brand-white) 14%, transparent);
+  --card-cut: 14px;
+}
+
 .benefit {
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: flex-start;
   gap: 1rem;
-  padding: 0.9rem 1.25rem;
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 1rem;
+  padding: 0.95rem 1.35rem;
   max-width: 560px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
+  overflow: hidden;
+  background: var(--card-edge);
+  clip-path: polygon(var(--card-cut) 0, 100% 0, 100% calc(100% - var(--card-cut)), calc(100% - var(--card-cut)) 100%, 0 100%, 0 var(--card-cut));
+  transition: background 0.35s ease;
 }
 
-.benefit:hover {
-  transform: translateX(8px);
-  box-shadow: 0 8px 24px rgba(213, 35, 35, 0.25);
-  border-color: rgba(213, 35, 35, 0.5);
-  background: rgba(255, 255, 255, 1);
+.benefit::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -2;
+  background: var(--card-glass);
+  clip-path: polygon(var(--card-cut) 0, 100% 0, 100% calc(100% - var(--card-cut)), calc(100% - var(--card-cut)) 100%, 0 100%, 0 var(--card-cut));
+}
+
+/* Luz que barre la tarjeta al pasar el cursor */
+.benefit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 35%, var(--card-sweep) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .benefit:hover {
+    background: var(--card-edge-hot);
+  }
+
+  .benefit:hover::after {
+    transform: translateX(120%);
+  }
+
+  .benefit:hover .benefitIcon {
+    transform: rotate(-6deg) scale(1.08);
+  }
+}
+
+/* Desenfoque del vidrio solo en escritorio: en móvil se mide antes de pagarlo (BR-056) */
+@media (min-width: 769px) {
+  .benefit::before {
+    backdrop-filter: blur(8px);
+  }
 }
 
 .benefitIcon {
@@ -172,16 +221,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #d52323;
-  border-radius: 0.5rem;
   padding: 0.4rem;
-  color: #ffffff;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.benefit:hover .benefitIcon {
-  transform: rotate(-5deg) scale(1.1);
-  box-shadow: 0 4px 12px rgba(213, 35, 35, 0.4);
+  background: var(--color-brand-primary);
+  color: var(--color-brand-white);
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .benefitIcon svg {
@@ -191,12 +235,23 @@
 }
 
 .benefitText {
-  font-size: clamp(0.75rem, 1.2vw, 0.8rem);
+  font-size: clamp(0.75rem, 1.2vw, 0.82rem);
   line-height: 1.6;
-  color: #1a1a1a;
+  color: var(--color-brand-white);
   margin: 0;
   padding-top: 0.4rem;
   font-weight: 400;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .benefit,
+  .benefitIcon {
+    transition: none;
+  }
+
+  .benefit::after {
+    display: none;
+  }
 }
 
 .heroImage {

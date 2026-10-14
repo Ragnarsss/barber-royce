@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from "framer-motion";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import styles from "./Hero.module.css";
 import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData.tsx";
 import heroImage842w from "@/assets/optimized/hero_model_left_profile_842w.webp";
@@ -9,11 +9,12 @@ import heroImage1684w from "@/assets/optimized/hero_model_left_profile_1684w.web
 import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
-import { staggerContainer, fadeInUp, fadeInLeft, letterRise, letterStagger } from "@/config/animations.config";
+import { staggerContainer, fadeInUp, letterRise, letterStagger } from "@/config/animations.config";
 import { SITE } from "@/config/constants";
 import { useSiteText } from "@/content/useSiteContent";
 import { useNeonLoaderDone } from "@/loader/neonLoader";
 import { SPOTLIGHT_SIZE, usePointerSpotlight } from "./spotlight";
+import { BenefitCard } from "./BenefitCard";
 
 export function Hero() {
   const siteText = useSiteText();
@@ -32,6 +33,9 @@ export function Hero() {
     offset: ["start start", "end start"],
   });
   const spotlight = usePointerSpotlight(sectionRef);
+  // Profundidad de las tarjetas al hacer scroll (BR-056): en móvil quedan bajo el pliegue y se superpondrían al texto.
+  const [isWide] = useState(() => typeof window !== "undefined" && window.matchMedia?.("(min-width: 769px)").matches === true);
+  const hasCardDepth = isWide && !reducedMotion;
   const layers = {
     background: useBackgroundLayer(scrollYProgress),
     middle: useMiddleLayer(scrollYProgress),
@@ -153,14 +157,14 @@ export function Hero() {
 
           <motion.div className={styles.benefits} variants={staggerContainer}>
             {HERO_BENEFITS_VIEW_DATA.map((benefit, index) => (
-              <motion.div
+              <BenefitCard
                 key={index}
-                className={styles.benefit}
-                variants={fadeInLeft}
-              >
-                <div className={styles.benefitIcon}>{benefit.icon}</div>
-                <p className={styles.benefitText}>{benefit.text}</p>
-              </motion.div>
+                icon={benefit.icon}
+                text={benefit.text}
+                index={index}
+                progress={scrollYProgress}
+                depth={hasCardDepth}
+              />
             ))}
           </motion.div>
         </div>
