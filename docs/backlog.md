@@ -528,7 +528,7 @@ Criterios de aceptación:
 #### BR-046 — Leer la hoja desde `.env` y en desarrollo
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: BR-040
-- Estado: En curso (rama `feat/br-046-env-local`; hecho en local)
+- Estado: Hecho (2026-10-14, rama `feat/br-046-env-local` → master, PR #15)
 - Historia de usuario: HU-CNT-001
 - RF/RNF: `RNF-CONF-003`
 
@@ -552,7 +552,7 @@ Criterios de aceptación:
 #### BR-047 — El navegador relee la hoja: cambios sin desplegar
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-040
-- Estado: En curso (rama `feat/br-047-contenido-en-vivo`; hecho en local, probado con Chrome real y con la hoja real)
+- Estado: Hecho (2026-10-14, rama `feat/br-047-contenido-en-vivo` → master, PR #16)
 - Historia de usuario: HU-CNT-001 (CA-06, CA-07)
 - RF/RNF: `RF-CNT-006`, `RNF-CONF-003`, `RNF-SEG-004`
 
@@ -591,7 +591,7 @@ Criterios de aceptación:
 #### BR-048 — Datos de contacto, sucursales y redes desde la hoja
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-047
-- Estado: En curso (rama `feat/br-048-negocio-desde-la-hoja`; hecho en local, probado con Chrome real; falta crear las dos pestañas en la hoja real)
+- Estado: Hecho (2026-10-14, rama `feat/br-048-negocio-desde-la-hoja` → master, PR #17)
 - Historia de usuario: HU-CNT-003
 - RF/RNF: `RF-CNT-007`, `RNF-DATOS-001`
 
@@ -1495,9 +1495,9 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-043 | Guía para publicar desde la hoja | J | P2 | S | En curso | BR-040 |
 | BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |
 | BR-045 | Títulos invisibles sobre fondo oscuro | C | P0 | S | En curso | — |
-| BR-046 | Leer la hoja desde `.env` y en desarrollo | J | P2 | S | En curso | BR-040 |
-| BR-047 | El navegador relee la hoja: cambios sin desplegar | J | P1 | M | En curso | BR-040 |
-| BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | En curso | BR-047 |
+| BR-046 | Leer la hoja desde `.env` y en desarrollo | J | P2 | S | Hecho | BR-040 |
+| BR-047 | El navegador relee la hoja: cambios sin desplegar | J | P1 | M | Hecho | BR-040 |
+| BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | Hecho | BR-047 |
 | BR-049 | Smooth scroll imperceptible y redundante | E | P1 | S | Hecho | BR-014, BR-017 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
