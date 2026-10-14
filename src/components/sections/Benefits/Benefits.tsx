@@ -25,8 +25,10 @@ export function Benefits() {
   // Escena ligada al scroll (scrub): de que la sección asoma por abajo a que queda centrada
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "center center"] });
-  const bandX = useTransform(scrollYProgress, [0, 1], ["35%", "0%"]);
-  const bandY = useTransform(scrollYProgress, [0, 1], ["28%", "0%"]);
+  // La franja se desliza por su propio eje (sube con la misma inclinación de sus bordes), no de costado:
+  // 18,75 % de su alto (30 % de la sección) hacia abajo y lo que corresponde en x para seguir la diagonal
+  const bandX = useTransform(scrollYProgress, [0, 1], ["-10%", "0%"]);
+  const bandY = useTransform(scrollYProgress, [0, 1], ["18.75%", "0%"]);
   const photoScale = useTransform(scrollYProgress, [0, 1], [1.14, 1]);
   const photoY = useTransform(scrollYProgress, [0, 1], ["-4%", "0%"]);
 
