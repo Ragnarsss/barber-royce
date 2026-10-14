@@ -1486,3 +1486,19 @@ servido con `vite preview` y Chrome real:
 - Los textos de las tarjetas quedan en el código (opción por defecto; el usuario no eligió pasarlos a la hoja).
 
 **Verificación:** 550 tests en verde (incluido `Benefits.test.tsx`: títulos y negritas, trazos con `stroke-dasharray`, reducir movimiento, marca, sin shadcn ni hex, franja aparte, hover con `translate`), lint y tipos limpios. Capturas en escritorio y móvil emulado. **Lighthouse móvil, `master` (mismo `.env`) contra BR-064 alternados ×5:** TBT mediana 243 → 201 ms (rangos 136–411 y 190–293), LCP 6,4 → 6,4 s, CLS 0. **Pendiente (usuario):** confirmar los textos contra el Figma y ver el trazo de los íconos en movimiento.
+
+---
+
+<a id="br-065"></a>
+
+## BR-065 — SocialProof2: parrilla bento con las proporciones del Figma
+
+**Notas de construcción (2026-10-14):**
+- El usuario compartió el Figma «Prueba social 2»: le gustan el fondo y las figuras; el problema eran las dimensiones de los recuadros.
+- **Causa de la columna angosta:** `.container` tenía `margin: 0 auto` dentro de una sección `flex` en columna; en flex, los márgenes automáticos anulan el estiramiento y el elemento se encoge a su contenido (806 px con el texto en 550 px, aunque tuviera `max-width: 1800px`). Se arregló con `width: 100%`.
+- Bento de doce filas: columnas `1.3fr 1.16fr 1fr`; la 1 parte en 7/5 (grande arriba), la 2 en 5/7 (grande abajo) y la 3 es una foto alta. Esquinas rectas (`--radius-sm`). Cada recuadro recorta su `img` con `object-fit: cover`, listo para las fotos de Instagram de `BR-051` (sin cambiar su alcance).
+- Texto más ancho y alineado a la izquierda, título y subtítulo más grandes, como en Figma.
+- El zoom del hover pasó de `transform` a `scale` (la entrada de framer pisaba el transform). Colores a tokens, sin `will-change` fijo. Fondo y figuras sin cambios.
+- Móvil: dos columnas, la primera foto a todo el ancho y la alta al costado de las demás.
+
+**Verificación:** 557 tests en verde (incluido `bento.test.ts`: columnas distintas, partición de cada columna, ancho del contenedor, `object-fit`, hover con `scale`, móvil, tokens), lint y tipos limpios. Capturas a 1906 px (el ancho de la captura del usuario) y en móvil emulado. **Lighthouse móvil, `master` (mismo `.env`) contra BR-065 alternados ×5:** TBT mediana 238 → 246 ms (una corrida atípica de 415), LCP 6,5 → 6,4 s, CLS 0. Los valores absolutos de ambos subieron respecto de mediciones anteriores, probablemente por otras sesiones usando la máquina; vale la comparación alternada.
