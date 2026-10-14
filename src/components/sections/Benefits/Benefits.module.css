@@ -43,20 +43,21 @@
 }
 
 /* Franja roja diagonal entre el contenido y la foto; tapa el borde izquierdo de la foto. Ancho ajustado por el
-   usuario (~16 % de la sección; antes ~10 %). */
+   usuario (~16 % de la sección; antes ~10 %). Es un 30 % más larga arriba y abajo que la sección: al deslizarse
+   por su eje con el scroll nunca deja un hueco. El polígono mantiene los bordes visibles en el mismo lugar. */
 .band {
   position: absolute;
-  top: 0;
-  right: 26%;
-  width: 30%;
-  height: 100%;
+  top: -30%;
+  right: 22.2%;
+  width: 37.6%;
+  height: 160%;
   z-index: 2;
   background: linear-gradient(
     165deg,
     var(--color-brand-primary) 0%,
     color-mix(in srgb, var(--color-brand-primary) 82%, var(--color-brand-background)) 100%
   );
-  clip-path: polygon(42% 0, 100% 0, 58% 100%, 0 100%);
+  clip-path: polygon(53.7% 0, 100% 0, 46.3% 100%, 0 100%);
 }
 
 .container {
@@ -190,8 +191,8 @@
   }
 
   .band {
-    right: 30%;
-    width: 32%;
+    right: 26%;
+    width: 40%;
   }
 }
 
