@@ -45,6 +45,7 @@ citan.
 | HU-INFO-003 | INFO | Conocer al equipo y la barbería | Media | 3 | 2 | — | Aprobada |
 | HU-INFO-004 | INFO | Ver productos disponibles | Baja | 2 | 3 | — | Propuesta |
 | HU-INFO-005 | INFO | Resolver dudas frecuentes | Media | 3 | 2 | — | Aprobada |
+| HU-INFO-006 | INFO | Ver el trabajo real de la barbería en sus fotos de Instagram | Media | 4 | 5 | HU-INFO-003 | Propuesta |
 | HU-SEO-001 | SEO | Aparecer en búsquedas locales | Alta | 5 | 5 | HU-INFO-002 | Aprobada |
 | HU-EXP-001 | EXP | Sitio rápido y fluido en el celular | Alta | 5 | 8 | — | Aprobada |
 | HU-EXP-002 | EXP | Sitio accesible y respetuoso con el movimiento | Media | 4 | 5 | — | Aprobada |
@@ -269,6 +270,25 @@ ver reseñas de otros clientes, para confiar antes de reservar.
   agregada en los datos estructurados que no salga de una fuente
   verificable (Google).
 
+> Actualizada (2026-10-14, pedido del usuario): las reseñas de la home pasan a
+> salir de las reseñas de Google de la barbería (`BR-052`). Hoy son tres textos
+> de muestra en `src/data/reviewsData.ts`, así que CA-03 no se cumple. Se
+> agregan CA-04 a CA-06 y RN-02. Nota sobre RN-01: las pautas de datos
+> estructurados de Google no aceptan, para un negocio local, calificaciones
+> copiadas de otros sitios; por eso `BR-052` no agrega `aggregateRating` al
+> JSON-LD, y el valor fijo actual (4,6 con 15 reseñas) lo quita `BR-006`.
+
+- CA-04 (2026-10-14): Given la ficha de Google de la barbería está conectada,
+  When llego a la sección de reseñas, Then veo reseñas de Google con su autor,
+  su calificación y la indicación de que vienen de Google.
+- CA-05 (2026-10-14): Given toco «Ver todas las reseñas», When se abre el
+  enlace, Then llego a la ficha de la barbería en Google Maps.
+- CA-06 (2026-10-14): Given Google no responde o la conexión no está
+  configurada, When abro la home, Then la sección no se ve rota ni muestra
+  reseñas inventadas: se oculta o muestra solo el enlace a la ficha de Google.
+- RN-02 (2026-10-14): Las reseñas de Google se muestran tal como las escribió
+  su autor: sin editar el texto ni cambiar la calificación.
+
 ### Datos:
 
 - Salida: `src/data/teamData.ts`, `aboutData.ts`, `reviewsData.ts`.
@@ -345,6 +365,54 @@ resolver mis dudas sin tener que escribir.
 ### Datos:
 
 - Salida: `src/data/faqData.ts`.
+
+---
+
+## HU-INFO-006 - Ver el trabajo real de la barbería en sus fotos de Instagram
+
+Como cliente que está decidiendo dónde cortarse, quiero ver en el sitio las
+fotos reales y recientes que la barbería publica en Instagram, para juzgar su
+trabajo antes de reservar.
+
+- Epic: Contenido del negocio
+- Actor / Persona: Cliente
+- Prioridad: Media
+- Estimación: 5 SP
+- Fuente: pedido del usuario (2026-10-14): «que la parrilla de fotos se conecte
+  a Instagram», para que la prueba social deje de ser de muestra. Hoy la
+  parrilla de la home (`SocialProof2`) muestra íconos de cámara en lugar de fotos.
+- Dependencias: HU-INFO-003 (misma sección de confianza), HU-EXP-001 (las
+  fotos no pueden costar velocidad), HU-MED-003 (privacidad del visitante).
+- Riesgo: Alto — Instagram exige una cuenta profesional y un token de acceso que
+  vence y es secreto (no puede llegar al navegador); las direcciones de las fotos
+  de Instagram caducan; si la integración falla, la sección no puede quedar rota
+  ni vacía.
+- RF relacionados: RF-INFO-008.
+- RNF impactados: RNF-PERF-004, RNF-SEG-002, RNF-SEG-004, RNF-PRIV-001,
+  RNF-CONF-003.
+- Casos de uso relacionados: —
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given la cuenta de Instagram está conectada, When abro la home, Then la
+  parrilla muestra las publicaciones más recientes de la barbería, en su orden.
+- CA-02: Given toco una foto, When se abre el enlace, Then llego a esa
+  publicación en Instagram, en una pestaña nueva.
+- CA-03: Given Instagram no responde o la conexión no está configurada, When
+  abro la home, Then la sección no se ve rota: muestra las últimas fotos que se
+  obtuvieron o, si nunca hubo, una invitación a seguir la cuenta.
+- CA-04: Given abro la home en un celular de gama media, When mido con
+  Lighthouse móvil, Then las fotos no empeoran LCP ni CLS y cada imagen respeta
+  el peso máximo de RNF-PERF-004.
+- CA-05: Given reviso el código del sitio publicado, When busco el token de
+  Instagram, Then no aparece en ningún archivo que descargue el navegador.
+
+### Reglas de negocio asociadas:
+
+- RN-01: Solo se muestran publicaciones de la cuenta de la barbería; nada de
+  fotos de banco de imágenes en esta sección.
+- RN-02: Cada foto lleva un texto alternativo; si la publicación no tiene
+  descripción, uno genérico («Publicación de Instagram de Royce Barbería»).
 
 ---
 

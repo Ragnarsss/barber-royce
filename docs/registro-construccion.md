@@ -1302,3 +1302,16 @@ servido con `vite preview` y Chrome real:
 **Derivado:** `touchMultiplier: 2` en `useCreateLenis` no tiene efecto sin `syncTouch`; queda por decidir si se quita o se suaviza el toque. `ScrollToTop.tsx` hace `resize()` más un `setTimeout` de 300 ms, otra redundancia fuera del alcance.
 
 **Observación al cerrar (2026-10-14, medida en producción con Chrome sin pantalla):** home y `/ubicacion` avanzan lo esperado con la rueda (600 de 600 px, clase `lenis` presente, sin errores de consola). En `/servicios`, con el puntero sobre el carrusel horizontal de tarjetas (`overflow-x: auto`), la página avanzó 60 px (otra posición, 398 px); fuera del carrusel, 600 px. No se sabe si lo causa este ticket o el carrusel con scroll propio, y la rueda simulada no es una real. **Por verificar (usuario):** con una rueda real, ¿la página sigue al desplazarse con el puntero sobre el carrusel de `/servicios`? Si no, abrir un ticket (posible `data-lenis-prevent` o ajuste del carrusel).
+
+---
+
+## Cierre de BR-046, BR-047 y BR-048 (2026-10-14)
+
+**Lo que verificó y reportó el usuario:**
+- Creó la hoja con las 7 pestañas, las publicó como CSV y definió `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` en su `.env` y en Vercel, más `VITE_GA_MEASUREMENT_ID` y `VITE_VERCEL_ANALYTICS`; hizo un Redeploy.
+- Vio el aviso de consentimiento en producción.
+- 2026-10-14: «sí se vio»: un cambio hecho en la hoja apareció en producción **sin volver a desplegar** (criterio 4 de `BR-047`). No detalló qué dato cambió, así que el criterio 3 de `BR-048` (un teléfono en el footer) queda cubierto por esta prueba general y por el e2e, no por una prueba específica del teléfono.
+
+**Lo que verifiqué yo en producción (2026-10-13, Chrome real, sin aceptar el aviso):** 7 rutas responden 200; en cada página el navegador pide las 7 pestañas a Google (redirección 307 y 200), sin avisos de CSP ni de CORS; Google Analytics no se carga sin consentimiento; `/privacidad` existe.
+
+**Queda fuera de estos tickets:** el texto de `/privacidad` es un borrador sin validación legal (`BR-044`); los datos del negocio de las plantillas siguen siendo de muestra (`BR-005`).

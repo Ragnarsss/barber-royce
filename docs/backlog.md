@@ -528,7 +528,7 @@ Criterios de aceptación:
 #### BR-046 — Leer la hoja desde `.env` y en desarrollo
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: BR-040
-- Estado: En curso (rama `feat/br-046-env-local`; hecho en local)
+- Estado: Hecho (2026-10-14, rama `feat/br-046-env-local` → master, PR #15)
 - Historia de usuario: HU-CNT-001
 - RF/RNF: `RNF-CONF-003`
 
@@ -552,7 +552,7 @@ Criterios de aceptación:
 #### BR-047 — El navegador relee la hoja: cambios sin desplegar
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-040
-- Estado: En curso (rama `feat/br-047-contenido-en-vivo`; hecho en local, probado con Chrome real y con la hoja real)
+- Estado: Hecho (2026-10-14, rama `feat/br-047-contenido-en-vivo` → master, PR #16)
 - Historia de usuario: HU-CNT-001 (CA-06, CA-07)
 - RF/RNF: `RF-CNT-006`, `RNF-CONF-003`, `RNF-SEG-004`
 
@@ -591,7 +591,7 @@ Criterios de aceptación:
 #### BR-048 — Datos de contacto, sucursales y redes desde la hoja
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-047
-- Estado: En curso (rama `feat/br-048-negocio-desde-la-hoja`; hecho en local, probado con Chrome real; falta crear las dos pestañas en la hoja real)
+- Estado: Hecho (2026-10-14, rama `feat/br-048-negocio-desde-la-hoja` → master, PR #17)
 - Historia de usuario: HU-CNT-003
 - RF/RNF: `RF-CNT-007`, `RNF-DATOS-001`
 
@@ -1424,6 +1424,174 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-043).
 
+### Épica L — Prueba social real
+
+La home tiene dos secciones de confianza que hoy son de muestra: la parrilla de
+fotos de `SocialProof2` (íconos de cámara) y las reseñas (tres textos en
+`src/data/reviewsData.ts`). El usuario pidió el 2026-10-14 conectarlas a
+Instagram y a las reseñas de Google. Ambas dependen de cuentas y servicios de
+terceros, así que cada ticket empieza por una decisión de arquitectura
+(¿se lee al construir, en una función de Vercel o en el navegador?), que se
+registra en un ADR nuevo antes de escribir código.
+
+#### BR-051 — Parrilla de fotos con las publicaciones reales de Instagram
+
+- Prioridad: P2 · Esfuerzo: L (se parte al decidir el enfoque) · Depende de: —
+- Estado: Bloqueada (falta la cuenta de Instagram profesional de la barbería y su acceso, y la decisión de arquitectura del paso 1)
+- Historia de usuario: HU-INFO-006 (CA-01 .. CA-05)
+- RF/RNF: `RF-INFO-008`, `RNF-PERF-004`, `RNF-SEG-002`, `RNF-SEG-004`, `RNF-PRIV-001`, `RNF-CONF-003`
+
+**Origen (2026-10-14):** el usuario pidió conectar la parrilla de fotos a
+Instagram para que la prueba social deje de ser de muestra. Hoy
+`src/components/sections/SocialProof2/SocialProof2.tsx` pinta la parrilla con el
+ícono `Camera` en cada casilla, sin ninguna foto. Cumple el disparador del
+diferido «Galería de Instagram en SocialProof2» (§4, ex `B001`).
+
+**Lo que hay que saber antes de decidir** (a confirmar en la documentación
+vigente de Meta al iniciar, porque cambia seguido):
+- La API «Basic Display» de Instagram dejó de funcionar a fines de 2024. Hoy
+  hace falta una **cuenta profesional** (empresa o creador), una **app de Meta**
+  y un **token de acceso** que vence (los de larga duración duran unos 60 días y
+  hay que renovarlos).
+- El token es un **secreto**: no puede ir en una variable `VITE_*` ni llegar al
+  navegador (regla 9 de `CLAUDE.md`, `RNF-SEG-002`).
+- Las direcciones de las imágenes que entrega Instagram **caducan**: no se pueden
+  guardar para siempre.
+
+**Enfoques posibles** (paso 1: elegir uno y registrarlo en un ADR):
+1. **Al construir (recomendado):** como la hoja (`ADR-008`), un plugin descarga
+   las últimas publicaciones con el token (variable de build sin `VITE_`),
+   **descarga y optimiza las fotos** y las sirve el propio sitio. Sin peticiones
+   del visitante a Meta, sin tocar la CSP ni la política de privacidad, y las
+   fotos pasan por la misma optimización que el resto. Contra: las fotos nuevas
+   aparecen con el siguiente build, así que necesita un build programado (por
+   ejemplo, diario con un Cron de Vercel y un deploy hook) y renovar el token
+   antes de que venza.
+2. **Función de Vercel:** una función con el token devuelve la lista con caché.
+   Fotos al día sin reconstruir, pero las imágenes vienen del CDN de Instagram:
+   hay que abrir la CSP (`img-src`) y mencionarlo en la política de privacidad, y
+   es el primer código de servidor del proyecto (revisa `ADR-001`).
+3. **Widget de terceros** (servicios que se ocupan del token): rápido de poner,
+   pero suma un script externo, costo mensual, abrir la CSP y otro proveedor que
+   ve a los visitantes.
+
+Alcance (con el enfoque 1; se ajusta si se elige otro):
+1. ADR nuevo con el enfoque elegido y las alternativas descartadas.
+2. Variables de build `INSTAGRAM_*` documentadas en `.env.example` y en el
+   README, sin prefijo `VITE_`; un test que falle si el token aparece en el build.
+3. Lectura de las N publicaciones más recientes (N = casillas de la parrilla),
+   descarga de las fotos, versiones optimizadas con dimensiones fijas (sin CLS) y
+   texto alternativo desde la descripción, recortada (RN-02).
+4. `SocialProof2` muestra las fotos; cada una es un `<a target="_blank"
+   rel="noopener noreferrer">` a su publicación (regla 8).
+5. Respaldo: si Instagram falla, el build no se rompe y usa las últimas fotos
+   guardadas o, si no hay, una invitación a seguir la cuenta (no los íconos).
+6. Build programado y procedimiento para renovar el token (o su automatización),
+   escritos para el dueño.
+
+Criterios de aceptación:
+1. Con la cuenta conectada, la parrilla de la home muestra las publicaciones más
+   recientes y cada una abre su publicación (HU-INFO-006 CA-01, CA-02; CP-INFO-008).
+2. Con Instagram caído o sin configurar, la sección muestra el respaldo y el build
+   termina bien (HU-INFO-006 CA-03; CP-CONF-003).
+3. Lighthouse móvil sobre el preview: LCP y CLS no empeoran frente a `master`;
+   ninguna foto supera el peso de RNF-PERF-004 (HU-INFO-006 CA-04; CP-PERF-004).
+4. El token no aparece en ningún archivo del build (HU-INFO-006 CA-05; CP-SEG-002).
+
+Preguntas para el usuario (no las resuelvo yo):
+1. ¿La cuenta `@barberia.royce` es profesional (empresa o creador)? ¿Quién tiene
+   acceso para crear la app de Meta y autorizarla?
+2. ¿Cuánto puede tardar una foto nueva en aparecer en el sitio (minutos, un día)?
+   Eso decide entre el enfoque 1 y el 2.
+3. ¿Cuántas fotos se muestran? Hoy la parrilla tiene 5 casillas.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-051).
+
+#### BR-052 — Reseñas reales de Google en la home
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-006
+- Estado: Bloqueada (falta el acceso a Google Cloud con facturación o a la ficha de Google de la barbería, y la decisión de arquitectura del paso 1)
+- Historia de usuario: HU-INFO-003 (CA-03 .. CA-06, RN-01, RN-02)
+- RF/RNF: `RF-INFO-009` (reemplaza a `RF-INFO-007`), `RNF-SEG-002`, `RNF-SEG-004`, `RNF-PRIV-001`, `RNF-PERF-004`
+
+**Origen (2026-10-14):** el usuario pidió conectar las reseñas a las de Google
+para que la prueba social deje de ser de muestra. Hoy
+`src/components/sections/Reviews/Reviews.tsx` muestra tres reseñas escritas en
+`src/data/reviewsData.ts` («Carlos M.», «Miguel R.», «Juan P.»), que no son reales:
+`HU-INFO-003` CA-03 y RN-01 no se cumplen. Además `index.html` publica un
+`aggregateRating` fijo (4,6 con 15 reseñas) que no sale de ninguna fuente; lo
+quita `BR-006`.
+
+**Lo que hay que saber antes de decidir** (a confirmar en la documentación y
+las condiciones vigentes de Google al iniciar, porque cambian):
+- **Places API (New), Place Details:** con el identificador del lugar devuelve la
+  calificación promedio, el número de reseñas y **como máximo 5 reseñas**,
+  elegidas por Google (no todas). Necesita un proyecto de Google Cloud **con
+  facturación** y una clave de API; el campo de reseñas está en un nivel de
+  precio alto, con un tramo gratis mensual.
+- Las condiciones de Google Maps Platform **limitan guardar** el contenido de
+  Places (salvo el identificador del lugar): guardar las reseñas en el repo o en
+  el build por mucho tiempo puede no estar permitido. Hay que mostrar la
+  **atribución a Google** y el autor de cada reseña.
+- **Google Business Profile API:** da todas las reseñas de la ficha propia, pero
+  pide autorización del dueño (OAuth) y una solicitud de acceso que Google aprueba.
+- Las pautas de datos estructurados de Google no aceptan, para un negocio local,
+  calificaciones copiadas de otros sitios: **no** se agrega `aggregateRating` al
+  JSON-LD con estos datos.
+
+**Enfoques posibles** (paso 1: elegir uno y registrarlo en un ADR):
+1. **Función de Vercel con caché corta (recomendado si hay facturación):** la
+   clave queda en el servidor, la función pide Place Details y responde con caché
+   (por ejemplo, unas horas). El navegador pide a la propia función: la CSP solo
+   necesita las fotos de perfil de los autores (o no se muestran). Es el primer
+   código de servidor del proyecto (revisa `ADR-001`).
+2. **Desde el navegador con una clave restringida por dominio:** sin servidor,
+   pero la clave queda visible (está pensada para eso si se restringe, aunque
+   igual pueden abusar de la cuota), hay que abrir la CSP a Google y mencionarlo
+   en la política de privacidad.
+3. **Al construir:** como la hoja. El más rápido para el visitante, pero choca
+   con el límite de guardar contenido de Places; solo si las condiciones lo
+   permiten con builds frecuentes.
+4. **Selección manual en la hoja:** el dueño copia algunas reseñas de Google en
+   una pestaña `reseñas`, con el enlace a cada una. Sin costo ni claves y con el
+   mecanismo que ya existe, pero no es automático y elegir solo las mejores
+   puede no reflejar la ficha real (choca con el espíritu de RN-01).
+
+Alcance (con el enfoque 1; se ajusta si se elige otro):
+1. ADR nuevo con el enfoque elegido y las alternativas descartadas.
+2. Identificador del lugar (`place_id`) de la ficha de la barbería en
+   `src/config/` (una ficha por sucursal si hay dos).
+3. Función que pide Place Details (calificación, número de reseñas y reseñas),
+   con la clave solo en el servidor, caché y tiempo máximo.
+4. `Reviews` muestra las reseñas de Google: autor, calificación, texto sin editar
+   (RN-02), fecha relativa y la atribución a Google; un enlace «Ver todas las
+   reseñas» a la ficha (regla 8).
+5. Sin conexión o con Google caído: se oculta la sección o se muestra solo el
+   enlace a la ficha. Se eliminan las reseñas de muestra de `reviewsData.ts`.
+6. Política de privacidad y CSP actualizadas si el enfoque lo exige (`BR-044`).
+
+Criterios de aceptación:
+1. Con la ficha conectada, la sección muestra reseñas de Google con autor,
+   calificación y atribución (HU-INFO-003 CA-04; CP-INFO-009).
+2. «Ver todas las reseñas» abre la ficha de la barbería en Google Maps
+   (HU-INFO-003 CA-05).
+3. Con Google caído o sin configurar, no aparece ninguna reseña de muestra y la
+   sección no se ve rota (HU-INFO-003 CA-06).
+4. La clave de API no aparece en ningún archivo del build, salvo que el ADR elija
+   el enfoque 2 con una clave restringida (CP-SEG-002).
+5. El JSON-LD no lleva `aggregateRating` con datos de Google (HU-INFO-003 RN-01).
+
+Preguntas para el usuario (no las resuelvo yo):
+1. ¿La barbería tiene ficha en Google (una por sucursal)? ¿Quién la administra?
+2. ¿Aceptas un proyecto de Google Cloud con facturación activa (con tramo gratis
+   y alertas de gasto), o prefieres el enfoque sin costo de la hoja (4)?
+3. Con máximo 5 reseñas elegidas por Google, ¿alcanza, o quieres mostrar más
+   (eso exige la Business Profile API)?
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-052).
+
+---
+
 ## 4. Diferido — no forma parte del despliegue
 
 Cada ítem tiene su **disparador**: la condición que obliga a revisarlo.
@@ -1434,7 +1602,7 @@ Cada ítem tiene su **disparador**: la condición que obliga a revisarlo.
 | Search Console y monitoreo de uso en tiempo real | ex checklist §6 | Cuando haya datos de analítica (`BR-036`..`BR-038`) que justifiquen revisar la indexación. |
 | ~~Analítica (GA4 o Vercel Analytics)~~ | ex checklist §6 | **Disparador cumplido (2026-10-12):** pasa a la épica I (`BR-036`..`BR-038`, `BR-044`). |
 | Monitoreo de errores (Sentry o similar) | ADR-005 | Primer error reportado por un cliente que no se vio en los logs. |
-| Galería de Instagram en SocialProof2 | ex `B001` | El dueño la pide y hay una cuenta con publicaciones constantes. |
+| ~~Galería de Instagram en SocialProof2~~ | ex `B001` | **Disparador cumplido (2026-10-14):** el usuario la pidió; pasa a la épica L (`BR-051`). |
 | PWA (manifest completo, service worker, offline, instalación) | ex `W001`..`W005` | Evidencia de visitas recurrentes que justifiquen la instalación. |
 | React Compiler | ex `P019` | Versión estable compatible con el plugin SWC. |
 | Partir componentes grandes en subcomponentes | ex `B018` | Cuando un ticket toque ese componente. |
@@ -1495,10 +1663,12 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-043 | Guía para publicar desde la hoja | J | P2 | S | En curso | BR-040 |
 | BR-044 | Política de privacidad (borrador) | I | P2 | S | En curso | — |
 | BR-045 | Títulos invisibles sobre fondo oscuro | C | P0 | S | En curso | — |
-| BR-046 | Leer la hoja desde `.env` y en desarrollo | J | P2 | S | En curso | BR-040 |
-| BR-047 | El navegador relee la hoja: cambios sin desplegar | J | P1 | M | En curso | BR-040 |
-| BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | En curso | BR-047 |
+| BR-046 | Leer la hoja desde `.env` y en desarrollo | J | P2 | S | Hecho | BR-040 |
+| BR-047 | El navegador relee la hoja: cambios sin desplegar | J | P1 | M | Hecho | BR-040 |
+| BR-048 | Datos de contacto, sucursales y redes desde la hoja | J | P1 | M | Hecho | BR-047 |
 | BR-049 | Smooth scroll imperceptible y redundante | E | P1 | S | Hecho | BR-014, BR-017 |
+| BR-051 | Parrilla de fotos con las publicaciones de Instagram | L | P2 | L | Bloqueada | — |
+| BR-052 | Reseñas reales de Google en la home | L | P2 | M | Bloqueada | BR-006 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
