@@ -2011,6 +2011,52 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-062).
 
+
+#### BR-064 — Benefits: fiel al Figma («Beneficios v2») con íconos que se dibujan
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-062
+- Estado: En curso (rama `feat/br-064-benefits-figma`)
+- Historia de usuario: HU-EXP-004 (CA-16)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-14):** el usuario encuentra la sección «un poco charra» y
+compartió el Figma «Beneficios v2». La implementación se alejó del diseño: la
+foto queda tapada por un rojo al 85 % (en Figma el rojo es una franja diagonal
+y la foto se ve clara, con la chaqueta «BARBER RR ROYCE»), el fondo es un gris
+fuera de la paleta (`#3a3a3a`), los textos de las tarjetas están mal copiados
+y sin las negritas del diseño, los íconos no son los del diseño (silla de
+barbero, persona con estrella), en móvil no hay foto, el subtítulo trae la marca
+literal y las tarjetas usan `Card` de shadcn (`BR-023`).
+
+Decisiones del usuario (2026-10-14): seguir el Figma y sumar un solo gesto: los
+íconos se dibujan solos con un trazo al entrar la tarjeta. Por defecto (no se
+eligió): los textos quedan en el código, no en la hoja; la silla y la persona
+con estrella se dibujan como íconos propios de trazo.
+
+Alcance:
+1. Fondo charcoal de la marca; franja roja diagonal entre el contenido y la
+   foto; la foto sin velo rojo.
+2. Tarjetas blancas como en Figma, sin shadcn, con los textos del diseño y sus
+   negritas; íconos: tijera, silla de barbero y persona con estrella.
+3. Entrada escalonada de las tarjetas y trazo de los íconos (`pathLength`); con
+   reducir movimiento, todo visible y dibujado.
+4. «ofreciendo:» con dos puntos (continúa en las tarjetas); la marca desde
+   `SITE.name`; colores a tokens.
+5. Móvil: la foto con la franja también se ve.
+
+Criterios de aceptación:
+1. La foto se ve clara, con la franja roja diagonal, en escritorio y en móvil
+   (HU-EXP-004 CA-16).
+2. Las tarjetas muestran los textos del Figma con sus negritas, y sus íconos
+   se dibujan al entrar; con reducir movimiento aparecen dibujados
+   (CP-A11Y-003).
+3. El texto de las tarjetas cumple 4,5:1 (CP-A11Y-004); sin colores escritos a
+   mano, sin la marca literal y sin `@/components/ui/card` (tests).
+4. TBT y CLS móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-064).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2099,6 +2145,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | En curso | BR-054, BR-056 |
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | En curso | BR-058 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | En curso | BR-058 |
+| BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | En curso | BR-062 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

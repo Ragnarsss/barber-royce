@@ -110,6 +110,19 @@ export const laserCutOneShot = (to: string): Variants => ({
 });
 
 /**
+ * Trazo de un ícono que se dibuja solo (BR-064): cada `path` o `circle` del SVG anima su `pathLength`. Hereda
+ * «hidden»/«visible» de la tarjeta y arranca un poco después de que ella aparece.
+ */
+export const iconDraw: Variants = {
+    hidden: { pathLength: 0, opacity: 0 },
+    visible: {
+        pathLength: 1,
+        opacity: 1,
+        transition: { pathLength: { duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.25 }, opacity: { duration: 0.2, delay: 0.25 } }
+    }
+};
+
+/**
  * Fade in desde la izquierda
  */
 export const fadeInLeft: Variants = {

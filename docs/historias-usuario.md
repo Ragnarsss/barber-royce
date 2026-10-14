@@ -625,6 +625,9 @@ y confiar en que el servicio está a la altura.
   scroll, Then un láser corta en diagonal y revela la foto y luego la tarjeta
   del testimonio, y si subo se vuelven a tapar; con reducir movimiento todo
   aparece revelado.
+- CA-16: Given llego a «Estilo que te acompaña», When las tarjetas entran en
+  pantalla, Then veo la foto clara con la franja roja diagonal, las tarjetas con
+  los textos del diseño, y sus íconos se dibujan con un trazo.
 
 ---
 
