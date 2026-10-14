@@ -2057,6 +2057,42 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-064).
 
+
+#### BR-065 — SocialProof2: parrilla bento con las proporciones del Figma
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-064
+- Estado: En curso (rama `feat/br-065-bento-instagram`)
+- Historia de usuario: HU-EXP-004 (CA-17)
+- RF/RNF: `RNF-PERF-002`, `RNF-A11Y-003`
+
+**Origen (2026-10-14):** el usuario siente rara la parrilla «Clientes felices,
+estilos impecables» en escritorio y compartió el Figma «Prueba social 2». Le
+gustan el fondo y las figuras; el problema son las dimensiones de los
+recuadros. Hoy son cinco recuadros verticales y angostos (`grid-template-columns:
+repeat(3, 1fr)` con filas de 13rem, `SocialProof2.module.css:230`) en una
+columna estrecha y centrada. En Figma son recuadros apaisados en tres columnas de
+distinto ancho; cada una de las dos primeras parte sus fotos a distinta altura
+(grande arriba y chica abajo, y al revés) y la tercera es una foto alta; el
+bloque de texto es más ancho y alineado a la izquierda; las esquinas son rectas.
+El zoom del hover usa `transform` y la entrada de framer lo pisa.
+
+Alcance:
+1. Bento con las proporciones del Figma en escritorio y tablet, y una versión
+   de dos columnas en móvil.
+2. Texto más ancho, alineado a la izquierda, como en Figma.
+3. Cada recuadro recorta su contenido con `object-fit: cover`: cuando
+   `BR-051` traiga las fotos de Instagram, cualquier proporción calza.
+4. Hover con la propiedad `scale` (no `transform`); colores a tokens.
+5. No se tocan el fondo ni las figuras.
+
+Criterios de aceptación:
+1. En escritorio la parrilla reproduce las proporciones del Figma; en móvil
+   queda en dos columnas sin recuadros angostos (HU-EXP-004 CA-17).
+2. Sin saltos de contenido (CP-PERF-002); con reducir movimiento, sin zoom.
+3. Sin colores escritos a mano en el bento (test).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-065).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2146,6 +2182,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | En curso | BR-058 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | En curso | BR-058 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | En curso | BR-062 |
+| BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | En curso | BR-064 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

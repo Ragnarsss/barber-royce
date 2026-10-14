@@ -628,6 +628,9 @@ y confiar en que el servicio está a la altura.
 - CA-16: Given llego a «Estilo que te acompaña», When las tarjetas entran en
   pantalla, Then veo la foto clara con la franja roja diagonal, las tarjetas con
   los textos del diseño, y sus íconos se dibujan con un trazo.
+- CA-17: Given llego a «Clientes felices, estilos impecables», When veo la
+  parrilla de fotos, Then los recuadros siguen un bento apaisado como en el
+  diseño, y en móvil quedan en dos columnas sin recuadros angostos.
 
 ---
 
