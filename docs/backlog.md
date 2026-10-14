@@ -1791,6 +1791,8 @@ Criterios de aceptación:
    (CP-PERF-001, CP-PERF-002, CP-PERF-003).
 6. La entrada del hero arranca cuando el loader sale, sin pantalla vacía.
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-054).
+
 #### BR-055 — Hero: fondos con profundidad
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-050
@@ -1818,6 +1820,8 @@ Criterios de aceptación:
 2. Con reducir movimiento no hay seguimiento (CP-A11Y-003).
 3. LCP, CLS y TBT móviles no empeoran frente a la línea base (CP-PERF-001,
    CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-055).
 
 #### BR-056 — Hero: tarjetas de beneficios (vidrio con esquinas cortadas)
 
@@ -1855,6 +1859,8 @@ Criterios de aceptación:
 2. El texto cumple contraste ≥ 4,5:1 sobre el fondo en escritorio y móvil, en
    ambos esquemas (CP-A11Y-004, `contrast.e2e.test.ts`).
 3. TBT y fluidez de scroll no empeoran (CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-056).
 
 #### BR-057 — Loader con el letrero real en vector
 
