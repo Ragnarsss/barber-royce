@@ -1420,3 +1420,21 @@ servido con `vite preview` y Chrome real:
 **Integración:** PR #26, #27 y #28 con el CI (lint, tipos, tests, build) y Vercel en verde, fusionados en orden.
 
 **Queda fuera:** el SVG definitivo del letrero (`BR-057`, bloqueado); la grabación en Chrome real del conteo de destellos (`CP-A11Y-005`); el ajuste fino de la intensidad del grano, que el usuario quiere probar a mano (`.grain` en `Hero.module.css`).
+
+---
+
+<a id="br-058"></a>
+
+## BR-058 — CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva
+
+**Notas de construcción (2026-10-14):**
+- Auditoría con `diseno-visual`. El usuario **conservó los hexágonos y la superposición de capas**: vienen de las barras de luz hexagonales del techo de la barbería. Se descartó cambiarlos por diagonales.
+- La foto pasó **dentro** de la figura blanca: su `clip-path` la contiene y se mueven juntas. Con su propio parallax se desplazaba dos veces; la figura usa ahora la capa lenta. Al revisar las capturas apareció que los atributos de la foto decían 700 × 925 y el archivo mide 700 × 667: se corrigieron (evita un salto de contenido al cargar) y la foto se dimensiona por el ancho.
+- El hexágono «rosado» (rojo al 30 % sobre blanco) pasó a rojo de marca sólido y hexagonal.
+- Barras de luz: tres hexágonos en fila de panal, arriba y cortados por el borde, con tubo blanco cálido y resplandor; se encienden una vez al entrar la sección (`lightBarIgnite`, 2,5 destellos en 0,9 s). Primero quedaron abajo junto a los botones y el usuario no entendía qué eran: arriba se leen como el techo.
+- Botón principal con chaflán y seguimiento magnético (`magnetic.ts`, MotionValue y resorte, solo con ratón); el foco lo dibuja el envoltorio, porque el `clip-path` recortaría el contorno. El hover tiñe el texto de rojo (mezclar el fondo blanco con rojo daba rosado). Secundario: contorno recto.
+- Móvil: la figura con la foto va en el flujo, debajo del texto (antes la foto, absoluta, tapaba el título); queda el hexágono rojo del texto como forma.
+- Deuda saldada, explicada al usuario: `will-change` fijo en 7 capas → clase `isAnimating` solo durante el scroll; todos los colores a tokens (el fondo era `#332a2b` y el token `#332b2b`); CSS muerto borrado; el `alt` usa `SITE.name`.
+- Test primero: `magneticOffset` (centro, fracción, tope) y el conteo de destellos de `lightBarIgnite`. Después: `CTA1.test.tsx` (foto dentro de la figura, rojo sólido, barras con y sin reducir movimiento, sin literal de marca, sin hex, sin `will-change`, sin CSS muerto, foco fuera del chaflán, contraste del blanco sobre el rojo).
+
+**Verificación:** 525 tests en verde, lint y tipos limpios. Capturas con `puppeteer-core` en escritorio (con el cursor sobre el botón) y móvil emulado a 390 px. **Lighthouse móvil, `master` contra BR-058 alternados ×5:** TBT 182 → 166 ms (mediana; dispersión de 128 a 341 en ambas), LCP 6,4 → 6,3 s, CLS 0. Una primera comparación daba +50 ms, pero el build de `master` en el worktree no tenía el `.env` (sin analítica ni hoja en vivo); se anotó como trampa en la skill. **Pendiente (usuario):** ver en movimiento el encendido de las barras, el botón magnético y el parallax de la figura.

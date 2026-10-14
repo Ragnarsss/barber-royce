@@ -63,7 +63,10 @@
 .letters {
   display: inline-flex;
   /* El resplandor va aquí y no en cada letra: dentro de la máscara (overflow: hidden) quedaría recortado en un rectángulo */
-  filter: drop-shadow(0 0.04em 0.25em color-mix(in srgb, var(--color-brand-primary) 55%, transparent));
+  filter: drop-shadow(
+    0 0.04em 0.25em
+      color-mix(in srgb, var(--color-brand-primary) 55%, transparent)
+  );
 }
 
 /* La máscara recorta la letra mientras sube; el relleno evita cortar el trazo de las mayúsculas */
@@ -151,9 +154,17 @@
  * contra el vidrio sobre el fondo más claro posible lo verifica cards.test.ts.
  */
 .hero {
-  --card-glass: color-mix(in srgb, var(--color-brand-background) 62%, transparent);
+  --card-glass: color-mix(
+    in srgb,
+    var(--color-brand-background) 62%,
+    transparent
+  );
   --card-edge: color-mix(in srgb, var(--color-brand-white) 18%, transparent);
-  --card-edge-hot: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);
+  --card-edge-hot: color-mix(
+    in srgb,
+    var(--color-brand-primary) 75%,
+    transparent
+  );
   --card-sweep: color-mix(in srgb, var(--color-brand-white) 14%, transparent);
   --card-cut: 14px;
 }
@@ -168,7 +179,14 @@
   max-width: 560px;
   overflow: hidden;
   background: var(--card-edge);
-  clip-path: polygon(var(--card-cut) 0, 100% 0, 100% calc(100% - var(--card-cut)), calc(100% - var(--card-cut)) 100%, 0 100%, 0 var(--card-cut));
+  clip-path: polygon(
+    var(--card-cut) 0,
+    100% 0,
+    100% calc(100% - var(--card-cut)),
+    calc(100% - var(--card-cut)) 100%,
+    0 100%,
+    0 var(--card-cut)
+  );
   transition: background 0.35s ease;
 }
 
@@ -178,7 +196,14 @@
   inset: 1px;
   z-index: -2;
   background: var(--card-glass);
-  clip-path: polygon(var(--card-cut) 0, 100% 0, 100% calc(100% - var(--card-cut)), calc(100% - var(--card-cut)) 100%, 0 100%, 0 var(--card-cut));
+  clip-path: polygon(
+    var(--card-cut) 0,
+    100% 0,
+    100% calc(100% - var(--card-cut)),
+    calc(100% - var(--card-cut)) 100%,
+    0 100%,
+    0 var(--card-cut)
+  );
 }
 
 /* Luz que barre la tarjeta al pasar el cursor */
@@ -187,7 +212,12 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(105deg, transparent 35%, var(--card-sweep) 50%, transparent 65%);
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    var(--card-sweep) 50%,
+    transparent 65%
+  );
   transform: translateX(-120%);
   transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
@@ -224,7 +254,14 @@
   padding: 0.4rem;
   background: var(--color-brand-primary);
   color: var(--color-brand-white);
-  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+  clip-path: polygon(
+    6px 0,
+    100% 0,
+    100% calc(100% - 6px),
+    calc(100% - 6px) 100%,
+    0 100%,
+    0 6px
+  );
   transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -287,9 +324,21 @@
  * el `clip-path`. Así el filo se mueve con el parallax sin un elemento extra.
  */
 .hero {
-  --hero-edge-light: color-mix(in srgb, var(--color-brand-white) 55%, transparent);
-  --hero-red-light: color-mix(in srgb, var(--color-brand-primary) 82%, var(--color-brand-white));
-  --hero-red-deep: color-mix(in srgb, var(--color-brand-primary) 62%, var(--color-brand-background));
+  --hero-edge-light: color-mix(
+    in srgb,
+    var(--color-brand-white) 55%,
+    transparent
+  );
+  --hero-red-light: color-mix(
+    in srgb,
+    var(--color-brand-primary) 82%,
+    var(--color-brand-white)
+  );
+  --hero-red-deep: color-mix(
+    in srgb,
+    var(--color-brand-primary) 62%,
+    var(--color-brand-background)
+  );
 }
 
 /* Capa de fondo - triángulos semi-transparentes más grandes */
@@ -323,8 +372,18 @@
   right: 50%;
   bottom: 0;
   background:
-    linear-gradient(to bottom right, transparent calc(50% - 1.5px), var(--hero-edge-light) 50%, transparent calc(50% + 0.5px)),
-    linear-gradient(150deg, var(--hero-red-light) 0%, var(--color-brand-primary) 40%, var(--hero-red-deep) 100%);
+    linear-gradient(
+      to bottom right,
+      transparent calc(50% - 1.5px),
+      var(--hero-edge-light) 50%,
+      transparent calc(50% + 0.5px)
+    ),
+    linear-gradient(
+      150deg,
+      var(--hero-red-light) 0%,
+      var(--color-brand-primary) 40%,
+      var(--hero-red-deep) 100%
+    );
   clip-path: polygon(0 0, 100% 0, 0 100%);
   width: 50vw;
   height: 100vh;
@@ -338,8 +397,17 @@
   right: 0;
   bottom: 0;
   background:
-    linear-gradient(to bottom right, transparent calc(50% - 0.5px), var(--hero-edge-light) 50%, transparent calc(50% + 1.5px)),
-    linear-gradient(150deg, var(--color-brand-primary) 0%, var(--hero-red-deep) 100%);
+    linear-gradient(
+      to bottom right,
+      transparent calc(50% - 0.5px),
+      var(--hero-edge-light) 50%,
+      transparent calc(50% + 1.5px)
+    ),
+    linear-gradient(
+      150deg,
+      var(--color-brand-primary) 0%,
+      var(--hero-red-deep) 100%
+    );
   clip-path: polygon(100% 0, 100% 100%, 0 100%);
   width: 50vw;
   height: 100vh;
@@ -366,7 +434,11 @@
   position: absolute;
   right: 0;
   bottom: 10%;
-  background: color-mix(in srgb, var(--color-brand-primary-hover) 40%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--color-brand-primary-hover) 40%,
+    transparent
+  );
   clip-path: polygon(90% 0, 100% 100%, 0 90%);
   width: 40vw;
   height: 65vh;
@@ -381,9 +453,9 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.07;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
+  opacity: 0.14;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
 }
 
 /*

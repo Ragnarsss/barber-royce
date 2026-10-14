@@ -1887,6 +1887,54 @@ Criterios de aceptación:
 1. El loader muestra el «RR» como tubo de neón con los criterios de `BR-054`,
    sin cambiar su duración ni sus protecciones.
 
+
+#### BR-058 — CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-054, BR-056
+- Estado: En curso (rama `feat/br-058-cta1`)
+- Historia de usuario: HU-EXP-004 (CA-10)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-A11Y-005`, `RNF-DATOS-001`
+
+**Origen (2026-10-14):** auditoría de CTA1 con la skill `diseno-visual`.
+Diagnóstico: la foto se sale de la figura blanca; lo «rosado» detrás de la foto
+es el rojo de marca al 30 % sobre blanco; el botón de reservar es un botón
+blanco estándar que no destaca; en móvil la foto tapa el título y el fondo
+queda plano (las formas se ocultan). Deuda: `will-change: transform` fijo en 7
+capas (`CTA1.module.css:141` y siguientes), colores escritos a mano (el fondo
+es `#332a2b` y el token del charcoal es `#332b2b`), CSS muerto
+(`.content::before`, `.imageWrapper`, `background-*` en `.ctaImage`) y el
+nombre de la marca literal en el `alt` (`CTA1.tsx:96`).
+
+Decisiones del usuario (2026-10-14): **se conservan las formas hexagonales y la
+superposición de capas** (los hexágonos vienen de las barras de luz
+hexagonales del techo de la barbería). Se descartó cambiarlas por diagonales.
+
+Alcance:
+1. La foto, contenida dentro de la figura blanca (mismo polígono).
+2. La pieza rosada pasa a rojo de marca sólido y a forma hexagonal.
+3. Gesto memorable: un par de hexágonos como **tubo de luz** (contorno con
+   resplandor blanco cálido, como las barras del techo) que se encienden una
+   vez cuando la sección entra en pantalla, con un parpadeo corto.
+4. Botón de reservar con chaflán (como las tarjetas de `BR-056`) y leve
+   seguimiento del cursor (`MotionValue`, solo con ratón); el secundario, en
+   contorno con el mismo corte.
+5. Móvil: la foto no tapa el título y queda una forma en vez de un fondo plano.
+6. Deuda: `will-change` solo durante el scroll (patrón `isAnimating` del hero);
+   colores y valores a tokens; borrar el CSS muerto; el `alt` con `SITE.name`.
+
+Criterios de aceptación:
+1. La foto no se sale de la figura blanca en escritorio (HU-EXP-004 CA-10).
+2. Las barras de luz se encienden una vez al entrar la sección, con ≤ 3
+   destellos por segundo (CP-A11Y-005); con reducir movimiento aparecen
+   encendidas y quietas (CP-A11Y-003).
+3. El texto y los botones cumplen contraste ≥ 4,5:1 (CP-A11Y-004) en
+   escritorio y móvil; en móvil la foto no se superpone al título.
+4. Ningún color escrito a mano en `CTA1.module.css` ni la marca literal en
+   `CTA1.tsx` (tests; `RNF-DATOS-001`).
+5. TBT y CLS móviles no empeoran frente a la línea base (CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-058).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -1972,6 +2020,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-055 | Hero: fondos con profundidad | K | P3 | M | Hecho | BR-050 |
 | BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Hecho | BR-050, BR-055 |
 | BR-057 | Loader con el letrero real en vector | K | P3 | S | Bloqueada | BR-054 |
+| BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | En curso | BR-054, BR-056 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

@@ -1,10 +1,20 @@
+/*
+ * CTA1 (BR-058). Los hexágonos vienen de las barras de luz hexagonales del techo de la barbería: se conservan sus
+ * formas y la superposición de capas. Todo color sale de los tokens; el will-change lo pone la clase global
+ * .isAnimating solo mientras hay scroll.
+ */
 .cta {
+  --cta-light: color-mix(in srgb, var(--color-brand-white) 88%, var(--color-brand-primary-hover));
+  --cta-glow: color-mix(in srgb, var(--color-brand-white) 70%, transparent);
+  --cta-glow-red: color-mix(in srgb, var(--color-brand-primary) 70%, transparent);
+  --cta-cut: 10px;
+
   height: 100vh;
+  min-height: 500px;
   padding: 0;
-  background: #332a2b;
+  background: var(--color-brand-section-bg);
   position: relative;
   overflow: hidden;
-  min-height: 500px;
   display: flex;
   align-items: stretch;
 }
@@ -46,14 +56,14 @@
   font-size: clamp(32px, 4vw, 48px);
   font-weight: 800;
   line-height: 1.1;
-  color: #ffffff;
+  color: var(--color-brand-white);
   margin: 0;
 }
 
 .subtitle {
   font-size: 14px;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.9);
+  color: color-mix(in srgb, var(--color-brand-white) 90%, transparent);
   margin: 0;
   font-weight: 400;
   font-style: italic;
@@ -67,62 +77,68 @@
   align-items: center;
 }
 
+/* Envoltorio del botón principal: se mueve con el cursor y dibuja el foco que el chaflán recortaría */
+.magnet {
+  display: inline-flex;
+}
+
+.magnet:has(:focus-visible) {
+  outline: 3px solid var(--color-brand-white);
+  outline-offset: 4px;
+}
+
+/* Botón principal: blanco con el chaflán de las tarjetas del hero (BR-056) */
 .ctaButton {
   gap: 8px;
-  background: #ffffff;
-  color: #1a1a1a;
-  font-weight: 600;
-  border-radius: 8px;
-  padding: 14px 40px;
+  background: var(--color-brand-white);
+  color: var(--color-brand-background);
+  font-weight: 700;
+  padding: 15px 40px;
   min-width: 230px;
   font-size: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
+  clip-path: polygon(var(--cta-cut) 0, 100% 0, 100% calc(100% - var(--cta-cut)), calc(100% - var(--cta-cut)) 100%, 0 100%, 0 var(--cta-cut));
+  transition: color 0.3s ease;
 }
 
-.ctaButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+.ctaButton:focus-visible {
+  outline: none; /* el foco lo dibuja .magnet, fuera del recorte */
 }
 
+.ctaButton svg {
+  color: var(--color-brand-primary);
+}
+
+/* Botón secundario: contorno recto, sin redondeo, para que no choque con lo angular */
 .ctaButtonGhost {
   background: transparent;
-  color: #ffffff;
-  border: 2px solid rgba(255, 255, 255, 0.9);
+  color: var(--color-brand-white);
+  border: 2px solid color-mix(in srgb, var(--color-brand-white) 90%, transparent);
   font-weight: 600;
-  padding: 12px 32px;
+  padding: 13px 32px;
   font-size: 16px;
-  border-radius: 8px;
   min-width: 200px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.3s ease;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease;
   text-decoration: none;
 }
 
-.ctaButtonGhost:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: #ffffff;
-  transform: translateY(-2px);
-}
+@media (hover: hover) and (pointer: fine) {
+  .ctaButton:hover {
+    color: var(--color-brand-primary);
+  }
 
-.ctaImage {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 50%;
-  height: 100%;
-  background-size: contain;
-  background-position: right bottom;
-  background-repeat: no-repeat;
-  z-index: 1;
-  will-change: transform;
+  .ctaButtonGhost:hover {
+    background: color-mix(in srgb, var(--color-brand-white) 15%, transparent);
+    border-color: var(--color-brand-white);
+  }
 }
 
 /* ===== CAPAS DE HEXÁGONOS PARALLAX ===== */
@@ -132,127 +148,166 @@
   position: absolute;
   top: -5%;
   left: -3%;
-  background: rgba(213, 35, 35, 0.25);
+  background: color-mix(in srgb, var(--color-brand-primary) 25%, transparent);
   clip-path: polygon(45% 0%, 85% 15%, 95% 65%, 65% 100%, 15% 85%, 5% 35%);
   width: 45vw;
   height: 90vh;
   rotate: 20deg;
   z-index: 0;
-  will-change: transform;
 }
 
 .imageHexagonBackground {
   position: absolute;
   right: -3%;
   bottom: -5%;
-  background: rgba(255, 255, 255, 0.15);
+  background: color-mix(in srgb, var(--color-brand-white) 15%, transparent);
   clip-path: polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 55%);
   width: 55vw;
   height: 105vh;
   z-index: 0;
-  will-change: transform;
 }
 
-/* Capa principal - hexágonos principales */
+/* Capa principal - hexágono rojo del texto */
 .textHexagon {
   position: absolute;
   top: 0;
   left: 0;
-  right: 50%;
-  bottom: 0;
-  background: #d52323;
+  background: var(--color-brand-primary);
   clip-path: polygon(50% 0%, 90% 20%, 100% 70%, 70% 100%, 20% 80%, 10% 30%);
   width: 40vw;
   height: 80vh;
   rotate: 15deg;
   z-index: 1;
-  will-change: transform;
 }
 
+/* Figura blanca: contiene la foto y el hexágono rojo de atrás; su recorte los contiene a ambos (BR-058) */
 .imageHexagon {
   position: absolute;
   right: 0;
   bottom: 0;
-  background: #ffffff;
+  background: var(--color-brand-white);
   clip-path: polygon(30% 0, 100% 0, 100% 100%, 30% 100%, 0 50%);
   width: 50vw;
   height: 100vh;
   z-index: 1;
-  will-change: transform;
 }
 
-/* Capa frontal - pequeños hexágonos decorativos con opacidad */
+/* Hexágono rojo detrás de la foto: antes era rojo al 30 % sobre blanco (se leía rosado) */
+.imageHexagonForeground {
+  position: absolute;
+  right: 10%;
+  bottom: 10%;
+  background: var(--color-brand-primary);
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  width: 62%;
+  height: 62%;
+  pointer-events: none;
+}
+
+.ctaImage {
+  position: absolute;
+  right: -6%;
+  bottom: 0;
+  width: 112%;
+}
+
+/* Por el ancho: llena la figura, anclada abajo; lo que sobra a los lados lo recorta la figura */
+.ctaImage img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Capa frontal - hexágono decorativo con opacidad */
 .textHexagonForeground {
   position: absolute;
   top: 15%;
   left: 8%;
-  background: rgba(170, 57, 57, 0.5);
+  background: color-mix(in srgb, var(--color-accent-600) 50%, transparent);
   clip-path: polygon(45% 5%, 85% 20%, 90% 65%, 60% 95%, 20% 75%, 15% 35%);
   width: 30vw;
   height: 60vh;
   rotate: 10deg;
   z-index: 1;
-  will-change: transform;
   pointer-events: none;
 }
 
-.imageHexagonForeground {
+/*
+ * Barras de luz hexagonales (BR-058): como las del techo de la barbería vistas desde abajo, en fila de panal en el
+ * borde superior y cortadas por él. Tubo blanco cálido con resplandor; solo se anima su opacidad.
+ */
+.lightBars {
   position: absolute;
-  right: 8%;
-  bottom: 15%;
-  background: rgba(254, 0, 0, 0.3);
-  clip-path: polygon(35% 5%, 95% 5%, 95% 95%, 35% 95%, 5% 50%);
-  width: 35vw;
-  height: 70vh;
+  left: 34%;
+  top: -9%;
+  width: min(32vw, 470px);
+  height: auto;
   z-index: 1;
-  will-change: transform;
+  overflow: visible;
   pointer-events: none;
+  color: var(--cta-light);
+  filter: drop-shadow(0 0 3px var(--cta-glow)) drop-shadow(0 0 12px var(--cta-glow-red));
+}
+
+.lightBars path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linejoin: round;
 }
 
 /* ───── Responsive ───── */
 @media (max-width: 1024px) {
-  .content::before {
-    left: -15%;
-  }
-
   .textContent {
     padding-left: 20px;
-  }
-
-  .ctaButtons {
-    flex-wrap: wrap;
   }
 }
 
 @media (max-width: 768px) {
-  /* Ocultar todas las capas de hexágonos en mobile para mejor performance */
-  .textHexagon,
-  .imageHexagon,
+  /*
+   * Móvil: el texto arriba y la figura con la foto debajo, en el flujo (antes la foto, absoluta, tapaba el
+   * título). Queda el hexágono rojo del texto como forma, en vez de un fondo plano.
+   */
+  .cta {
+    height: auto;
+    min-height: auto;
+    flex-direction: column;
+  }
+
   .textHexagonBackground,
   .imageHexagonBackground,
   .textHexagonForeground,
-  .imageHexagonForeground {
+  .lightBars {
     display: none;
   }
 
-  .cta {
-    min-height: auto;
+  .textHexagon {
+    left: -15%;
+    width: 110vw;
+    height: 70vh;
   }
 
   .container {
+    order: 1;
     grid-template-columns: 1fr;
+  }
+
+  .imageHexagon {
+    position: relative;
+    order: 2;
+    width: 100%;
+    height: min(110vw, 520px);
+    clip-path: polygon(14% 0, 100% 0, 100% 100%, 14% 100%, 0 50%);
+  }
+
+  .ctaImage {
+    right: -4%;
+    width: 100%;
   }
 
   .content {
     padding: 60px 24px;
     justify-content: center;
-  }
-
-  .content::before {
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: clamp(320px, 80vw, 500px);
-    height: clamp(320px, 80vw, 500px);
   }
 
   .textContent {
@@ -268,25 +323,16 @@
     gap: 12px;
   }
 
+  .magnet,
   .ctaButton,
   .ctaButtonGhost {
     width: 100%;
     min-width: unset;
+  }
+
+  .ctaButton,
+  .ctaButtonGhost {
     padding: 14px 24px;
     justify-content: center;
-  }
-
-  .imageWrapper {
-    min-height: 350px;
-    background-position: center bottom;
-  }
-
-  .imageWrapper::before {
-    display: none;
-  }
-
-  .imageWrapper::after {
-    width: 80px;
-    height: 80px;
   }
 }
