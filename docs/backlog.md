@@ -1669,6 +1669,155 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-050).
 
+Los tickets `BR-053` a `BR-057` salen de la sesión del 2026-10-14. El usuario
+aprobó el orden: **skill → loader → fondos → tarjetas**, la dirección **A** para
+las tarjetas y usar «Royce» (no el monograma) en el loader; el «RR» en vector
+queda para cuando lo consiga.
+
+#### BR-053 — Skill `diseno-visual` y flujo de SVG
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-050
+- Estado: Propuesta
+- Historia de usuario: no aplica — proceso y herramientas de trabajo.
+- RF/RNF: no aplica — documentación de un proceso.
+
+**Origen (2026-10-14):** el usuario pide con frecuencia el mismo rol (diseñador
+de sitios de marketing «award winning», sección por sección) y propuso volverlo
+una skill. En `C:\Users\Cristian\Documents\alienskilez-web\.claude\skills\svg-workflow`
+hay una skill de SVG que cubre limpieza, `pathLength="1"` y el bug de los
+comentarios con `--`.
+
+Alcance:
+1. `.claude/skills/diseno-visual/SKILL.md`: el rol; el proceso por sección
+   (diagnóstico, tres direcciones, elegir, ticket, implementar, verificar); las
+   restricciones del proyecto (tokens, `MotionValue` y nunca `setState` por
+   scroll, `prefers-reduced-motion`, presupuesto de LCP/CLS/TBT con línea base,
+   WCAG 2.3.1 para parpadeos, la regla de pedir ticket antes de código).
+2. Portar `svg-workflow` a `.claude/skills/svg-workflow`, adaptada a este repo
+   (sin Tailwind, con tokens y CSS Modules).
+3. Registrar ambas en `AGENTS.md`.
+
+Criterios de aceptación:
+1. Pedir «mejoremos la sección X» carga la skill y propone tres direcciones antes
+   de escribir código.
+2. `AGENTS.md` lista las dos skills nuevas y coincide con `.claude/`
+   (lo verifica `backlog-governance`).
+
+#### BR-054 — Loader de neón «ROYCE»
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-050, BR-053
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-06, CA-07)
+- RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
+
+**Origen (2026-10-14):** el usuario quiere un loader como el de alienskilez-web
+(`Preloader.tsx`), pero con un SVG animado como un letrero de neón: empieza
+apagado, se enciende, parpadea como defectuoso y entra. Hoy el hero espera a
+Lenis y se ve vacío un instante.
+
+Decisiones tomadas el 2026-10-14 (**por confirmar**: la frecuencia, porque el
+usuario no la eligió):
+1. Se usa «ROYCE» y no el monograma «RR» (ver `BR-057`).
+2. Se muestra **una vez por sesión** (`sessionStorage`, con `try/catch`), no en
+   cada carga: la web es de captación y cada segundo cuenta.
+
+Alcance:
+1. SVG de «ROYCE» con contornos sacados de Anton, como asset en `src/assets/`
+   (flujo de `BR-053`), con trazos sin relleno que leen como tubo de neón.
+2. Secuencia en CSS: apagado, encendido con parpadeo irregular (una letra más
+   defectuosa), resplandor estable, un último parpadeo y salida. Resplandor con
+   varios `drop-shadow` (núcleo claro, halo rojo con tokens); el parpadeo anima
+   `opacity` de una capa borrosa, no el radio del blur.
+3. Duración máxima ~2 s, como variable CSS fuente de verdad atada por test a una
+   constante de TypeScript.
+4. Se salta con `pointerdown`, `keydown`, `wheel` o `touchstart`; bloquea el
+   scroll mientras corre; `aria-hidden`; con `prefers-reduced-motion` no se monta.
+5. Al salir dispara la entrada del hero (`isReady` de `Hero.tsx`).
+6. Un fallo del almacenamiento de sesión no impide ver el sitio.
+
+Criterios de aceptación:
+1. La secuencia se ve y dura ≤ 2 s; una interacción la salta (HU-EXP-004 CA-06).
+2. No se repite al recargar ni al cambiar de ruta en la misma sesión
+   (HU-EXP-004 CA-06).
+3. Con `prefers-reduced-motion: reduce` no se monta y no hay parpadeos
+   (HU-EXP-004 CA-07, CP-A11Y-003).
+4. No hay más de 3 destellos por segundo (CP-A11Y-005).
+5. LCP, CLS y TBT móviles no empeoran frente a la línea base medida antes
+   (CP-PERF-001, CP-PERF-002, CP-PERF-003).
+6. La entrada del hero arranca cuando el loader sale, sin pantalla vacía.
+
+#### BR-055 — Hero: fondos con profundidad
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-050
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-08)
+- RF/RNF: `RNF-PERF-001`, `RNF-PERF-003`, `RNF-A11Y-003`
+
+**Origen (2026-10-14):** los fondos del hero son seis triángulos planos con
+`clip-path` en tres capas con parallax (`Hero.module.css`); no tienen textura,
+luz ni reacción al cursor, y en móvil se ocultan todos (`display: none`), así
+que el hero móvil queda de un solo color.
+
+Alcance:
+1. Grano fino sobre el rojo y el charcoal, y degradados en los triángulos.
+2. Filo de luz de 1 px en las diagonales.
+3. Haz de luz que sigue al cursor con `MotionValue` y resorte, solo con
+   `(pointer: fine)`; nada de `setState` por `pointermove` ni por scroll.
+4. En móvil, una forma geométrica simple en vez de ocultar los fondos.
+5. Con `prefers-reduced-motion`, fondo estático y sin seguimiento.
+6. Colores y valores como tokens, sin hex nuevos.
+
+Criterios de aceptación:
+1. El fondo muestra profundidad en escritorio y en móvil, y el haz sigue al
+   cursor sin re-renders (HU-EXP-004 CA-08).
+2. Con reducir movimiento no hay seguimiento (CP-A11Y-003).
+3. LCP, CLS y TBT móviles no empeoran frente a la línea base (CP-PERF-001,
+   CP-PERF-003).
+
+#### BR-056 — Hero: tarjetas de beneficios (vidrio con esquinas cortadas)
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-050, BR-055
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-09)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-14):** las tres tarjetas son píldoras blancas lisas
+(`.benefit`, `Hero.module.css`) entre formas angulares: legibles pero genéricas.
+El usuario eligió la dirección **A** entre dos propuestas.
+
+Alcance:
+1. Chaflán con `clip-path` en las esquinas, fondo translúcido y borde fino; el
+   texto pasa a claro y se verifica el contraste.
+2. Entrada ligada al scroll con `useScroll`/`MotionValue` (Lenis), y en móvil por
+   entrada en pantalla; hover en escritorio con una luz que barre la tarjeta.
+3. `backdrop-filter` solo si la medición en móvil lo permite; si no, fondo
+   translúcido sin desenfoque.
+4. Con `prefers-reduced-motion`, tarjetas estáticas.
+
+Criterios de aceptación:
+1. Las tarjetas reaccionan al scroll o al cursor (HU-EXP-004 CA-09).
+2. El texto cumple contraste ≥ 4,5:1 sobre el fondo en escritorio y móvil, en
+   ambos esquemas (CP-A11Y-004, `contrast.e2e.test.ts`).
+3. TBT y fluidez de scroll no empeoran (CP-PERF-003).
+
+#### BR-057 — Loader con el monograma «RR» en vector
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-054
+- Estado: Bloqueada (falta el «RR» en vector: hoy solo hay `royce-barber-logo.png` y un `favicon.svg` de 130 KB trazado de un raster)
+- Historia de usuario: HU-EXP-004 (CA-06)
+- RF/RNF: `RNF-PERF-001`, `RNF-A11Y-005`
+
+**Origen (2026-10-14):** el usuario intentará conseguir el monograma «RR» en
+vector; mientras tanto el loader usa «ROYCE» (`BR-054`).
+
+Alcance:
+1. Reemplazar o acompañar a «ROYCE» por el «RR» en el loader, con el mismo flujo
+   de SVG y la misma secuencia de neón.
+
+Criterios de aceptación:
+1. El loader muestra el «RR» como tubo de neón con los criterios de `BR-054`,
+   sin cambiar su duración ni sus protecciones.
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -1749,6 +1898,11 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-050 | Hero: tipografía de marca | K | P3 | M | Hecho | BR-042, BR-043 |
 | BR-051 | Parrilla de fotos con las publicaciones de Instagram | L | P2 | L | Bloqueada | — |
 | BR-052 | Reseñas reales de Google en la home | L | P2 | M | Bloqueada | BR-006 |
+| BR-053 | Skill `diseno-visual` y flujo de SVG | K | P2 | S | Propuesta | BR-050 |
+| BR-054 | Loader de neón «ROYCE» | K | P3 | M | Propuesta | BR-050, BR-053 |
+| BR-055 | Hero: fondos con profundidad | K | P3 | M | Propuesta | BR-050 |
+| BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Propuesta | BR-050, BR-055 |
+| BR-057 | Loader con el monograma «RR» en vector | K | P3 | S | Bloqueada | BR-054 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
