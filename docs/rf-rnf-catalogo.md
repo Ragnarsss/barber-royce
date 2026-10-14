@@ -84,6 +84,7 @@ Salvo que el CP diga otra cosa:
 | RF-INFO-007 | INFO | Mostrar reseñas de clientes en la home. | Media | **CP-INFO-007:** la sección de reseñas de la home muestra las reseñas de `reviewsData.ts` con autor. | HU-INFO-003 | — | Implementado |
 | RF-INFO-008 | INFO | Mostrar en la parrilla de la home (`SocialProof2`) las publicaciones recientes de la cuenta de Instagram de la barbería, cada una enlazada a su publicación, sin exponer el token de acceso al navegador y con un respaldo si Instagram falla. | Media | **CP-INFO-008:** con la cuenta conectada la parrilla muestra las últimas publicaciones y cada una abre su enlace; sin conexión o con Instagram caído, la sección muestra el respaldo; el token no aparece en ningún archivo del build. | HU-INFO-006 | — | Propuesto (`BR-051`) |
 | RF-INFO-009 | INFO | Mostrar en la sección de reseñas de la home reseñas reales de la ficha de Google de la barbería, con autor, calificación y atribución a Google, y un enlace a la ficha; sin reseñas inventadas si Google falla. | Media | **CP-INFO-009:** con la ficha conectada la sección muestra reseñas de Google con autor y la atribución; el enlace abre la ficha en Google Maps; sin conexión no aparece ninguna reseña de muestra. | HU-INFO-003 | — | Propuesto (`BR-052`; reemplaza a `RF-INFO-007` al cerrarse) |
+| RF-INFO-010 | INFO | Mostrar la ficha de cada barbero en un diálogo accesible (foto, nombre, cargo, especialidades y descripción), con especialidades y descripción editables y opcionales en la pestaña `equipo` de la hoja. | Baja | **CP-INFO-010:** en `/equipo`, activar un barbero con clic, Enter o Espacio abre su ficha con esos datos; Escape la cierra y el foco vuelve al barbero; una fila sin especialidades ni descripción se ve sin huecos. | HU-INFO-003 | — | Propuesto (`BR-063`) |
 | RF-NAV-001 | NAV | Navegar entre rutas desde un navbar (con menú móvil) y un footer generados desde `ROUTES`, volviendo al inicio de la página en cada cambio de ruta. | Alta | **CP-NAV-001:** los enlaces del navbar y del footer coinciden con las entradas de `ROUTES` marcadas para cada uno; al cambiar de ruta, la nueva página empieza arriba. | HU-EXP-002 | — | Implementado (gap: `<Routes>` no sale de `ROUTES`; `BR-026`) |
 | RF-NAV-002 | NAV | Mostrar una página "no encontrada" con identidad de marca, enlace al inicio y botón de reserva para cualquier ruta inexistente. | Alta | **CP-NAV-002:** `/no-existe` muestra la página 404 con ambos enlaces, `<title>` propio y `noindex`. | HU-EXP-003 | CU-EXP-001 | Verificado (`BR-003`; test en `NotFoundPage.test.tsx`, producción 2026-10-12) |
 | RF-NAV-003 | NAV | Contener un error de render en la sección o ruta afectada con un mensaje y "Reintentar", y recargar una vez ante un chunk inexistente tras un despliegue. | Alta | **CP-NAV-003:** forzar un error en una sección deja navbar y footer operativos y muestra el fallback con "Reintentar"; simular un fallo de carga de chunk recarga la página una sola vez. | HU-EXP-003 | CU-EXP-001 | Implementado (boundary de páginas en producción desde `BR-019`; recuperación de chunk en `BR-020`) |
@@ -180,7 +181,7 @@ Salvo que el CP diga otra cosa:
 | HU-RES-002 | RF-RES-002 | RNF-DATOS-001 |
 | HU-INFO-001 | RF-INFO-001 | RNF-PERF-004 |
 | HU-INFO-002 | RF-INFO-003 | RNF-DATOS-001 |
-| HU-INFO-003 | RF-INFO-004, RF-INFO-005, RF-INFO-007, RF-INFO-009 | RNF-PERF-004, RNF-SEG-002, RNF-SEG-004, RNF-PRIV-001 |
+| HU-INFO-003 | RF-INFO-004, RF-INFO-005, RF-INFO-007, RF-INFO-009, RF-INFO-010 | RNF-PERF-004, RNF-A11Y-002, RNF-SEG-002, RNF-SEG-004, RNF-PRIV-001 |
 | HU-INFO-004 | RF-INFO-002 | RNF-PERF-004 |
 | HU-INFO-005 | RF-INFO-006, RF-SEO-002 | RNF-A11Y-002 |
 | HU-INFO-006 | RF-INFO-008 | RNF-PERF-004, RNF-SEG-002, RNF-SEG-004, RNF-PRIV-001, RNF-CONF-003 |
@@ -188,7 +189,7 @@ Salvo que el CP diga otra cosa:
 | HU-EXP-001 | — | RNF-PERF-001 .. RNF-PERF-006, RNF-COMP-001 |
 | HU-EXP-002 | RF-NAV-001 | RNF-A11Y-001 .. RNF-A11Y-004 |
 | HU-EXP-003 | RF-NAV-002, RF-NAV-003 | RNF-CONF-001, RNF-CONF-002 |
-| HU-EXP-004 | — | RNF-PERF-001 .. RNF-PERF-003, RNF-A11Y-003 .. RNF-A11Y-005, RNF-DATOS-001 |
+| HU-EXP-004 | RF-INFO-004, RF-INFO-010 | RNF-PERF-001 .. RNF-PERF-003, RNF-A11Y-003 .. RNF-A11Y-005, RNF-DATOS-001 |
 | HU-OPS-001 | RF-OPS-001, RF-OPS-002 | RNF-SEG-001, RNF-SEG-003, RNF-MANT-001, RNF-MANT-002, RNF-MANT-003 |
 | HU-MED-001 | RF-MED-001 | RNF-PRIV-001, RNF-PERF-007, RNF-SEG-004 |
 | HU-MED-002 | RF-MED-002, RF-MED-004 | RNF-PRIV-001, RNF-PERF-007, RNF-SEG-004 |
