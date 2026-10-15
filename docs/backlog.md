@@ -2129,6 +2129,11 @@ de luz del techo de la barbería (`BR-058`).
 > mismo fondo del panal; sigue siendo el `<h1>`. Además, el líder aparece sin
 > animación de entrada, porque su foto es el LCP de la página y la entrada lo
 > retrasaba (ver el registro).
+>
+> **Regresión aceptada por escrito (2026-10-14, decisión del usuario):** el CLS
+> móvil de `/equipo` pasa de 0 a 0,0006 porque el texto centrado del título se
+> corre al llegar Anton. Está muy por debajo del umbral de 0,1; el criterio 5
+> se da por cumplido con esa salvedad.
 
 Alcance:
 1. Panal de hexágonos de puntas arriba (`clip-path`), segunda fila desplazada
