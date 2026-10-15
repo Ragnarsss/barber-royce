@@ -1548,3 +1548,15 @@ servido con `vite preview` y Chrome real:
 - `honeycomb.test.ts` pasa de 8 a 27 casos: además de las posiciones, calcula los polígonos y exige que todo par de hexágonos a menos de 0,2 anchos se toque exactamente, para equipos de 1 a 10 barberos en escritorio y en móvil. Sin ese test el defecto no se veía en ninguna prueba.
 
 **Verificación:** 632 tests en verde, lint y tipos limpios. **Lighthouse móvil, `master` contra el ajuste alternados ×5:** TBT mediana 103 → 128 ms con rangos superpuestos (90–173 y 75–141), LCP 5,0 → 4,9 s, CLS igual (0,0006).
+
+<a id="br-066"></a>
+
+## BR-066 — El respaldo del enlace de reserva apunta a un subdominio que no existe
+
+**Notas de construcción (2026-10-14):**
+- El usuario avisó de que el enlace de reserva no servía. En la hoja (`negocio`, `reservas.url`) estaba bien; el respaldo del repo (`BOOKING.url` en `src/config/constants.ts` y la plantilla `negocio.csv`) usaba `barberiaroyc.site.agendapro.com`, que redirige a la página comercial de AgendaPro. Quedó del archivo anterior (`docs/archivo/BACKLOG.md` lo cita igual y se deja: es histórico).
+- Con la hoja funcionando no se notaba; solo habría fallado si la hoja no respondía. Se corrigió el respaldo y se regeneró la plantilla desde él (la comparación de `contentWiring.test.tsx` la exige igual al respaldo).
+- Mi sugerencia anterior de usar `https://roycespa.site.agendapro.com/cl` (sin sucursal) era un error: el usuario confirmó que la buena es la de la sucursal `400965`. Se dejó esa.
+- `src/config/booking.test.ts` (test primero, en rojo con tres casos): el respaldo es la dirección real, la plantilla trae la misma y el subdominio antiguo no queda en `src/`, en las plantillas ni en `index.html`.
+
+**Verificación:** lint, tipos y toda la suite en verde (ver el PR #29). El enlace real responde 200 y es la página «Barberia Royce & Royce Space | Agenda online».

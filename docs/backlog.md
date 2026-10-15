@@ -344,6 +344,33 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-010).
 
+#### BR-066 — El respaldo del enlace de reserva apunta a un subdominio que no existe
+
+- Prioridad: P1 · Esfuerzo: XS · Depende de: —
+- Estado: En curso (rama `feat/br-058-065-landing-y-equipo`, PR #29)
+- Historia de usuario: HU-RES-001 (CA-02, CA-03)
+- RF/RNF: `RF-RES-001`, `RNF-DATOS-001`
+
+**Origen (2026-10-14):** el usuario avisó de que el enlace de reserva no servía
+y dio el bueno. En la hoja (`negocio`, `reservas.url`) ya estaba bien
+(`https://roycespa.site.agendapro.com/cl/sucursal/400965`), pero el valor de
+respaldo del repo (`src/config/constants.ts:31` y la plantilla
+`docs/contenido/negocio.csv`) usaba `barberiaroyc.site.agendapro.com`, que no
+existe: AgendaPro lo redirige a su página comercial.
+
+**Causa:** el subdominio del respaldo se escribió mal o quedó de un nombre
+anterior de la cuenta de AgendaPro. Con la hoja funcionando no se notaba; si la
+hoja fallaba, todos los botones de reservar llevaban a la página general de
+AgendaPro.
+
+**Arreglo:** el respaldo usa la dirección real de la hoja y la plantilla se
+regenera desde él.
+
+Criterios de aceptación:
+1. `BUSINESS.booking.url` (respaldo) es `https://roycespa.site.agendapro.com/cl/sucursal/400965`
+   y la plantilla `negocio.csv` coincide (HU-RES-001 CA-03, `RNF-DATOS-001`).
+2. Ninguna dirección con `barberiaroyc` queda fuera de `docs/archivo/`.
+
 ---
 
 ### Épica C — Robustez y errores
@@ -2342,6 +2369,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | En curso | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | En curso | BR-062 |
 | BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | En curso | BR-064 |
+| BR-066 | El respaldo del enlace de reserva apunta a un subdominio que no existe | B | P1 | XS | En curso | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

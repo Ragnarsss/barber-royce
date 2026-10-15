@@ -28,7 +28,7 @@ export const WHATSAPP_DEFAULTS = {
 
 // Reserva (AgendaPro, ADR-001). Fuente única: BR-005 migra los demás CTAs aquí.
 export const BOOKING = {
-    url: "https://barberiaroyc.site.agendapro.com/cl/sucursal/400965",
+    url: "https://roycespa.site.agendapro.com/cl/sucursal/400965",
     label: "Reservar hora",
 } as const;
 
