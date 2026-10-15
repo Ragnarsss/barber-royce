@@ -223,7 +223,6 @@
 
 .footer {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   gap: 16px;
 }
@@ -232,36 +231,6 @@
   font-size: 28px;
   font-weight: 700;
   color: #ffffff;
-}
-
-.button {
-  display: flex !important;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px !important;
-  background: #ffffff !important;
-  color: #1a1a1a !important;
-  border: none !important;
-  border-radius: 8px !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  height: auto !important;
-}
-
-.button:hover {
-  background: rgba(255, 255, 255, 0.9) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
-}
-
-.cartIcon {
-  width: 18px;
-  height: 18px;
 }
 
 @media (max-width: 968px) {
@@ -339,10 +308,5 @@
 
   .price {
     font-size: 24px;
-  }
-
-  .button {
-    padding: 10px 20px !important;
-    font-size: 13px !important;
   }
 }

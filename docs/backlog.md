@@ -309,21 +309,32 @@ Criterios de aceptación:
 #### BR-009 — Decidir qué hace el botón "Comprar" de productos
 
 - Prioridad: P1 · Esfuerzo: XS · Depende de: —
-- Estado: Propuesta (decisión del usuario pendiente)
+- Estado: En curso (rama `feat/br-009-quitar-boton-comprar`)
 - Historia de usuario: HU-INFO-004 (CA-03, RN-01)
 - RF/RNF: `RF-INFO-002`
 
 **Origen (2026-10-12):** el botón "Comprar" de `/productos` no hace nada y
 los precios tienen formato de dólares.
 
+> **Decisión del usuario (2026-10-15):** se **quita el botón «Comprar»**: por
+> ahora el sitio no vende productos. De las tres opciones de abajo gana una
+> cuarta, la más simple: sin botón ni acción. La página sigue mostrando los
+> productos con su precio. Si más adelante se quiere consultar o comprar, será
+> un ticket nuevo.
+
 Alcance:
-1. Decidir entre: consultar por WhatsApp con el producto prellenado,
+1. ~~Decidir entre: consultar por WhatsApp con el producto prellenado,
    "Disponible en el local" sin botón, u ocultar la página hasta tener
-   catálogo real.
-2. Precios en CLP.
+   catálogo real.~~ Decidido: quitar el botón (ver arriba).
+2. Precios en CLP (ya hecho: `formatClp` en la hoja).
+3. Quitar el botón, su ícono de carrito y el CSS que queda sin uso en
+   `ProductsPage`.
 
 Criterios de aceptación:
-1. Ningún botón visible sin acción (HU-INFO-004 RN-01).
+1. Ningún botón visible sin acción (HU-INFO-004 RN-01): `/productos` no tiene
+   ningún botón «Comprar» (test en `contentWiring.test.tsx`).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-009).
 
 #### BR-010 — Preparar variables de entorno sin secretos
 
@@ -2313,7 +2324,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-006 | SEO técnico | B | P0 | S | Propuesta | BR-005 |
 | BR-007 | Enlaces externos seguros | B | P0 | XS | En curso | — |
 | BR-008 | Fotos propias en lugar de Unsplash | B | P0 | M | Bloqueada | — |
-| BR-009 | Decidir botón "Comprar" | B | P1 | XS | Propuesta | — |
+| BR-009 | Quitar el botón "Comprar" (decidido) | B | P1 | XS | En curso | — |
 | BR-010 | Variables de entorno | B | P1 | XS | Hecho | — |
 | BR-011 | Ruta crítica del LCP | F | P1 | S | En curso | — |
 | BR-012 | Imágenes pendientes | F | P1 | S | En curso | BR-011 |
