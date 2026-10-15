@@ -2101,6 +2101,124 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-065).
 
+Los tickets `BR-060` y `BR-063` salen del pedido del usuario del 2026-10-14:
+rediseñar `/equipo` según su diseño en Figma (dos capturas: el panal y el modal
+abierto). La dirección visual ya viene dada por ese diseño, así que no se
+proponen tres direcciones; la skill `diseno-visual` se usa para el diagnóstico
+y la verificación. Se parte en dos porque junto sería de esfuerzo L.
+
+#### BR-060 — Equipo: panal de hexágonos con el líder destacado
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-058
+- Estado: En curso (rama `feat/br-060-equipo-panal`)
+- Historia de usuario: HU-EXP-004 (CA-12)
+- RF/RNF: `RF-INFO-004`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-14):** hoy `/equipo` (`TeamPage.tsx`) muestra los hexágonos en
+una grilla de dos filas alineadas a la izquierda, con mucho espacio vacío a la
+derecha, sobre un fondo casi plano; el líder es un poco más grande, con un
+borde rojo apenas visible, y el resto de los marcos son grises. El diseño en
+Figma del usuario es un **panal**: dos filas de hexágonos de puntas arriba, la
+segunda desplazada medio hexágono y encajada en la primera, sobre las
+diagonales roja y charcoal del hero; cada hexágono con un marco grueso, el del
+líder rojo y más grande, los demás blancos. Los hexágonos vienen de las barras
+de luz del techo de la barbería (`BR-058`).
+
+> **Alcance ajustado (2026-10-14, decisión del usuario):** la banda «Nuestro
+> equipo» de `PageHero` se reemplaza por un título compacto en Anton sobre el
+> mismo fondo del panal; sigue siendo el `<h1>`. Además, el líder aparece sin
+> animación de entrada, porque su foto es el LCP de la página y la entrada lo
+> retrasaba (ver el registro).
+>
+> **Regresión aceptada por escrito (2026-10-14, decisión del usuario):** el CLS
+> móvil de `/equipo` pasa de 0 a 0,0006 porque el texto centrado del título se
+> corre al llegar Anton. Está muy por debajo del umbral de 0,1; el criterio 5
+> se da por cumplido con esa salvedad.
+
+Alcance:
+1. Panal de hexágonos de puntas arriba (`clip-path`), segunda fila desplazada
+   medio hexágono, centrado en la página y armado para cualquier cantidad de
+   barberos (5 hoy). En móvil, un panal más angosto (2 por fila) sin
+   desbordar.
+2. Marco grueso en cada hexágono (capa del mismo polígono detrás de la foto):
+   blanco para el equipo, rojo de marca y de mayor tamaño para el líder
+   (`isLead`, columna `lider` que ya existe).
+3. Fondo de diagonales roja y charcoal como el del hero, en el módulo de la
+   página (sin tocar los archivos del hero).
+4. Al pasar el cursor o enfocar con teclado, se ve el nombre (como hoy) y el
+   marco se enciende con el resplandor de neón blanco de `BR-059`. Cada
+   hexágono es un `<button>` con nombre accesible, listo para abrir el modal de
+   `BR-063`.
+5. Entrada escalonada al entrar en pantalla; con `prefers-reduced-motion`,
+   estática y sin transición. Colores y medidas en tokens, sin hex.
+
+Criterios de aceptación:
+1. En escritorio, `/equipo` muestra el panal centrado, con la segunda fila
+   encajada medio hexágono, el líder más grande con marco rojo y el resto con
+   marco blanco (HU-EXP-004 CA-12).
+2. Al pasar el cursor o enfocar con teclado un hexágono, se lee el nombre
+   del barbero con contraste ≥ 4,5:1 (CP-A11Y-004, `contrast.e2e.test.ts`).
+3. En 360, 768 y 1440 px el panal no desborda ni produce scroll horizontal.
+4. Con reducir movimiento no hay animación de entrada ni transición
+   (CP-A11Y-003).
+5. CLS y TBT móviles no empeoran frente a la línea base de `master`
+   (CP-PERF-003).
+6. Ningún color escrito a mano en el módulo de la página (ADR-002).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-060).
+
+#### BR-063 — Equipo: ficha de cada barbero en un modal
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-060
+- Estado: Propuesta
+- Historia de usuario: HU-INFO-003 (CA-07), HU-EXP-004 (CA-15)
+- RF/RNF: `RF-INFO-010`, `RF-CNT-002`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-14):** el usuario quiere que, al hacer clic en un hexágono, se
+abra la ficha del barbero, según su diseño en Figma: la foto a la izquierda
+ocupando un tercio, un degradado de la foto hacia el negro y, en la zona
+oscura, el nombre en grande, chips con las especialidades y una descripción.
+Hoy la pestaña `equipo` no tiene especialidades ni descripción
+(`docs/contenido/equipo.csv`); el usuario está de acuerdo en agregar esas
+columnas a la plantilla y a la hoja.
+
+Alcance:
+1. Columnas nuevas y **opcionales** en la pestaña `equipo`: `especialidades`
+   (lista separada por comas, con un máximo de chips y de largo por chip) y
+   `descripcion` (texto con largo máximo). Se actualizan el esquema
+   (`src/content/schemas.ts`), el tipo `TeamMember`, la plantilla CSV,
+   `docs/contenido-hoja.md` y el respaldo (`src/content/snapshot/`, lo hace el
+   desarrollador). Una hoja sin esas columnas sigue siendo válida.
+2. Modal de la ficha: foto al 33 % con degradado hacia el contenido, nombre en
+   grande (`--font-family-display`), cargo y experiencia, chips de
+   especialidades y descripción. Si faltan especialidades o descripción, esa
+   parte no se muestra. Chaflán con `clip-path` como el resto del sitio.
+   En móvil, la foto pasa arriba como franja y el texto debajo.
+3. Accesibilidad: `role="dialog"`, `aria-modal`, `aria-labelledby` con el
+   nombre, foco atrapado, Escape y un botón de cerrar lo cierran, y el foco
+   vuelve al hexágono que lo abrió. El fondo no se desplaza mientras está
+   abierto (Lenis se detiene y se reanuda).
+4. Entrada y salida del modal con framer-motion; con `prefers-reduced-motion`,
+   sin animación.
+
+Criterios de aceptación:
+1. Al hacer clic en un hexágono (o Enter/Espacio con el foco en él), se abre la
+   ficha de ese barbero con foto, nombre, especialidades y descripción
+   (HU-INFO-003 CA-07, CP-INFO-010).
+2. Con el modal abierto, Tab no sale del modal; Escape lo cierra y el foco
+   vuelve al hexágono; el fondo no se desplaza (HU-EXP-004 CA-15,
+   CP-A11Y-002).
+3. Una fila de `equipo` sin especialidades ni descripción se valida y su
+   ficha se ve sin huecos; un chip o una descripción más largos que el
+   máximo rechazan la pestaña con aviso de fila y campo (CP-CNT-002).
+4. El texto del modal cumple contraste ≥ 4,5:1 sobre el degradado y el negro
+   (CP-A11Y-004).
+5. Con reducir movimiento, el modal aparece y se cierra sin animación
+   (CP-A11Y-003).
+6. El test de la guía de la hoja nombra los campos nuevos (`BR-043`).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-063).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2188,7 +2306,9 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-057 | Loader con el letrero real en vector | K | P3 | S | Bloqueada | BR-054 |
 | BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | En curso | BR-054, BR-056 |
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | En curso | BR-058 |
+| BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | En curso | BR-058 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | En curso | BR-058 |
+| BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Propuesta | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | En curso | BR-062 |
 | BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | En curso | BR-064 |
 

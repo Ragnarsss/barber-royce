@@ -1,61 +1,30 @@
-import { motion } from "framer-motion";
 import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
-import { Card } from "@/components/ui/card";
-import { PageHero } from "@/components/common/PageHero/PageHero";
+import { TeamHoneycomb } from "@/components/team/TeamHoneycomb";
 import { ROUTES } from "@/config/routes";
-import styles from "./TeamPage.module.css";
 import { useSiteContent } from "@/content/useSiteContent";
-import { scaleIn, defaultViewport } from "@/config/animations.config";
+import styles from "./TeamPage.module.css";
 
+/**
+ * Página del equipo (BR-060): título compacto y el panal de hexágonos sobre las diagonales roja y charcoal del
+ * hero. El título compacto reemplaza a la banda de PageHero por decisión del usuario (2026-10-14).
+ */
 export const TeamPage = () => {
   const team = useSiteContent().team;
-  const route = ROUTES.team;
 
   return (
     <div className={styles.page}>
-      <SEOHelmet route={route} />
-
-      <PageHero
-        title="Nuestro Equipo"
-        subtitle="Profesionales apasionados por su oficio"
-      />
+      <SEOHelmet route={ROUTES.team} />
+      <div className={styles.backdrop} aria-hidden="true">
+        <span className={styles.shadeTriangle} />
+        <span className={styles.redTriangle} />
+      </div>
 
       <div className={styles.content}>
-        <div className={styles.container}>
-          <div className={styles.hexGrid}>
-            {team.map((member, index) => (
-              <motion.div
-                key={index}
-                className={`${styles.hexWrapper} ${member.isLead ? styles.leadHex : ""}`}
-                variants={scaleIn}
-                initial="hidden"
-                whileInView="visible"
-                viewport={defaultViewport}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className={styles.hexCard}>
-                  <div className={styles.hexShape}>
-                    <div className={styles.hexImageContainer}>
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className={styles.hexImage}
-                        width="400"
-                        height="400"
-                        loading="lazy"
-                      />
-                    </div>
-                    <div className={styles.hexOverlay}>
-                      <h3 className={styles.name}>{member.name}</h3>
-                      <p className={styles.role}>{member.role}</p>
-                      <p className={styles.experience}>{member.experience}</p>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
+        <header className={styles.header}>
+          <h1 className={styles.title}>Nuestro equipo</h1>
+          <p className={styles.subtitle}>Profesionales apasionados por su oficio</p>
+        </header>
+        <TeamHoneycomb team={team} />
       </div>
     </div>
   );

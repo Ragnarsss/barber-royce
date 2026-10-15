@@ -1,320 +1,90 @@
-/* Usa PageHero component - hero styles eliminados */
+/*
+ * Página del equipo (BR-060): fondo charcoal con un triángulo oscuro arriba a la izquierda y uno rojo abajo a la
+ * derecha, como las diagonales del hero (Figma). El rojo lleva el mismo degradado y filo de luz de 1 px que el
+ * hero (BR-055); el filo es un segundo fondo cuyo 50 % cae justo en la diagonal del `clip-path`.
+ */
 .page {
-  min-height: 100vh;
-  background-color: var(--color-brand-background);
-  background-image:
-    radial-gradient(
-      circle at 20% 50%,
-      rgba(213, 35, 35, 0.03) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 80% 80%,
-      rgba(213, 35, 35, 0.03) 0%,
-      transparent 50%
-    );
-}
+  --edge-light: color-mix(in srgb, var(--color-brand-white) 45%, transparent);
+  --red-light: color-mix(in srgb, var(--color-brand-primary) 82%, var(--color-brand-white));
+  --red-deep: color-mix(in srgb, var(--color-brand-primary) 62%, var(--color-brand-background));
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-
-.subtitle {
-  font-size: clamp(0.9rem, 1.8vw, 1.25rem);
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
   position: relative;
-  z-index: 1;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--color-brand-section-bg);
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.shadeTriangle,
+.redTriangle {
+  position: absolute;
+}
+
+.shadeTriangle {
+  top: 0;
+  left: 0;
+  width: 55%;
+  height: 70%;
+  background: var(--color-brand-background);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.redTriangle {
+  right: 0;
+  bottom: 0;
+  width: 60%;
+  height: 85%;
+  background:
+    linear-gradient(
+      to top left,
+      transparent calc(50% - 0.5px),
+      var(--edge-light) 50%,
+      transparent calc(50% + 1.5px)
+    ),
+    linear-gradient(150deg, var(--red-light) 0%, var(--color-brand-primary) 40%, var(--red-deep) 100%);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 
 .content {
-  padding: clamp(3rem, 8vh, 3.75rem) 0 clamp(4rem, 10vh, 5rem);
   position: relative;
-  overflow: hidden;
-}
-
-/* Shapes decorativas triangulares */
-.content::before {
-  content: "";
-  position: absolute;
-  top: -10%;
-  left: -5%;
-  width: 300px;
-  height: 600px;
-  background: var(--color-brand-primary);
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-  opacity: 0.15;
-  z-index: 0;
-}
-
-.content::after {
-  content: "";
-  position: absolute;
-  bottom: -10%;
-  right: -5%;
-  width: 400px;
-  height: 500px;
-  background: var(--color-brand-primary);
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
-  opacity: 0.15;
-  z-index: 0;
-}
-
-/* Honeycomb Grid Layout usando shape-outside */
-.hexGrid {
-  --hex-size: clamp(10rem, 18vw, 11.25rem);
-  --hex-margin: 0.5rem;
-  --offset: calc(1.732 * var(--hex-size) + 4 * var(--hex-margin) - 1px);
-
-  font-size: 0;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2.5rem 1.25rem;
-  position: relative;
-  z-index: 1;
-}
-
-.hexGrid::before {
-  content: "";
-  width: calc(var(--hex-size) / 2 + var(--hex-margin));
-  float: left;
-  height: 120%;
-  shape-outside: repeating-linear-gradient(
-    transparent 0 calc(var(--offset) - 3px),
-    #000 0 var(--offset)
-  );
-}
-
-.hexWrapper {
-  width: var(--hex-size);
-  height: calc(var(--hex-size) * 1.1547);
-  display: inline-block;
-  font-size: initial;
-  margin: var(--hex-margin);
-  margin-bottom: calc(var(--hex-margin) - var(--hex-size) * 0.2885);
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-/* Master Barber - Hexágono más grande */
-.hexWrapper.leadHex {
-  --hex-size: clamp(14rem, 26vw, 16.25rem);
-  width: var(--hex-size);
-  height: calc(var(--hex-size) * 1.1547);
-}
-
-.hexCard {
-  background: transparent !important;
-  border: none !important;
-  text-align: center;
-  padding: 0 !important;
-  height: 100%;
-  width: 100%;
-}
-
-/* Forma hexagonal */
-.hexShape {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  background: rgba(255, 255, 255, 0.05);
-  border: 3px solid rgba(255, 255, 255, 0.4);
-  transition: all 0.4s ease;
-  overflow: hidden;
-  box-shadow:
-    0 0 20px rgba(255, 255, 255, 0.1),
-    inset 0 0 20px rgba(255, 255, 255, 0.05);
-}
-
-.leadHex .hexShape {
-  border: 4px solid var(--color-brand-primary);
-  box-shadow:
-    0 0 40px rgba(213, 35, 35, 0.5),
-    inset 0 0 30px rgba(213, 35, 35, 0.1);
-}
-
-.hexWrapper:hover .hexShape {
-  border-color: rgba(213, 35, 35, 0.9);
-  transform: scale(1.05);
-  box-shadow: 0 0 40px rgba(213, 35, 35, 0.6);
-}
-
-.leadHex:hover .hexShape {
-  transform: scale(1.03);
-  box-shadow: 0 0 50px rgba(213, 35, 35, 0.8);
-}
-
-.hexImageContainer {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.hexImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.hexWrapper:hover .hexImage {
-  transform: scale(1.15);
-}
-
-.hexOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.85) 0%,
-    rgba(0, 0, 0, 0.4) 50%,
-    rgba(0, 0, 0, 0.85) 100%
-  );
-  opacity: 0;
-  transition: opacity 0.4s ease;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: 20px;
+  gap: var(--spacing-8);
+  padding: calc(var(--spacing-24) + var(--spacing-4)) var(--spacing-4) var(--spacing-section-mobile);
+}
+
+.header {
   text-align: center;
 }
 
-.hexWrapper:hover .hexOverlay {
-  opacity: 1;
-}
-
-.name {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0 0 8px 0;
-  color: #ffffff;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-}
-
-.leadHex .name {
-  font-size: 24px;
-  margin-bottom: 12px;
-}
-
-.role {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-brand-primary);
-  margin: 0 0 6px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
-}
-
-.leadHex .role {
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
-.experience {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.9);
+.title {
   margin: 0;
-  font-weight: 400;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  font-family: var(--font-family-display);
+  font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
 }
 
-.leadHex .experience {
-  font-size: 14px;
+.subtitle {
+  margin: var(--spacing-2) 0 0;
+  font-size: var(--font-size-sm);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
 }
 
-@media (max-width: 968px) {
-  .title {
-    font-size: 44px;
-  }
-
-  .hero {
-    padding: 80px 0 50px;
-  }
-
-  .hexGrid {
-    --hex-size: 160px;
-  }
-
-  .hexWrapper.leadHex {
-    --hex-size: 220px;
-  }
-
-  .name {
-    font-size: 16px;
-  }
-
-  .leadHex .name {
-    font-size: 21px;
-  }
-
-  .role {
-    font-size: 12px;
-  }
-
-  .leadHex .role {
-    font-size: 15px;
-  }
-
-  .experience {
-    font-size: 11px;
-  }
-
-  .leadHex .experience {
-    font-size: 13px;
-  }
-}
-
-@media (max-width: 768px) {
-  .title {
-    font-size: 38px;
-  }
-
-  .subtitle {
-    font-size: 18px;
-  }
-
-  .hero {
-    padding: 70px 0 40px;
-  }
-
-  .hexGrid {
-    --hex-size: 140px;
-    max-width: 400px;
-  }
-
-  .hexWrapper.leadHex {
-    --hex-size: 200px;
-  }
-
-  .name {
-    font-size: 14px;
-  }
-
-  .leadHex .name {
-    font-size: 19px;
-  }
-
-  .role {
-    font-size: 11px;
-  }
-
-  .leadHex .role {
-    font-size: 14px;
-  }
-
-  .experience {
-    font-size: 10px;
-  }
-
-  .leadHex .experience {
-    font-size: 12px;
+@media (min-width: 768px) {
+  .content {
+    gap: var(--spacing-10);
+    padding-bottom: var(--spacing-section-desktop);
   }
 }
