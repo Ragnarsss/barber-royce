@@ -93,6 +93,7 @@ sección a la vez** y con el usuario eligiendo la dirección.
   el contenido duplicado (`BR-050`).
 - Chrome sin pantalla no baja de ~500 px de ancho con `--window-size`: para ver un móvil de 390 px reales, mete la página en un `<iframe width="390">` dentro de una página suelta y captura esa. Sin eso, las capturas "móviles" no son móviles.
 - Chrome sin pantalla no escribe la captura con ciertas combinaciones de opciones (`--blink-settings`, perfil compartido) y calla: usa un `--user-data-dir` propio, una ruta absoluta y comprueba la fecha del archivo.
+- El TBT de Lighthouse varía mucho entre corridas (de 160 a 340 ms en la misma build). Para atribuir una diferencia, compara **alternando** las corridas de `master` y de la rama, y construye `master` con **el mismo `.env`**: un worktree no lo trae (está en `.gitignore`) y sin él el build pierde la analítica y la hoja en vivo, y parece más rápido (`BR-058`).
 - Lighthouse en Windows avisa `EPERM` al borrar su carpeta temporal: es
   inofensivo, los resultados sí se escriben.
 - Un loader que tapa un contenido que ya carga rápido solo resta tiempo: debe

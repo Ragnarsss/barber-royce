@@ -1,26 +1,39 @@
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
 import styles from "./CTA1.module.css";
 import cta700w from "@/assets/optimized/cta1_model_700w.webp";
 import cta1400w from "@/assets/optimized/cta1_model_1400w.webp";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useParallaxProgress, useMiddleLayer, useForegroundLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
-import { fadeInLeft, fadeInRight } from "@/config/animations.config";
+import { useParallaxProgress, useMiddleLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
+import { useLenisScrollActive } from "@/hooks/useScrollActive";
+import { fadeInLeft, fadeInRight, lightBarIgnite } from "@/config/animations.config";
+import { SITE } from "@/config/constants";
 import { Link } from "react-router-dom";
 import { trackReserve } from "@/analytics/track";
 import { useSiteContent, useSiteText } from "@/content/useSiteContent";
+import { useMagnetic } from "./magnetic";
+
+/** Hexágono regular de puntas laterales (232 × 200), como las barras de luz del techo de la barbería (BR-058). */
+const HEXAGON = "M60 3H172L228 100L172 197H60L4 100Z";
 
 export function CTA1() {
   const { business } = useSiteContent();
   const siteText = useSiteText();
+  const reducedMotion = useReducedMotion() ?? false;
   const { ref, controls } = useScrollAnimation();
+  const magnetRef = useRef<HTMLSpanElement>(null);
+  const magnet = useMagnetic(magnetRef);
+
+  // will-change solo mientras hay scroll (patrón del hero): fijo, cada capa ocupa memoria de GPU todo el tiempo.
+  const animating = useLenisScrollActive() ? "isAnimating" : "";
 
   const { ref: sectionRef, scrollYProgress } = useParallaxProgress<HTMLElement>(undefined, {
     offset: ["start end", "end start"],
   });
+  // La foto va dentro de la figura y se mueve con ella: con parallax propio se desplazaba dos veces.
   const layers = {
     middle: useMiddleLayer(scrollYProgress),
-    foreground: useForegroundLayer(scrollYProgress),
     slow: useSlowLayer(scrollYProgress),
     fast: useFastLayer(scrollYProgress),
   };
@@ -29,33 +42,62 @@ export function CTA1() {
     <section id="cta-1" className={styles.cta} ref={sectionRef}>
       {/* Capa de fondo - hexágonos con opacidad reducida */}
       <motion.div
-        className={styles.textHexagonBackground}
+        className={`${styles.textHexagonBackground} ${animating}`}
         style={{ y: layers.slow.y, x: layers.slow.x }}
       ></motion.div>
       <motion.div
-        className={styles.imageHexagonBackground}
+        className={`${styles.imageHexagonBackground} ${animating}`}
         style={{ y: layers.slow.y, x: layers.slow.x }}
       ></motion.div>
 
-      {/* Capa principal - hexágonos principales */}
+      {/* Capa principal - hexágono rojo del texto */}
       <motion.div
-        className={styles.textHexagon}
+        className={`${styles.textHexagon} ${animating}`}
         style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
       ></motion.div>
+
+      {/* Capa frontal - hexágono decorativo */}
       <motion.div
-        className={styles.imageHexagon}
-        style={{ y: layers.middle.y }}
+        className={`${styles.textHexagonForeground} ${animating}`}
+        style={{ y: layers.fast.y, x: layers.fast.x }}
       ></motion.div>
 
-      {/* Capa frontal - hexágonos pequeños decorativos */}
-      <motion.div
-        className={styles.textHexagonForeground}
-        style={{ y: layers.fast.y, x: layers.fast.x }}
-      ></motion.div>
-      <motion.div
-        className={styles.imageHexagonForeground}
-        style={{ y: layers.fast.y, x: layers.fast.x }}
-      ></motion.div>
+      {/* Barras de luz hexagonales del techo de la barbería, arriba y cortadas por el borde: se encienden una vez (BR-058) */}
+      <motion.svg
+        className={styles.lightBars}
+        viewBox="0 0 572 300"
+        aria-hidden="true"
+        data-light-bars
+        initial={reducedMotion ? false : "hidden"}
+        animate={reducedMotion ? undefined : controls}
+        variants={reducedMotion ? undefined : lightBarIgnite}
+      >
+        {/* Fila de panal: cada hexágono se encaja con el anterior, como las barras del techo vistas desde abajo */}
+        <path d={HEXAGON} />
+        <path d={HEXAGON} transform="translate(170 98)" />
+        <path d={HEXAGON} transform="translate(340 0)" />
+      </motion.svg>
+
+      {/* Figura blanca con la foto adentro: el recorte la contiene y se mueven juntas (BR-058) */}
+      <motion.div className={`${styles.imageHexagon} ${animating}`} style={{ y: layers.slow.y }} data-figure>
+        <motion.div
+          className={`${styles.imageHexagonForeground} ${animating}`}
+          style={{ y: layers.fast.y, x: layers.fast.x }}
+        ></motion.div>
+        <motion.picture
+          className={`${styles.ctaImage} ${animating}`}
+          initial="hidden"
+          animate={controls}
+          variants={fadeInRight}
+        >
+          <source
+            srcSet={`${cta700w} 700w, ${cta1400w} 1400w`}
+            sizes="(max-width: 768px) 100vw, 700px"
+            type="image/webp"
+          />
+          <img src={cta700w} alt={`Modelo con corte premium de ${SITE.name}`} loading="lazy" width="700" height="667" />
+        </motion.picture>
+      </motion.div>
 
       <div className={styles.container} ref={ref}>
         <motion.div
@@ -68,10 +110,13 @@ export function CTA1() {
             <h2 className={styles.title}>{siteText("cta1.titulo")}</h2>
             <p className={styles.subtitle}>{siteText("cta1.subtitulo")}</p>
             <div className={styles.ctaButtons}>
-              <a className={styles.ctaButton} href={business.booking.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta1")}>
-                <Calendar size={20} />
-                Agendar Ahora
-              </a>
+              {/* El envoltorio se mueve con el cursor y dibuja el foco: el chaflán (clip-path) recortaría el contorno */}
+              <motion.span ref={magnetRef} className={styles.magnet} style={{ x: magnet.x, y: magnet.y }}>
+                <a className={styles.ctaButton} href={business.booking.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta1")}>
+                  <Calendar size={20} />
+                  Agendar Ahora
+                </a>
+              </motion.span>
               <Link to="/servicios" className={styles.ctaButtonGhost}>
                 Conocer Servicios
                 <ArrowRight size={18} />
@@ -79,27 +124,6 @@ export function CTA1() {
             </div>
           </div>
         </motion.div>
-        <motion.picture
-          className={styles.ctaImage}
-          initial="hidden"
-          animate={controls}
-          variants={fadeInRight}
-          style={{ y: layers.foreground.y, scale: layers.foreground.scale }}
-        >
-          <source
-            srcSet={`${cta700w} 700w, ${cta1400w} 1400w`}
-            sizes="(max-width: 768px) 100vw, 700px"
-            type="image/webp"
-          />
-          <img
-            src={cta700w}
-            alt="Modelo con corte premium de Royce Barbería"
-            loading="lazy"
-            width="700"
-            height="925"
-            style={{ width: "100%", height: "auto" }}
-          />
-        </motion.picture>
       </div>
     </section>
   );

@@ -344,6 +344,33 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-010).
 
+#### BR-066 — El respaldo del enlace de reserva apunta a un subdominio que no existe
+
+- Prioridad: P1 · Esfuerzo: XS · Depende de: —
+- Estado: En curso (rama `feat/br-058-065-landing-y-equipo`, PR #29)
+- Historia de usuario: HU-RES-001 (CA-02, CA-03)
+- RF/RNF: `RF-RES-001`, `RNF-DATOS-001`
+
+**Origen (2026-10-14):** el usuario avisó de que el enlace de reserva no servía
+y dio el bueno. En la hoja (`negocio`, `reservas.url`) ya estaba bien
+(`https://roycespa.site.agendapro.com/cl/sucursal/400965`), pero el valor de
+respaldo del repo (`src/config/constants.ts:31` y la plantilla
+`docs/contenido/negocio.csv`) usaba `barberiaroyc.site.agendapro.com`, que no
+existe: AgendaPro lo redirige a su página comercial.
+
+**Causa:** el subdominio del respaldo se escribió mal o quedó de un nombre
+anterior de la cuenta de AgendaPro. Con la hoja funcionando no se notaba; si la
+hoja fallaba, todos los botones de reservar llevaban a la página general de
+AgendaPro.
+
+**Arreglo:** el respaldo usa la dirección real de la hoja y la plantilla se
+regenera desde él.
+
+Criterios de aceptación:
+1. `BUSINESS.booking.url` (respaldo) es `https://roycespa.site.agendapro.com/cl/sucursal/400965`
+   y la plantilla `negocio.csv` coincide (HU-RES-001 CA-03, `RNF-DATOS-001`).
+2. Ninguna dirección con `barberiaroyc` queda fuera de `docs/archivo/`.
+
 ---
 
 ### Épica C — Robustez y errores
@@ -1708,7 +1735,7 @@ Criterios de aceptación:
 #### BR-054 — Loader de neón (letrero «Barber Royce»)
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-050, BR-053
-- Estado: En curso (rama `feat/br-054-loader-neon`)
+- Estado: Hecho (2026-10-14, rama `feat/br-054-loader-neon` → master, PR #26)
 - Historia de usuario: HU-EXP-004 (CA-06, CA-07)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
 
@@ -1796,7 +1823,7 @@ Criterios de aceptación:
 #### BR-055 — Hero: fondos con profundidad
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-050
-- Estado: En curso (rama `feat/br-055-fondos-hero`)
+- Estado: Hecho (2026-10-14, rama `feat/br-055-fondos-hero` → master, PR #27)
 - Historia de usuario: HU-EXP-004 (CA-08)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-003`, `RNF-A11Y-003`
 
@@ -1826,7 +1853,7 @@ Criterios de aceptación:
 #### BR-056 — Hero: tarjetas de beneficios (vidrio con esquinas cortadas)
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-050, BR-055
-- Estado: En curso (rama `feat/br-056-tarjetas-hero`)
+- Estado: Hecho (2026-10-14, rama `feat/br-056-tarjetas-hero` → master, PR #28)
 - Historia de usuario: HU-EXP-004 (CA-09)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`
 
@@ -1886,6 +1913,369 @@ Alcance:
 Criterios de aceptación:
 1. El loader muestra el «RR» como tubo de neón con los criterios de `BR-054`,
    sin cambiar su duración ni sus protecciones.
+
+
+#### BR-058 — CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-054, BR-056
+- Estado: En curso (rama `feat/br-058-cta1`)
+- Historia de usuario: HU-EXP-004 (CA-10)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-A11Y-005`, `RNF-DATOS-001`
+
+**Origen (2026-10-14):** auditoría de CTA1 con la skill `diseno-visual`.
+Diagnóstico: la foto se sale de la figura blanca; lo «rosado» detrás de la foto
+es el rojo de marca al 30 % sobre blanco; el botón de reservar es un botón
+blanco estándar que no destaca; en móvil la foto tapa el título y el fondo
+queda plano (las formas se ocultan). Deuda: `will-change: transform` fijo en 7
+capas (`CTA1.module.css:141` y siguientes), colores escritos a mano (el fondo
+es `#332a2b` y el token del charcoal es `#332b2b`), CSS muerto
+(`.content::before`, `.imageWrapper`, `background-*` en `.ctaImage`) y el
+nombre de la marca literal en el `alt` (`CTA1.tsx:96`).
+
+Decisiones del usuario (2026-10-14): **se conservan las formas hexagonales y la
+superposición de capas** (los hexágonos vienen de las barras de luz
+hexagonales del techo de la barbería). Se descartó cambiarlas por diagonales.
+
+Alcance:
+1. La foto, contenida dentro de la figura blanca (mismo polígono).
+2. La pieza rosada pasa a rojo de marca sólido y a forma hexagonal.
+3. Gesto memorable: un par de hexágonos como **tubo de luz** (contorno con
+   resplandor blanco cálido, como las barras del techo) que se encienden una
+   vez cuando la sección entra en pantalla, con un parpadeo corto.
+4. Botón de reservar con chaflán (como las tarjetas de `BR-056`) y leve
+   seguimiento del cursor (`MotionValue`, solo con ratón); el secundario, en
+   contorno con el mismo corte.
+5. Móvil: la foto no tapa el título y queda una forma en vez de un fondo plano.
+6. Deuda: `will-change` solo durante el scroll (patrón `isAnimating` del hero);
+   colores y valores a tokens; borrar el CSS muerto; el `alt` con `SITE.name`.
+
+Criterios de aceptación:
+1. La foto no se sale de la figura blanca en escritorio (HU-EXP-004 CA-10).
+2. Las barras de luz se encienden una vez al entrar la sección, con ≤ 3
+   destellos por segundo (CP-A11Y-005); con reducir movimiento aparecen
+   encendidas y quietas (CP-A11Y-003).
+3. El texto y los botones cumplen contraste ≥ 4,5:1 (CP-A11Y-004) en
+   escritorio y móvil; en móvil la foto no se superpone al título.
+4. Ningún color escrito a mano en `CTA1.module.css` ni la marca literal en
+   `CTA1.tsx` (tests; `RNF-DATOS-001`).
+5. TBT y CLS móviles no empeoran frente a la línea base (CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-058).
+
+
+#### BR-059 — Navbar: resplandor de neón blanco al pasar el cursor
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: BR-058
+- Estado: En curso (rama `feat/br-059-navbar-neon`)
+- Historia de usuario: HU-EXP-004 (CA-11)
+- RF/RNF: `RNF-A11Y-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-14):** al ver las barras de luz hexagonales de CTA1 (`BR-058`),
+el usuario pidió que los enlaces de la navbar tengan ese mismo resplandor de
+neón blanco al pasar el cursor. Hoy el hover solo cambia el rojo por un rojo más
+brillante (`Navbar.module.css:99`).
+
+Alcance:
+1. Hover y foco de teclado en los enlaces de escritorio: el texto pasa a blanco
+   con un resplandor de neón (núcleo blanco y halo rojo), con transición corta.
+2. El mismo resplandor con foco de teclado en el menú móvil.
+3. Con `prefers-reduced-motion`, sin transición. Colores en tokens.
+
+Criterios de aceptación:
+1. Al pasar el cursor o enfocar con teclado un enlace, se ve el resplandor
+   blanco (HU-EXP-004 CA-11).
+2. El texto en hover y foco cumple contraste ≥ 4,5:1 sobre la navbar
+   (CP-A11Y-004).
+3. Con reducir movimiento no hay transición (CP-A11Y-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-059).
+
+
+#### BR-062 — SocialProof1: corte láser cinematográfico y disparos por pistas
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-058
+- Estado: En curso (rama `feat/br-062-social-proof-laser`)
+- Historia de usuario: HU-EXP-004 (CA-14)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-A11Y-005`, `RNF-DATOS-001`
+
+**Origen (2026-10-14):** el usuario siente que al efecto láser de SocialProof1
+«le falta». Diagnóstico con `diseno-visual`: los 5 rayos se diseñaron como
+diagonales cruzadas (`rotate(-45deg)`, `SocialProof1.module.css:247`), pero
+`style={{ x, y }}` de framer-motion escribe su propio `transform` y pisa la
+rotación, así que se ven horizontales y su desplazamiento casi no se percibe.
+Deuda: 52 colores escritos a mano, 5 `will-change` fijos, la marca literal en
+la cita y en el `alt`, y `#999999` sobre blanco (2,8:1, bajo el mínimo).
+
+Decisiones del usuario (2026-10-14): dirección **B** (disparos por pistas) más un
+**revelado cinematográfico con scrub** (avanza y retrocede con el scroll).
+
+Alcance:
+1. Corte de la foto: un panel del color del fondo la cubre y se retira en
+   diagonal con un láser en su borde, ligado al scroll; después, el corte
+   cruzado de la tarjeta desde el lado contrario (juntos dibujan una X).
+2. Al terminar el corte de la foto, su marco rojo se enciende una vez.
+3. Ambiente: haces cortos viajan por pistas diagonales tenues con el scroll
+   (la pista rota por CSS y el haz se mueve en su eje: sin pisar la rotación).
+4. Subrayado láser del título que se dibuja al entrar.
+5. Solo `transform` y `opacity` (nada de `clip-path` animado). En móvil, el
+   corte ocurre una vez al entrar en pantalla. Con reducir movimiento, todo
+   revelado y quieto.
+6. Deuda: colores a tokens, sin `will-change` fijo, sin la marca literal, el
+   gris del distintivo con contraste suficiente.
+
+Criterios de aceptación:
+1. Con el scroll, la foto y la tarjeta se revelan con el corte láser y se
+   vuelven a tapar al subir; a mitad de la sección ya están reveladas
+   (HU-EXP-004 CA-14).
+2. Los rayos se ven diagonales y sus haces viajan por las pistas.
+3. Con reducir movimiento todo aparece revelado, sin haces ni destellos
+   (CP-A11Y-003); el encendido del marco no pasa de 3 destellos por segundo
+   (CP-A11Y-005).
+4. Sin colores escritos a mano ni marca literal (tests; `RNF-DATOS-001`); el
+   texto de la tarjeta cumple 4,5:1 (CP-A11Y-004).
+5. TBT y CLS móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-062).
+
+
+#### BR-064 — Benefits: fiel al Figma («Beneficios v2») con íconos que se dibujan
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-062
+- Estado: En curso (rama `feat/br-064-benefits-figma`)
+- Historia de usuario: HU-EXP-004 (CA-16)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-14):** el usuario encuentra la sección «un poco charra» y
+compartió el Figma «Beneficios v2». La implementación se alejó del diseño: la
+foto queda tapada por un rojo al 85 % (en Figma el rojo es una franja diagonal
+y la foto se ve clara, con la chaqueta «BARBER RR ROYCE»), el fondo es un gris
+fuera de la paleta (`#3a3a3a`), los textos de las tarjetas están mal copiados
+y sin las negritas del diseño, los íconos no son los del diseño (silla de
+barbero, persona con estrella), en móvil no hay foto, el subtítulo trae la marca
+literal y las tarjetas usan `Card` de shadcn (`BR-023`).
+
+Decisiones del usuario (2026-10-14): seguir el Figma y sumar un solo gesto: los
+íconos se dibujan solos con un trazo al entrar la tarjeta. Por defecto (no se
+eligió): los textos quedan en el código, no en la hoja; la silla y la persona
+con estrella se dibujan como íconos propios de trazo.
+
+Alcance:
+1. Fondo charcoal de la marca; franja roja diagonal entre el contenido y la
+   foto; la foto sin velo rojo.
+2. Tarjetas blancas como en Figma, sin shadcn, con los textos del diseño y sus
+   negritas; íconos: tijera, silla de barbero y persona con estrella.
+3. Entrada escalonada de las tarjetas y trazo de los íconos (`pathLength`); con
+   reducir movimiento, todo visible y dibujado.
+4. «ofreciendo:» con dos puntos (continúa en las tarjetas); la marca desde
+   `SITE.name`; colores a tokens.
+5. Móvil: la foto con la franja también se ve.
+
+> **Alcance ajustado (2026-10-14, decisión del usuario):** más deleite con el
+> scroll. (1) La franja roja entra deslizándose en diagonal desde abajo y se
+> asienta cuando la sección queda centrada; (2) la foto parte un poco ampliada y
+> se asienta a su tamaño (Ken Burns ligado al scroll); (3) al pasar el ratón por
+> una tarjeta, su ícono se vuelve a dibujar. Scrub (avanza y retrocede), solo
+> `transform`; con reducir movimiento todo queda quieto en su posición final.
+> Se descartó la inclinación 3D de las tarjetas para no recargar.
+
+Criterios de aceptación:
+1. La foto se ve clara, con la franja roja diagonal, en escritorio y en móvil
+   (HU-EXP-004 CA-16).
+2. Las tarjetas muestran los textos del Figma con sus negritas, y sus íconos
+   se dibujan al entrar; con reducir movimiento aparecen dibujados
+   (CP-A11Y-003).
+3. El texto de las tarjetas cumple 4,5:1 (CP-A11Y-004); sin colores escritos a
+   mano, sin la marca literal y sin `@/components/ui/card` (tests).
+4. TBT y CLS móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-064).
+
+
+#### BR-065 — SocialProof2: parrilla bento con las proporciones del Figma
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-064
+- Estado: En curso (rama `feat/br-065-bento-instagram`)
+- Historia de usuario: HU-EXP-004 (CA-17)
+- RF/RNF: `RNF-PERF-002`, `RNF-A11Y-003`
+
+**Origen (2026-10-14):** el usuario siente rara la parrilla «Clientes felices,
+estilos impecables» en escritorio y compartió el Figma «Prueba social 2». Le
+gustan el fondo y las figuras; el problema son las dimensiones de los
+recuadros. Hoy son cinco recuadros verticales y angostos (`grid-template-columns:
+repeat(3, 1fr)` con filas de 13rem, `SocialProof2.module.css:230`) en una
+columna estrecha y centrada. En Figma son recuadros apaisados en tres columnas de
+distinto ancho; cada una de las dos primeras parte sus fotos a distinta altura
+(grande arriba y chica abajo, y al revés) y la tercera es una foto alta; el
+bloque de texto es más ancho y alineado a la izquierda; las esquinas son rectas.
+El zoom del hover usa `transform` y la entrada de framer lo pisa.
+
+Alcance:
+1. Bento con las proporciones del Figma en escritorio y tablet, y una versión
+   de dos columnas en móvil.
+2. Texto más ancho, alineado a la izquierda, como en Figma.
+3. Cada recuadro recorta su contenido con `object-fit: cover`: cuando
+   `BR-051` traiga las fotos de Instagram, cualquier proporción calza.
+4. Hover con la propiedad `scale` (no `transform`); colores a tokens.
+5. No se tocan el fondo ni las figuras.
+
+Criterios de aceptación:
+1. En escritorio la parrilla reproduce las proporciones del Figma; en móvil
+   queda en dos columnas sin recuadros angostos (HU-EXP-004 CA-17).
+2. Sin saltos de contenido (CP-PERF-002); con reducir movimiento, sin zoom.
+3. Sin colores escritos a mano en el bento (test).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-065).
+
+Los tickets `BR-060` y `BR-063` salen del pedido del usuario del 2026-10-14:
+rediseñar `/equipo` según su diseño en Figma (dos capturas: el panal y el modal
+abierto). La dirección visual ya viene dada por ese diseño, así que no se
+proponen tres direcciones; la skill `diseno-visual` se usa para el diagnóstico
+y la verificación. Se parte en dos porque junto sería de esfuerzo L.
+
+#### BR-060 — Equipo: panal de hexágonos con el líder destacado
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-058
+- Estado: En curso (rama `feat/br-060-equipo-panal`)
+- Historia de usuario: HU-EXP-004 (CA-12)
+- RF/RNF: `RF-INFO-004`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-14):** hoy `/equipo` (`TeamPage.tsx`) muestra los hexágonos en
+una grilla de dos filas alineadas a la izquierda, con mucho espacio vacío a la
+derecha, sobre un fondo casi plano; el líder es un poco más grande, con un
+borde rojo apenas visible, y el resto de los marcos son grises. El diseño en
+Figma del usuario es un **panal**: dos filas de hexágonos de puntas arriba, la
+segunda desplazada medio hexágono y encajada en la primera, sobre las
+diagonales roja y charcoal del hero; cada hexágono con un marco grueso, el del
+líder rojo y más grande, los demás blancos. Los hexágonos vienen de las barras
+de luz del techo de la barbería (`BR-058`).
+
+> **Alcance ajustado (2026-10-14, decisión del usuario):** la banda «Nuestro
+> equipo» de `PageHero` se reemplaza por un título compacto en Anton sobre el
+> mismo fondo del panal; sigue siendo el `<h1>`. Además, el líder aparece sin
+> animación de entrada, porque su foto es el LCP de la página y la entrada lo
+> retrasaba (ver el registro).
+>
+> **Regresión aceptada por escrito (2026-10-14, decisión del usuario):** el CLS
+> móvil de `/equipo` pasa de 0 a 0,0006 porque el texto centrado del título se
+> corre al llegar Anton. Está muy por debajo del umbral de 0,1; el criterio 5
+> se da por cumplido con esa salvedad.
+>
+> **Alcance ajustado (2026-10-14, pedido del usuario):** el panal se agranda en
+> escritorio (hexágonos de hasta 17,5 rem, antes 12,5) y **todos los hexágonos
+> vecinos quedan a la misma distancia**: el líder se veía más lejos de la fila
+> de abajo (35,8 px) que los demás entre sí (10,8–12 px). Criterio nuevo: la
+> separación entre cualquier par de vecinos es la misma en todos los anchos
+> (12 px en escritorio, 8 px en móvil), y un test geométrico lo exige para
+> equipos de 1 a 10 barberos.
+
+Alcance:
+1. Panal de hexágonos de puntas arriba (`clip-path`), segunda fila desplazada
+   medio hexágono, centrado en la página y armado para cualquier cantidad de
+   barberos (5 hoy). En móvil, un panal más angosto (2 por fila) sin
+   desbordar.
+2. Marco grueso en cada hexágono (capa del mismo polígono detrás de la foto):
+   blanco para el equipo, rojo de marca y de mayor tamaño para el líder
+   (`isLead`, columna `lider` que ya existe).
+3. Fondo de diagonales roja y charcoal como el del hero, en el módulo de la
+   página (sin tocar los archivos del hero).
+4. Al pasar el cursor o enfocar con teclado, se ve el nombre (como hoy) y el
+   marco se enciende con el resplandor de neón blanco de `BR-059`. Cada
+   hexágono es un `<button>` con nombre accesible, listo para abrir el modal de
+   `BR-063`.
+5. Entrada escalonada al entrar en pantalla; con `prefers-reduced-motion`,
+   estática y sin transición. Colores y medidas en tokens, sin hex.
+
+Criterios de aceptación:
+1. En escritorio, `/equipo` muestra el panal centrado, con la segunda fila
+   encajada medio hexágono, el líder más grande con marco rojo y el resto con
+   marco blanco (HU-EXP-004 CA-12).
+2. Al pasar el cursor o enfocar con teclado un hexágono, se lee el nombre
+   del barbero con contraste ≥ 4,5:1 (CP-A11Y-004, `contrast.e2e.test.ts`).
+3. En 360, 768 y 1440 px el panal no desborda ni produce scroll horizontal.
+4. Con reducir movimiento no hay animación de entrada ni transición
+   (CP-A11Y-003).
+5. CLS y TBT móviles no empeoran frente a la línea base de `master`
+   (CP-PERF-003).
+6. Ningún color escrito a mano en el módulo de la página (ADR-002).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-060).
+
+#### BR-063 — Equipo: ficha de cada barbero en un modal
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-060
+- Estado: En curso (rama `feat/br-063-ficha-barbero`)
+- Historia de usuario: HU-INFO-003 (CA-07), HU-EXP-004 (CA-15)
+- RF/RNF: `RF-INFO-010`, `RF-CNT-002`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-14):** el usuario quiere que, al hacer clic en un hexágono, se
+abra la ficha del barbero, según su diseño en Figma: la foto a la izquierda
+ocupando un tercio, un degradado de la foto hacia el negro y, en la zona
+oscura, el nombre en grande, chips con las especialidades y una descripción.
+Hoy la pestaña `equipo` no tiene especialidades ni descripción
+(`docs/contenido/equipo.csv`); el usuario está de acuerdo en agregar esas
+columnas a la plantilla y a la hoja.
+
+> **Alcance ajustado (2026-10-14, decisión del usuario):** la ficha se
+> enriquece con contenido. (1) Textos de **ejemplo** para los cinco barberos
+> en el respaldo (especialidades, descripción, frase y trabajos), que el dueño
+> reemplaza en la hoja. (2) Contenido nuevo, cada uno con una columna
+> opcional en `equipo`: botón **«Reservar con…»** (`reserva`, enlace propio
+> del barbero; vacío = el enlace general de AgendaPro; se rastrea como
+> `reserve_click` con sección `equipo`), **Instagram** del barbero
+> (`instagram`), **fotos de sus trabajos** (`trabajos`, hasta 3) y una
+> **frase** (`frase`, hasta 120 caracteres); además, la experiencia como un
+> dato grande cuando empieza con un número. Sin Instagram de ejemplo (un
+> usuario inventado podría ser la cuenta real de otra persona). Las fotos de
+> ejemplo de trabajos reutilizan las de Unsplash del sitio: la CSP solo
+> admite imágenes propias o de Unsplash.
+>
+> **Alcance ajustado (2026-10-14, decisión del usuario):** la ficha muestra
+> también los **días de atención** (columna `dias`: días sueltos, nombres
+> completos o rangos como `Lun a Vie`; se ven como una semana con esos días
+> encendidos) y la **sucursal** (columna `sucursal`, con el `id` de la pestaña
+> `sucursales`; una o varias). Un `id` que no existe rechaza la pestaña
+> `equipo`. Para eso las sucursales pasan a tener `id` en el contenido
+> (`Location.id`), y `resolveContent` lee `sucursales` antes que `equipo`. El
+> usuario descartó, por ahora, el horario por día.
+
+Alcance:
+1. Columnas nuevas y **opcionales** en la pestaña `equipo`: `especialidades`
+   (lista separada por comas, con un máximo de chips y de largo por chip) y
+   `descripcion` (texto con largo máximo). Se actualizan el esquema
+   (`src/content/schemas.ts`), el tipo `TeamMember`, la plantilla CSV,
+   `docs/contenido-hoja.md` y el respaldo (`src/content/snapshot/`, lo hace el
+   desarrollador). Una hoja sin esas columnas sigue siendo válida.
+2. Modal de la ficha: foto al 33 % con degradado hacia el contenido, nombre en
+   grande (`--font-family-display`), cargo y experiencia, chips de
+   especialidades y descripción. Si faltan especialidades o descripción, esa
+   parte no se muestra. Chaflán con `clip-path` como el resto del sitio.
+   En móvil, la foto pasa arriba como franja y el texto debajo.
+3. Accesibilidad: `role="dialog"`, `aria-modal`, `aria-labelledby` con el
+   nombre, foco atrapado, Escape y un botón de cerrar lo cierran, y el foco
+   vuelve al hexágono que lo abrió. El fondo no se desplaza mientras está
+   abierto (Lenis se detiene y se reanuda).
+4. Entrada y salida del modal con framer-motion; con `prefers-reduced-motion`,
+   sin animación.
+
+Criterios de aceptación:
+1. Al hacer clic en un hexágono (o Enter/Espacio con el foco en él), se abre la
+   ficha de ese barbero con foto, nombre, especialidades y descripción
+   (HU-INFO-003 CA-07, CP-INFO-010).
+2. Con el modal abierto, Tab no sale del modal; Escape lo cierra y el foco
+   vuelve al hexágono; el fondo no se desplaza (HU-EXP-004 CA-15,
+   CP-A11Y-002).
+3. Una fila de `equipo` sin especialidades ni descripción se valida y su
+   ficha se ve sin huecos; un chip o una descripción más largos que el
+   máximo rechazan la pestaña con aviso de fila y campo (CP-CNT-002).
+4. El texto del modal cumple contraste ≥ 4,5:1 sobre el degradado y el negro
+   (CP-A11Y-004).
+5. Con reducir movimiento, el modal aparece y se cierra sin animación
+   (CP-A11Y-003).
+6. El test de la guía de la hoja nombra los campos nuevos (`BR-043`).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-063).
 
 ---
 
@@ -1968,10 +2358,18 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-051 | Parrilla de fotos con las publicaciones de Instagram | L | P2 | L | Bloqueada | — |
 | BR-052 | Reseñas reales de Google en la home | L | P2 | M | Bloqueada | BR-006 |
 | BR-053 | Skill `diseno-visual` y flujo de SVG | K | P2 | S | Hecho | BR-050 |
-| BR-054 | Loader de neón (letrero «Barber Royce») | K | P3 | M | En curso | BR-050, BR-053 |
-| BR-055 | Hero: fondos con profundidad | K | P3 | M | En curso | BR-050 |
-| BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | En curso | BR-050, BR-055 |
+| BR-054 | Loader de neón (letrero «Barber Royce») | K | P3 | M | Hecho | BR-050, BR-053 |
+| BR-055 | Hero: fondos con profundidad | K | P3 | M | Hecho | BR-050 |
+| BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Hecho | BR-050, BR-055 |
 | BR-057 | Loader con el letrero real en vector | K | P3 | S | Bloqueada | BR-054 |
+| BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | En curso | BR-054, BR-056 |
+| BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | En curso | BR-058 |
+| BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | En curso | BR-058 |
+| BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | En curso | BR-058 |
+| BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | En curso | BR-060 |
+| BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | En curso | BR-062 |
+| BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | En curso | BR-064 |
+| BR-066 | El respaldo del enlace de reserva apunta a un subdominio que no existe | B | P1 | XS | En curso | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

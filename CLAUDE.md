@@ -87,6 +87,16 @@ Tests junto al archivo que prueban (`*.test.ts(x)`); helper de render en `src/te
 10. Las decisiones del usuario se registran con fecha (en la HU, el ticket
     o un ADR); no se reescribe en silencio lo ya decidido.
 
+## Decisiones no explícitas
+
+Si algo no está pedido de forma explícita y afecta la forma de trabajar,
+el alcance o la estructura, **se pregunta antes de hacerlo**. Por ejemplo:
+crear carpetas o worktrees, cambiar de rama en una carpeta compartida,
+partir, fusionar o renumerar tickets, saltarse un paso de una skill, fijar
+prioridades o agregar campos a la hoja. Las decisiones internas de
+implementación (nombres, estructura de un test, orden de lectura) no
+requieren consulta.
+
 ## Idioma
 
 - **Documentación y comentarios de código:** español neutro, con tuteo, sin

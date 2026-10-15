@@ -88,6 +88,41 @@ export const letterRise: Variants = {
 };
 
 /**
+ * Barras de luz hexagonales que se encienden una vez (BR-058), como las del techo de la barbería: apagadas, un
+ * parpadeo corto y encendidas. Con 2,5 destellos en 0,9 s queda bajo el límite de 3 por segundo (WCAG 2.3.1).
+ * Con «reducir movimiento» el componente no usa esta variante: las barras aparecen encendidas.
+ */
+export const lightBarIgnite: Variants = {
+    hidden: { opacity: 0.15 },
+    visible: {
+        opacity: [0.15, 1, 0.2, 1, 0.3, 1],
+        transition: { duration: 0.9, times: [0, 0.3, 0.42, 0.55, 0.66, 0.8], ease: "linear" }
+    }
+};
+
+/**
+ * Corte láser de una sola vez (BR-062): en pantallas chicas, el panel que tapa la foto o la tarjeta se retira al
+ * entrar la sección, en vez de seguir el scroll. `to` es cuánto se corre (de su propio ancho) y hacia qué lado.
+ */
+export const laserCutOneShot = (to: string): Variants => ({
+    hidden: { x: "0%" },
+    visible: { x: to, transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] } }
+});
+
+/**
+ * Trazo de un ícono que se dibuja solo (BR-064): cada `path` o `circle` del SVG anima su `pathLength`. Hereda
+ * «hidden»/«visible» de la tarjeta y arranca un poco después de que ella aparece.
+ */
+export const iconDraw: Variants = {
+    hidden: { pathLength: 0, opacity: 0 },
+    visible: {
+        pathLength: 1,
+        opacity: 1,
+        transition: { pathLength: { duration: 1.1, ease: [0.22, 1, 0.36, 1], delay: 0.25 }, opacity: { duration: 0.2, delay: 0.25 } }
+    }
+};
+
+/**
  * Fade in desde la izquierda
  */
 export const fadeInLeft: Variants = {

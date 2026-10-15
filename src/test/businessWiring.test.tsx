@@ -40,6 +40,7 @@ const content: SiteContent = {
   business,
   locations: [
     {
+      id: "sucursal-de-la-hoja",
       name: "Sucursal de la hoja",
       address: "Calle de la hoja 123",
       city: "Ciudad de la hoja",

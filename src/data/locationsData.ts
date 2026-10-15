@@ -2,6 +2,7 @@ import type { Location } from "@/types/location.types";
 
 export const locationsList: Location[] = [
     {
+        id: "barberia-royce-la-serena",
         name: "Barbería Royce La Serena",
         address: "Larrain Alcalde 3108",
         city: "Pampa Baja, La Serena",
@@ -17,6 +18,7 @@ export const locationsList: Location[] = [
     },
 
     {
+        id: "barberia-royce-coquimbo",
         name: "Barbería Royce Coquimbo",
         address: "Pdte. Alessandri 1871",
         city: "San Ramón, Coquimbo",

@@ -1,7 +1,7 @@
 .socialProof {
   min-height: 100vh;
   padding: clamp(4rem, 10vh, 6.25rem) 0;
-  background-color: #332a2b;
+  background-color: var(--color-brand-section-bg);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -25,11 +25,10 @@
   left: -100px;
   width: 1000px;
   height: 1000px;
-  background: #d52323;
+  background: var(--color-brand-primary);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 1;
   rotate: -45deg;
-  will-change: transform;
 }
 
 .hexagonBg1 {
@@ -38,11 +37,10 @@
   right: -250px;
   width: 800px;
   height: 800px;
-  background: rgba(213, 35, 35, 0.15);
+  background: color-mix(in srgb, var(--color-brand-primary) 15%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 0;
   rotate: 25deg;
-  will-change: transform;
 }
 
 .hexagonBg2 {
@@ -51,11 +49,10 @@
   left: 5%;
   width: 700px;
   height: 700px;
-  background: rgba(213, 35, 35, 0.1);
+  background: color-mix(in srgb, var(--color-brand-primary) 10%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 0;
   rotate: -60deg;
-  will-change: transform;
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -68,11 +65,10 @@
   right: 8%;
   width: 400px;
   height: 400px;
-  background: rgba(213, 35, 35, 0.25);
+  background: color-mix(in srgb, var(--color-brand-primary) 25%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 1;
   rotate: 15deg;
-  will-change: transform;
 }
 
 .hexagonMiddle2 {
@@ -81,11 +77,10 @@
   right: 15%;
   width: 300px;
   height: 300px;
-  background: rgba(213, 35, 35, 0.2);
+  background: color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 1;
   rotate: -35deg;
-  will-change: transform;
   transition: opacity 0.3s ease-out;
 }
 
@@ -95,11 +90,10 @@
   left: 3%;
   width: 350px;
   height: 350px;
-  background: rgba(213, 35, 35, 0.18);
+  background: color-mix(in srgb, var(--color-brand-primary) 18%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 1;
   rotate: 45deg;
-  will-change: transform;
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -112,11 +106,10 @@
   left: 15%;
   width: 150px;
   height: 150px;
-  background: rgba(213, 35, 35, 0.35);
+  background: color-mix(in srgb, var(--color-brand-primary) 35%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 2;
   rotate: 60deg;
-  will-change: transform;
   transition: transform 0.1s ease-out;
 }
 
@@ -126,11 +119,10 @@
   right: 25%;
   width: 180px;
   height: 180px;
-  background: rgba(213, 35, 35, 0.3);
+  background: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 2;
   rotate: -20deg;
-  will-change: transform;
 }
 
 .hexagonFast3 {
@@ -139,11 +131,10 @@
   left: 40%;
   width: 120px;
   height: 120px;
-  background: rgba(213, 35, 35, 0.28);
+  background: color-mix(in srgb, var(--color-brand-primary) 28%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 2;
   rotate: 80deg;
-  will-change: transform;
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -156,11 +147,10 @@
   right: 5%;
   width: 80px;
   height: 80px;
-  background: rgba(213, 35, 35, 0.5);
+  background: color-mix(in srgb, var(--color-brand-primary) 50%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 3;
   rotate: 30deg;
-  will-change: transform;
 }
 
 .hexagonFg2 {
@@ -169,15 +159,16 @@
   left: 20%;
   width: 60px;
   height: 60px;
-  background: rgba(213, 35, 35, 0.45);
+  background: color-mix(in srgb, var(--color-brand-primary) 45%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 3;
   rotate: -45deg;
-  will-change: transform;
 }
 
 .container {
-  max-width: 1800px;
+  /* width: 100%: con margin auto dentro de un flex en columna, el elemento se encoge a su contenido (BR-065) */
+  width: 100%;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 0 3rem;
   position: relative;
@@ -206,84 +197,98 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  max-width: 650px;
+  max-width: 760px;
 }
 
 .title {
   white-space: pre-line; /* los saltos de línea del texto editable de la hoja se respetan (BR-042) */
-  font-size: clamp(2rem, 4.5vw, 2.75rem);
+  font-size: clamp(2.25rem, 4.8vw, 3.5rem);
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-brand-white);
   margin: 0;
   line-height: 1.2;
 }
 
 .subtitle {
-  font-size: clamp(0.8rem, 1.2vw, 0.875rem);
-  line-height: 1.7;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--color-brand-white) 90%, transparent);
   margin: 0;
-  max-width: 550px;
+  max-width: 640px;
 }
 
-/* Bento Grid Layout */
+/*
+ * Parrilla bento (BR-065), con las proporciones del Figma «Prueba social 2»: tres columnas de distinto ancho; las
+ * dos primeras parten sus fotos a distinta altura (grande arriba y chica abajo, y al revés) y la tercera es una foto
+ * alta. Doce filas para poder partir cada columna donde dice el diseño. Cada recuadro recorta su contenido
+ * (object-fit: cover): cuando BR-051 traiga las fotos de Instagram, cualquier proporción calza.
+ */
 .bentoGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: 11.25rem 11.25rem;
-  gap: 1.5rem;
-  max-width: 100%;
-}
-
-@media (min-width: 1200px) {
-  .bentoGrid {
-    grid-template-rows: 13rem 13rem;
-    gap: 2rem;
-  }
+  grid-template-columns: 1.3fr 1.16fr 1fr;
+  grid-template-rows: repeat(12, minmax(0, 1fr));
+  height: clamp(22rem, 30vw, 28rem);
+  gap: clamp(0.75rem, 1.4vw, 1.25rem);
 }
 
 .bentoItem {
-  background: #e0e0e0;
-  border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #999;
-  overflow: hidden;
-  transition: transform 0.3s ease;
+  border-radius: var(--radius-sm);
+  background: var(--color-neutral-300);
+  color: var(--color-neutral-500);
+  /* scale y no transform: la entrada de framer escribe el transform en línea y pisaría el del CSS */
+  transition: scale 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.bentoItem:hover {
-  transform: scale(1.03);
+.bentoItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .bentoItem svg {
   stroke: currentColor;
 }
 
-/* Item grande normal */
-.bentoLarge {
-  grid-column: span 1;
+@media (hover: hover) and (pointer: fine) {
+  .bentoItem:hover {
+    scale: 1.03;
+  }
 }
 
-/* Item alto que ocupa 2 filas (imagen lateral) */
+/* Columna 1: grande arriba, chica abajo */
+.bentoA {
+  grid-column: 1;
+  grid-row: 1 / 8;
+}
+
+.bentoC {
+  grid-column: 1;
+  grid-row: 8 / 13;
+}
+
+/* Columna 2: chica arriba, grande abajo */
+.bentoB {
+  grid-column: 2;
+  grid-row: 1 / 6;
+}
+
+.bentoD {
+  grid-column: 2;
+  grid-row: 6 / 13;
+}
+
+/* Columna 3: foto alta */
 .bentoTall {
   grid-column: 3;
-  grid-row: 1 / 3;
-  border-radius: 1rem;
+  grid-row: 1 / 13;
 }
 
 @media (max-width: 1024px) {
-  .bentoGrid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 10rem 10rem 12.5rem;
-  }
-
-  .bentoTall {
-    grid-column: 1 / 3;
-    grid-row: 3;
-  }
-
   .hexagonBg2,
   .hexagonMiddle3,
   .hexagonFast3,
@@ -297,9 +302,36 @@
     padding: clamp(3rem, 8vh, 4rem) 0;
   }
 
+  /* Móvil: dos columnas; la primera foto a todo el ancho y la alta junto a la última */
   .bentoGrid {
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 9.375rem 9.375rem 11.25rem;
+    grid-template-rows: 12rem 9rem 9rem 9rem;
+    height: auto;
+  }
+
+  .bentoA {
+    grid-column: 1 / 3;
+    grid-row: 1;
+  }
+
+  .bentoB {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .bentoC {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .bentoD {
+    grid-column: 1;
+    grid-row: 4;
+  }
+
+  .bentoTall {
+    grid-column: 2;
+    grid-row: 2 / 5;
   }
 
   .hexagonBg1,
@@ -318,5 +350,11 @@
   .hexagonFast1 {
     width: 100px;
     height: 100px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bentoItem {
+    transition: none;
   }
 }

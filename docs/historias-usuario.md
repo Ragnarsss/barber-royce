@@ -252,7 +252,7 @@ ver reseñas de otros clientes, para confiar antes de reservar.
 - Fuente: sitio actual (`/equipo`, `/nosotros`, reseñas en la home).
 - Dependencias: Ninguna.
 - Riesgo: Bajo.
-- RF relacionados: RF-INFO-004, RF-INFO-005, RF-INFO-007.
+- RF relacionados: RF-INFO-004, RF-INFO-005, RF-INFO-007, RF-INFO-010.
 - RNF impactados: RNF-PERF-004.
 - Casos de uso relacionados: —
 
@@ -287,6 +287,10 @@ ver reseñas de otros clientes, para confiar antes de reservar.
 - CA-06 (2026-10-14): Given Google no responde o la conexión no está
   configurada, When abro la home, Then la sección no se ve rota ni muestra
   reseñas inventadas: se oculta o muestra solo el enlace a la ficha de Google.
+- CA-07 (2026-10-14, pedido del usuario, `BR-063`): Given estoy en `/equipo`,
+  When hago clic en un barbero (o lo activo con el teclado), Then se abre su
+  ficha con foto, nombre, especialidades y una descripción que el dueño edita
+  en la hoja; si alguna falta, la ficha se ve completa sin ella.
 - RN-02 (2026-10-14): Las reseñas de Google se muestran tal como las escribió
   su autor: sin editar el texto ni cambiar la calificación.
 
@@ -613,6 +617,31 @@ y confiar en que el servicio está a la altura.
   pantalla (o paso el cursor en escritorio), Then reaccionan con una animación
   ligada al scroll o al cursor, y su texto cumple el contraste de
   RNF-A11Y-004 en escritorio y móvil.
+- CA-10: Given bajo hasta el bloque de reserva que sigue a la portada, When
+  entra en pantalla, Then las barras de luz hexagonales (como las del techo
+  de la barbería) se encienden una vez, la foto queda enmarcada en su figura,
+  el botón de reservar es el elemento que más destaca y, en móvil, la foto no
+  tapa el título.
+- CA-11: Given paso el cursor o enfoco con teclado un enlace de la navegación,
+  When se resalta, Then se ilumina con un resplandor de neón blanco, como las
+  luces del techo, y su texto se sigue leyendo.
+- CA-12 (2026-10-14, `BR-060`): Given entro a `/equipo`, When carga, Then veo
+  al equipo en un panal de hexágonos (como las barras de luz del techo), con el
+  líder más grande y con un marco distinto, y al pasar el cursor o enfocar un
+  hexágono leo el nombre del barbero.
+- CA-14: Given bajo hasta «Respaldados por los mejores», When avanzo con el
+  scroll, Then un láser corta en diagonal y revela la foto y luego la tarjeta
+  del testimonio, y si subo se vuelven a tapar; con reducir movimiento todo
+  aparece revelado.
+- CA-15 (2026-10-14, `BR-063`): Given abro la ficha de un barbero, When uso
+  solo el teclado, Then el foco queda dentro de la ficha, Escape la cierra y
+  vuelvo al barbero que la abrió, sin que la página de fondo se haya movido.
+- CA-16: Given llego a «Estilo que te acompaña», When las tarjetas entran en
+  pantalla, Then veo la foto clara con la franja roja diagonal, las tarjetas con
+  los textos del diseño, y sus íconos se dibujan con un trazo.
+- CA-17: Given llego a «Clientes felices, estilos impecables», When veo la
+  parrilla de fotos, Then los recuadros siguen un bento apaisado como en el
+  diseño, y en móvil quedan en dos columnas sin recuadros angostos.
 
 ---
 

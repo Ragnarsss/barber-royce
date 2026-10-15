@@ -1,0 +1,190 @@
+/*
+ * Panal del equipo (BR-060). La grilla tiene columnas de un cuarto de hexágono de ancho y filas de un octavo de su
+ * alto (honeycomb.ts); cada celda trae su posición de móvil (--m-*) y de escritorio (--d-*). Un hexágono de puntas
+ * arriba mide 1,1547 veces su ancho de alto (es regular).
+ *
+ * La celda de cada hexágono toca a las de sus vecinos. Para separarlos igual por todos sus bordes, el hexágono se
+ * encoge por igual dentro de su celda: `--hex-gap / 2` a cada lado en horizontal y 1,1547 veces eso en vertical, que
+ * es un hexágono regular más chico, a la misma distancia del borde vecino por los seis lados.
+ */
+.honeycomb {
+  /* Ancho de un hexágono: el que quepa en la pantalla para las columnas de la grilla (cada columna es 1/4 de ancho). */
+  --hex-width: min(10rem, calc(4 * (100vw - 2 * var(--spacing-4)) / var(--m-grid-cols)));
+  --hex-gap: var(--spacing-2);
+  --frame-width: var(--spacing-1);
+  --lead-frame-width: calc(var(--spacing-1) * 1.75);
+  --hex-clip: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  --frame-color: var(--color-brand-white);
+  --lead-frame-color: var(--color-brand-primary);
+  --glow-core: color-mix(in srgb, var(--color-brand-white) 85%, transparent);
+  --glow-red: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);
+  --glow: drop-shadow(0 0 3px var(--glow-core)) drop-shadow(0 0 10px var(--glow-core))
+    drop-shadow(0 0 24px var(--glow-red));
+  --rest-shadow: drop-shadow(0 var(--spacing-2) var(--spacing-4) color-mix(in srgb, var(--color-primary-900) 55%, transparent));
+  --caption-shade: color-mix(in srgb, var(--color-primary-900) 80%, transparent);
+
+  display: grid;
+  grid-template-columns: repeat(var(--m-grid-cols), calc(var(--hex-width) / 4));
+  grid-template-rows: repeat(var(--m-grid-rows), calc(var(--hex-width) * 1.1547 / 8));
+  justify-content: center;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.cell {
+  grid-column: var(--m-col) / span var(--m-cols);
+  grid-row: var(--m-row) / span var(--m-rows);
+  padding: calc(var(--hex-gap) * 0.57735) calc(var(--hex-gap) / 2);
+}
+
+.hex {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  filter: var(--rest-shadow);
+  transition: filter var(--transition-base);
+}
+
+.hex:focus {
+  outline: none;
+}
+
+.frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  clip-path: var(--hex-clip);
+  background: var(--frame-color);
+  transition: background-color var(--transition-base);
+}
+
+.lead .frame {
+  background: var(--lead-frame-color);
+}
+
+.photo {
+  position: absolute;
+  inset: var(--frame-width);
+  clip-path: var(--hex-clip);
+  overflow: hidden;
+  background: var(--color-brand-section-bg);
+}
+
+.lead .photo {
+  inset: var(--lead-frame-width);
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+/* Nombre y cargo: aparecen al pasar el cursor o enfocar, sobre una sombra que sube desde abajo. */
+.caption {
+  position: absolute;
+  inset: var(--frame-width);
+  clip-path: var(--hex-clip);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-1);
+  padding: 0 var(--spacing-4);
+  text-align: center;
+  /*
+   * Sombra pareja del 80 % sobre todo el hexágono: aun sobre una foto blanca el texto queda sobre un gris de 51 y el
+   * blanco da 12,6:1, sin importar en cuántas líneas se parta el nombre. Un degradado desde abajo no alcanzaba en
+   * móvil, donde los nombres ocupan dos líneas y suben hasta el 80 % del alto.
+   */
+  background: var(--caption-shade);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.name {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
+}
+
+.role {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
+}
+
+.lead .name {
+  font-size: var(--font-size-2xl);
+}
+
+/* Cursor o foco de teclado: el marco se enciende en blanco con halo rojo, como las barras de luz del techo. */
+.hex:hover,
+.hex:focus-visible {
+  filter: var(--glow);
+}
+
+.hex:hover .caption,
+.hex:focus-visible .caption {
+  opacity: 1;
+}
+
+.hex:hover .photo img,
+.hex:focus-visible .photo img {
+  transform: scale(1.06);
+}
+
+.hex:focus-visible .frame {
+  background: var(--color-brand-white);
+}
+
+@media (min-width: 768px) {
+  .honeycomb {
+    /* Más grande (hasta 17,5 rem), pero nunca más ancho que la pantalla: con un equipo grande se achica. */
+    --hex-width: min(
+      clamp(9rem, 17vw, 17.5rem),
+      calc(4 * (100vw - 2 * var(--spacing-8)) / var(--d-grid-cols))
+    );
+    --hex-gap: var(--spacing-3);
+    --frame-width: calc(var(--spacing-1) * 1.5);
+    --lead-frame-width: calc(var(--spacing-1) * 2.5);
+
+    grid-template-columns: repeat(var(--d-grid-cols), calc(var(--hex-width) / 4));
+    grid-template-rows: repeat(var(--d-grid-rows), calc(var(--hex-width) * 1.1547 / 8));
+  }
+
+  .cell {
+    grid-column: var(--d-col) / span var(--d-cols);
+    grid-row: var(--d-row) / span var(--d-rows);
+  }
+
+  .lead .name {
+    font-size: var(--font-size-3xl);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hex,
+  .frame,
+  .caption,
+  .photo img {
+    transition: none;
+  }
+
+  .hex:hover .photo img,
+  .hex:focus-visible .photo img {
+    transform: none;
+  }
+}

@@ -143,15 +143,15 @@ export function SocialProof2() {
             animate={controls}
             variants={staggerContainer}
           >
-            {/* Fila 1: 2 items grandes + imagen lateral */}
+            {/* Bento del Figma (BR-065): columna 1 = A arriba y C abajo; columna 2 = B arriba y D abajo; columna 3 = alta */}
             <motion.div
-              className={`${styles.bentoItem} ${styles.bentoLarge}`}
+              className={`${styles.bentoItem} ${styles.bentoA}`}
               variants={scaleIn}
             >
               <Camera size={40} strokeWidth={1.5} />
             </motion.div>
             <motion.div
-              className={`${styles.bentoItem} ${styles.bentoLarge}`}
+              className={`${styles.bentoItem} ${styles.bentoB}`}
               variants={scaleIn}
             >
               <Camera size={40} strokeWidth={1.5} />
@@ -163,15 +163,14 @@ export function SocialProof2() {
               <Camera size={48} strokeWidth={1.5} />
             </motion.div>
 
-            {/* Fila 2: 2 items */}
             <motion.div
-              className={`${styles.bentoItem} ${styles.bentoLarge}`}
+              className={`${styles.bentoItem} ${styles.bentoC}`}
               variants={scaleIn}
             >
               <Camera size={40} strokeWidth={1.5} />
             </motion.div>
             <motion.div
-              className={`${styles.bentoItem} ${styles.bentoLarge}`}
+              className={`${styles.bentoItem} ${styles.bentoD}`}
               variants={scaleIn}
             >
               <Camera size={40} strokeWidth={1.5} />

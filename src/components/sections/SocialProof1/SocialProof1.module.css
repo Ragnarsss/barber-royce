@@ -1,6 +1,6 @@
 .socialProof {
   min-height: 100vh;
-  background-color: #332b2b;
+  background-color: var(--color-brand-section-bg);
   position: relative;
   overflow: hidden;
   padding: clamp(4rem, 10vh, 6rem) 0 clamp(3rem, 8vh, 5rem);
@@ -29,7 +29,7 @@
 .title {
   font-size: clamp(1.75rem, 4vw, 2.625rem);
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-brand-white);
   margin: 0 0 1rem 0;
   text-align: left;
 }
@@ -37,7 +37,7 @@
 .subtitle {
   font-size: clamp(0.8rem, 1.2vw, 0.875rem);
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.85);
+  color: color-mix(in srgb, var(--color-brand-white) 85%, transparent);
   margin: 0;
   max-width: 800px;
 }
@@ -74,10 +74,10 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #d52323 0%, #fe0000 100%);
+  background: linear-gradient(135deg, var(--color-brand-primary) 0%, var(--color-brand-primary-hover) 100%);
   transform: rotate(-6deg);
   z-index: -1;
-  box-shadow: 0 15px 50px rgba(213, 35, 35, 0.4);
+  box-shadow: 0 15px 50px color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
 }
 
 .imagePlaceholder,
@@ -91,7 +91,7 @@
 /* ===== TESTIMONIAL CARD - SVG SHAPE ===== */
 
 .testimonialCard {
-  background: #ffffff;
+  background: var(--color-brand-white);
   clip-path: polygon(
     37.4% 0%,
     87.38% 14.18%,
@@ -100,7 +100,7 @@
     12.58% 85.68%,
     0% 35.74%
   );
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 15px 50px color-mix(in srgb, var(--color-primary-900) 30%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,7 +120,7 @@
 .testimonialText {
   font-size: clamp(0.9rem, 1.4vw, 1rem);
   line-height: normal;
-  color: #1a1a1a;
+  color: var(--color-brand-background);
   font-style: italic;
   text-align: left;
   font-weight: 300;
@@ -136,17 +136,17 @@
 .author strong {
   font-size: clamp(1.05rem, 1.7vw, 1.25rem);
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--color-brand-background);
 }
 
 .author span {
   font-size: clamp(0.9rem, 1.4vw, 1rem);
-  color: #666666;
+  color: var(--color-text-secondary);
 }
 
 .clientBadge {
   font-size: clamp(0.85rem, 1.2vw, 0.95rem);
-  color: #999999;
+  color: var(--color-neutral-600); /* antes un gris claro con 2,8:1 sobre blanco, bajo el mínimo (BR-062) */
   font-style: italic;
 }
 
@@ -197,6 +197,7 @@
     margin: 0 auto;
     padding: 2rem 1.75rem;
     aspect-ratio: auto;
+    overflow: hidden;
   }
 
   .testimonialText {
@@ -218,127 +219,137 @@
 }
 
 /* ═════════════════════════════════════════════════════════════
-   RAYOS LÁSER DIAGONALES CRUZADOS - Tipo / y \
+   CORTE LÁSER (BR-062)
+   Pistas diagonales tenues con un haz que viaja por cada una, y paneles que
+   se retiran en diagonal con un láser en su borde para revelar la foto y la
+   tarjeta. Solo transform y opacity. Las rotaciones e inclinaciones que se
+   combinan con un movimiento de framer van por framer (skewX), no por CSS:
+   su transform en línea pisaría el del CSS (era el bug de los rayos).
 ═════════════════════════════════════════════════════════════ */
 
-.diagonalLaser1,
-.diagonalLaser2,
-.diagonalLaser3,
-.diagonalLaser4,
-.diagonalLaser5 {
+.socialProof {
+  --sp-laser: var(--color-brand-primary-hover);
+  --sp-laser-core: color-mix(in srgb, var(--color-brand-white) 80%, var(--color-brand-primary-hover));
+  --sp-laser-glow:
+    0 0 6px color-mix(in srgb, var(--color-brand-primary-hover) 90%, transparent),
+    0 0 18px color-mix(in srgb, var(--color-brand-primary) 70%, transparent),
+    0 0 36px color-mix(in srgb, var(--color-brand-primary) 45%, transparent);
+}
+
+/* La pista rota por CSS: no lleva transform de framer. El haz, su hijo, se mueve en el eje de la pista. */
+.laserTrack {
   position: absolute;
-  width: 150%;
-  height: 3px;
-  pointer-events: none;
-  will-change: transform;
-  z-index: 0;
-  transform-origin: center;
   left: 50%;
+  width: 150%;
   margin-left: -75%;
-}
-
-/* ───────────────────────────────────────────────────────────
-   RAYOS TIPO "/" - Diagonales ascendentes ↗
-────────────────────────────────────────────────────────────── */
-
-/* Rayo Diagonal 1: / primario */
-.diagonalLaser1 {
-  top: 50%;
-  transform: rotate(-45deg); /* Inclinación tipo "/" */
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(254, 0, 0, 0.4) 15%,
-    rgba(213, 35, 35, 0.95) 50%,
-    rgba(254, 0, 0, 0.4) 85%,
-    transparent 100%
-  );
-  box-shadow:
-    0 0 15px rgba(254, 0, 0, 0.9),
-    0 0 30px rgba(213, 35, 35, 0.7),
-    0 0 45px rgba(254, 0, 0, 0.5);
-  filter: blur(0.5px);
-}
-
-/* Rayo Diagonal 3: / secundario */
-.diagonalLaser3 {
-  top: 20%;
-  height: 2.5px;
-  transform: rotate(-50deg);
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(254, 0, 0, 0.35) 20%,
-    rgba(213, 35, 35, 0.85) 50%,
-    rgba(254, 0, 0, 0.35) 80%,
-    transparent 100%
-  );
-  box-shadow:
-    0 0 12px rgba(254, 0, 0, 0.8),
-    0 0 25px rgba(213, 35, 35, 0.6);
-  filter: blur(0.5px);
-}
-
-/* Rayo Diagonal 5: / terciario */
-.diagonalLaser5 {
-  top: 80%;
   height: 2px;
-  transform: rotate(-40deg);
+  pointer-events: none;
+  z-index: 0;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(213, 35, 35, 0.3) 25%,
-    rgba(254, 0, 0, 0.75) 50%,
-    rgba(213, 35, 35, 0.3) 75%,
+    color-mix(in srgb, var(--color-brand-primary) 25%, transparent) 20%,
+    color-mix(in srgb, var(--color-brand-primary) 25%, transparent) 80%,
     transparent 100%
   );
-  box-shadow:
-    0 0 10px rgba(254, 0, 0, 0.7),
-    0 0 20px rgba(213, 35, 35, 0.5);
-  filter: blur(0.5px);
 }
 
-/* ───────────────────────────────────────────────────────────
-   RAYOS TIPO "\" - Diagonales descendentes ↘
-────────────────────────────────────────────────────────────── */
-
-/* Rayo Diagonal 2: \ primario */
-.diagonalLaser2 {
-  top: 30%;
-  transform: rotate(45deg); /* Inclinación tipo "\" */
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(254, 0, 0, 0.4) 15%,
-    rgba(213, 35, 35, 0.9) 50%,
-    rgba(254, 0, 0, 0.4) 85%,
-    transparent 100%
-  );
-  box-shadow:
-    0 0 15px rgba(254, 0, 0, 0.85),
-    0 0 30px rgba(213, 35, 35, 0.65),
-    0 0 45px rgba(254, 0, 0, 0.45);
-  filter: blur(0.5px);
-  height: 2.5px;
+.laserTrack1 {
+  top: 28%;
+  transform: rotate(-32deg);
 }
 
-/* Rayo Diagonal 4: \ secundario */
-.diagonalLaser4 {
-  top: 60%;
-  height: 2px;
-  transform: rotate(40deg);
+.laserTrack2 {
+  top: 52%;
+  transform: rotate(26deg);
+}
+
+.laserTrack3 {
+  top: 76%;
+  transform: rotate(-20deg);
+}
+
+/* Haz: 1/8 de la pista, con la cabeza brillante adelante */
+.bolt {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 12.5%;
+  height: 6px;
+  border-radius: 3px;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(254, 0, 0, 0.35) 20%,
-    rgba(213, 35, 35, 0.8) 50%,
-    rgba(254, 0, 0, 0.35) 80%,
+    color-mix(in srgb, var(--sp-laser) 55%, transparent) 45%,
+    var(--sp-laser-core) 94%,
     transparent 100%
   );
+  box-shadow: var(--sp-laser-glow);
+}
+
+/* Recorte de la foto: contiene la imagen y su panel de corte */
+.imageClip {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Panel del color del fondo; el láser va en su borde de ataque (izquierdo en la foto) */
+.cutCover {
+  position: absolute;
+  top: -25%;
+  bottom: -25%;
+  left: -30%;
+  width: 160%;
+  z-index: 2;
+  pointer-events: none;
+  background: var(--color-brand-section-bg);
+}
+
+.cutCover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--sp-laser-core);
+  box-shadow: var(--sp-laser-glow);
+}
+
+/* En la tarjeta el corte viene desde el lado contrario: el láser va a la derecha */
+.cutCoverCard {
+  left: auto;
+  right: -30%;
+}
+
+.cutCoverCard::before {
+  left: auto;
+  right: 0;
+}
+
+/* Destello del marco rojo: misma forma que el marco, solo cambia su opacidad */
+.frameFlash {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  transform: rotate(-6deg);
+  border: 3px solid var(--sp-laser);
   box-shadow:
-    0 0 12px rgba(254, 0, 0, 0.75),
-    0 0 24px rgba(213, 35, 35, 0.55);
-  filter: blur(0.5px);
+    0 0 24px 6px color-mix(in srgb, var(--color-brand-primary-hover) 80%, transparent),
+    0 0 80px 10px color-mix(in srgb, var(--color-brand-primary) 55%, transparent);
+}
+
+/* Subrayado láser del título: se dibuja de izquierda a derecha (scaleX con framer) */
+.titleUnderline {
+  display: block;
+  width: min(220px, 40%);
+  height: 3px;
+  margin: -0.25rem 0 1.25rem;
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--sp-laser), var(--sp-laser-core));
+  box-shadow: var(--sp-laser-glow);
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -354,13 +365,12 @@
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   background: linear-gradient(
     135deg,
-    rgba(213, 35, 35, 0.12) 0%,
-    rgba(254, 0, 0, 0.08) 100%
+    color-mix(in srgb, var(--color-brand-primary) 12%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand-primary-hover) 8%, transparent) 100%
   );
   backdrop-filter: blur(2px);
-  border: 1px solid rgba(213, 35, 35, 0.2);
+  border: 1px solid color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
   pointer-events: none;
-  will-change: transform;
   z-index: 0;
 }
 
@@ -409,13 +419,12 @@
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   background: linear-gradient(
     135deg,
-    rgba(254, 0, 0, 0.15) 0%,
-    rgba(213, 35, 35, 0.1) 100%
+    color-mix(in srgb, var(--color-brand-primary-hover) 15%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand-primary) 10%, transparent) 100%
   );
-  border: 1.5px solid rgba(254, 0, 0, 0.25);
-  box-shadow: 0 0 30px rgba(213, 35, 35, 0.2);
+  border: 1.5px solid color-mix(in srgb, var(--color-brand-primary-hover) 25%, transparent);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
   pointer-events: none;
-  will-change: transform;
   transition: opacity 0.3s ease-out;
   z-index: 0;
 }
@@ -465,15 +474,14 @@
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
   background: linear-gradient(
     135deg,
-    rgba(213, 35, 35, 0.2) 0%,
-    rgba(254, 0, 0, 0.15) 100%
+    color-mix(in srgb, var(--color-brand-primary) 20%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand-primary-hover) 15%, transparent) 100%
   );
-  border: 2px solid rgba(213, 35, 35, 0.3);
+  border: 2px solid color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
   box-shadow:
-    0 0 40px rgba(213, 35, 35, 0.3),
-    inset 0 0 20px rgba(255, 255, 255, 0.05);
+    0 0 40px color-mix(in srgb, var(--color-brand-primary) 30%, transparent),
+    inset 0 0 20px color-mix(in srgb, var(--color-brand-white) 5%, transparent);
   pointer-events: none;
-  will-change: transform;
   transition: transform 0.1s ease-out;
   z-index: 2;
 }
@@ -503,10 +511,9 @@
   width: 80px;
   height: 80px;
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  background: rgba(213, 35, 35, 0.08);
-  border: 1px solid rgba(213, 35, 35, 0.15);
+  background: color-mix(in srgb, var(--color-brand-primary) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-brand-primary) 15%, transparent);
   pointer-events: none;
-  will-change: transform;
   z-index: 1;
 }
 
@@ -544,11 +551,7 @@
 
 @media (max-width: 1024px) {
   /* Ocultar decoración en tablets */
-  .diagonalLaser1,
-  .diagonalLaser2,
-  .diagonalLaser3,
-  .diagonalLaser4,
-  .diagonalLaser5,
+  .laserTrack,
   .hexagonBackground1,
   .hexagonBackground2,
   .hexagonBackground3,
@@ -564,5 +567,16 @@
   .hexagonSmall3,
   .hexagonSmall4 {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hexagonMiddle1,
+  .hexagonMiddle2,
+  .hexagonMiddle3,
+  .hexagonMiddle4,
+  .hexagonForeground1,
+  .hexagonForeground2 {
+    transition: none;
   }
 }

@@ -85,19 +85,34 @@
   opacity: 0.5;
 }
 
+/*
+ * Resplandor de neón blanco al pasar el cursor o con foco de teclado (BR-059), como las barras de luz hexagonales
+ * del techo (CTA1, BR-058): núcleo blanco y halo rojo. Solo cambian el color y la sombra del texto.
+ */
+.navbar {
+  --nav-glow-core: color-mix(in srgb, var(--color-brand-white) 85%, transparent);
+  --nav-glow-halo: color-mix(in srgb, var(--color-brand-white) 60%, transparent);
+  --nav-glow-red: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);
+  --nav-glow: 0 0 3px var(--nav-glow-core), 0 0 10px var(--nav-glow-halo), 0 0 22px var(--nav-glow-red), 0 0 34px var(--nav-glow-red);
+}
+
 .navLink {
   color: var(--color-brand-primary);
   text-decoration: none;
   font-weight: var(--font-weight-light);
   font-size: var(--font-size-sm);
-  transition: var(--transition-colors);
+  transition:
+    color 0.25s ease,
+    text-shadow 0.25s ease;
   position: relative;
   letter-spacing: var(--letter-spacing-wide);
   text-transform: uppercase;
 }
 
-.navLink:hover {
-  color: var(--color-brand-primary-hover);
+.navLink:hover,
+.navLink:focus-visible {
+  color: var(--color-brand-white);
+  text-shadow: var(--nav-glow);
 }
 
 .navLink.active {
@@ -207,6 +222,17 @@
 .mobileNavLink.active {
   color: var(--color-brand-primary-hover);
   font-weight: var(--font-weight-semibold);
+}
+
+.mobileNavLink:focus-visible {
+  color: var(--color-brand-white);
+  text-shadow: var(--nav-glow);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navLink {
+    transition: none;
+  }
 }
 
 /* Responsive */

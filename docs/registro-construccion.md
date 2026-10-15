@@ -1410,3 +1410,153 @@ servido con `vite preview` y Chrome real:
 - El e2e de contraste ignora fondos translúcidos y no mediría las tarjetas: `cards.test.ts` calcula el peor caso (vidrio sobre el borde sobre el rojo claro del degradado) en reposo y con hover, leyendo los porcentajes del CSS y los hex de los tokens. Se vio fallar con el vidrio al 10 %.
 
 **Verificación:** 510 tests en verde, lint y tipos limpios. Capturas: hover en escritorio y móvil emulado. **Lighthouse móvil local, mediana de 5, con BR-054..056:** FCP 3,1 s; LCP 6,4 s; CLS 0; TBT 180 ms (≤ 200 de `RNF-PERF-003`, pero ~50 ms sobre BR-054; parte es el triángulo que ahora se pinta en móvil). **Pendiente (usuario):** decidir si se acepta ese TBT; ver en movimiento el haz, la luz de las tarjetas y la profundidad al hacer scroll.
+
+---
+
+## Cierre de BR-054, BR-055 y BR-056 (2026-10-14)
+
+**Lo que verificó y reportó el usuario en producción:** el letrero de neón «se ve bien» y basta hasta el SVG definitivo (`BR-057`); las tarjetas «geniales»; los cambios de los fondos «se notan» (degradado, filo de luz, grano, haz); el grano «hace que se vea más artístico». **Aceptó el TBT móvil de 180 ms** (≤ 200 de `RNF-PERF-003`, ~40 ms sobre la línea base) y, antes, la regresión de LCP en la primera visita de la sesión (`BR-054`).
+
+**Integración:** PR #26, #27 y #28 con el CI (lint, tipos, tests, build) y Vercel en verde, fusionados en orden.
+
+**Queda fuera:** el SVG definitivo del letrero (`BR-057`, bloqueado); la grabación en Chrome real del conteo de destellos (`CP-A11Y-005`); el ajuste fino de la intensidad del grano, que el usuario quiere probar a mano (`.grain` en `Hero.module.css`).
+
+---
+
+<a id="br-058"></a>
+
+## BR-058 — CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva
+
+**Notas de construcción (2026-10-14):**
+- Auditoría con `diseno-visual`. El usuario **conservó los hexágonos y la superposición de capas**: vienen de las barras de luz hexagonales del techo de la barbería. Se descartó cambiarlos por diagonales.
+- La foto pasó **dentro** de la figura blanca: su `clip-path` la contiene y se mueven juntas. Con su propio parallax se desplazaba dos veces; la figura usa ahora la capa lenta. Al revisar las capturas apareció que los atributos de la foto decían 700 × 925 y el archivo mide 700 × 667: se corrigieron (evita un salto de contenido al cargar) y la foto se dimensiona por el ancho.
+- El hexágono «rosado» (rojo al 30 % sobre blanco) pasó a rojo de marca sólido y hexagonal.
+- Barras de luz: tres hexágonos en fila de panal, arriba y cortados por el borde, con tubo blanco cálido y resplandor; se encienden una vez al entrar la sección (`lightBarIgnite`, 2,5 destellos en 0,9 s). Primero quedaron abajo junto a los botones y el usuario no entendía qué eran: arriba se leen como el techo.
+- Botón principal con chaflán y seguimiento magnético (`magnetic.ts`, MotionValue y resorte, solo con ratón); el foco lo dibuja el envoltorio, porque el `clip-path` recortaría el contorno. El hover tiñe el texto de rojo (mezclar el fondo blanco con rojo daba rosado). Secundario: contorno recto.
+- Móvil: la figura con la foto va en el flujo, debajo del texto (antes la foto, absoluta, tapaba el título); queda el hexágono rojo del texto como forma.
+- Deuda saldada, explicada al usuario: `will-change` fijo en 7 capas → clase `isAnimating` solo durante el scroll; todos los colores a tokens (el fondo era `#332a2b` y el token `#332b2b`); CSS muerto borrado; el `alt` usa `SITE.name`.
+- Test primero: `magneticOffset` (centro, fracción, tope) y el conteo de destellos de `lightBarIgnite`. Después: `CTA1.test.tsx` (foto dentro de la figura, rojo sólido, barras con y sin reducir movimiento, sin literal de marca, sin hex, sin `will-change`, sin CSS muerto, foco fuera del chaflán, contraste del blanco sobre el rojo).
+
+**Verificación:** 525 tests en verde, lint y tipos limpios. Capturas con `puppeteer-core` en escritorio (con el cursor sobre el botón) y móvil emulado a 390 px. **Lighthouse móvil, `master` contra BR-058 alternados ×5:** TBT 182 → 166 ms (mediana; dispersión de 128 a 341 en ambas), LCP 6,4 → 6,3 s, CLS 0. Una primera comparación daba +50 ms, pero el build de `master` en el worktree no tenía el `.env` (sin analítica ni hoja en vivo); se anotó como trampa en la skill. **Pendiente (usuario):** ver en movimiento el encendido de las barras, el botón magnético y el parallax de la figura.
+
+---
+
+<a id="br-059"></a>
+
+## BR-059 — Navbar: resplandor de neón blanco al pasar el cursor
+
+**Notas de construcción (2026-10-14):**
+- Pedido del usuario al ver las barras de luz de CTA1: el hover de los enlaces pasaba de rojo a un rojo más brillante. Ahora, al pasar el cursor o con foco de teclado, el texto pasa a blanco con un resplandor de neón (`--nav-glow`: núcleo blanco, halo blanco y dos capas de halo rojo), todo con `color-mix` sobre tokens. El foco de teclado del menú móvil se ilumina igual. Con reducir movimiento, sin transición.
+- La primera versión del resplandor era demasiado discreta frente a los tubos de CTA1; se reforzó tras verla en una captura.
+- Test primero (`navbarNeon.test.ts`): hover y foco comparten el resplandor, el menú móvil también, sin colores escritos a mano, sin transición con reducir movimiento.
+
+**Verificación:** captura con el cursor sobre «Servicios». Texto blanco sobre la navbar negra: contraste máximo. **Pendiente (usuario):** verlo en movimiento.
+
+---
+
+<a id="br-062"></a>
+
+## BR-062 — SocialProof1: corte láser cinematográfico y disparos por pistas
+
+**Notas de construcción (2026-10-14):**
+- **Bug de origen:** los 5 rayos tenían `transform: rotate(...)` en el CSS y `style={{ x, y }}` de framer-motion, que escribe su propio `transform` en línea y pisa la rotación: se veían horizontales. Los hexágonos de la sección tienen el mismo bug (su `rotate` del CSS tampoco se aplica); no se tocaron porque al usuario le gusta cómo se ven, y queda anotado aquí.
+- Pistas: la pista rota por CSS y **no** lleva estilo de framer; el haz, su hijo, se mueve con `x` en el eje de la pista (`LaserBolt`). Un test impide que la pista vuelva a llevar `transform` en línea.
+- Corte: un panel del color del fondo con un láser en su borde de ataque se retira en diagonal. La inclinación va por framer (`skewX`), no por CSS, por la misma razón. Foto y tarjeta se cortan desde lados opuestos (dibujan una X); el marco rojo se enciende una vez al terminar el corte de la foto.
+- **Ajuste tras ver las capturas:** con el avance medido sobre toda la sección, el corte ocurría antes de que la foto entrara en pantalla. Cada corte se mide ahora con `useScroll` sobre su propio elemento (de asomar por abajo a llegar al centro).
+- Móvil: el corte ocurre una vez al entrar (`laserCutOneShot`). Reducir movimiento: sin paneles, sin haces ni destello.
+- `as const` en la coreografía hacía que `useTransform` eligiera la firma de mapa de salidas: se tipó con arreglos normales.
+- Deuda: 52 colores a tokens (todos eran la paleta de marca con transparencia), sin `will-change` fijo, la marca de la cita y del `alt` desde `SITE.name`, y el gris del distintivo (2,8:1 sobre blanco) a `--color-neutral-600`.
+- Test primero: `laserCut.test.ts` (tiempos del revelado, orden de los cortes, un solo destello, ventanas de los haces trianguladas). Después: `SocialProof1.test.tsx` (paneles, pistas con su haz, regresión del bug, reducir movimiento, marca, tokens, contraste del distintivo). jsdom no trae `element.animate`: el test lo sustituye.
+
+**Verificación:** 543 tests en verde, lint y tipos limpios. Tira de capturas con `puppeteer-core` en cuatro posiciones: el corte a mitad de camino con la foto a 250 px del borde inferior y todo revelado (con el destello del marco) a 450 px. **Lighthouse móvil, `master` (mismo `.env`) contra BR-062 alternados ×5:** TBT mediana 185 → 198 ms con rangos superpuestos (133–337 y 157–316), LCP 6,4 → 6,4 s, CLS 0. **Pendiente (usuario):** ver el scrub en movimiento, en escritorio y en el celular.
+
+---
+
+<a id="br-064"></a>
+
+## BR-064 — Benefits: fiel al Figma («Beneficios v2») con íconos que se dibujan
+
+**Notas de construcción (2026-10-14):**
+- El usuario compartió el Figma «Beneficios v2»: la sección no era mala de diseño, sino de implementación. La foto estaba tapada por un rojo al 85 % (en Figma el rojo es una franja diagonal y se lee la chaqueta «BARBER RR ROYCE»), el fondo era un gris fuera de la paleta, los textos estaban mal copiados del Figma («dominan cada técnica, tu oficio,», «adaptamos cada servicio a tu corte refleje…») y sin sus negritas, y los íconos no eran los del diseño. Se descartó la reescritura que yo había propuesto: los textos correctos son los del Figma, leídos de una captura de baja resolución (**a confirmar por el usuario**).
+- Tarjetas blancas como en Figma, sin la `Card` de shadcn (`BR-023`). Datos en `src/data/benefitsData.ts` con negritas como partes `{ strong }` (sin interpretar HTML); se borró `benefitsData.tsx`.
+- Íconos de trazo (`DrawnIcon.tsx`): tijera y persona de lucide (ISC); silla de barbero y estrella dibujadas a mano, porque lucide no las tiene. Se dibujan con `pathLength` (`iconDraw`) al entrar la tarjeta; con reducir movimiento aparecen dibujados.
+- El hover de la tarjeta usa `translate` y no `transform`: la entrada de framer escribe el transform en línea (la lección de `BR-062`).
+- «ofreciendo:» con dos puntos (la frase continúa en las tarjetas); la marca del subtítulo desde `SITE.name`; colores a tokens.
+- Móvil: la foto va debajo, en el flujo, con una cuña roja diagonal arriba y anclada abajo para que se lea el logo de la chaqueta (se ajustó dos veces mirando las capturas).
+- Los textos de las tarjetas quedan en el código (opción por defecto; el usuario no eligió pasarlos a la hoja).
+
+**Verificación:** 550 tests en verde (incluido `Benefits.test.tsx`: títulos y negritas, trazos con `stroke-dasharray`, reducir movimiento, marca, sin shadcn ni hex, franja aparte, hover con `translate`), lint y tipos limpios. Capturas en escritorio y móvil emulado. **Lighthouse móvil, `master` (mismo `.env`) contra BR-064 alternados ×5:** TBT mediana 243 → 201 ms (rangos 136–411 y 190–293), LCP 6,4 → 6,4 s, CLS 0. **Pendiente (usuario):** confirmar los textos contra el Figma y ver el trazo de los íconos en movimiento.
+
+---
+
+<a id="br-065"></a>
+
+## BR-065 — SocialProof2: parrilla bento con las proporciones del Figma
+
+**Notas de construcción (2026-10-14):**
+- El usuario compartió el Figma «Prueba social 2»: le gustan el fondo y las figuras; el problema eran las dimensiones de los recuadros.
+- **Causa de la columna angosta:** `.container` tenía `margin: 0 auto` dentro de una sección `flex` en columna; en flex, los márgenes automáticos anulan el estiramiento y el elemento se encoge a su contenido (806 px con el texto en 550 px, aunque tuviera `max-width: 1800px`). Se arregló con `width: 100%`.
+- Bento de doce filas: columnas `1.3fr 1.16fr 1fr`; la 1 parte en 7/5 (grande arriba), la 2 en 5/7 (grande abajo) y la 3 es una foto alta. Esquinas rectas (`--radius-sm`). Cada recuadro recorta su `img` con `object-fit: cover`, listo para las fotos de Instagram de `BR-051` (sin cambiar su alcance).
+- Texto más ancho y alineado a la izquierda, título y subtítulo más grandes, como en Figma.
+- El zoom del hover pasó de `transform` a `scale` (la entrada de framer pisaba el transform). Colores a tokens, sin `will-change` fijo. Fondo y figuras sin cambios.
+- Móvil: dos columnas, la primera foto a todo el ancho y la alta al costado de las demás.
+
+**Verificación:** 557 tests en verde (incluido `bento.test.ts`: columnas distintas, partición de cada columna, ancho del contenedor, `object-fit`, hover con `scale`, móvil, tokens), lint y tipos limpios. Capturas a 1906 px (el ancho de la captura del usuario) y en móvil emulado. **Lighthouse móvil, `master` (mismo `.env`) contra BR-065 alternados ×5:** TBT mediana 238 → 246 ms (una corrida atípica de 415), LCP 6,5 → 6,4 s, CLS 0. Los valores absolutos de ambos subieron respecto de mediciones anteriores, probablemente por otras sesiones usando la máquina; vale la comparación alternada.
+
+**Ajuste de BR-064 (2026-10-14), escena ligada al scroll:** la franja roja entra en diagonal desde abajo y se asienta cuando la sección queda centrada, y la foto parte ampliada (1,14) y se asienta (`useScroll` sobre la sección, scrub, solo `transform`); con reducir movimiento todo queda en su posición final. Al pasar el ratón, el ícono se redibuja con una animación **CSS** del `stroke-dashoffset` que framer deja en cada trazo. Primero se hizo con `whileHover` de framer y el test del trazo lo detectó: con `whileHover`, la tarjeta pasa a controlar sus propias variantes y deja de heredar «hidden»/«visible» de la grilla (se perdían la entrada escalonada y el trazo). Tira de capturas en tres puntos del scroll. Este ajuste **no se midió con Lighthouse** (solo agrega transformaciones bajo el pliegue).
+
+**Ajuste de BR-064 (2026-10-14), movimiento de la franja:** al usuario le pareció raro. Se movía en diagonal (35 % a la derecha y 28 % abajo), pero su inclinación es casi vertical: se veía desplazarse de costado, y al bajar dejaba un hueco arriba. Ahora la franja es un 30 % más larga arriba y abajo que la sección (con el polígono recalculado para que, en reposo, sus bordes visibles queden donde estaban) y se desliza por su propio eje: 18,75 % de su alto hacia abajo y −10 % en x, que es la pendiente de sus bordes. Tira de capturas: sin huecos en ningún punto del scroll.
+
+<a id="br-060"></a>
+
+## BR-060 — Equipo: panal de hexágonos con el líder destacado
+
+**Notas de construcción (2026-10-14):**
+- Referencia: el Figma del usuario (panal con el líder grande y marco rojo, el resto con marco blanco, sobre las diagonales del hero).
+- **Panal como grilla CSS:** columnas de medio hexágono y filas de un cuarto de su alto; un hexágono ocupa 2 × 4 y cada fila avanza 3, así que la siguiente encaja en los huecos. El líder ocupa 3 × 6 (1,5 veces). `buildHoneycomb` (`src/components/team/honeycomb.ts`, con test primero) calcula para cada barbero su posición en escritorio y en móvil, y el CSS elige con una media query: cambiar el ancho no vuelve a renderizar.
+- Escritorio: el líder a la izquierda; el resto en filas de hasta 4, la de abajo con el barbero de más y corrida medio hexágono hacia el líder. Con la fila de arriba alineada al borde superior del líder, la fila de abajo pisaba su esquina: el panal baja medio hexágono y pasa bajo su punta. Móvil: el líder arriba al centro y filas de 2 alternadas.
+- Marco: el hexágono exterior es el color del marco y la foto va recortada con el mismo polígono, inset por el grosor. Cursor o foco de teclado: `drop-shadow` blanco con halo rojo sobre el botón sin recortar (el `clip-path` cortaría un `box-shadow`), como el neón de `BR-059`. Cada hexágono es un `<button>` con «nombre, cargo» como nombre accesible, listo para abrir la ficha de `BR-063`.
+- Nombre y cargo al pasar el cursor, sobre una sombra pareja del 80 %: el blanco queda en ≥ 12,6:1 aun sobre una foto blanca. Un degradado desde abajo no alcanzaba: en móvil los nombres ocupan dos líneas y llegan al 80 % del alto (medido en Chrome).
+- Título compacto en Anton sobre el mismo fondo en vez de la banda de `PageHero` (decisión del usuario, 2026-10-14). Fondo: charcoal, triángulo oscuro arriba a la izquierda y rojo abajo a la derecha con el degradado y el filo de luz del hero, hechos en el módulo de la página sin tocar el hero.
+- **LCP:** la foto del líder es el LCP. En la primera medición empeoró de 5,3 a 6,5 s: el *render delay* pasó de 1,1 a 3,0 s porque la entrada (opacidad desde 0) retrasa el momento en que Chrome la cuenta. Ahora el líder aparece sin entrada y su foto va con `loading="eager"` y `fetchpriority="high"`; el resto entra escalonado.
+- Se quitó el uso de `Card` de `ui/` (`BR-023`) y el CSS anterior con colores escritos a mano.
+
+**Verificación:** 576 tests en verde, contando los e2e (16 nuevos: `honeycomb.test.ts` con el equipo de hoy, el del Figma, uno grande, sin líder, uno solo y móvil; `TeamHoneycomb.test.tsx` con nombre accesible, líder primero, `alt`, clic, marcos, foco, reducir movimiento y tokens), lint y tipos limpios, `contrast.e2e.test.ts` en verde en las 9 rutas. Capturas a 1440, 768 y 390 px sin scroll horizontal, con cursor y con foco de teclado. **Lighthouse móvil, `master` (mismo `.env`) contra BR-060 alternados ×5:** TBT mediana 120 → 135 ms con rangos superpuestos (103–164 y 103–173), LCP 5,1 → 4,9 s (4,8–5,0), CLS 0 → 0,0006. **Regresión aceptada (2026-10-14, decisión del usuario):** el CLS de 0,0006 viene del texto del título al llegar Anton (la caja no cambia, se corre el texto centrado); está muy por debajo del umbral de 0,1. **Pendiente:** verificar en el preview de Vercel.
+
+<a id="br-063"></a>
+
+## BR-063 — Equipo: ficha de cada barbero en un modal
+
+**Notas de construcción (2026-10-14):**
+- Referencia: el Figma del modal (la foto en un tercio, un degradado hacia el negro y, en la zona oscura, el nombre grande, chips y descripción). Ajuste del usuario a mitad de camino: llenar la ficha con contenido de ejemplo y sumar «Reservar con…», Instagram, fotos de trabajos, frase y años destacados (ver el ajuste en la ficha).
+- **Hoja:** columnas opcionales nuevas en `equipo`: `especialidades` (hasta 6, de 30 caracteres), `descripcion` (400), `frase` (120), `reserva` e `instagram` (`https://`) y `trabajos` (hasta 3 imágenes). `RowReader` suma `optionalList`, `optionalUrl` y `optionalImageList`; una hoja sin las columnas sigue siendo válida. La plantilla `docs/contenido/equipo.csv` se regeneró con `contentToSheet` desde el respaldo (un test exige que sean idénticas), y la guía del dueño explica cada columna y los errores nuevos.
+- **Respaldo:** textos de ejemplo para los cinco barberos (decisión del usuario). Las fotos de trabajos reutilizan las de Unsplash del sitio: la CSP (`img-src`) solo admite imágenes propias o de Unsplash, y así lo dice la guía. Sin Instagram de ejemplo.
+- **Diálogo** (`BarberProfileDialog`, en un portal): `role="dialog"`, `aria-modal`, `aria-labelledby` con el nombre y `aria-describedby` con la descripción si existe. Al abrir, el foco va a «Cerrar ficha»; Tab y Mayús+Tab dan la vuelta dentro; Escape, el botón o el fondo lo cierran y el foco vuelve al hexágono. Mientras está abierto, Lenis se detiene y `html` queda con `overflow: hidden`; el cuerpo de la ficha se desplaza solo (`data-lenis-prevent`). Entrada y salida con `AnimatePresence`; con reducir movimiento, sin animación.
+- La experiencia se muestra como dato grande cuando empieza con un número (`experienceHighlight`, con test primero); si no, como texto junto al cargo.
+- «Reservar con…» usa `reserva` o, si está vacía, `business.booking.url`, y se rastrea como `reserve_click` con la sección nueva `equipo` (`trackedLinks.test.ts` lo exige). En móvil los botones quedan fijos al pie de la ficha, que se desplaza.
+- Trampa: el `clip-path` del chaflán recorta el `outline` de foco; en los botones con chaflán el foco es un anillo interior (`box-shadow: inset`).
+- Trampa de test: el foco vuelve en la limpieza del efecto, que React corre justo después de sacar el diálogo del DOM; en paralelo con otros archivos, el test fallaba si no esperaba también el foco.
+
+**Verificación:** 600 tests en verde, contando los e2e, lint y tipos limpios. Capturas a 1440 y 390 px con los datos de la plantilla (la hoja real todavía no tiene las columnas nuevas: se interceptó su pestaña `equipo` en Chrome): ficha completa, ficha sin campos opcionales y móvil con los botones fijos. Recorrido con teclado en Chrome real: el foco va a cerrar, Escape cierra, el foco vuelve al hexágono y `overflow` se restaura. Contraste: blanco sobre el negro de la ficha 21:1; el texto atenuado (blanco al 85 %) más de 14:1; el número rojo grande ~4,1:1 (texto grande, mínimo 3:1); el botón rojo con texto blanco 5,1:1. **Lighthouse móvil, `master` (BR-060) contra BR-063 alternados ×5:** TBT mediana 77 → 75 ms (61–91 y 63–88), LCP 4,8 → 4,9 s, CLS igual (0,0006). **Pendiente:** agregar las columnas a la hoja real y verificar en el preview de Vercel.
+
+**Ajuste de BR-063 (2026-10-14), días de atención y sucursal:** columnas `dias` y `sucursal` en `equipo`. `parseDays` (`src/content/days.ts`, con test primero) acepta días sueltos, nombres completos y rangos, con o sin tilde (un rango que cruza el domingo da la vuelta). Las sucursales pasan a tener `id` (`Location.id`, leído de la hoja y fijado en `locationsData.ts` igual que en la plantilla); `resolveContent` lee `sucursales` antes que `equipo` y le pasa sus ids a `readTeam`, así una sucursal inexistente rechaza la fila con su número correcto, y el informe conserva el orden de siempre. La plantilla de sucursales sale ahora con `l.id` en vez del id derivado del nombre (es el mismo). En la ficha: una semana L M M J V S D con los días encendidos en rojo (para lectores de pantalla, «Atiende: Lunes, …») y los nombres de las sucursales con un ícono. Verificación: 613 tests en verde, lint y tipos limpios; capturas a 1440 y 390 px con los datos de la plantilla.
+
+**Ajuste de BR-060 (2026-10-14), panal más grande y con la misma distancia:** el usuario pidió agrandar el panal en escritorio y que la distancia entre hexágonos fuera pareja: el líder (marco rojo) se veía más lejos de los de abajo. Medido en Chrome a 1920 px con los polígonos de cada botón: líder–Roberto **35,8 px**; los demás pares, 10,8–12,0 px.
+- **Causa 1, el líder no encajaba:** con una grilla de medias columnas y cuartos de alto, el borde diagonal de un hexágono de 1,5× queda a media unidad de la diagonal del vecino de 1× (la condición de encaje exige una suma entera y el líder da un .5). Se probó bajando la fila de abajo, pero eso solo movía el hueco. **Arreglo:** la grilla pasa a cuartos de ancho y octavos de alto (hexágono de 4 × 8, líder de 6 × 12, fila de 6). Con esa resolución el primer barbero va a ras de la arista derecha del líder y un cuarto de su alto más abajo, y la fila de abajo corrida media celda queda sobre la diagonal del líder; en móvil la punta del líder baja justo a la hendidura que dejan los dos de la primera fila.
+- **Causa 2, la separación no era pareja:** el relleno de cada celda era el mismo `--hex-gap / 2` por los cuatro lados; los lados inclinados quedaban a ~10,4 px y los verticales a 12. **Arreglo:** el hexágono se encoge por igual (`--hex-gap / 2` en horizontal y 1,1547 veces eso en vertical): como es regular, queda a la misma distancia del vecino por los seis bordes. Medido: los 7 pares a **12,0 px** a 1920, 1440, 1024 y 768 px y a **8,0 px** a 390 px, sin scroll horizontal.
+- **Tamaño:** hasta 17,5 rem en escritorio (268 px el hexágono y 408 el líder a 1920), y `min()` con el ancho de pantalla para que un equipo grande se achique en vez de desbordar. En móvil, el ancho también sale de las columnas de la grilla.
+- `honeycomb.test.ts` pasa de 8 a 27 casos: además de las posiciones, calcula los polígonos y exige que todo par de hexágonos a menos de 0,2 anchos se toque exactamente, para equipos de 1 a 10 barberos en escritorio y en móvil. Sin ese test el defecto no se veía en ninguna prueba.
+
+**Verificación:** 632 tests en verde, lint y tipos limpios. **Lighthouse móvil, `master` contra el ajuste alternados ×5:** TBT mediana 103 → 128 ms con rangos superpuestos (90–173 y 75–141), LCP 5,0 → 4,9 s, CLS igual (0,0006).
+
+<a id="br-066"></a>
+
+## BR-066 — El respaldo del enlace de reserva apunta a un subdominio que no existe
+
+**Notas de construcción (2026-10-14):**
+- El usuario avisó de que el enlace de reserva no servía. En la hoja (`negocio`, `reservas.url`) estaba bien; el respaldo del repo (`BOOKING.url` en `src/config/constants.ts` y la plantilla `negocio.csv`) usaba `barberiaroyc.site.agendapro.com`, que redirige a la página comercial de AgendaPro. Quedó del archivo anterior (`docs/archivo/BACKLOG.md` lo cita igual y se deja: es histórico).
+- Con la hoja funcionando no se notaba; solo habría fallado si la hoja no respondía. Se corrigió el respaldo y se regeneró la plantilla desde él (la comparación de `contentWiring.test.tsx` la exige igual al respaldo).
+- Mi sugerencia anterior de usar `https://roycespa.site.agendapro.com/cl` (sin sucursal) era un error: el usuario confirmó que la buena es la de la sucursal `400965`. Se dejó esa.
+- `src/config/booking.test.ts` (test primero, en rojo con tres casos): el respaldo es la dirección real, la plantilla trae la misma y el subdominio antiguo no queda en `src/`, en las plantillas ni en `index.html`.
+
+**Verificación:** lint, tipos y toda la suite en verde (ver el PR #29). El enlace real responde 200 y es la página «Barberia Royce & Royce Space | Agenda online».
