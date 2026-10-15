@@ -24,6 +24,8 @@ export const teamMembersList: TeamMember[] = [
             "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=400&h=300&fit=crop",
         ],
         quote: "Un buen corte se nota cuando te levantas al día siguiente.",
+        workDays: [0, 1, 2, 3, 4, 5],
+        branchIds: ["barberia-royce-la-serena", "barberia-royce-coquimbo"],
     },
     {
         name: "Miguel Torres",
@@ -41,6 +43,8 @@ export const teamMembersList: TeamMember[] = [
             "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&h=300&fit=crop",
         ],
         quote: "Los clásicos no pasan de moda.",
+        workDays: [0, 1, 2, 3, 4],
+        branchIds: ["barberia-royce-la-serena"],
     },
     {
         name: "Juan Ramirez",
@@ -58,6 +62,8 @@ export const teamMembersList: TeamMember[] = [
             "https://images.unsplash.com/photo-1599351431653-4c7ff2f9f8b7?w=400&h=300&fit=crop",
         ],
         quote: "Si lo imaginas, lo dibujamos.",
+        workDays: [1, 2, 3, 4, 5],
+        branchIds: ["barberia-royce-coquimbo"],
     },
     {
         name: "Roberto Silva",
@@ -71,6 +77,8 @@ export const teamMembersList: TeamMember[] = [
         instagram: "",
         works: [],
         quote: "",
+        workDays: [0, 2, 4, 5],
+        branchIds: ["barberia-royce-la-serena"],
     },
     {
         name: "David Morales",
@@ -84,5 +92,7 @@ export const teamMembersList: TeamMember[] = [
         instagram: "",
         works: [],
         quote: "",
+        workDays: [1, 3, 5],
+        branchIds: ["barberia-royce-coquimbo"],
     },
 ];

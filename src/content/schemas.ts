@@ -8,6 +8,7 @@ import type { Service } from "@/types/service.types";
 import type { TeamMember } from "@/types/team.types";
 import { BUSINESS_FIELDS, businessValueProblem, emailProblem, isBusinessKey, mapUrlProblem, phoneProblem } from "./business";
 import type { CsvTable } from "./csv";
+import { parseDays } from "./days";
 import { formatClp } from "./format";
 import { TEXTS, isTextKey } from "./texts";
 import type { ContentIssue, ContentTab } from "./types";
@@ -27,6 +28,7 @@ const MAX_SPECIALTY_LENGTH = 30;
 const MAX_MEMBER_DESCRIPTION = 400;
 const MAX_MEMBER_QUOTE = 120;
 const MAX_MEMBER_WORKS = 3;
+const MAX_MEMBER_BRANCHES = 5;
 /** Una imagen es una ruta del sitio (`/…`) o una dirección `https://`. */
 const IMAGE_SOURCE = /^(https:\/\/|\/)/;
 
@@ -107,6 +109,13 @@ class RowReader {
     const value = this.optionalText(field, max);
     if (value !== "" && !isHttps(value)) this.report(field, `"${value}" debe ser una dirección completa que empiece con https://`);
     return value;
+  }
+
+  /** Días de atención (`Lun a Vie, Sáb`), de 0 (lunes) a 6 (domingo). Vacío = ninguno. */
+  days(field: string): number[] {
+    const { days, unknown } = parseDays(this.values[field] ?? "");
+    for (const part of unknown) this.report(field, `"${part}" no es un día; usa Lun, Mar, Mié, Jue, Vie, Sáb, Dom o un rango como Lun a Vie`);
+    return days;
   }
 
   /** Lista opcional de imágenes separadas por comas, cada una una ruta del sitio (`/…`) o una dirección `https://`. */
@@ -253,7 +262,11 @@ export function readProducts(table: CsvTable): TabResult<Product> {
   );
 }
 
-export function readTeam(table: CsvTable): TabResult<TeamMember> {
+/**
+ * Pestaña `equipo`. `branchIds` son los ids de las sucursales que usa el sitio: si se dan, una `sucursal` que no
+ * esté entre ellos rechaza la fila (BR-063). Sin ellos solo se revisa el formato.
+ */
+export function readTeam(table: CsvTable, branchIds?: readonly string[]): TabResult<TeamMember> {
   const result = readTab(
     "equipo",
     table,
@@ -272,8 +285,15 @@ export function readTeam(table: CsvTable): TabResult<TeamMember> {
         const instagram = r.optionalUrl("instagram", 300);
         const works = r.optionalImageList("trabajos", MAX_MEMBER_WORKS);
         const quote = r.optionalText("frase", MAX_MEMBER_QUOTE);
+        const workDays = r.days("dias");
+        const branches = r.optionalList("sucursal", MAX_MEMBER_BRANCHES, 60);
+        for (const branch of branches) {
+          if (branchIds && !branchIds.includes(branch)) {
+            r.report("sucursal", `"${branch}" no es una sucursal; usa el id de la pestaña sucursales (${branchIds.join(", ")})`);
+          }
+        }
         if (name === undefined || role === undefined || experience === undefined) return undefined;
-        return { name, role, experience, image, isLead, specialties, description, bookingUrl, instagram, works, quote };
+        return { name, role, experience, image, isLead, specialties, description, bookingUrl, instagram, works, quote, workDays, branchIds: branches };
       },
     },
     { unique: "id" },
@@ -376,7 +396,7 @@ export function readLocations(table: CsvTable): TabResult<Location> {
     {
       required: ["id", "nombre", "direccion", "ciudad", "telefono", "email", "whatsapp", "mapa", "horario_semana", "horario_sabado", "horario_domingo"],
       read: (r) => {
-        r.slug("id");
+        const id = r.slug("id");
         const name = r.text("nombre", 60);
         const address = r.text("direccion", 80);
         const city = r.text("ciudad", 60);
@@ -387,8 +407,9 @@ export function readLocations(table: CsvTable): TabResult<Location> {
         const weekdays = r.text("horario_semana", 40);
         const saturday = r.text("horario_sabado", 40);
         const sunday = r.text("horario_domingo", 40);
-        if ([name, address, city, phone, email, whatsapp, mapUrl, weekdays, saturday, sunday].some((value) => value === undefined)) return undefined;
+        if ([id, name, address, city, phone, email, whatsapp, mapUrl, weekdays, saturday, sunday].some((value) => value === undefined)) return undefined;
         return {
+          id: id!,
           name: name!,
           address: address!,
           city: city!,

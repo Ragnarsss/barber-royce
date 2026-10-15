@@ -2195,6 +2195,15 @@ columnas a la plantilla y a la hoja.
 > usuario inventado podría ser la cuenta real de otra persona). Las fotos de
 > ejemplo de trabajos reutilizan las de Unsplash del sitio: la CSP solo
 > admite imágenes propias o de Unsplash.
+>
+> **Alcance ajustado (2026-10-14, decisión del usuario):** la ficha muestra
+> también los **días de atención** (columna `dias`: días sueltos, nombres
+> completos o rangos como `Lun a Vie`; se ven como una semana con esos días
+> encendidos) y la **sucursal** (columna `sucursal`, con el `id` de la pestaña
+> `sucursales`; una o varias). Un `id` que no existe rechaza la pestaña
+> `equipo`. Para eso las sucursales pasan a tener `id` en el contenido
+> (`Location.id`), y `resolveContent` lee `sucursales` antes que `equipo`. El
+> usuario descartó, por ahora, el horario por día.
 
 Alcance:
 1. Columnas nuevas y **opcionales** en la pestaña `equipo`: `especialidades`

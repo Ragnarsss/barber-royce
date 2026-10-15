@@ -228,6 +228,23 @@ describe("pestaña equipo", () => {
       expect(bad.issues[0].message).toContain("foto.jpg");
     });
 
+    it("lee los días de atención y las sucursales (ids separados por comas)", () => {
+      const { items, issues } = readTeam(
+        table(`${HEAD},dias,sucursal\nc,Carlos,Master,15 años,,,"Lun a Vie, Sáb","barberia-royce-la-serena, barberia-royce-coquimbo"\nm,Miguel,Barber,10 años,,,,\n`),
+      );
+
+      expect(issues).toEqual([]);
+      expect(items[0]).toMatchObject({ workDays: [0, 1, 2, 3, 4, 5], branchIds: ["barberia-royce-la-serena", "barberia-royce-coquimbo"] });
+      expect(items[1]).toMatchObject({ workDays: [], branchIds: [] });
+    });
+
+    it("un día que no existe rechaza la pestaña y lo nombra", () => {
+      const { issues } = readTeam(table(`${HEAD},dias\nc,Carlos,Master,15 años,,,"Lun, Feriados"\n`));
+
+      expect(issues[0]).toMatchObject({ field: "dias" });
+      expect(issues[0].message).toContain("Feriados");
+    });
+
     it("una frase de más de 120 caracteres rechaza la pestaña", () => {
       const { issues } = readTeam(table(`${HEAD},frase\nc,Carlos,Master,15 años,,,${"a".repeat(121)}\n`));
 

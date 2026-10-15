@@ -26,6 +26,8 @@ vi.mock("virtual:site-content", async () => {
           instagram: "https://www.instagram.com/carlos.barber",
           works: ["/trabajos/a.jpg", "/trabajos/b.jpg"],
           quote: "El detalle lo es todo.",
+          workDays: [0, 1, 2, 3, 4, 5],
+          branchIds: ["barberia-royce-la-serena", "barberia-royce-coquimbo"],
         },
         {
           name: "Juan Pérez",
@@ -39,6 +41,8 @@ vi.mock("virtual:site-content", async () => {
           instagram: "",
           works: [],
           quote: "",
+          workDays: [],
+          branchIds: [],
         },
       ],
     },
@@ -103,6 +107,26 @@ describe("ficha del barbero (BR-063)", () => {
     expect(instagram).toHaveAttribute("rel", "noopener noreferrer");
   });
 
+  it("CA-07: muestra los días que atiende (también para lectores de pantalla) y sus sucursales", async () => {
+    const { snapshot } = await import("@/content/snapshot");
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /Carlos Mendoza/ }));
+
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByText("Atiende: Lunes, Martes, Miércoles, Jueves, Viernes, Sábado")).toBeInTheDocument();
+    const week = [...dialog.querySelectorAll("[title]")].map((day) => [day.getAttribute("title"), day.hasAttribute("data-on")]);
+    expect(week).toEqual([
+      ["Lunes", true],
+      ["Martes", true],
+      ["Miércoles", true],
+      ["Jueves", true],
+      ["Viernes", true],
+      ["Sábado", true],
+      ["Domingo", false],
+    ]);
+    for (const location of snapshot.locations) expect(dialog).toHaveTextContent(location.name);
+  });
+
   it("«Reservar con…» usa el enlace general si el barbero no tiene uno propio", async () => {
     const { snapshot } = await import("@/content/snapshot");
     renderPage();
@@ -127,6 +151,8 @@ describe("ficha del barbero (BR-063)", () => {
     const dialog = screen.getByRole("dialog", { name: "Juan Pérez" });
     expect(within(dialog).queryByRole("list")).not.toBeInTheDocument();
     expect(within(dialog).queryByRole("link", { name: /Instagram/ })).not.toBeInTheDocument();
+    expect(within(dialog).queryByText(/Atiende:/)).not.toBeInTheDocument();
+    expect(within(dialog).queryByText(/Sucursal:/)).not.toBeInTheDocument();
     expect(dialog).not.toHaveAttribute("aria-describedby");
     // Sin número al inicio, la experiencia se muestra como texto junto al cargo.
     expect(within(dialog).getByText(/Desde 2019/)).toBeInTheDocument();

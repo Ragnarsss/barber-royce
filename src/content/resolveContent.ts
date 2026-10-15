@@ -22,10 +22,11 @@ const APPLY: Record<ContentTab, (content: SiteContent, items: never[]) => void> 
   sucursales: (content, items) => void (content.locations = items),
 };
 
-const READERS: Record<ContentTab, (table: ReturnType<typeof toTable>) => TabResult<unknown>> = {
+/** `content` es lo resuelto hasta ese momento: el equipo valida sus sucursales contra las que usará el sitio. */
+const READERS: Record<ContentTab, (table: ReturnType<typeof toTable>, content: SiteContent) => TabResult<unknown>> = {
   servicios: readServices,
   productos: readProducts,
-  equipo: readTeam,
+  equipo: (table, content) => readTeam(table, content.locations.map((location) => location.id)),
   preguntas: readFaq,
   textos: readTexts,
   negocio: readBusiness,
@@ -49,7 +50,9 @@ export function resolveContent(sheet: SheetCsv, snapshot: SiteContent): Resolved
   const content: SiteContent = structuredClone(snapshot);
   const reports: TabReport[] = [];
 
-  for (const tab of CONTENT_TABS) {
+  // Las sucursales van primero: el equipo revisa contra ellas dónde atiende cada barbero (BR-063).
+  const order = [...CONTENT_TABS].sort((a, b) => Number(b === "sucursales") - Number(a === "sucursales"));
+  for (const tab of order) {
     const csv = sheet[tab];
     if (csv === undefined) {
       reports.push(backup(tab, "no se obtuvo de la hoja"));
@@ -69,7 +72,7 @@ export function resolveContent(sheet: SheetCsv, snapshot: SiteContent): Resolved
       continue;
     }
 
-    const { items, issues, warnings } = READERS[tab](table);
+    const { items, issues, warnings } = READERS[tab](table, content);
     if (issues.length > 0) {
       reports.push(backup(tab, `${issues.length} problema${issues.length === 1 ? "" : "s"} en la hoja`, issues, warnings));
     } else if (items.length === 0 && tab !== "textos" && tab !== "negocio") {
@@ -81,6 +84,7 @@ export function resolveContent(sheet: SheetCsv, snapshot: SiteContent): Resolved
     }
   }
 
+  reports.sort((a, b) => CONTENT_TABS.indexOf(a.tab) - CONTENT_TABS.indexOf(b.tab));
   return { content, reports };
 }
 

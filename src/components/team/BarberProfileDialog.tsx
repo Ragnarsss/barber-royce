@@ -1,10 +1,11 @@
 import { useEffect, useId, useRef, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { motion, useReducedMotion } from "framer-motion";
-import { CalendarCheck, X } from "lucide-react";
+import { CalendarCheck, MapPin, X } from "lucide-react";
 import type { TeamMember } from "@/types/team.types";
 import { trackReserve } from "@/analytics/track";
 import { InstagramIcon } from "@/components/icons";
+import { WEEK_DAYS } from "@/content/days";
 import { useSiteContent } from "@/content/useSiteContent";
 import { useLenisInstance } from "@/hooks/useLenisContext";
 import { experienceHighlight } from "./experience";
@@ -31,7 +32,8 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 export const BarberProfileDialog = ({ member, onClose }: BarberProfileDialogProps) => {
   const reducedMotion = useReducedMotion() ?? false;
   const lenis = useLenisInstance();
-  const { business } = useSiteContent();
+  const { business, locations } = useSiteContent();
+  const branches = locations.filter((location) => member.branchIds.includes(location.id));
   const years = experienceHighlight(member.experience);
   const firstName = member.name.split(" ")[0];
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -129,6 +131,30 @@ export const BarberProfileDialog = ({ member, onClose }: BarberProfileDialogProp
                     </li>
                   ))}
                 </ul>
+              )}
+            </div>
+          )}
+
+          {(member.workDays.length > 0 || branches.length > 0) && (
+            <div className={styles.availability}>
+              {member.workDays.length > 0 && (
+                <p className={styles.week}>
+                  <span className="sr-only">Atiende: {member.workDays.map((day) => WEEK_DAYS[day].long).join(", ")}</span>
+                  <span className={styles.weekDays} aria-hidden="true">
+                    {WEEK_DAYS.map((day, index) => (
+                      <span key={day.long} className={styles.weekDay} data-on={member.workDays.includes(index) || undefined} title={day.long}>
+                        {day.short}
+                      </span>
+                    ))}
+                  </span>
+                </p>
+              )}
+              {branches.length > 0 && (
+                <p className={styles.branches}>
+                  <MapPin aria-hidden="true" />
+                  <span className="sr-only">Sucursal: </span>
+                  {branches.map((branch) => branch.name).join(" · ")}
+                </p>
               )}
             </div>
           )}

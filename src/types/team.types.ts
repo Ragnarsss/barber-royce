@@ -21,4 +21,8 @@ export interface TeamMember {
     works: string[];
     /** Frase corta del barbero para la ficha (BR-063). */
     quote: string;
+    /** Días que atiende, de 0 (lunes) a 6 (domingo) (BR-063); vacío = no se muestra. */
+    workDays: number[];
+    /** Ids de las sucursales (pestaña `sucursales`) donde atiende (BR-063). */
+    branchIds: string[];
 }

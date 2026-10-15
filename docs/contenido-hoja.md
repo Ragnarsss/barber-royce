@@ -59,6 +59,13 @@ nombres.
 - `trabajos` (equipo): hasta 3 fotos de sus cortes, con las direcciones separadas
   por comas. Por ahora el sitio solo muestra imágenes guardadas en el propio sitio
   (empiezan con `/`) o de Unsplash; las de otros sitios no cargan.
+- `dias` (equipo): los días que atiende, separados por comas. Sirven las
+  abreviaturas (`Lun, Mar, Mié, Jue, Vie, Sáb, Dom`), los nombres completos y los
+  rangos: `Lun a Vie, Sáb` o `Mar-Jue`. Con o sin tilde. En la ficha se ven como
+  una semana con esos días encendidos.
+- `sucursal` (equipo): dónde atiende, con el **`id` de la pestaña `sucursales`**
+  (por ejemplo `barberia-royce-la-serena`). Si atiende en las dos, sepáralas con
+  una coma. Un `id` que no existe en `sucursales` rechaza la pestaña.
 - La **experiencia** se muestra como un número grande si empieza con un número
   («15 años de experiencia» → **15** años de experiencia).
 
@@ -326,6 +333,8 @@ pestañas sí se actualizaron. Busca la línea con `-` o `!` debajo para ver qu�
 | `… imagen: "…" debe empezar con https:// o con /` | La imagen no es una dirección válida | Usa una dirección `https://` o déjala vacía |
 | `… falta esta columna en el encabezado` | Cambiaste o borraste un encabezado | Restaura el nombre exacto de la columna |
 | `… hay 2 líderes (…)` | Dos personas con `lider = SI` | Deja solo una |
+| `… dias: "Feriados" no es un día; usa Lun, Mar, …` | Un día mal escrito | Usa las abreviaturas o un rango como `Lun a Vie` |
+| `… sucursal: "coquimbo" no es una sucursal; usa el id de la pestaña sucursales (…)` | El `id` no coincide con ninguna fila de `sucursales` | Copia el `id` exacto desde la pestaña `sucursales` |
 | `… especialidades: tiene 7 elementos y el máximo es 6` | Demasiadas especialidades para un barbero | Deja las 6 principales |
 | `… especialidades: "…" tiene 34 caracteres y el máximo es 30` | Una especialidad muy larga | Acórtala (por ejemplo, «Degradados con navaja») |
 | `la pestaña está vacía` | Pestaña sin contenido | Revisa que importaste los datos |
