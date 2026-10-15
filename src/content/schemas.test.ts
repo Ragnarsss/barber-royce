@@ -160,6 +160,47 @@ describe("pestaña equipo", () => {
     expect(issues).toHaveLength(1);
     expect(issues[0].message).toContain("Carlos, Miguel");
   });
+
+  describe("especialidades y descripción (BR-063, HU-INFO-003 CA-07)", () => {
+    const FULL = `${HEAD},especialidades,descripcion`;
+
+    it("lee las especialidades separadas por comas, sin espacios sobrantes ni vacías", () => {
+      const { items, issues } = readTeam(
+        table(`${FULL}\nc,Carlos,Master,15 años,,SI," Fade , Barba,,Diseño ",Corta desde 2010.\n`),
+      );
+
+      expect(issues).toEqual([]);
+      expect(items[0]).toMatchObject({ specialties: ["Fade", "Barba", "Diseño"], description: "Corta desde 2010." });
+    });
+
+    it("sin las columnas nuevas la pestaña sigue siendo válida (CP-CNT-002)", () => {
+      const { items, issues } = readTeam(table(`${HEAD}\nc,Carlos,Master,15 años,,SI\n`));
+
+      expect(issues).toEqual([]);
+      expect(items[0]).toMatchObject({ specialties: [], description: "" });
+    });
+
+    it("más de 6 especialidades rechazan la pestaña con fila y campo", () => {
+      const { issues } = readTeam(table(`${FULL}\nc,Carlos,Master,15 años,,,"a,b,c,d,e,f,g",\n`));
+
+      expect(issues[0]).toMatchObject({ tab: "equipo", row: 2, field: "especialidades" });
+      expect(issues[0].message).toContain("7");
+    });
+
+    it("una especialidad de más de 30 caracteres rechaza la pestaña y la nombra", () => {
+      const long = "Degradados de precisión con navaja";
+      const { issues } = readTeam(table(`${FULL}\nc,Carlos,Master,15 años,,,"Fade,${long}",\n`));
+
+      expect(issues[0]).toMatchObject({ field: "especialidades" });
+      expect(issues[0].message).toContain(long);
+    });
+
+    it("una descripción de más de 400 caracteres rechaza la pestaña", () => {
+      const { issues } = readTeam(table(`${FULL}\nc,Carlos,Master,15 años,,,,${"a".repeat(401)}\n`));
+
+      expect(issues[0]).toMatchObject({ field: "descripcion" });
+    });
+  });
 });
 
 describe("pestaña preguntas", () => {

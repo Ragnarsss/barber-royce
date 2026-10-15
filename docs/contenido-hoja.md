@@ -44,6 +44,11 @@ nombres.
   Puede ir vacía.
 - `incluye` (servicios): texto corto, por ejemplo «Cortesía».
 - `lider` (equipo): `SI` para destacar a una persona. **Solo una** puede ser líder.
+- `especialidades` (equipo): lo que mejor hace cada barbero, separado por comas,
+  por ejemplo `Fade, Barba, Diseño`. Aparecen como etiquetas en su ficha. Hasta 6,
+  de hasta 30 caracteres cada una.
+- `descripcion` (equipo): un párrafo corto sobre el barbero para su ficha.
+  Si la dejas vacía, la ficha se muestra sin ella.
 
 ### Reglas de cada campo
 
@@ -53,7 +58,8 @@ nombres.
 | `precio` | **Número entero, sin `$` ni puntos**, en pesos chilenos. El sitio lo muestra como `$15.000` | `15000` |
 | `categoria` | Solo una de las permitidas (abajo) | `Barba` |
 | `nombre` | Hasta 60 caracteres | |
-| `descripcion` | Servicios: hasta 300. Productos: hasta 200 | |
+| `descripcion` | Servicios: hasta 300. Productos: hasta 200. Equipo: hasta 400 | |
+| `especialidades` | Separadas por comas. Hasta 6, de hasta 30 caracteres cada una | `Fade, Barba, Diseño` |
 | `duracion` | Hasta 20 caracteres | `45 min` |
 | `pregunta` / `respuesta` | Hasta 150 / hasta 800 caracteres | |
 
@@ -308,6 +314,8 @@ pestañas sí se actualizaron. Busca la línea con `-` o `!` debajo para ver qu�
 | `… imagen: "…" debe empezar con https:// o con /` | La imagen no es una dirección válida | Usa una dirección `https://` o déjala vacía |
 | `… falta esta columna en el encabezado` | Cambiaste o borraste un encabezado | Restaura el nombre exacto de la columna |
 | `… hay 2 líderes (…)` | Dos personas con `lider = SI` | Deja solo una |
+| `… especialidades: tiene 7 elementos y el máximo es 6` | Demasiadas especialidades para un barbero | Deja las 6 principales |
+| `… especialidades: "…" tiene 34 caracteres y el máximo es 30` | Una especialidad muy larga | Acórtala (por ejemplo, «Degradados con navaja») |
 | `la pestaña está vacía` | Pestaña sin contenido | Revisa que importaste los datos |
 | `no tiene ninguna fila activa` | Todas las filas están en `NO` | Activa al menos una |
 | `no se obtuvo de la hoja` / `respondió HTTP 404` | La pestaña no está publicada, o el `gid` está mal | Repite la sección 3 y revisa `CONTENT_SHEET_GIDS` |

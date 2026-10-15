@@ -9,4 +9,8 @@ export interface TeamMember {
     experience: string;
     image: string;
     isLead: boolean;
+    /** Especialidades para los chips de la ficha (BR-063); vacía si el dueño no las escribió. */
+    specialties: string[];
+    /** Descripción de la ficha (BR-063); vacía si el dueño no la escribió. */
+    description: string;
 }

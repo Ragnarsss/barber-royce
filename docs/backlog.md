@@ -2170,7 +2170,7 @@ Criterios de aceptación:
 #### BR-063 — Equipo: ficha de cada barbero en un modal
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-060
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-063-ficha-barbero`)
 - Historia de usuario: HU-INFO-003 (CA-07), HU-EXP-004 (CA-15)
 - RF/RNF: `RF-INFO-010`, `RF-CNT-002`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`
 
@@ -2308,7 +2308,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | En curso | BR-058 |
 | BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | En curso | BR-058 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | En curso | BR-058 |
-| BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Propuesta | BR-060 |
+| BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | En curso | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | En curso | BR-062 |
 | BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | En curso | BR-064 |
 

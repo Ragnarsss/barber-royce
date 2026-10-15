@@ -13,9 +13,9 @@ const css = readFileSync(resolve(here, "TeamHoneycomb.module.css"), "utf8");
 const pageCss = readFileSync(resolve(here, "../../pages/TeamPage.module.css"), "utf8");
 
 const team: TeamMember[] = [
-  { name: "Ana Rojas", role: "Barber", experience: "3 años", image: "/ana.jpg", isLead: false },
-  { name: "Carlos Mendoza", role: "Master Barber", experience: "15 años", image: "/carlos.jpg", isLead: true },
-  { name: "Juan Pérez", role: "Barber", experience: "5 años", image: "/juan.jpg", isLead: false },
+  { name: "Ana Rojas", role: "Barber", experience: "3 años", image: "/ana.jpg", isLead: false, specialties: [], description: "" },
+  { name: "Carlos Mendoza", role: "Master Barber", experience: "15 años", image: "/carlos.jpg", isLead: true, specialties: [], description: "" },
+  { name: "Juan Pérez", role: "Barber", experience: "5 años", image: "/juan.jpg", isLead: false, specialties: [], description: "" },
 ];
 
 describe("TeamHoneycomb (BR-060, HU-EXP-004 CA-12)", () => {

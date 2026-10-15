@@ -21,6 +21,10 @@ export interface TabResult<T> {
 }
 
 const MAX_PRICE = 1_000_000;
+/** Ficha del barbero (BR-063): lo que cabe en el modal sin desbordar. */
+const MAX_SPECIALTIES = 6;
+const MAX_SPECIALTY_LENGTH = 30;
+const MAX_MEMBER_DESCRIPTION = 400;
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const FALSE_VALUES = new Set(["no", "false", "0", "n"]);
 const TRUE_VALUES = new Set(["si", "sí", "true", "1", "s", "x"]);
@@ -71,6 +75,19 @@ class RowReader {
     const value = this.values[field] ?? "";
     if (value.length > max) this.report(field, `tiene ${value.length} caracteres y el máximo es ${max}`);
     return value;
+  }
+
+  /** Lista opcional separada por comas (`Fade, Barba`): sin espacios sobrantes ni elementos vacíos. */
+  optionalList(field: string, maxItems: number, maxLength: number): string[] {
+    const items = (this.values[field] ?? "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item !== "");
+    if (items.length > maxItems) this.report(field, `tiene ${items.length} elementos y el máximo es ${maxItems}`);
+    for (const item of items) {
+      if (item.length > maxLength) this.report(field, `"${item}" tiene ${item.length} caracteres y el máximo es ${maxLength}`);
+    }
+    return items;
   }
 
   slug(field: string): string | undefined {
@@ -221,8 +238,10 @@ export function readTeam(table: CsvTable): TabResult<TeamMember> {
         const experience = r.text("experiencia", 60);
         const image = r.image("imagen");
         const isLead = r.flag("lider", false);
+        const specialties = r.optionalList("especialidades", MAX_SPECIALTIES, MAX_SPECIALTY_LENGTH);
+        const description = r.optionalText("descripcion", MAX_MEMBER_DESCRIPTION);
         if (name === undefined || role === undefined || experience === undefined) return undefined;
-        return { name, role, experience, image, isLead };
+        return { name, role, experience, image, isLead, specialties, description };
       },
     },
     { unique: "id" },

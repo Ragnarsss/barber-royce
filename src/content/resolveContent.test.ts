@@ -7,7 +7,7 @@ import { CONTENT_TABS, type SiteContent } from "./types";
 const OTHER: SiteContent = {
   services: [{ name: "Respaldo", description: "d", price: "$1.000", duration: "1 min", includes: "", image: "", category: "Barba" }],
   products: [{ name: "Respaldo", description: "d", price: "$1.000", image: "", category: "Styling" }],
-  team: [{ name: "Respaldo", role: "r", experience: "e", image: "", isLead: false }],
+  team: [{ name: "Respaldo", role: "r", experience: "e", image: "", isLead: false, specialties: [], description: "" }],
   faq: [{ category: "Otros", question: "¿Respaldo?", answer: "Sí" }],
   texts: { "hero.lema": "Respaldo" },
   business: snapshot.business,

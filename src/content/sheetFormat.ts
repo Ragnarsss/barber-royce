@@ -54,8 +54,19 @@ export function contentToSheet(content: SiteContent): SheetCsv {
       ...content.products.map((p, i) => [productIds[i], p.name, p.description, String(parseClp(p.price)), p.category, p.image, "SI", String(i + 1)]),
     ]),
     equipo: toCsv([
-      ["id", "nombre", "cargo", "experiencia", "imagen", "lider", "activo", "orden"],
-      ...content.team.map((m, i) => [teamIds[i], m.name, m.role, m.experience, m.image, yesNo(m.isLead), "SI", String(i + 1)]),
+      ["id", "nombre", "cargo", "experiencia", "imagen", "lider", "activo", "orden", "especialidades", "descripcion"],
+      ...content.team.map((m, i) => [
+        teamIds[i],
+        m.name,
+        m.role,
+        m.experience,
+        m.image,
+        yesNo(m.isLead),
+        "SI",
+        String(i + 1),
+        m.specialties.join(", "),
+        m.description,
+      ]),
     ]),
     preguntas: toCsv([
       ["id", "categoria", "pregunta", "respuesta", "activo", "orden"],

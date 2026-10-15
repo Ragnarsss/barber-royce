@@ -1,0 +1,191 @@
+/*
+ * Ficha del barbero (BR-063), según el Figma: la foto a la izquierda en un tercio, un degradado hacia el negro y, en
+ * la zona oscura, el nombre en grande, los chips y la descripción. Esquinas con chaflán como el resto del sitio.
+ * En móvil la foto pasa arriba como franja y se funde hacia abajo.
+ */
+.backdrop {
+  --backdrop-shade: color-mix(in srgb, var(--color-primary-900) 72%, transparent);
+
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-index-overlay);
+  background: var(--backdrop-shade);
+  backdrop-filter: blur(4px);
+}
+
+.dialog {
+  --chamfer: var(--spacing-6);
+  --surface: var(--color-primary-900);
+  --chip-border: color-mix(in srgb, var(--color-brand-white) 45%, transparent);
+  --muted: color-mix(in srgb, var(--color-brand-white) 85%, var(--surface));
+
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-index-modal);
+  display: grid;
+  grid-template-rows: minmax(10rem, 32vh) minmax(0, 1fr);
+  width: min(56rem, calc(100% - 2 * var(--spacing-4)));
+  height: fit-content;
+  max-height: calc(100dvh - 2 * var(--spacing-4));
+  margin: auto;
+  overflow: hidden;
+  background: var(--surface);
+  color: var(--color-brand-white);
+  clip-path: polygon(
+    var(--chamfer) 0,
+    100% 0,
+    100% calc(100% - var(--chamfer)),
+    calc(100% - var(--chamfer)) 100%,
+    0 100%,
+    0 var(--chamfer)
+  );
+}
+
+.photo {
+  position: relative;
+  min-height: 0;
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+}
+
+/* El degradado funde la foto con el fondo donde empieza el texto. */
+.photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 45%, var(--surface) 100%);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+  min-height: 0;
+  padding: var(--spacing-2) var(--spacing-6) var(--spacing-8);
+  overflow-y: auto;
+}
+
+.role {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-widest);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
+}
+
+.experience {
+  font-weight: var(--font-weight-regular);
+  color: var(--muted);
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: clamp(var(--font-size-4xl), 7vw, var(--font-size-7xl));
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Chip con chaflán: el borde es el fondo de la pieza exterior y el relleno se recorta por dentro. */
+.chip {
+  --chip-cut: var(--spacing-2);
+
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
+  background: color-mix(in srgb, var(--color-brand-primary) 22%, var(--surface));
+  box-shadow: inset 0 0 0 1px var(--chip-border);
+  clip-path: polygon(
+    var(--chip-cut) 0,
+    100% 0,
+    100% calc(100% - var(--chip-cut)),
+    calc(100% - var(--chip-cut)) 100%,
+    0 100%,
+    0 var(--chip-cut)
+  );
+}
+
+.description {
+  margin: 0;
+  max-width: 60ch;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--muted);
+}
+
+.close {
+  position: absolute;
+  top: var(--spacing-3);
+  right: var(--spacing-3);
+  display: grid;
+  place-items: center;
+  width: var(--spacing-12);
+  height: var(--spacing-12);
+  padding: 0;
+  border: 1px solid var(--chip-border);
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  color: var(--color-brand-white);
+  cursor: pointer;
+  transition:
+    border-color var(--transition-base),
+    background-color var(--transition-base);
+}
+
+.close:hover {
+  border-color: var(--color-brand-white);
+  background: var(--color-brand-primary);
+}
+
+.close:focus-visible {
+  outline: 2px solid var(--color-brand-white);
+  outline-offset: 2px;
+}
+
+@media (min-width: 768px) {
+  .dialog {
+    grid-template-rows: none;
+    grid-template-columns: 33% minmax(0, 1fr);
+    min-height: 26rem;
+  }
+
+  .photo::after {
+    background: linear-gradient(to right, transparent 35%, var(--surface) 100%);
+  }
+
+  .body {
+    justify-content: center;
+    padding: var(--spacing-12) var(--spacing-12) var(--spacing-12) var(--spacing-8);
+  }
+
+  .role {
+    font-size: var(--font-size-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .close {
+    transition: none;
+  }
+}
