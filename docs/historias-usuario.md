@@ -648,6 +648,15 @@ y confiar en que el servicio está a la altura.
 - CA-17: Given llego a «Clientes felices, estilos impecables», When veo la
   parrilla de fotos, Then los recuadros siguen un bento apaisado como en el
   diseño, y en móvil quedan en dos columnas sin recuadros angostos.
+- CA-18 (2026-10-15, `BR-067`): Given entro a `/productos`, When carga, Then veo
+  el catálogo en un panal de hexágonos a la misma distancia entre sí; al pasar
+  el cursor o enfocar uno se ilumina y leo su nombre y su precio, y al
+  activarlo se abre su ficha con foto, categoría, descripción y precio, sin
+  botón de compra.
+- CA-19 (2026-10-15, `BR-068`): Given hay más productos de los que caben en una
+  carga, When llego al final del panal, Then se suman los siguientes (con
+  hexágonos grises de relleno mientras llegan), sin saltos de la página, y
+  puedo pedirlos también con el teclado.
 
 ---
 
