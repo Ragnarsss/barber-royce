@@ -1572,3 +1572,15 @@ El PR #29 integró a `master` el trabajo de dos sesiones (CTA1, navbar, SocialPr
 - `CONTENT_SHEET_GIDS` en Vercel ya lleva el `gid` nuevo de `equipo` (`2144022599`); queda anotado porque un cambio de pestaña en la hoja obliga a actualizarlo y a redesplegar.
 - Idea del usuario, sin ticket todavía: un selector con pestañas para sumar la segunda barbería (La Serena, con otros colores).
 - Regresiones aceptadas por escrito: CLS de `/equipo` 0 → 0,0006 (`BR-060`); las de `BR-054` siguen en su ficha.
+
+<a id="br-009"></a>
+
+## BR-009 — Quitar el botón «Comprar» de productos
+
+**Notas de construcción (2026-10-15):**
+- Decisión del usuario: por ahora el sitio no vende productos, así que el botón sale. De las opciones de la ficha ganó una cuarta, más simple: sin botón ni acción. Los precios se siguen mostrando.
+- Se quitaron el `Button`, su ícono de carrito y el CSS que quedaba sin uso (`.button`, `.cartIcon`) de `ProductsPage`; el pie de la tarjeta queda solo con el precio. El test que lo exige está en `contentWiring.test.tsx` (se escribió primero y falló con el botón puesto).
+- Efecto colateral: `src/components/ui/button` ya no lo importa ninguna página. Sigue en el repo; lo retira `BR-023` (Tailwind y shadcn).
+- Este ticket no cambia el diseño de la página: el catálogo se rehace en panal en `BR-067`.
+
+**Verificación:** lint y tipos limpios, suite en verde (ver el cierre). **Pendiente:** verificar en el preview.

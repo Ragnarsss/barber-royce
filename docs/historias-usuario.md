@@ -304,6 +304,10 @@ ver reseñas de otros clientes, para confiar antes de reservar.
 
 > Actualizada (2026-10-12): queda `Propuesta` hasta decidir qué hace el
 > botón "Comprar" (`BR-009`).
+>
+> Actualizada (2026-10-15, decisión del usuario): el botón «Comprar» se quita
+> (`BR-009`): por ahora el sitio no vende productos. CA-03 y RN-01 se cumplen
+> sin botón.
 
 Como cliente, quiero ver los productos que vende la barbería con su
 precio, para saber qué puedo comprar en el local.
@@ -328,6 +332,8 @@ precio, para saber qué puedo comprar en el local.
   la lista se actualiza sin recargar la página.
 - CA-03: Given toco la acción de un producto, When se ejecuta, Then hace lo
   que el texto del botón promete (decisión en `BR-009`).
+  - Resuelto (2026-10-15, `BR-009`): no hay acción de compra; Given entro a
+    `/productos`, When veo un producto, Then no hay ningún botón «Comprar».
 
 ### Reglas de negocio asociadas:
 

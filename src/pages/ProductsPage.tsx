@@ -3,7 +3,6 @@ import { useState, useTransition } from "react";
 import { Helmet } from "react-helmet-async";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/common/PageHero/PageHero";
 import { ROUTES } from "@/config/routes";
 import styles from "./ProductsPage.module.css";
@@ -150,14 +149,6 @@ export function ProductsPage() {
                       <p className={styles.description}>{product.description}</p>
                       <div className={styles.footer}>
                         <span className={styles.price}>{product.price}</span>
-                        <Button className={styles.button}>
-                          <svg className={styles.cartIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="9" cy="21" r="1" />
-                            <circle cx="20" cy="21" r="1" />
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                          </svg>
-                          Comprar
-                        </Button>
                       </div>
                     </CardContent>
                   </Card>
