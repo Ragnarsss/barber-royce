@@ -1,10 +1,15 @@
 /*
- * Panal del equipo (BR-060). La grilla tiene columnas de medio hexágono y filas de un cuarto de su alto
- * (honeycomb.ts); cada celda trae su posición de móvil (--m-*) y de escritorio (--d-*). Un hexágono de puntas
- * arriba mide 1,1547 veces su ancho de alto.
+ * Panal del equipo (BR-060). La grilla tiene columnas de un cuarto de hexágono de ancho y filas de un octavo de su
+ * alto (honeycomb.ts); cada celda trae su posición de móvil (--m-*) y de escritorio (--d-*). Un hexágono de puntas
+ * arriba mide 1,1547 veces su ancho de alto (es regular).
+ *
+ * La celda de cada hexágono toca a las de sus vecinos. Para separarlos igual por todos sus bordes, el hexágono se
+ * encoge por igual dentro de su celda: `--hex-gap / 2` a cada lado en horizontal y 1,1547 veces eso en vertical, que
+ * es un hexágono regular más chico, a la misma distancia del borde vecino por los seis lados.
  */
 .honeycomb {
-  --hex-width: min(10rem, calc((100vw - 2 * var(--spacing-4)) / 2.5));
+  /* Ancho de un hexágono: el que quepa en la pantalla para las columnas de la grilla (cada columna es 1/4 de ancho). */
+  --hex-width: min(10rem, calc(4 * (100vw - 2 * var(--spacing-4)) / var(--m-grid-cols)));
   --hex-gap: var(--spacing-2);
   --frame-width: var(--spacing-1);
   --lead-frame-width: calc(var(--spacing-1) * 1.75);
@@ -19,8 +24,8 @@
   --caption-shade: color-mix(in srgb, var(--color-primary-900) 80%, transparent);
 
   display: grid;
-  grid-template-columns: repeat(var(--m-grid-cols), calc(var(--hex-width) / 2));
-  grid-template-rows: repeat(var(--m-grid-rows), calc(var(--hex-width) * 1.1547 / 4));
+  grid-template-columns: repeat(var(--m-grid-cols), calc(var(--hex-width) / 4));
+  grid-template-rows: repeat(var(--m-grid-rows), calc(var(--hex-width) * 1.1547 / 8));
   justify-content: center;
   margin: 0 auto;
   padding: 0;
@@ -30,7 +35,7 @@
 .cell {
   grid-column: var(--m-col) / span var(--m-cols);
   grid-row: var(--m-row) / span var(--m-rows);
-  padding: calc(var(--hex-gap) / 2);
+  padding: calc(var(--hex-gap) * 0.57735) calc(var(--hex-gap) / 2);
 }
 
 .hex {
@@ -147,13 +152,17 @@
 
 @media (min-width: 768px) {
   .honeycomb {
-    --hex-width: clamp(9rem, 15vw, 12.5rem);
+    /* Más grande (hasta 17,5 rem), pero nunca más ancho que la pantalla: con un equipo grande se achica. */
+    --hex-width: min(
+      clamp(9rem, 17vw, 17.5rem),
+      calc(4 * (100vw - 2 * var(--spacing-8)) / var(--d-grid-cols))
+    );
     --hex-gap: var(--spacing-3);
     --frame-width: calc(var(--spacing-1) * 1.5);
     --lead-frame-width: calc(var(--spacing-1) * 2.5);
 
-    grid-template-columns: repeat(var(--d-grid-cols), calc(var(--hex-width) / 2));
-    grid-template-rows: repeat(var(--d-grid-rows), calc(var(--hex-width) * 1.1547 / 4));
+    grid-template-columns: repeat(var(--d-grid-cols), calc(var(--hex-width) / 4));
+    grid-template-rows: repeat(var(--d-grid-rows), calc(var(--hex-width) * 1.1547 / 8));
   }
 
   .cell {
