@@ -2134,6 +2134,14 @@ de luz del techo de la barbería (`BR-058`).
 > móvil de `/equipo` pasa de 0 a 0,0006 porque el texto centrado del título se
 > corre al llegar Anton. Está muy por debajo del umbral de 0,1; el criterio 5
 > se da por cumplido con esa salvedad.
+>
+> **Alcance ajustado (2026-10-14, pedido del usuario):** el panal se agranda en
+> escritorio (hexágonos de hasta 17,5 rem, antes 12,5) y **todos los hexágonos
+> vecinos quedan a la misma distancia**: el líder se veía más lejos de la fila
+> de abajo (35,8 px) que los demás entre sí (10,8–12 px). Criterio nuevo: la
+> separación entre cualquier par de vecinos es la misma en todos los anchos
+> (12 px en escritorio, 8 px en móvil), y un test geométrico lo exige para
+> equipos de 1 a 10 barberos.
 
 Alcance:
 1. Panal de hexágonos de puntas arriba (`clip-path`), segunda fila desplazada
