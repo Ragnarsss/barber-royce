@@ -2124,6 +2124,12 @@ diagonales roja y charcoal del hero; cada hexágono con un marco grueso, el del
 líder rojo y más grande, los demás blancos. Los hexágonos vienen de las barras
 de luz del techo de la barbería (`BR-058`).
 
+> **Alcance ajustado (2026-10-14, decisión del usuario):** la banda «Nuestro
+> equipo» de `PageHero` se reemplaza por un título compacto en Anton sobre el
+> mismo fondo del panal; sigue siendo el `<h1>`. Además, el líder aparece sin
+> animación de entrada, porque su foto es el LCP de la página y la entrada lo
+> retrasaba (ver el registro).
+
 Alcance:
 1. Panal de hexágonos de puntas arriba (`clip-path`), segunda fila desplazada
    medio hexágono, centrado en la página y armado para cualquier cantidad de

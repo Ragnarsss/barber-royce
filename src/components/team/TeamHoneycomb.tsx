@@ -48,7 +48,9 @@ export const TeamHoneycomb = ({ team, onSelect }: TeamHoneycombProps) => {
           className={`${styles.cell} ${isLead ? styles.lead : ""}`}
           style={placementVars(d, m)}
           variants={scaleIn}
-          initial={reducedMotion ? false : "hidden"}
+          // La foto del líder es el LCP de la página: aparece sin animación de entrada (con opacidad 0 Chrome no la
+          // cuenta hasta que termina) y se pide con prioridad alta. El resto entra escalonado.
+          initial={reducedMotion || isLead ? false : "hidden"}
           whileInView="visible"
           viewport={defaultViewport}
           transition={{ delay: index * ENTRANCE_STAGGER }}
@@ -57,7 +59,15 @@ export const TeamHoneycomb = ({ team, onSelect }: TeamHoneycombProps) => {
           <button type="button" className={styles.hex} onClick={() => onSelect?.(member)} aria-label={`${member.name}, ${member.role}`}>
             <span className={styles.frame} aria-hidden="true">
               <span className={styles.photo}>
-                <img src={member.image} alt={member.name} width="400" height="400" loading="lazy" decoding="async" />
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  width="400"
+                  height="400"
+                  loading={isLead ? "eager" : "lazy"}
+                  fetchPriority={isLead ? "high" : "auto"}
+                  decoding={isLead ? "sync" : "async"}
+                />
               </span>
               <span className={styles.caption}>
                 <span className={styles.name}>{member.name}</span>
