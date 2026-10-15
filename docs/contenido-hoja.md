@@ -49,6 +49,18 @@ nombres.
   de hasta 30 caracteres cada una.
 - `descripcion` (equipo): un párrafo corto sobre el barbero para su ficha.
   Si la dejas vacía, la ficha se muestra sin ella.
+- `frase` (equipo): una frase corta del barbero, de hasta 120 caracteres. Sale
+  entre comillas bajo su nombre.
+- `reserva` (equipo): el enlace de AgendaPro para reservar **directo con ese
+  barbero**, si existe. Vacío = el botón «Reservar con…» usa el enlace general
+  de reservas (`reservas.url` en la pestaña `negocio`).
+- `instagram` (equipo): la dirección completa de su Instagram personal
+  (`https://www.instagram.com/…`). Vacío = no aparece el botón.
+- `trabajos` (equipo): hasta 3 fotos de sus cortes, con las direcciones separadas
+  por comas. Por ahora el sitio solo muestra imágenes guardadas en el propio sitio
+  (empiezan con `/`) o de Unsplash; las de otros sitios no cargan.
+- La **experiencia** se muestra como un número grande si empieza con un número
+  («15 años de experiencia» → **15** años de experiencia).
 
 ### Reglas de cada campo
 

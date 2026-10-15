@@ -195,6 +195,45 @@ describe("pestaña equipo", () => {
       expect(issues[0].message).toContain(long);
     });
 
+    it("lee reserva, instagram, trabajos y frase; vacíos son válidos", () => {
+      const HEAD_ALL = `${FULL},reserva,instagram,trabajos,frase`;
+      const { items, issues } = readTeam(
+        table(
+          `${HEAD_ALL}\nc,Carlos,Master,15 años,,SI,,,https://agendapro.com/carlos,https://instagram.com/carlos,"https://images.unsplash.com/a.jpg, /trabajos/b.jpg",El detalle lo es todo.\nm,Miguel,Barber,10 años,,,,,,,,\n`,
+        ),
+      );
+
+      expect(issues).toEqual([]);
+      expect(items[0]).toMatchObject({
+        bookingUrl: "https://agendapro.com/carlos",
+        instagram: "https://instagram.com/carlos",
+        works: ["https://images.unsplash.com/a.jpg", "/trabajos/b.jpg"],
+        quote: "El detalle lo es todo.",
+      });
+      expect(items[1]).toMatchObject({ bookingUrl: "", instagram: "", works: [], quote: "" });
+    });
+
+    it("reserva e instagram tienen que empezar con https://", () => {
+      const { issues } = readTeam(table(`${HEAD},reserva,instagram\nc,Carlos,Master,15 años,,,agendapro.com/c,@carlos\n`));
+
+      expect(issues.map((issue) => issue.field)).toEqual(["reserva", "instagram"]);
+    });
+
+    it("más de 3 trabajos, o uno que no es una dirección de imagen, rechazan la pestaña", () => {
+      const four = readTeam(table(`${HEAD},trabajos\nc,Carlos,Master,15 años,,,"/a.jpg,/b.jpg,/c.jpg,/d.jpg"\n`));
+      const bad = readTeam(table(`${HEAD},trabajos\nc,Carlos,Master,15 años,,,"foto.jpg"\n`));
+
+      expect(four.issues[0]).toMatchObject({ field: "trabajos" });
+      expect(bad.issues[0]).toMatchObject({ field: "trabajos" });
+      expect(bad.issues[0].message).toContain("foto.jpg");
+    });
+
+    it("una frase de más de 120 caracteres rechaza la pestaña", () => {
+      const { issues } = readTeam(table(`${HEAD},frase\nc,Carlos,Master,15 años,,,${"a".repeat(121)}\n`));
+
+      expect(issues[0]).toMatchObject({ field: "frase" });
+    });
+
     it("una descripción de más de 400 caracteres rechaza la pestaña", () => {
       const { issues } = readTeam(table(`${FULL}\nc,Carlos,Master,15 años,,,,${"a".repeat(401)}\n`));
 

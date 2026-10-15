@@ -2182,6 +2182,20 @@ Hoy la pestaña `equipo` no tiene especialidades ni descripción
 (`docs/contenido/equipo.csv`); el usuario está de acuerdo en agregar esas
 columnas a la plantilla y a la hoja.
 
+> **Alcance ajustado (2026-10-14, decisión del usuario):** la ficha se
+> enriquece con contenido. (1) Textos de **ejemplo** para los cinco barberos
+> en el respaldo (especialidades, descripción, frase y trabajos), que el dueño
+> reemplaza en la hoja. (2) Contenido nuevo, cada uno con una columna
+> opcional en `equipo`: botón **«Reservar con…»** (`reserva`, enlace propio
+> del barbero; vacío = el enlace general de AgendaPro; se rastrea como
+> `reserve_click` con sección `equipo`), **Instagram** del barbero
+> (`instagram`), **fotos de sus trabajos** (`trabajos`, hasta 3) y una
+> **frase** (`frase`, hasta 120 caracteres); además, la experiencia como un
+> dato grande cuando empieza con un número. Sin Instagram de ejemplo (un
+> usuario inventado podría ser la cuenta real de otra persona). Las fotos de
+> ejemplo de trabajos reutilizan las de Unsplash del sitio: la CSP solo
+> admite imágenes propias o de Unsplash.
+
 Alcance:
 1. Columnas nuevas y **opcionales** en la pestaña `equipo`: `especialidades`
    (lista separada por comas, con un máximo de chips y de largo por chip) y

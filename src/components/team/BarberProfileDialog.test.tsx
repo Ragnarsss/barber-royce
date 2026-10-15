@@ -22,8 +22,24 @@ vi.mock("virtual:site-content", async () => {
           isLead: true,
           specialties: ["Fade", "Barba"],
           description: "Fundó la barbería.",
+          bookingUrl: "",
+          instagram: "https://www.instagram.com/carlos.barber",
+          works: ["/trabajos/a.jpg", "/trabajos/b.jpg"],
+          quote: "El detalle lo es todo.",
         },
-        { name: "Juan Pérez", role: "Barber", experience: "5 años", image: "/juan.jpg", isLead: false, specialties: [], description: "" },
+        {
+          name: "Juan Pérez",
+          role: "Barber",
+          experience: "Desde 2019",
+          image: "/juan.jpg",
+          isLead: false,
+          specialties: [],
+          description: "",
+          bookingUrl: "https://agendapro.com/juan",
+          instagram: "",
+          works: [],
+          quote: "",
+        },
       ],
     },
   };
@@ -72,24 +88,61 @@ describe("ficha del barbero (BR-063)", () => {
     expect(within(dialog).getByRole("img", { name: "Carlos Mendoza" })).toBeInTheDocument();
   });
 
-  it("CA-07: sin especialidades ni descripción, la ficha no deja huecos", () => {
+  it("CA-07: muestra la frase, los años como dato grande, los trabajos y el Instagram", () => {
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /Carlos Mendoza/ }));
+
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByText("«El detalle lo es todo.»")).toBeInTheDocument();
+    expect(within(dialog).getByText("15")).toBeInTheDocument();
+    expect(within(dialog).getByText("años")).toBeInTheDocument();
+    const works = within(dialog).getByRole("list", { name: "Trabajos de Carlos Mendoza" });
+    expect(within(works).getAllByRole("img").map((img) => img.getAttribute("src"))).toEqual(["/trabajos/a.jpg", "/trabajos/b.jpg"]);
+    const instagram = within(dialog).getByRole("link", { name: "Instagram de Carlos Mendoza" });
+    expect(instagram).toHaveAttribute("href", "https://www.instagram.com/carlos.barber");
+    expect(instagram).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("«Reservar con…» usa el enlace general si el barbero no tiene uno propio", async () => {
+    const { snapshot } = await import("@/content/snapshot");
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /Carlos Mendoza/ }));
+
+    const reserve = screen.getByRole("link", { name: "Reservar con Carlos" });
+    expect(reserve).toHaveAttribute("href", snapshot.business.booking.url);
+    expect(reserve).toHaveAttribute("target", "_blank");
+  });
+
+  it("«Reservar con…» usa el enlace propio del barbero cuando lo tiene", () => {
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /Juan Pérez/ }));
+
+    expect(screen.getByRole("link", { name: "Reservar con Juan" })).toHaveAttribute("href", "https://agendapro.com/juan");
+  });
+
+  it("CA-07: sin especialidades, descripción, frase, trabajos ni Instagram, la ficha no deja huecos", () => {
     renderPage();
     fireEvent.click(screen.getByRole("button", { name: "Juan Pérez, Barber" }));
 
     const dialog = screen.getByRole("dialog", { name: "Juan Pérez" });
     expect(within(dialog).queryByRole("list")).not.toBeInTheDocument();
+    expect(within(dialog).queryByRole("link", { name: /Instagram/ })).not.toBeInTheDocument();
     expect(dialog).not.toHaveAttribute("aria-describedby");
+    // Sin número al inicio, la experiencia se muestra como texto junto al cargo.
+    expect(within(dialog).getByText(/Desde 2019/)).toBeInTheDocument();
   });
 
-  it("CA-15: al abrir, el foco va a cerrar; Tab no sale de la ficha", () => {
+  it("CA-15: al abrir, el foco va a cerrar; Tab y Mayús+Tab dan la vuelta dentro de la ficha", () => {
     renderPage();
     fireEvent.click(screen.getByRole("button", { name: /Carlos Mendoza/ }));
 
+    // Orden dentro de la ficha: «Reservar con…», Instagram y, al final, cerrar.
     const close = screen.getByRole("button", { name: "Cerrar ficha" });
+    const reserve = screen.getByRole("link", { name: "Reservar con Carlos" });
     expect(close).toHaveFocus();
     fireEvent.keyDown(close, { key: "Tab" });
-    expect(close).toHaveFocus();
-    fireEvent.keyDown(close, { key: "Tab", shiftKey: true });
+    expect(reserve).toHaveFocus();
+    fireEvent.keyDown(reserve, { key: "Tab", shiftKey: true });
     expect(close).toHaveFocus();
   });
 
@@ -102,7 +155,8 @@ describe("ficha del barbero (BR-063)", () => {
     fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect(trigger).toHaveFocus();
+    // El foco vuelve en la limpieza del efecto, que React corre justo después de sacar el diálogo del DOM.
+    await waitFor(() => expect(trigger).toHaveFocus());
   });
 
   it("CA-15: el fondo no se desplaza mientras está abierta (Lenis se detiene y se reanuda)", async () => {
@@ -114,7 +168,7 @@ describe("ficha del barbero (BR-063)", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Cerrar ficha" }));
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect(lenis.start).toHaveBeenCalled();
+    await waitFor(() => expect(lenis.start).toHaveBeenCalled());
     expect(document.documentElement.style.overflow).toBe("");
   });
 

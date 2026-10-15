@@ -1,9 +1,13 @@
 import { useEffect, useId, useRef, type KeyboardEvent } from "react";
 import { createPortal } from "react-dom";
 import { motion, useReducedMotion } from "framer-motion";
-import { X } from "lucide-react";
+import { CalendarCheck, X } from "lucide-react";
 import type { TeamMember } from "@/types/team.types";
+import { trackReserve } from "@/analytics/track";
+import { InstagramIcon } from "@/components/icons";
+import { useSiteContent } from "@/content/useSiteContent";
 import { useLenisInstance } from "@/hooks/useLenisContext";
+import { experienceHighlight } from "./experience";
 import styles from "./BarberProfileDialog.module.css";
 
 interface BarberProfileDialogProps {
@@ -18,13 +22,18 @@ const EASE = [0.22, 1, 0.36, 1] as const;
 
 /**
  * Ficha de un barbero (BR-063, HU-INFO-003 CA-07, HU-EXP-004 CA-15): la foto ocupa un tercio y se funde hacia el
- * negro donde van el nombre, las especialidades y la descripción. Diálogo modal: el foco queda dentro, Escape o el
+ * negro donde van el nombre, su frase, los años de experiencia, las especialidades, la descripción, fotos de sus
+ * trabajos y los botones para reservar con él y ver su Instagram. Todo lo opcional que falta no deja hueco.
+ * Diálogo modal: el foco queda dentro, Escape o el
  * fondo lo cierran, el foco vuelve a quien lo abrió y la página no se desplaza mientras está abierto (Lenis se
  * detiene). Va con `AnimatePresence` para animar la salida; con reducir movimiento aparece y se va sin animación.
  */
 export const BarberProfileDialog = ({ member, onClose }: BarberProfileDialogProps) => {
   const reducedMotion = useReducedMotion() ?? false;
   const lenis = useLenisInstance();
+  const { business } = useSiteContent();
+  const years = experienceHighlight(member.experience);
+  const firstName = member.name.split(" ")[0];
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const titleId = useId();
@@ -97,25 +106,67 @@ export const BarberProfileDialog = ({ member, onClose }: BarberProfileDialogProp
         <div className={styles.body} data-lenis-prevent>
           <p className={styles.role}>
             {member.role}
-            {member.experience && <span className={styles.experience}> · {member.experience}</span>}
+            {!years && member.experience && <span className={styles.experience}> · {member.experience}</span>}
           </p>
           <h2 id={titleId} className={styles.name}>
             {member.name}
           </h2>
-          {member.specialties.length > 0 && (
-            <ul className={styles.chips} aria-label="Especialidades">
-              {member.specialties.map((specialty) => (
-                <li key={specialty} className={styles.chip}>
-                  {specialty}
-                </li>
-              ))}
-            </ul>
+          {member.quote && <p className={styles.quote}>«{member.quote}»</p>}
+
+          {(years || member.specialties.length > 0) && (
+            <div className={styles.facts}>
+              {years && (
+                <p className={styles.stat}>
+                  <span className={styles.statValue}>{years.value}</span>
+                  <span className={styles.statLabel}>{years.label}</span>
+                </p>
+              )}
+              {member.specialties.length > 0 && (
+                <ul className={styles.chips} aria-label="Especialidades">
+                  {member.specialties.map((specialty) => (
+                    <li key={specialty} className={styles.chip}>
+                      {specialty}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
+
           {member.description && (
             <p id={descriptionId} className={styles.description}>
               {member.description}
             </p>
           )}
+
+          {member.works.length > 0 && (
+            <ul className={styles.works} aria-label={`Trabajos de ${member.name}`}>
+              {member.works.map((work, index) => (
+                <li key={work} className={styles.work}>
+                  <img src={work} alt={`Trabajo de ${member.name} (${index + 1})`} width="400" height="300" loading="lazy" decoding="async" />
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className={styles.actions}>
+            <a
+              className={styles.reserve}
+              href={member.bookingUrl || business.booking.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={trackReserve("equipo")}
+            >
+              <CalendarCheck aria-hidden="true" />
+              Reservar con {firstName}
+            </a>
+            {member.instagram && (
+              <a className={styles.social} href={member.instagram} target="_blank" rel="noopener noreferrer" aria-label={`Instagram de ${member.name}`}>
+                <InstagramIcon size={20} />
+                <span aria-hidden="true">Instagram</span>
+              </a>
+            )}
+          </div>
         </div>
 
         <button ref={closeRef} type="button" className={styles.close} onClick={onClose} aria-label="Cerrar ficha">

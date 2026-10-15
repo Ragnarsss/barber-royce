@@ -29,7 +29,7 @@ describe("la guía del dueño está al día con el código (BR-043)", () => {
   });
 
   it("las columnas nuevas de la pestaña equipo aparecen en la guía (BR-063)", () => {
-    for (const column of ["lider", "especialidades", "descripcion"]) {
+    for (const column of ["lider", "especialidades", "descripcion", "frase", "reserva", "instagram", "trabajos"]) {
       expect(guide, column).toContain(`\`${column}\``);
     }
   });

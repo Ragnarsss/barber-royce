@@ -25,6 +25,18 @@ const MAX_PRICE = 1_000_000;
 const MAX_SPECIALTIES = 6;
 const MAX_SPECIALTY_LENGTH = 30;
 const MAX_MEMBER_DESCRIPTION = 400;
+const MAX_MEMBER_QUOTE = 120;
+const MAX_MEMBER_WORKS = 3;
+/** Una imagen es una ruta del sitio (`/…`) o una dirección `https://`. */
+const IMAGE_SOURCE = /^(https:\/\/|\/)/;
+
+const isHttps = (value: string): boolean => {
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
+};
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const FALSE_VALUES = new Set(["no", "false", "0", "n"]);
 const TRUE_VALUES = new Set(["si", "sí", "true", "1", "s", "x"]);
@@ -90,6 +102,22 @@ class RowReader {
     return items;
   }
 
+  /** Enlace opcional: vacío o una dirección completa `https://`. */
+  optionalUrl(field: string, max: number): string {
+    const value = this.optionalText(field, max);
+    if (value !== "" && !isHttps(value)) this.report(field, `"${value}" debe ser una dirección completa que empiece con https://`);
+    return value;
+  }
+
+  /** Lista opcional de imágenes separadas por comas, cada una una ruta del sitio (`/…`) o una dirección `https://`. */
+  optionalImageList(field: string, maxItems: number): string[] {
+    const images = this.optionalList(field, maxItems, 500);
+    for (const image of images) {
+      if (!IMAGE_SOURCE.test(image)) this.report(field, `"${image}" debe empezar con https:// o con /`);
+    }
+    return images;
+  }
+
   slug(field: string): string | undefined {
     const value = this.text(field, 60);
     if (value !== undefined && !SLUG.test(value)) return this.report(field, "solo admite minúsculas, números y guiones (por ejemplo: corte-clasico)");
@@ -116,7 +144,7 @@ class RowReader {
   /** Imagen opcional: vacía, una ruta del sitio (`/…`) o una dirección `https://`. */
   image(field: string): string {
     const value = this.values[field] ?? "";
-    if (value !== "" && !/^(https:\/\/|\/)/.test(value)) this.report(field, `"${value}" debe empezar con https:// o con /`);
+    if (value !== "" && !IMAGE_SOURCE.test(value)) this.report(field, `"${value}" debe empezar con https:// o con /`);
     return value;
   }
 
@@ -240,8 +268,12 @@ export function readTeam(table: CsvTable): TabResult<TeamMember> {
         const isLead = r.flag("lider", false);
         const specialties = r.optionalList("especialidades", MAX_SPECIALTIES, MAX_SPECIALTY_LENGTH);
         const description = r.optionalText("descripcion", MAX_MEMBER_DESCRIPTION);
+        const bookingUrl = r.optionalUrl("reserva", 500);
+        const instagram = r.optionalUrl("instagram", 300);
+        const works = r.optionalImageList("trabajos", MAX_MEMBER_WORKS);
+        const quote = r.optionalText("frase", MAX_MEMBER_QUOTE);
         if (name === undefined || role === undefined || experience === undefined) return undefined;
-        return { name, role, experience, image, isLead, specialties, description };
+        return { name, role, experience, image, isLead, specialties, description, bookingUrl, instagram, works, quote };
       },
     },
     { unique: "id" },
