@@ -347,7 +347,7 @@ Criterios de aceptación:
 #### BR-066 — El respaldo del enlace de reserva apunta a un subdominio que no existe
 
 - Prioridad: P1 · Esfuerzo: XS · Depende de: —
-- Estado: En curso (rama `feat/br-058-065-landing-y-equipo`, PR #29)
+- Estado: Hecho (2026-10-15, rama `feat/br-058-065-landing-y-equipo` → master, PR #29; verificado por el usuario en producción)
 - Historia de usuario: HU-RES-001 (CA-02, CA-03)
 - RF/RNF: `RF-RES-001`, `RNF-DATOS-001`
 
@@ -1918,7 +1918,7 @@ Criterios de aceptación:
 #### BR-058 — CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-054, BR-056
-- Estado: En curso (rama `feat/br-058-cta1`)
+- Estado: Hecho (2026-10-15, rama `feat/br-058-cta1` → master, PR #29; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-10)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-A11Y-005`, `RNF-DATOS-001`
 
@@ -1966,7 +1966,7 @@ Criterios de aceptación:
 #### BR-059 — Navbar: resplandor de neón blanco al pasar el cursor
 
 - Prioridad: P3 · Esfuerzo: XS · Depende de: BR-058
-- Estado: En curso (rama `feat/br-059-navbar-neon`)
+- Estado: Hecho (2026-10-15, rama `feat/br-059-navbar-neon` → master, PR #29; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-11)
 - RF/RNF: `RNF-A11Y-003`, `RNF-A11Y-004`
 
@@ -1994,7 +1994,7 @@ Criterios de aceptación:
 #### BR-062 — SocialProof1: corte láser cinematográfico y disparos por pistas
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-058
-- Estado: En curso (rama `feat/br-062-social-proof-laser`)
+- Estado: Hecho (2026-10-15, rama `feat/br-062-social-proof-laser` → master, PR #29; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-14)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-A11Y-005`, `RNF-DATOS-001`
 
@@ -2042,7 +2042,7 @@ Criterios de aceptación:
 #### BR-064 — Benefits: fiel al Figma («Beneficios v2») con íconos que se dibujan
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-062
-- Estado: En curso (rama `feat/br-064-benefits-figma`)
+- Estado: Hecho (2026-10-15, rama `feat/br-064-benefits-figma` → master, PR #29; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-16)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
 
@@ -2096,7 +2096,7 @@ Criterios de aceptación:
 #### BR-065 — SocialProof2: parrilla bento con las proporciones del Figma
 
 - Prioridad: P3 · Esfuerzo: S · Depende de: BR-064
-- Estado: En curso (rama `feat/br-065-bento-instagram`)
+- Estado: Hecho (2026-10-15, rama `feat/br-065-bento-instagram` → master, PR #29; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-17)
 - RF/RNF: `RNF-PERF-002`, `RNF-A11Y-003`
 
@@ -2137,7 +2137,7 @@ y la verificación. Se parte en dos porque junto sería de esfuerzo L.
 #### BR-060 — Equipo: panal de hexágonos con el líder destacado
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-058
-- Estado: En curso (rama `feat/br-060-equipo-panal`)
+- Estado: Hecho (2026-10-15, rama `feat/br-060-equipo-panal` → master, PR #29; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-12)
 - RF/RNF: `RF-INFO-004`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`
 
@@ -2205,7 +2205,7 @@ Criterios de aceptación:
 #### BR-063 — Equipo: ficha de cada barbero en un modal
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-060
-- Estado: En curso (rama `feat/br-063-ficha-barbero`)
+- Estado: Hecho (2026-10-15, rama `feat/br-063-ficha-barbero` → master, PR #29; verificado por el usuario en producción)
 - Historia de usuario: HU-INFO-003 (CA-07), HU-EXP-004 (CA-15)
 - RF/RNF: `RF-INFO-010`, `RF-CNT-002`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`
 
@@ -2362,14 +2362,14 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-055 | Hero: fondos con profundidad | K | P3 | M | Hecho | BR-050 |
 | BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Hecho | BR-050, BR-055 |
 | BR-057 | Loader con el letrero real en vector | K | P3 | S | Bloqueada | BR-054 |
-| BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | En curso | BR-054, BR-056 |
-| BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | En curso | BR-058 |
-| BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | En curso | BR-058 |
-| BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | En curso | BR-058 |
-| BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | En curso | BR-060 |
-| BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | En curso | BR-062 |
-| BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | En curso | BR-064 |
-| BR-066 | El respaldo del enlace de reserva apunta a un subdominio que no existe | B | P1 | XS | En curso | — |
+| BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | Hecho | BR-054, BR-056 |
+| BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | Hecho | BR-058 |
+| BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | Hecho | BR-058 |
+| BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
+| BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
+| BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |
+| BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | Hecho | BR-064 |
+| BR-066 | El respaldo del enlace de reserva apunta a un subdominio que no existe | B | P1 | XS | Hecho | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

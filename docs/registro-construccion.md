@@ -1560,3 +1560,15 @@ servido con `vite preview` y Chrome real:
 - `src/config/booking.test.ts` (test primero, en rojo con tres casos): el respaldo es la dirección real, la plantilla trae la misma y el subdominio antiguo no queda en `src/`, en las plantillas ni en `index.html`.
 
 **Verificación:** lint, tipos y toda la suite en verde (ver el PR #29). El enlace real responde 200 y es la página «Barberia Royce & Royce Space | Agenda online».
+
+## Cierre de BR-058 a BR-066 (2026-10-15)
+
+El PR #29 integró a `master` el trabajo de dos sesiones (CTA1, navbar, SocialProof1 y 2, Benefits, panal y ficha del equipo, y el arreglo del enlace de reserva). Se integró sin esperar el preview, a pedido del usuario, y el CI pasó dos veces (`2 min 19 s` y `2 min 10 s`). Después se verificó en producción (`barber-royce.vercel.app`):
+- Chrome real a 1440 y 390 px: `/equipo` pide la pestaña nueva de la hoja (`gid 2144022599`), recibe las 16 columnas y las 5 filas, y la ficha del líder muestra frase, años, especialidades, días, sucursales, descripción, trabajos y el botón «Reservar con Carlos» hacia `roycespa…/sucursal/400965`.
+- El usuario revisó el sitio y dio el visto bueno para cerrar los ocho tickets.
+
+**Pendientes que no bloquean el cierre:**
+- La columna `reserva` de la pestaña `equipo` está vacía: todos los botones «Reservar con…» usan el enlace general hasta que el dueño pegue el de cada profesional.
+- `CONTENT_SHEET_GIDS` en Vercel ya lleva el `gid` nuevo de `equipo` (`2144022599`); queda anotado porque un cambio de pestaña en la hoja obliga a actualizarlo y a redesplegar.
+- Idea del usuario, sin ticket todavía: un selector con pestañas para sumar la segunda barbería (La Serena, con otros colores).
+- Regresiones aceptadas por escrito: CLS de `/equipo` 0 → 0,0006 (`BR-060`); las de `BR-054` siguen en su ficha.
