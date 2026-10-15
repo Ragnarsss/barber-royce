@@ -28,6 +28,12 @@ describe("la guía del dueño está al día con el código (BR-043)", () => {
     }
   });
 
+  it("las columnas nuevas de la pestaña equipo aparecen en la guía (BR-063)", () => {
+    for (const column of ["lider", "especialidades", "descripcion", "frase", "reserva", "instagram", "trabajos", "dias", "sucursal"]) {
+      expect(guide, column).toContain(`\`${column}\``);
+    }
+  });
+
   it("cada categoría permitida aparece en la guía, escrita igual", () => {
     for (const category of [...SERVICE_CATEGORIES, ...PRODUCT_CATEGORIES, ...FAQ_CATEGORIES].filter((c) => c !== "Todos")) {
       expect(guide, category).toContain(`\`${category}\``);

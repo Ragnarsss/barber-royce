@@ -7,7 +7,7 @@ import { CONTENT_TABS, type SiteContent } from "./types";
 const OTHER: SiteContent = {
   services: [{ name: "Respaldo", description: "d", price: "$1.000", duration: "1 min", includes: "", image: "", category: "Barba" }],
   products: [{ name: "Respaldo", description: "d", price: "$1.000", image: "", category: "Styling" }],
-  team: [{ name: "Respaldo", role: "r", experience: "e", image: "", isLead: false }],
+  team: [{ name: "Respaldo", role: "r", experience: "e", image: "", isLead: false, specialties: [], description: "", bookingUrl: "", instagram: "", works: [], quote: "", workDays: [], branchIds: [] }],
   faq: [{ category: "Otros", question: "¿Respaldo?", answer: "Sí" }],
   texts: { "hero.lema": "Respaldo" },
   business: snapshot.business,
@@ -162,6 +162,36 @@ describe("resolveContent: hoja o respaldo (BR-039, HU-CNT-001, RNF-CONF-003)", (
       expect(snapshot.team.length).toBeGreaterThan(0);
       expect(snapshot.faq.length).toBeGreaterThan(0);
     });
+  });
+});
+
+describe("sucursales de cada barbero (BR-063)", () => {
+  const withBranch = (branch: string): SheetCsv => ({
+    ...goodSheet,
+    equipo: `id,nombre,cargo,experiencia,sucursal\nc,Carlos,Master,15 años,${branch}\n`,
+  });
+
+  it("una sucursal que existe en la pestaña sucursales se acepta", () => {
+    const { content, reports } = resolveContent(withBranch("s"), OTHER);
+
+    expect(content.team[0]).toMatchObject({ name: "Carlos", branchIds: ["s"] });
+    expect(reports.find((report) => report.tab === "equipo")?.source).toBe("hoja");
+  });
+
+  it("una sucursal que no existe rechaza la pestaña equipo, que vuelve al respaldo con el problema", () => {
+    const { content, reports } = resolveContent(withBranch("coquimbo-centro"), OTHER);
+    const equipo = reports.find((report) => report.tab === "equipo");
+
+    expect(content.team).toEqual(OTHER.team);
+    expect(equipo?.source).toBe("respaldo");
+    expect(equipo?.issues[0]).toMatchObject({ tab: "equipo", row: 2, field: "sucursal" });
+    expect(equipo?.issues[0].message).toContain("coquimbo-centro");
+  });
+
+  it("se valida contra las sucursales que usa el sitio, aunque vengan del respaldo", () => {
+    const { content } = resolveContent({ equipo: withBranch(OTHER.locations[0].id).equipo }, OTHER);
+
+    expect(content.team[0].branchIds).toEqual([OTHER.locations[0].id]);
   });
 });
 

@@ -186,6 +186,7 @@ describe("pestaña sucursales (BR-048, HU-CNT-003)", () => {
     expect(issues).toEqual([]);
     expect(items).toEqual([
       {
+        id: "la-serena",
         name: "Royce La Serena",
         address: "Larrain Alcalde 3108",
         city: "Pampa Baja, La Serena",

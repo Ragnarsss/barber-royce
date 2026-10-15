@@ -160,6 +160,103 @@ describe("pestaña equipo", () => {
     expect(issues).toHaveLength(1);
     expect(issues[0].message).toContain("Carlos, Miguel");
   });
+
+  describe("especialidades y descripción (BR-063, HU-INFO-003 CA-07)", () => {
+    const FULL = `${HEAD},especialidades,descripcion`;
+
+    it("lee las especialidades separadas por comas, sin espacios sobrantes ni vacías", () => {
+      const { items, issues } = readTeam(
+        table(`${FULL}\nc,Carlos,Master,15 años,,SI," Fade , Barba,,Diseño ",Corta desde 2010.\n`),
+      );
+
+      expect(issues).toEqual([]);
+      expect(items[0]).toMatchObject({ specialties: ["Fade", "Barba", "Diseño"], description: "Corta desde 2010." });
+    });
+
+    it("sin las columnas nuevas la pestaña sigue siendo válida (CP-CNT-002)", () => {
+      const { items, issues } = readTeam(table(`${HEAD}\nc,Carlos,Master,15 años,,SI\n`));
+
+      expect(issues).toEqual([]);
+      expect(items[0]).toMatchObject({ specialties: [], description: "" });
+    });
+
+    it("más de 6 especialidades rechazan la pestaña con fila y campo", () => {
+      const { issues } = readTeam(table(`${FULL}\nc,Carlos,Master,15 años,,,"a,b,c,d,e,f,g",\n`));
+
+      expect(issues[0]).toMatchObject({ tab: "equipo", row: 2, field: "especialidades" });
+      expect(issues[0].message).toContain("7");
+    });
+
+    it("una especialidad de más de 30 caracteres rechaza la pestaña y la nombra", () => {
+      const long = "Degradados de precisión con navaja";
+      const { issues } = readTeam(table(`${FULL}\nc,Carlos,Master,15 años,,,"Fade,${long}",\n`));
+
+      expect(issues[0]).toMatchObject({ field: "especialidades" });
+      expect(issues[0].message).toContain(long);
+    });
+
+    it("lee reserva, instagram, trabajos y frase; vacíos son válidos", () => {
+      const HEAD_ALL = `${FULL},reserva,instagram,trabajos,frase`;
+      const { items, issues } = readTeam(
+        table(
+          `${HEAD_ALL}\nc,Carlos,Master,15 años,,SI,,,https://agendapro.com/carlos,https://instagram.com/carlos,"https://images.unsplash.com/a.jpg, /trabajos/b.jpg",El detalle lo es todo.\nm,Miguel,Barber,10 años,,,,,,,,\n`,
+        ),
+      );
+
+      expect(issues).toEqual([]);
+      expect(items[0]).toMatchObject({
+        bookingUrl: "https://agendapro.com/carlos",
+        instagram: "https://instagram.com/carlos",
+        works: ["https://images.unsplash.com/a.jpg", "/trabajos/b.jpg"],
+        quote: "El detalle lo es todo.",
+      });
+      expect(items[1]).toMatchObject({ bookingUrl: "", instagram: "", works: [], quote: "" });
+    });
+
+    it("reserva e instagram tienen que empezar con https://", () => {
+      const { issues } = readTeam(table(`${HEAD},reserva,instagram\nc,Carlos,Master,15 años,,,agendapro.com/c,@carlos\n`));
+
+      expect(issues.map((issue) => issue.field)).toEqual(["reserva", "instagram"]);
+    });
+
+    it("más de 3 trabajos, o uno que no es una dirección de imagen, rechazan la pestaña", () => {
+      const four = readTeam(table(`${HEAD},trabajos\nc,Carlos,Master,15 años,,,"/a.jpg,/b.jpg,/c.jpg,/d.jpg"\n`));
+      const bad = readTeam(table(`${HEAD},trabajos\nc,Carlos,Master,15 años,,,"foto.jpg"\n`));
+
+      expect(four.issues[0]).toMatchObject({ field: "trabajos" });
+      expect(bad.issues[0]).toMatchObject({ field: "trabajos" });
+      expect(bad.issues[0].message).toContain("foto.jpg");
+    });
+
+    it("lee los días de atención y las sucursales (ids separados por comas)", () => {
+      const { items, issues } = readTeam(
+        table(`${HEAD},dias,sucursal\nc,Carlos,Master,15 años,,,"Lun a Vie, Sáb","barberia-royce-la-serena, barberia-royce-coquimbo"\nm,Miguel,Barber,10 años,,,,\n`),
+      );
+
+      expect(issues).toEqual([]);
+      expect(items[0]).toMatchObject({ workDays: [0, 1, 2, 3, 4, 5], branchIds: ["barberia-royce-la-serena", "barberia-royce-coquimbo"] });
+      expect(items[1]).toMatchObject({ workDays: [], branchIds: [] });
+    });
+
+    it("un día que no existe rechaza la pestaña y lo nombra", () => {
+      const { issues } = readTeam(table(`${HEAD},dias\nc,Carlos,Master,15 años,,,"Lun, Feriados"\n`));
+
+      expect(issues[0]).toMatchObject({ field: "dias" });
+      expect(issues[0].message).toContain("Feriados");
+    });
+
+    it("una frase de más de 120 caracteres rechaza la pestaña", () => {
+      const { issues } = readTeam(table(`${HEAD},frase\nc,Carlos,Master,15 años,,,${"a".repeat(121)}\n`));
+
+      expect(issues[0]).toMatchObject({ field: "frase" });
+    });
+
+    it("una descripción de más de 400 caracteres rechaza la pestaña", () => {
+      const { issues } = readTeam(table(`${FULL}\nc,Carlos,Master,15 años,,,,${"a".repeat(401)}\n`));
+
+      expect(issues[0]).toMatchObject({ field: "descripcion" });
+    });
+  });
 });
 
 describe("pestaña preguntas", () => {

@@ -3,7 +3,7 @@ import type { TeamMember } from "@/types/team.types";
 import { buildHoneycomb, HEX_COLS, HEX_ROWS, LEAD_COLS, LEAD_ROWS } from "./honeycomb";
 
 // BR-060 (HU-EXP-004 CA-12): el panal se arma en una grilla de medias columnas y cuartos de alto.
-const member = (name: string, isLead = false): TeamMember => ({ name, role: "Barber", experience: "", image: "", isLead });
+const member = (name: string, isLead = false): TeamMember => ({ name, role: "Barber", experience: "", image: "", isLead, specialties: [], description: "", bookingUrl: "", instagram: "", works: [], quote: "", workDays: [], branchIds: [] });
 const team = (others: number, withLead = true) => [
   ...(withLead ? [member("Líder", true)] : []),
   ...Array.from({ length: others }, (_, i) => member(`B${i + 1}`)),

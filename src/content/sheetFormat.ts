@@ -1,5 +1,6 @@
 import { businessToEntries } from "./business";
 import { toCsv } from "./csv";
+import { formatDays } from "./days";
 import { parseClp } from "./format";
 import type { SheetCsv } from "./resolveContent";
 import type { SiteContent } from "./types";
@@ -35,14 +36,14 @@ function uniqueIds(labels: string[]): string[] {
  * Convierte contenido en el formato de la hoja: un CSV por pestaña, con los mismos encabezados que espera
  * `resolveContent`. Sirve para (1) comprobar que el respaldo cumple el mismo esquema que la hoja (ida y
  * vuelta sin pérdidas) y (2) generar las plantillas que el dueño importa en Google Sheets.
- * Los `id` salen del nombre de cada fila (`corte-de-cabello`): en la hoja real los elige el dueño.
+ * Los `id` salen del nombre de cada fila (`corte-de-cabello`), salvo los de las sucursales, que traen el suyo porque
+ * el equipo las nombra por id (BR-063). En la hoja real los elige el dueño.
  */
 export function contentToSheet(content: SiteContent): SheetCsv {
   const serviceIds = uniqueIds(content.services.map((s) => s.name));
   const productIds = uniqueIds(content.products.map((p) => p.name));
   const teamIds = uniqueIds(content.team.map((m) => m.name));
   const faqIds = uniqueIds(content.faq.map((q) => q.question));
-  const locationIds = uniqueIds(content.locations.map((l) => l.name));
 
   return {
     servicios: toCsv([
@@ -54,8 +55,42 @@ export function contentToSheet(content: SiteContent): SheetCsv {
       ...content.products.map((p, i) => [productIds[i], p.name, p.description, String(parseClp(p.price)), p.category, p.image, "SI", String(i + 1)]),
     ]),
     equipo: toCsv([
-      ["id", "nombre", "cargo", "experiencia", "imagen", "lider", "activo", "orden"],
-      ...content.team.map((m, i) => [teamIds[i], m.name, m.role, m.experience, m.image, yesNo(m.isLead), "SI", String(i + 1)]),
+      [
+        "id",
+        "nombre",
+        "cargo",
+        "experiencia",
+        "imagen",
+        "lider",
+        "activo",
+        "orden",
+        "especialidades",
+        "descripcion",
+        "frase",
+        "reserva",
+        "instagram",
+        "trabajos",
+        "dias",
+        "sucursal",
+      ],
+      ...content.team.map((m, i) => [
+        teamIds[i],
+        m.name,
+        m.role,
+        m.experience,
+        m.image,
+        yesNo(m.isLead),
+        "SI",
+        String(i + 1),
+        m.specialties.join(", "),
+        m.description,
+        m.quote,
+        m.bookingUrl,
+        m.instagram,
+        m.works.join(", "),
+        formatDays(m.workDays),
+        m.branchIds.join(", "),
+      ]),
     ]),
     preguntas: toCsv([
       ["id", "categoria", "pregunta", "respuesta", "activo", "orden"],
@@ -66,7 +101,7 @@ export function contentToSheet(content: SiteContent): SheetCsv {
     sucursales: toCsv([
       ["id", "nombre", "direccion", "ciudad", "telefono", "email", "whatsapp", "mapa", "horario_semana", "horario_sabado", "horario_domingo", "activo", "orden"],
       ...content.locations.map((l, i) => [
-        locationIds[i], l.name, l.address, l.city, l.phone, l.email, l.whatsapp, l.mapUrl,
+        l.id, l.name, l.address, l.city, l.phone, l.email, l.whatsapp, l.mapUrl,
         l.schedule[0]?.hours ?? "", l.schedule[1]?.hours ?? "", l.schedule[2]?.hours ?? "", "SI", String(i + 1),
       ]),
     ]),

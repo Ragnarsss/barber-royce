@@ -2170,7 +2170,7 @@ Criterios de aceptación:
 #### BR-063 — Equipo: ficha de cada barbero en un modal
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-060
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-063-ficha-barbero`)
 - Historia de usuario: HU-INFO-003 (CA-07), HU-EXP-004 (CA-15)
 - RF/RNF: `RF-INFO-010`, `RF-CNT-002`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`
 
@@ -2181,6 +2181,29 @@ oscura, el nombre en grande, chips con las especialidades y una descripción.
 Hoy la pestaña `equipo` no tiene especialidades ni descripción
 (`docs/contenido/equipo.csv`); el usuario está de acuerdo en agregar esas
 columnas a la plantilla y a la hoja.
+
+> **Alcance ajustado (2026-10-14, decisión del usuario):** la ficha se
+> enriquece con contenido. (1) Textos de **ejemplo** para los cinco barberos
+> en el respaldo (especialidades, descripción, frase y trabajos), que el dueño
+> reemplaza en la hoja. (2) Contenido nuevo, cada uno con una columna
+> opcional en `equipo`: botón **«Reservar con…»** (`reserva`, enlace propio
+> del barbero; vacío = el enlace general de AgendaPro; se rastrea como
+> `reserve_click` con sección `equipo`), **Instagram** del barbero
+> (`instagram`), **fotos de sus trabajos** (`trabajos`, hasta 3) y una
+> **frase** (`frase`, hasta 120 caracteres); además, la experiencia como un
+> dato grande cuando empieza con un número. Sin Instagram de ejemplo (un
+> usuario inventado podría ser la cuenta real de otra persona). Las fotos de
+> ejemplo de trabajos reutilizan las de Unsplash del sitio: la CSP solo
+> admite imágenes propias o de Unsplash.
+>
+> **Alcance ajustado (2026-10-14, decisión del usuario):** la ficha muestra
+> también los **días de atención** (columna `dias`: días sueltos, nombres
+> completos o rangos como `Lun a Vie`; se ven como una semana con esos días
+> encendidos) y la **sucursal** (columna `sucursal`, con el `id` de la pestaña
+> `sucursales`; una o varias). Un `id` que no existe rechaza la pestaña
+> `equipo`. Para eso las sucursales pasan a tener `id` en el contenido
+> (`Location.id`), y `resolveContent` lee `sucursales` antes que `equipo`. El
+> usuario descartó, por ahora, el horario por día.
 
 Alcance:
 1. Columnas nuevas y **opcionales** en la pestaña `equipo`: `especialidades`
@@ -2308,7 +2331,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | En curso | BR-058 |
 | BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | En curso | BR-058 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | En curso | BR-058 |
-| BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Propuesta | BR-060 |
+| BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | En curso | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | En curso | BR-062 |
 | BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | En curso | BR-064 |
 
