@@ -2365,12 +2365,13 @@ Criterios de aceptación:
 > falta o la dirección falla (4 de las 6 de Unsplash dan 404, `BR-008`), el
 > hexágono muestra su nombre y precio siempre, en vez de quedar vacío.
 >
-> **Regresión de LCP medida, sin decidir (2026-10-15):** el LCP de `/productos`
-> pasa de ~3,9 s (un párrafo de texto) a ~5,0 s (una foto del panal), y por
-> arrastre el TBT sube porque el TTI llega más tarde. Es estructural: la foto
-> grande que pide el diseño se descubre recién cuando el JavaScript pinta la
-> página. Se descartó que sea la decodificación de la foto o la sombra de cada
-> hexágono. Queda para que el usuario decida si la acepta, como la de `BR-054`.
+> **Regresión aceptada por escrito (2026-10-15, decisión del usuario):** el LCP
+> móvil de `/productos` pasa de ~3,9 s (un párrafo de texto) a ~5,0 s (una foto
+> del panal), y por arrastre el TBT mediana sube de 78 a 150 ms porque el TTI
+> llega más tarde. Es estructural: la foto grande que pide el diseño se
+> descubre recién cuando el JavaScript pinta la página. Se descartó que sea la
+> decodificación de la foto o la sombra de cada hexágono. El criterio 6 se da por
+> cumplido con esa salvedad, como la de `BR-054`.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-067).
 
