@@ -38,6 +38,15 @@
   padding: calc(var(--hex-gap) * 0.57735) calc(var(--hex-gap) / 2);
 }
 
+/* Relleno gris mientras llegan más elementos: la misma figura que un hexágono, sin marco ni foto. */
+.ghost {
+  display: block;
+  width: 100%;
+  height: 100%;
+  clip-path: var(--hex-clip);
+  background: color-mix(in srgb, var(--color-brand-white) 16%, var(--color-brand-background));
+}
+
 .hex {
   display: block;
   width: 100%;

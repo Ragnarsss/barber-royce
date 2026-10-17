@@ -308,6 +308,12 @@ ver reseñas de otros clientes, para confiar antes de reservar.
 > Actualizada (2026-10-15, decisión del usuario): el botón «Comprar» se quita
 > (`BR-009`): por ahora el sitio no vende productos. CA-03 y RN-01 se cumplen
 > sin botón.
+>
+> Actualizada (2026-10-15, `BR-067` y `BR-068`): el catálogo pasa a un panal de
+> hexágonos con carga progresiva. CA-01 se cumple así: el nombre y el precio se
+> ven al pasar el cursor o enfocar, y la foto, la categoría y la descripción en
+> la ficha que abre cada producto. CA-02 sigue igual: los filtros reacomodan el
+> panal.
 
 Como cliente, quiero ver los productos que vende la barbería con su
 precio, para saber qué puedo comprar en el local.

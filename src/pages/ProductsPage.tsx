@@ -5,7 +5,7 @@ import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
 import { SearchIcon } from "@/components/icons";
 import { filterProducts } from "@/components/products/filterProducts";
 import { ProductDialog } from "@/components/products/ProductDialog";
-import { ProductsHoneycomb } from "@/components/products/ProductsHoneycomb";
+import { ProductsCatalog } from "@/components/products/ProductsCatalog";
 import { ROUTES } from "@/config/routes";
 import { useSiteContent } from "@/content/useSiteContent";
 import { PRODUCT_CATEGORIES, type Product, type ProductCategory } from "@/types/product.types";
@@ -72,7 +72,7 @@ export function ProductsPage() {
               </button>
             </div>
           ) : (
-            <ProductsHoneycomb key={`${category}|${deferredQuery}`} products={filtered} onSelect={setSelected} />
+            <ProductsCatalog key={`${category}|${deferredQuery}`} products={filtered} onSelect={setSelected} />
           )}
         </div>
       </HoneycombPage>
