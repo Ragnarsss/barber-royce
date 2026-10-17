@@ -7,6 +7,7 @@ import { SITE } from "@/config/constants";
 import { fadeInUp, staggerContainer } from "@/config/animations.config";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { DrawnIcon } from "./DrawnIcon";
+import { CardCarousel } from "@/components/common/CardCarousel/CardCarousel";
 import barberBack954w from "@/assets/optimized/barber_background_954w.webp";
 import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
 
@@ -73,33 +74,36 @@ export function Benefits() {
               exclusividad, ofreciendo:
             </p>
           </div>
-          <motion.div
-            ref={ref}
-            className={styles.grid}
-            initial={reducedMotion ? false : "hidden"}
-            animate={controls}
-            variants={staggerContainer}
-          >
-            {benefitsList.map((benefit) => (
-              <motion.article
-                key={benefit.title}
-                className={styles.card}
-                variants={fadeInUp}
-                data-benefit
-              >
-                <h3 className={styles.cardTitle}>{benefit.title}</h3>
-                <div className={styles.cardIcon}>
-                  <DrawnIcon name={benefit.icon} animate={!reducedMotion} />
-                </div>
-                <div className={styles.accent} />
-                <p className={styles.cardDescription}>
-                  {benefit.description.map((part, index) =>
-                    typeof part === "string" ? part : <strong key={index}>{part.strong}</strong>,
-                  )}
-                </p>
-              </motion.article>
-            ))}
-          </motion.div>
+          {/* En móvil las tarjetas son un carrusel con snap (BR-070); en escritorio, la grilla de siempre */}
+          <CardCarousel label="Beneficios">
+            <motion.div
+              ref={ref}
+              className={styles.grid}
+              initial={reducedMotion ? false : "hidden"}
+              animate={controls}
+              variants={staggerContainer}
+            >
+              {benefitsList.map((benefit) => (
+                <motion.article
+                  key={benefit.title}
+                  className={styles.card}
+                  variants={fadeInUp}
+                  data-benefit
+                >
+                  <h3 className={styles.cardTitle}>{benefit.title}</h3>
+                  <div className={styles.cardIcon}>
+                    <DrawnIcon name={benefit.icon} animate={!reducedMotion} />
+                  </div>
+                  <div className={styles.accent} />
+                  <p className={styles.cardDescription}>
+                    {benefit.description.map((part, index) =>
+                      typeof part === "string" ? part : <strong key={index}>{part.strong}</strong>,
+                    )}
+                  </p>
+                </motion.article>
+              ))}
+            </motion.div>
+          </CardCarousel>
         </div>
       </div>
     </section>

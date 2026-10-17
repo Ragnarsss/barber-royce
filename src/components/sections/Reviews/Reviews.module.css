@@ -173,8 +173,14 @@
     padding: clamp(3rem, 8vh, 4rem) 0;
   }
 
+  /* Con `margin: 0 auto` el contenedor se ajusta a su contenido y, con el carrusel, se estiraba más allá de la pantalla */
+  .container {
+    width: 100%;
+  }
+
   .grid {
     grid-template-columns: 1fr;
+    --carousel-gutter: 3rem; /* el relleno lateral de .container: el carrusel llega hasta el borde (BR-070) */
   }
 
   .card {

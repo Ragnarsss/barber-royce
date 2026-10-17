@@ -3,6 +3,7 @@ import { type ReactNode } from "react";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
+import { CardCarousel } from "@/components/common/CardCarousel/CardCarousel";
 
 
 interface AnimatedGridSectionProps<T> {
@@ -18,6 +19,8 @@ interface AnimatedGridSectionProps<T> {
     items: T[];
     renderItem: (item: T, index: number) => ReactNode;
     enableParallax?: boolean;
+    /** Si se indica, en móvil la grilla pasa a ser un carrusel con snap con este nombre (BR-070). */
+    carouselLabel?: string;
 }
 
 export function AnimatedGridSection<T>({
@@ -33,10 +36,26 @@ export function AnimatedGridSection<T>({
     items,
     renderItem,
     enableParallax = true,
+    carouselLabel,
 }: AnimatedGridSectionProps<T>) {
     const { ref, controls } = useScrollAnimation();
     const { ref: sectionRef, scrollYProgress } = useParallaxProgress();
     const layers = { slow: useSlowLayer(scrollYProgress) };
+
+    const grid = (
+        <motion.div
+            className={gridClassName}
+            initial="hidden"
+            animate={controls}
+            variants={staggerContainer}
+        >
+            {items.map((item, index) => (
+                <motion.div key={index} variants={scaleIn}>
+                    {renderItem(item, index)}
+                </motion.div>
+            ))}
+        </motion.div>
+    );
 
     return (
         <section id={id} className={className} ref={sectionRef}>
@@ -55,18 +74,7 @@ export function AnimatedGridSection<T>({
                     {subtitle && <p className={subtitleClassName}>{subtitle}</p>}
                 </motion.div>
 
-                <motion.div
-                    className={gridClassName}
-                    initial="hidden"
-                    animate={controls}
-                    variants={staggerContainer}
-                >
-                    {items.map((item, index) => (
-                        <motion.div key={index} variants={scaleIn}>
-                            {renderItem(item, index)}
-                        </motion.div>
-                    ))}
-                </motion.div>
+                {carouselLabel ? <CardCarousel label={carouselLabel}>{grid}</CardCarousel> : grid}
             </motion.div>
         </section>
     );

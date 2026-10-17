@@ -2584,9 +2584,11 @@ Decisiones del usuario (2026-10-17):
 Alcance (solo `max-width: 768px`):
 1. Las tarjetas van en una fila horizontal con `scroll-snap`, cada una al ~82 %
    del ancho para que asome la siguiente; sin barra de desplazamiento.
-2. La tarjeta que se ve se destaca y las demás se atenúan un poco, sin
-   `setState` por scroll: un `IntersectionObserver` cambia un atributo cuando
-   otra tarjeta pasa a ser la visible, como el centinela de `BR-068`.
+2. La tarjeta que se ve queda a tamaño completo y las demás un poco más chicas
+   (propiedad `scale`: `opacity` la escribe framer en línea en las tarjetas de
+   entrada y pisaría el CSS), sin `setState` por scroll: un
+   `IntersectionObserver` cambia un atributo cuando otra tarjeta pasa a ser la
+   visible, como el centinela de `BR-068`.
 3. Puntos de posición debajo, que son botones: cambian de tarjeta sin gesto de
    arrastre (WCAG 2.5.1) y dicen cuál es la actual.
 4. La fila es una región enfocable con nombre: con el teclado se recorre con las

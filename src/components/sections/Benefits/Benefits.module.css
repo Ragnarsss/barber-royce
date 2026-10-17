@@ -274,6 +274,7 @@
 
   .grid {
     gap: 1.25rem;
+    --carousel-gutter: 2rem; /* el relleno lateral de .container: el carrusel llega hasta el borde (BR-070) */
   }
 }
 
