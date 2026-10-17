@@ -36,12 +36,12 @@ function uniqueIds(labels: string[]): string[] {
  * Convierte contenido en el formato de la hoja: un CSV por pestaña, con los mismos encabezados que espera
  * `resolveContent`. Sirve para (1) comprobar que el respaldo cumple el mismo esquema que la hoja (ida y
  * vuelta sin pérdidas) y (2) generar las plantillas que el dueño importa en Google Sheets.
- * Los `id` salen del nombre de cada fila (`corte-de-cabello`), salvo los de las sucursales, que traen el suyo porque
- * el equipo las nombra por id (BR-063). En la hoja real los elige el dueño.
+ * Los `id` salen del nombre de cada fila (`corte-de-cabello`), salvo los de las sucursales y los productos, que traen
+ * el suyo: el equipo nombra a las sucursales por id (BR-063) y los productos pueden repetir el nombre (BR-067).
+ * En la hoja real los elige el dueño.
  */
 export function contentToSheet(content: SiteContent): SheetCsv {
   const serviceIds = uniqueIds(content.services.map((s) => s.name));
-  const productIds = uniqueIds(content.products.map((p) => p.name));
   const teamIds = uniqueIds(content.team.map((m) => m.name));
   const faqIds = uniqueIds(content.faq.map((q) => q.question));
 
@@ -52,7 +52,7 @@ export function contentToSheet(content: SiteContent): SheetCsv {
     ]),
     productos: toCsv([
       ["id", "nombre", "descripcion", "precio", "categoria", "imagen", "activo", "orden"],
-      ...content.products.map((p, i) => [productIds[i], p.name, p.description, String(parseClp(p.price)), p.category, p.image, "SI", String(i + 1)]),
+      ...content.products.map((p, i) => [p.id, p.name, p.description, String(parseClp(p.price)), p.category, p.image, "SI", String(i + 1)]),
     ]),
     equipo: toCsv([
       [

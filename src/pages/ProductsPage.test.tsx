@@ -15,10 +15,10 @@ vi.mock("virtual:site-content", async () => {
     default: {
       ...snapshot,
       products: [
-        { name: "Pomada Mate", description: "Fijación fuerte sin brillo", price: "$12.990", image: "/pomada.jpg", category: "Styling" },
-        { name: "Aceite para barba", description: "Suaviza y da brillo", price: "$9.990", image: "/aceite.jpg", category: "Barba" },
-        { name: "Shampoo diario", description: "Limpieza suave", price: "$7.490", image: "/shampoo.jpg", category: "Cuidado" },
-        { name: "Kit de navidad", description: "Pomada y aceite", price: "$24.990", image: "/kit.jpg", category: "Kits" },
+        { id: "pomada-mate", name: "Pomada Mate", description: "Fijación fuerte sin brillo", price: "$12.990", image: "/pomada.jpg", category: "Styling" },
+        { id: "aceite-barba", name: "Aceite para barba", description: "Suaviza y da brillo", price: "$9.990", image: "/aceite.jpg", category: "Barba" },
+        { id: "shampoo-diario", name: "Shampoo diario", description: "Limpieza suave", price: "$7.490", image: "/shampoo.jpg", category: "Cuidado" },
+        { id: "kit-navidad", name: "Kit de navidad", description: "Pomada y aceite", price: "$24.990", image: "/kit.jpg", category: "Kits" },
       ],
     },
   };

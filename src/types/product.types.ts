@@ -4,6 +4,8 @@
  */
 
 export interface Product {
+    /** Identificador de la fila en la pestaña `productos` (único aunque el nombre se repita; BR-067). */
+    id: string;
     name: string;
     description: string;
     price: string;

@@ -19,7 +19,7 @@ import { readAllSources } from "./sourceFiles";
 const hoja = vi.hoisted(() => ({
   content: {
     services: [{ name: "Servicio de la hoja", description: "Descripción de la hoja", price: "$9.990", duration: "99 min", includes: "", image: "", category: "Barba" }],
-    products: [{ name: "Producto de la hoja", description: "Descripción", price: "$12.345", image: "", category: "Cuidado" }],
+    products: [{ id: "producto-de-la-hoja", name: "Producto de la hoja", description: "Descripción", price: "$12.345", image: "", category: "Cuidado" }],
     team: [{ name: "Barbero de la hoja", role: "Cargo de la hoja", experience: "1 año", image: "", isLead: true }],
     faq: [{ category: "Servicios", question: "¿Pregunta de la hoja?", answer: "Respuesta de la hoja", }],
     texts: {},

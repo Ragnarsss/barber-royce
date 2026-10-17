@@ -50,6 +50,21 @@
   clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 
+/*
+ * Variante en banda: las diagonales miden una pantalla (no un porcentaje de la página) y debajo el fondo es liso. Si el
+ * alto dependiera del contenido, un cambio de fuente o la carga de más productos movería el triángulo rojo entero.
+ */
+.band {
+  background: var(--color-brand-background);
+}
+
+.band .backdrop {
+  bottom: auto;
+  height: 100vh;
+  height: 100svh;
+  background: var(--color-brand-section-bg);
+}
+
 .content {
   position: relative;
   display: flex;

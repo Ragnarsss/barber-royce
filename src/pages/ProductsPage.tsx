@@ -34,7 +34,7 @@ export function ProductsPage() {
   return (
     <>
       <SEOHelmet route={ROUTES.products} />
-      <HoneycombPage title="Productos premium" subtitle="Las mejores marcas para tu cuidado diario">
+      <HoneycombPage title="Productos premium" subtitle="Las mejores marcas para tu cuidado diario" band>
         <div className={styles.filters}>
           <div className={styles.search}>
             <SearchIcon className={styles.searchIcon} />
@@ -78,7 +78,7 @@ export function ProductsPage() {
       </HoneycombPage>
 
       <AnimatePresence>
-        {selected && <ProductDialog key={selected.name} product={selected} onClose={() => setSelected(null)} />}
+        {selected && <ProductDialog key={selected.id} product={selected} onClose={() => setSelected(null)} />}
       </AnimatePresence>
     </>
   );

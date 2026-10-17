@@ -4,6 +4,7 @@ import { filterProducts } from "./filterProducts";
 
 // BR-067 (HU-INFO-004 CA-02): buscar por texto y filtrar por categoría.
 const product = (name: string, description: string, category: Product["category"]): Product => ({
+  id: name.toLowerCase().replace(/s+/g, "-"),
   name,
   description,
   price: "$10.000",
