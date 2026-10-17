@@ -679,6 +679,10 @@ y confiar en que el servicio está a la altura.
   una se asienta en su lugar dejando asomar la siguiente, un indicador marca
   cuál veo y puedo cambiar de tarjeta con el teclado o con los puntos; en
   escritorio siguen en grilla.
+- CA-22 (2026-10-17, `BR-071`): Given paso de «Estilo que te acompaña» a «Lo que
+  dicen nuestros clientes» en un celular, When veo la foto que une las dos
+  secciones, Then lleva dos cuñas rojas, una arriba a la izquierda y otra abajo a
+  la derecha, y se lee la chaqueta «BARBER ROYCE».
 
 ---
 

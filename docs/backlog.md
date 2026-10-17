@@ -2610,6 +2610,38 @@ Criterios de aceptación:
 7. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
    midiendo alternado (CP-PERF-003).
 
+
+#### BR-071 — Beneficios en móvil: foto puente con dos cuñas rojas
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: BR-064
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-22)
+- RF/RNF: `RNF-PERF-003`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** en móvil, la foto entre «Estilo que te acompaña» y «Lo
+que dicen nuestros clientes» (la chaqueta «BARBER ROYCE») lleva una sola cuña
+roja arriba, de 72 px (`Benefits.module.css`, `.imageBackground::before`). El
+usuario decidió mantener la foto como puente entre las dos secciones y pidió que
+tenga dos figuras: la cuña de arriba a la izquierda, más grande, y otra abajo a
+la derecha, en espejo (dibujó la forma sobre una captura).
+
+Decisión del usuario (2026-10-17): dos cuñas rojas en la foto puente; solo móvil,
+que es donde existe esa foto.
+
+Alcance (solo `max-width: 768px`):
+1. Cuña de arriba a la izquierda, más alta que la actual.
+2. Cuña nueva abajo a la derecha, en espejo: borde diagonal que sube hacia la
+   derecha.
+3. El tamaño de cada cuña sale de una variable CSS al comienzo de la regla, para
+   ajustarlo a ojo.
+4. La foto, su recorte y el escritorio no cambian.
+
+Criterios de aceptación:
+1. La foto puente muestra las dos cuñas rojas, con la chaqueta «BARBER ROYCE»
+   legible (HU-EXP-004 CA-22).
+2. En escritorio nada cambia.
+3. Sin colores escritos a mano (test; ADR-002).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2701,6 +2733,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-061 | Hero y CTA1 en móvil: fieles al Figma | K | P3 | M | Propuesta | BR-056, BR-058, BR-059 |
 | BR-069 | Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas | K | P3 | M | Propuesta | BR-056, BR-064 |
 | BR-070 | Beneficios y Reseñas en móvil: carrusel con snap | K | P3 | M | Propuesta | BR-069 |
+| BR-071 | Beneficios en móvil: foto puente con dos cuñas rojas | K | P3 | XS | Propuesta | BR-064 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |
