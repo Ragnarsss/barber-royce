@@ -1,14 +1,61 @@
 /*
- * Carrusel con snap solo en móvil (BR-070, HU-EXP-004 CA-21). En escritorio el envoltorio no existe (`display: contents`)
- * y la grilla de la sección queda como estaba. En móvil, el primer hijo (la grilla de tarjetas de la sección) pasa a ser
- * una fila desplazable y cada tarjeta, un paso del snap. La sección define `--carousel-gutter` (el relleno lateral de su
- * contenedor) para que la fila llegue hasta el borde de la pantalla y se vea asomar la tarjeta siguiente.
+ * Carrusel con snap (BR-070, HU-EXP-004 CA-21; escritorio, BR-073, CA-24). Sin `desktopVisible`, en escritorio el
+ * envoltorio no existe (`display: contents`) y la grilla de la sección queda como estaba. En móvil, el primer hijo (la
+ * grilla de tarjetas de la sección) pasa a ser una fila desplazable y cada tarjeta, un paso del snap. La sección define
+ * `--carousel-gutter` (el relleno lateral de su contenedor) para que la fila llegue hasta el borde de la pantalla y se
+ * vea asomar la tarjeta siguiente.
+ *
+ * Con `desktopVisible` (clase `.desktop`), en escritorio la fila también es un carrusel y muestra
+ * `--carousel-visible` tarjetas a la vez, con flechas.
  */
 .carousel {
   display: contents;
 }
 
+/* Puntos: el componente solo los monta cuando hay algo que desplazar */
 .dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 1rem;
+}
+
+/* Botón de 24 px (área táctil mínima) con un punto de 8 px; el activo se estira con `scale`, sin tocar el layout */
+.dot {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.dot::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-brand-white) 40%, transparent);
+  transition:
+    scale 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.dot[aria-current="true"]::before {
+  scale: 3 1;
+  background: var(--color-brand-primary);
+}
+
+.dot:focus-visible {
+  outline: 2px solid var(--color-brand-white);
+  outline-offset: 2px;
+  border-radius: var(--radius-full);
+}
+
+/* Flechas: solo en escritorio (en móvil se desliza con el dedo) */
+.arrow {
   display: none;
 }
 
@@ -49,52 +96,95 @@
   .carousel > :first-child > [data-active="false"] {
     scale: 0.94;
   }
+}
 
-  .dots {
-    display: flex;
-    justify-content: center;
-    gap: 0.25rem;
-    margin-top: 1rem;
+@media (min-width: 769px) {
+  .desktop {
+    display: block;
+    position: relative;
   }
 
-  /* Botón de 24 px (área táctil mínima) con un punto de 8 px; el activo se estira con `scale`, sin tocar el layout */
-  .dot {
+  .desktop > :first-child {
+    --carousel-gap: 1.5rem;
+    display: flex;
+    gap: var(--carousel-gap);
+    /* Aire arriba y abajo: el overflow-x recorta también en vertical y el hover sube la tarjeta */
+    padding-block: 0.75rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    cursor: grab;
+  }
+
+  .desktop > :first-child::-webkit-scrollbar {
+    display: none;
+  }
+
+  .desktop > :first-child:focus-visible {
+    outline: 2px solid var(--color-brand-white);
+    outline-offset: -2px;
+  }
+
+  .desktop > :first-child[data-dragging="true"] {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  /* `--carousel-visible` tarjetas a la vez, separadas por el espacio de la fila */
+  .desktop > :first-child > * {
+    flex: 0 0 calc((100% - (var(--carousel-visible, 3) - 1) * var(--carousel-gap)) / var(--carousel-visible, 3));
+    scroll-snap-align: start;
+  }
+
+  /* Flecha con las esquinas cortadas del resto de las formas del sitio: roja, con la flecha blanca */
+  .arrow {
+    position: absolute;
+    top: calc(50% - 1.5rem);
+    z-index: 2;
     display: grid;
     place-items: center;
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
     padding: 0;
-    background: none;
+    color: var(--color-brand-white);
+    background: var(--color-brand-primary);
     border: 0;
     cursor: pointer;
-  }
-
-  .dot::before {
-    content: "";
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: var(--radius-full);
-    background: color-mix(in srgb, var(--color-brand-white) 40%, transparent);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
     transition:
-      scale 0.3s ease,
-      background-color 0.3s ease;
+      background-color 0.25s ease,
+      scale 0.25s ease;
   }
 
-  .dot[aria-current="true"]::before {
-    scale: 3 1;
-    background: var(--color-brand-primary);
+  .arrowPrev {
+    left: -1.375rem;
   }
 
-  .dot:focus-visible {
+  .arrowNext {
+    right: -1.375rem;
+  }
+
+  .arrow:hover:not(:disabled) {
+    background: var(--color-brand-primary-hover);
+    scale: 1.08;
+  }
+
+  .arrow:focus-visible {
     outline: 2px solid var(--color-brand-white);
     outline-offset: 2px;
-    border-radius: var(--radius-full);
+  }
+
+  .arrow:disabled {
+    background: color-mix(in srgb, var(--color-brand-white) 25%, transparent);
+    cursor: default;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .carousel > :first-child > *,
-  .dot::before {
+  .dot::before,
+  .arrow {
     transition: none;
   }
 }

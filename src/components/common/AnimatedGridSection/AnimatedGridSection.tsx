@@ -21,6 +21,8 @@ interface AnimatedGridSectionProps<T> {
     enableParallax?: boolean;
     /** Si se indica, en móvil la grilla pasa a ser un carrusel con snap con este nombre (BR-070). */
     carouselLabel?: string;
+    /** Con `carouselLabel`, si se indica el carrusel también existe en escritorio con tantas tarjetas visibles (BR-073). */
+    carouselDesktopVisible?: number;
 }
 
 export function AnimatedGridSection<T>({
@@ -37,6 +39,7 @@ export function AnimatedGridSection<T>({
     renderItem,
     enableParallax = true,
     carouselLabel,
+    carouselDesktopVisible,
 }: AnimatedGridSectionProps<T>) {
     const { ref, controls } = useScrollAnimation();
     const { ref: sectionRef, scrollYProgress } = useParallaxProgress();
@@ -74,7 +77,13 @@ export function AnimatedGridSection<T>({
                     {subtitle && <p className={subtitleClassName}>{subtitle}</p>}
                 </motion.div>
 
-                {carouselLabel ? <CardCarousel label={carouselLabel}>{grid}</CardCarousel> : grid}
+                {carouselLabel ? (
+                    <CardCarousel label={carouselLabel} desktopVisible={carouselDesktopVisible}>
+                        {grid}
+                    </CardCarousel>
+                ) : (
+                    grid
+                )}
             </motion.div>
         </section>
     );

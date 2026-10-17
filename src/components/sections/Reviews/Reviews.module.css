@@ -146,6 +146,51 @@
   }
 }
 
+/*
+ * Profundidad del carrusel en escritorio (BR-073): la tarjeta del centro va a tamaño completo y las de los lados más
+ * chicas y atenuadas, según dónde estén en la fila. Es una animación CSS ligada a la posición de cada tarjeta dentro de
+ * la fila (`animation-timeline: view()`): sin JavaScript ni `setState` por scroll, solo `scale` y `opacity` (propiedades
+ * sueltas: framer escribe el `transform` en línea). Con tres visibles, el centro de cada tarjeta recorre el 25 %, 50 % y
+ * 75 % de su rango. Donde el navegador no soporta la línea de tiempo, o con reducir movimiento, las tarjetas son iguales.
+ */
+@keyframes reviewDepth {
+  0% {
+    scale: 0.82;
+    opacity: 0.35;
+  }
+
+  25% {
+    scale: 0.92;
+    opacity: 0.7;
+  }
+
+  50% {
+    scale: 1;
+    opacity: 1;
+  }
+
+  75% {
+    scale: 0.92;
+    opacity: 0.7;
+  }
+
+  100% {
+    scale: 0.82;
+    opacity: 0.35;
+  }
+}
+
+@media (min-width: 769px) {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .card {
+        animation: reviewDepth linear both;
+        animation-timeline: view(inline);
+      }
+    }
+  }
+}
+
 .rating {
   color: var(--color-brand-primary);
   font-size: 20px;

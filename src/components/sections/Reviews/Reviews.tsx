@@ -20,6 +20,7 @@ export function Reviews() {
       subtitle={siteText("reviews.subtitulo")}
       items={reviewsList}
       carouselLabel="Reseñas de clientes"
+      carouselDesktopVisible={3}
       renderItem={(review) => (
         // Tarjeta de vidrio con esquinas cortadas, como las del Hero (BR-069)
         <article className={styles.card}>
