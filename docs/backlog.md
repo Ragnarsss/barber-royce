@@ -2650,6 +2650,49 @@ Criterios de aceptación:
 2. En escritorio nada cambia.
 3. Sin colores escritos a mano (test; ADR-002).
 
+
+#### BR-072 — Innovación y calidad: tarjetas de vidrio y carrusel en móvil
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-069, BR-070
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-23)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** «Innovación y calidad en cada detalle» (la sección
+`Features`, las características del servicio) quedó fuera de `BR-069` y
+`BR-070`, que cubrieron Beneficios y Reseñas. El usuario pidió ahora que reciba
+lo mismo. Hoy sus tarjetas son blancas, usan el componente `Card`, miden 17,5 rem
+de alto con mucho vacío adentro y van apiladas; su CSS trae colores escritos a
+mano (`#1a1a1a`, `#d52323`, `rgba(...)`); y la última tarjeta se corta contra el
+borde de la sección en móvil, porque el parallax de `AnimatedGridSection` baja el
+contenedor hasta un 10 % y la sección tiene `overflow: hidden`.
+
+Decisión del usuario (2026-10-17): lo mismo que a las otras dos secciones, tarjetas
+de vidrio (móvil y escritorio, como `BR-069`) y carrusel con snap (solo móvil,
+como `BR-070`). Por defecto (no se eligió): el ícono sigue el estilo de las
+tarjetas del Hero, un cuadrado rojo con esquinas cortadas y el ícono blanco.
+
+Alcance:
+1. Tarjetas de vidrio con esquinas cortadas y los tokens compartidos; texto
+   blanco; sin el componente `Card`.
+2. Ícono en un cuadrado rojo con esquinas cortadas, como el del Hero.
+3. En móvil, el carrusel con snap de `BR-070` (`carouselLabel` en
+   `AnimatedGridSection`) y el contenedor a todo el ancho.
+4. En móvil, sin el parallax del contenedor: arregla la tarjeta cortada.
+5. Todos los colores de la sección a tokens.
+
+Criterios de aceptación:
+1. Las tarjetas son de vidrio oscuro con esquinas cortadas, en móvil y escritorio
+   (HU-EXP-004 CA-23).
+2. En móvil se deslizan con snap, asoma la siguiente y los puntos son botones con
+   nombre; en escritorio siguen en grilla (CP-A11Y-002).
+3. Ninguna tarjeta queda cortada por el borde de la sección en móvil.
+4. El texto cumple 4,5:1 (CP-A11Y-004); con reducir movimiento no hay animación
+   nueva (CP-A11Y-003).
+5. Sin colores escritos a mano en `Features.module.css` (test; ADR-002).
+6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-003).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2742,6 +2785,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-069 | Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas | K | P3 | M | Propuesta | BR-056, BR-064 |
 | BR-070 | Beneficios y Reseñas en móvil: carrusel con snap | K | P3 | M | Propuesta | BR-069 |
 | BR-071 | Beneficios en móvil: foto puente con dos cuñas rojas | K | P3 | XS | Propuesta | BR-064 |
+| BR-072 | Innovación y calidad: tarjetas de vidrio y carrusel en móvil | K | P3 | S | Propuesta | BR-069, BR-070 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |

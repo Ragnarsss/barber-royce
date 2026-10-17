@@ -683,6 +683,11 @@ y confiar en que el servicio está a la altura.
   dicen nuestros clientes» en un celular, When veo la foto que une las dos
   secciones, Then lleva dos cuñas rojas, una arriba a la izquierda y otra abajo a
   la derecha, y se lee la chaqueta «BARBER ROYCE».
+- CA-23 (2026-10-17, `BR-072`): Given llego a «Innovación y calidad en cada
+  detalle», When veo las características del servicio, Then son tarjetas de
+  vidrio oscuro con esquinas cortadas, como las del primer bloque; en un celular
+  se deslizan con snap, ninguna queda cortada por el borde de la sección y los
+  puntos permiten cambiar de tarjeta sin arrastrar.
 
 ---
 
