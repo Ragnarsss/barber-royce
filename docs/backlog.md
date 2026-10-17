@@ -309,7 +309,7 @@ Criterios de aceptación:
 #### BR-009 — Decidir qué hace el botón "Comprar" de productos
 
 - Prioridad: P1 · Esfuerzo: XS · Depende de: —
-- Estado: En curso (rama `feat/br-009-quitar-boton-comprar`)
+- Estado: Hecho (2026-10-17, rama `feat/br-009-quitar-boton-comprar` → master, PR #31; verificado por el usuario en producción)
 - Historia de usuario: HU-INFO-004 (CA-03, RN-01)
 - RF/RNF: `RF-INFO-002`
 
@@ -2296,7 +2296,7 @@ sería L). El botón «Comprar» salió aparte, en `BR-009`.
 #### BR-067 — Productos: catálogo en panal con hover y ficha
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-060, BR-063, BR-009
-- Estado: En curso (rama `feat/br-067-productos-panal`)
+- Estado: Hecho (2026-10-17, rama `feat/br-067-productos-panal` → master, PR #31; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-18), HU-INFO-004 (CA-01, CA-02)
 - RF/RNF: `RF-INFO-011`, `RF-INFO-002`, `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`
 
@@ -2378,7 +2378,7 @@ Criterios de aceptación:
 #### BR-068 — Productos: carga progresiva (scroll infinito)
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-067
-- Estado: En curso (rama `feat/br-068-productos-scroll-infinito`)
+- Estado: Hecho (2026-10-17, rama `feat/br-068-productos-scroll-infinito` → master, PR #31; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-19)
 - RF/RNF: `RF-INFO-011`, `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`
 
@@ -2461,7 +2461,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-006 | SEO técnico | B | P0 | S | Propuesta | BR-005 |
 | BR-007 | Enlaces externos seguros | B | P0 | XS | En curso | — |
 | BR-008 | Fotos propias en lugar de Unsplash | B | P0 | M | Bloqueada | — |
-| BR-009 | Quitar el botón "Comprar" (decidido) | B | P1 | XS | En curso | — |
+| BR-009 | Quitar el botón "Comprar" (decidido) | B | P1 | XS | Hecho | — |
 | BR-010 | Variables de entorno | B | P1 | XS | Hecho | — |
 | BR-011 | Ruta crítica del LCP | F | P1 | S | En curso | — |
 | BR-012 | Imágenes pendientes | F | P1 | S | En curso | BR-011 |
@@ -2518,8 +2518,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |
 | BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | Hecho | BR-064 |
 | BR-066 | El respaldo del enlace de reserva apunta a un subdominio que no existe | B | P1 | XS | Hecho | — |
-| BR-067 | Productos: catálogo en panal con hover y ficha | K | P3 | M | En curso | BR-060, BR-063, BR-009 |
-| BR-068 | Productos: carga progresiva (scroll infinito) | K | P3 | M | En curso | BR-067 |
+| BR-067 | Productos: catálogo en panal con hover y ficha | K | P3 | M | Hecho | BR-060, BR-063, BR-009 |
+| BR-068 | Productos: carga progresiva (scroll infinito) | K | P3 | M | Hecho | BR-067 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
