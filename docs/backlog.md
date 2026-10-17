@@ -2468,14 +2468,19 @@ Decisiones del usuario (2026-10-17):
 > al triángulo** que fijó `BR-055` (HU-EXP-004 CA-08, parte móvil). El fondo
 > sigue sin ser un color plano. En escritorio CA-08 no cambia.
 >
-> **Foto provisoria:** `src/assets/hero_mobile.png` es la exportación del Figma
-> como SVG: una foto de 271 × 284 px estirada a 2059 × 2081, ya espejada y con
-> el velo negro al 60 % incorporado. Se ve suave a pantalla completa. Hay que
-> cambiarla por la original en buena resolución (≥ 1200 px de ancho); como esa
-> sí vendrá sin velo, entonces se agrega el velo por CSS con un token.
-> El mismo `<picture>` del Hero elige la foto móvil (`<source media>`) y
-> `index.html` precarga solo una de las dos con `media` excluyentes
-> (`lcpPreload.test.ts`).
+> **Foto del Hero móvil:** `src/assets/hero_mobile.png` (2439 × 2556 px, sin
+> velo, exportada del Figma por el usuario el 2026-10-17). Se ve algo suave a
+> pantalla completa porque el original del Figma ya era chico; cuando haya una
+> original en mayor resolución, solo se cambia el archivo. El velo negro al
+> 60 % del Figma va por CSS con un token. El mismo `<picture>` del Hero elige la
+> foto móvil (`<source media>`) y `index.html` precarga solo una de las dos con
+> `media` excluyentes (`lcpPreload.test.ts`). La primera exportación (271 px,
+> con el velo incorporado) se descartó.
+>
+> **CTA1 móvil (2026-10-17, el usuario):** usa la foto del Hero de escritorio
+> (`hero_model_left_profile`, los mismos archivos que el Hero) para que el
+> modelo se vea bien, en vez de `cta1_model`. Es un `<source media>` en el
+> mismo `<picture>`; la foto carga solo en móvil y de forma diferida.
 
 Alcance (solo `max-width: 768px`; el escritorio no cambia):
 1. Navbar: hamburguesa roja a la izquierda; la marca en texto, en dos líneas

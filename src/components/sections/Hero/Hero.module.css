@@ -522,7 +522,16 @@
     height: 100% !important;
     object-fit: cover;
     /* Corrida a la izquierda (más del lado derecho de la foto): el rostro del barbero no se corta en el borde */
-    object-position: 72% top;
+    object-position: 80% top;
+  }
+
+  /* Velo oscuro sobre la foto (60 %, como en el Figma): el texto blanco se lee sobre las zonas claras (CP-A11Y-004) */
+  .heroImageSEO::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-primary-900) 60%, transparent);
+    pointer-events: none;
   }
 
   .container {

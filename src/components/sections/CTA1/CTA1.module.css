@@ -324,8 +324,8 @@
    * el Figma. Va por el ancho (no por el alto de la sección) para que el tamaño no dependa del largo del texto.
    */
   .ctaImage {
-    right: -97%;
-    width: 170%;
+    right: -94%;
+    width: 140%;
     max-width: none; /* sin esto, la regla global de imágenes la limita al 100 % del contenedor */
   }
 

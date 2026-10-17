@@ -199,6 +199,8 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
     const mobile = heroCss.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
 
     expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*transform:\s*none\s*!important/);
+    // El velo del Figma (60 % negro) va por CSS y con un token: la foto viene sin velo y se puede cambiar sin tocarlo.
+    expect(mobile).toMatch(/\.heroImageSEO::after\s*\{[^}]*color-mix\(in srgb, var\(--color-primary-900\) 60%, transparent\)/);
     expect(mobile).toMatch(/\.title::after\s*\{[^}]*background:\s*var\(--color-brand-white\)/);
   });
 

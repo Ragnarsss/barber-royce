@@ -168,6 +168,14 @@ describe("CTA1 en móvil (BR-061, HU-EXP-004 CA-13)", () => {
     expect(rule(/\.ctaImage/)).toMatch(/max-width:\s*none/);
   });
 
+  it("CA-13: en móvil la foto es la del Hero de escritorio, en el mismo <picture> y con los mismos archivos", () => {
+    renderCta();
+
+    const source = document.querySelector("[data-figure] picture source[media='(max-width: 768px)']");
+    expect(source?.getAttribute("srcset")).toMatch(/hero_model_left_profile_842w\S*\.webp 842w/);
+    expect(source?.getAttribute("srcset")).toMatch(/hero_model_left_profile_1684w\S*\.webp 1684w/);
+  });
+
   it("CA-13: el texto va alineado a la izquierda, con una línea blanca bajo el título", () => {
     expect(rule(/\.textContent/)).toMatch(/text-align:\s*left/);
     expect(rule(/\.title::after/)).toMatch(/background:\s*var\(--color-brand-white\)/);

@@ -4,6 +4,9 @@ import { Calendar, ArrowRight } from "lucide-react";
 import styles from "./CTA1.module.css";
 import cta700w from "@/assets/optimized/cta1_model_700w.webp";
 import cta1400w from "@/assets/optimized/cta1_model_1400w.webp";
+import profile842w from "@/assets/optimized/hero_model_left_profile_842w.webp";
+import profile1060w from "@/assets/optimized/hero_model_left_profile_1060w.webp";
+import profile1684w from "@/assets/optimized/hero_model_left_profile_1684w.webp";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useMiddleLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
@@ -101,6 +104,13 @@ export function CTA1() {
           animate={controls}
           variants={fadeInRight}
         >
+          {/* Móvil: la foto del Hero de escritorio, que muestra mejor al modelo (BR-061); son los mismos archivos del Hero */}
+          <source
+            media="(max-width: 768px)"
+            srcSet={`${profile842w} 842w, ${profile1060w} 1060w, ${profile1684w} 1684w`}
+            sizes="140vw"
+            type="image/webp"
+          />
           <source
             srcSet={`${cta700w} 700w, ${cta1400w} 1400w`}
             sizes="(max-width: 768px) 100vw, 700px"
