@@ -1,0 +1,54 @@
+/*
+ * Carga progresiva del catálogo (BR-068): el centinela que dispara el siguiente lote y el botón alternativo, con el
+ * mismo chaflán que los filtros. El `clip-path` recorta cualquier `outline`: el foco se marca con una sombra interior.
+ */
+.sentinel {
+  width: 100%;
+  height: 1px;
+  pointer-events: none;
+}
+
+.more {
+  --cut: var(--spacing-3);
+
+  display: block;
+  margin: var(--spacing-6) auto 0;
+  min-height: var(--spacing-12);
+  padding: 0 var(--spacing-8);
+  border: 0;
+  font: inherit;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
+  background: color-mix(in srgb, var(--color-primary-900) 55%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-brand-white) 40%, transparent);
+  clip-path: polygon(
+    var(--cut) 0,
+    100% 0,
+    100% calc(100% - var(--cut)),
+    calc(100% - var(--cut)) 100%,
+    0 100%,
+    0 var(--cut)
+  );
+  cursor: pointer;
+  transition:
+    background-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.more:hover {
+  box-shadow: inset 0 0 0 1px var(--color-brand-white);
+}
+
+.more:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-brand-white);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .more {
+    transition: none;
+  }
+}

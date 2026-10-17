@@ -60,6 +60,25 @@ describe("Honeycomb (BR-067)", () => {
     expect(screen.getByRole("button", { name: "Pomada, $10" })).not.toHaveAttribute("data-empty");
   });
 
+  it("el relleno gris es decorativo: sin botón, sin texto y oculto a los lectores de pantalla", () => {
+    const filled = buildFixedHoneycomb(5);
+    const { container } = renderWithProviders(
+      <Honeycomb
+        desktop={filled.desktop}
+        mobile={filled.mobile}
+        items={[
+          ...items(["/a.jpg", "/b.jpg", "/c.jpg"]),
+          ...[3, 4].map((i) => ({ key: `relleno-${i}`, placeholder: true as const, desktop: filled.cells[i].desktop, mobile: filled.cells[i].mobile })),
+        ]}
+      />,
+    );
+
+    expect(screen.getAllByRole("button")).toHaveLength(3);
+    const ghosts = container.querySelectorAll("li[aria-hidden=\"true\"]");
+    expect(ghosts).toHaveLength(2);
+    for (const ghost of ghosts) expect(ghost.textContent).toBe("");
+  });
+
   it("activar un hexágono llama a su acción", () => {
     const onSelect = vi.fn();
     renderPanal(["/a.jpg", "/b.jpg", "/c.jpg"], onSelect);

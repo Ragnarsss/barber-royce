@@ -2357,7 +2357,7 @@ Criterios de aceptación:
 #### BR-068 — Productos: carga progresiva (scroll infinito)
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-067
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-068-productos-scroll-infinito`)
 - Historia de usuario: HU-EXP-004 (CA-19)
 - RF/RNF: `RF-INFO-011`, `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`
 
@@ -2490,7 +2490,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | Hecho | BR-064 |
 | BR-066 | El respaldo del enlace de reserva apunta a un subdominio que no existe | B | P1 | XS | Hecho | — |
 | BR-067 | Productos: catálogo en panal con hover y ficha | K | P3 | M | En curso | BR-060, BR-063, BR-009 |
-| BR-068 | Productos: carga progresiva (scroll infinito) | K | P3 | M | Propuesta | BR-067 |
+| BR-068 | Productos: carga progresiva (scroll infinito) | K | P3 | M | En curso | BR-067 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

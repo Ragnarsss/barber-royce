@@ -24,13 +24,24 @@ export interface HoneycombItem {
   onSelect?: () => void;
 }
 
+/** Hexágono gris de relleno: reserva su lugar mientras llegan más elementos (BR-068). No es interactivo. */
+export interface HoneycombPlaceholder {
+  key: string;
+  placeholder: true;
+  desktop: CellPlacement;
+  mobile: CellPlacement;
+}
+
 interface HoneycombProps {
-  items: HoneycombItem[];
+  items: (HoneycombItem | HoneycombPlaceholder)[];
   desktop: GridSize;
   mobile: GridSize;
 }
 
 const ENTRANCE_STAGGER = 0.08;
+
+/** El escalonado de la entrada se reinicia cada tantos hexágonos: los de un lote nuevo no esperan a los de los anteriores. */
+const STAGGER_GROUP = 6;
 
 /** Variables de posición de la celda; el CSS usa las de móvil o las de escritorio según el ancho. */
 const placementVars = (desktop: CellPlacement, mobile: CellPlacement) =>
@@ -61,9 +72,15 @@ export const Honeycomb = ({ items, desktop, mobile }: HoneycombProps) => {
 
   return (
     <ul className={styles.honeycomb} style={gridVars}>
-      {items.map((item, index) => (
-        <HoneycombCell key={item.key} item={item} index={index} reducedMotion={reducedMotion} />
-      ))}
+      {items.map((item, index) =>
+        "placeholder" in item ? (
+          <li key={item.key} className={styles.cell} style={placementVars(item.desktop, item.mobile)} aria-hidden="true">
+            <span className={styles.ghost} />
+          </li>
+        ) : (
+          <HoneycombCell key={item.key} item={item} index={index} reducedMotion={reducedMotion} />
+        ),
+      )}
     </ul>
   );
 };
@@ -92,7 +109,7 @@ const HoneycombCell = ({ item, index, reducedMotion }: HoneycombCellProps) => {
       initial={reducedMotion || item.eager ? false : "hidden"}
       whileInView="visible"
       viewport={defaultViewport}
-      transition={{ delay: index * ENTRANCE_STAGGER }}
+      transition={{ delay: (index % STAGGER_GROUP) * ENTRANCE_STAGGER }}
       data-lead={item.isLead || undefined}
     >
       <button type="button" className={styles.hex} onClick={item.onSelect} aria-label={item.label} data-empty={noPhoto || undefined}>
