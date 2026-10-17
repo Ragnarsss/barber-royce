@@ -72,6 +72,11 @@
   display: none;
 }
 
+/* La marca en texto solo se ve en móvil (BR-061); en escritorio sigue el logo en imagen. */
+.logoWordmark {
+  display: none;
+}
+
 .navLinks {
   display: flex;
   gap: var(--spacing-8);
@@ -237,13 +242,101 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .navLinks,
-  .actions {
+  /*
+   * Móvil (BR-061, HU-EXP-004 CA-13): la hamburguesa roja a la izquierda, la marca en dos líneas ("ROYCE" en
+   * blanco sobre "BARBERÍA" en rojo) y, a la derecha, el botón de reserva chico, blanco con texto rojo.
+   */
+  .navbar,
+  .navbar.scrolled {
+    padding: var(--spacing-3) 0;
+  }
+
+  .container {
+    padding: 0 var(--spacing-4);
+    gap: var(--spacing-3);
+  }
+
+  .navLinks {
     display: none;
   }
 
   .mobileMenuButton {
     display: block;
+    order: 0;
+    padding: var(--spacing-2) var(--spacing-1);
+  }
+
+  .hamburger,
+  .hamburger::before,
+  .hamburger::after {
+    width: 26px;
+    height: 3px;
+  }
+
+  .hamburger::before,
+  .hamburger::after {
+    left: 0;
+  }
+
+  .hamburger::before {
+    top: -9px;
+  }
+
+  .hamburger::after {
+    top: 9px;
+  }
+
+  .logo {
+    order: 1;
+    margin-right: auto;
+  }
+
+  .logoImage {
+    display: none;
+  }
+
+  .logoWordmark {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-family-heading);
+    font-size: var(--font-size-xl);
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+
+  .logoName {
+    color: var(--color-brand-white);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  .logoPrefix {
+    color: var(--color-brand-primary);
+    font-weight: var(--font-weight-regular);
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  .actions {
+    display: flex;
+    order: 2;
+  }
+
+  .actions .ctaButton {
+    background-color: var(--color-brand-white);
+    color: var(--color-brand-primary);
+    border: 0;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+  }
+
+  .actions .ctaButton:hover {
+    background-color: var(--color-brand-white);
+    color: var(--color-brand-primary-hover);
+    transform: none;
+    box-shadow: none;
   }
 
   .mobileMenu {
