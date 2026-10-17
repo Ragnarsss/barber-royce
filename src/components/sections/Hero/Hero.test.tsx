@@ -33,6 +33,7 @@ vi.mock("framer-motion", async (importOriginal) => ({
 import { Hero } from "./Hero";
 
 const heroCss = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "Hero.module.css"), "utf8");
+const cardTokensCss = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../../styles/tokens/cards.css"), "utf8");
 
 const renderHero = () => {
   renderWithProviders(
@@ -269,7 +270,9 @@ describe("Hero: tarjetas de beneficios (BR-056, HU-EXP-004 CA-09)", () => {
   });
 
   it("la tarjeta tiene las esquinas cortadas y la luz que barre solo existe con ratón", () => {
-    expect(heroCss).toMatch(/\n\.benefit\s*\{[^}]*clip-path:\s*polygon\(/);
+    // Desde BR-069 el recorte es un token compartido: el Hero lo usa y el token define las esquinas cortadas
+    expect(heroCss).toMatch(/\n\.benefit\s*\{[^}]*clip-path:\s*var\(--card-clip\)/);
+    expect(cardTokensCss).toMatch(/--card-clip:\s*polygon\(/);
     expect(heroCss).toMatch(/@media \(hover: hover\) and \(pointer: fine\)\s*\{[^@]*\.benefit:hover::after/);
   });
 

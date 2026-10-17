@@ -8,6 +8,8 @@ import { CARD_DEPTH, cardDepthRange } from "./cards";
 const here = dirname(fileURLToPath(import.meta.url));
 const heroCss = readFileSync(resolve(here, "Hero.module.css"), "utf8");
 const tokens = readFileSync(resolve(here, "../../../styles/tokens/colors.css"), "utf8");
+// BR-069: los valores de la tarjeta (vidrio, borde) son tokens compartidos; el rojo claro del fondo sigue en el Hero.
+const cardTokens = readFileSync(resolve(here, "../../../styles/tokens/cards.css"), "utf8");
 
 describe("cardDepthRange: profundidad al hacer scroll (BR-056, HU-EXP-004 CA-09)", () => {
   it("la primera tarjeta sube lo mínimo", () => {
@@ -39,7 +41,8 @@ const contrast = (a: Rgb, b: Rgb) => {
   const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
   return (hi + 0.05) / (lo + 0.05);
 };
-const percentOf = (variable: string) => Number(heroCss.match(new RegExp(`--${variable}:[^;]*?(\\d+)%`))?.[1]) / 100;
+const percentOf = (variable: string) =>
+  Number((cardTokens.match(new RegExp(`--${variable}:[^;]*?(\\d+)%`)) ?? heroCss.match(new RegExp(`--${variable}:[^;]*?(\\d+)%`)))?.[1]) / 100;
 
 describe("contraste de las tarjetas (BR-056, CP-A11Y-004)", () => {
   // El vidrio (::before) se compone sobre el fondo de la propia tarjeta, que es su borde: blanco translúcido en reposo

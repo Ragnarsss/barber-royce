@@ -151,24 +151,9 @@
  * Tarjetas de beneficios (BR-056): vidrio oscuro con dos esquinas cortadas, como el corte de la navaja. El borde
  * es el fondo de la tarjeta y el vidrio un ::before 1 px adentro, así el chaflán también lleva borde. Al pasar el
  * cursor (solo con ratón) una luz barre la tarjeta y el borde se enciende en rojo. Texto blanco: el contraste
- * contra el vidrio sobre el fondo más claro posible lo verifica cards.test.ts.
+ * contra el vidrio sobre el fondo más claro posible lo verifica cards.test.ts. Los valores (vidrio, borde, corte)
+ * son tokens compartidos con otras secciones desde BR-069: src/styles/tokens/cards.css.
  */
-.hero {
-  --card-glass: color-mix(
-    in srgb,
-    var(--color-brand-background) 62%,
-    transparent
-  );
-  --card-edge: color-mix(in srgb, var(--color-brand-white) 18%, transparent);
-  --card-edge-hot: color-mix(
-    in srgb,
-    var(--color-brand-primary) 75%,
-    transparent
-  );
-  --card-sweep: color-mix(in srgb, var(--color-brand-white) 14%, transparent);
-  --card-cut: 14px;
-}
-
 .benefit {
   position: relative;
   isolation: isolate;
@@ -179,14 +164,7 @@
   max-width: 560px;
   overflow: hidden;
   background: var(--card-edge);
-  clip-path: polygon(
-    var(--card-cut) 0,
-    100% 0,
-    100% calc(100% - var(--card-cut)),
-    calc(100% - var(--card-cut)) 100%,
-    0 100%,
-    0 var(--card-cut)
-  );
+  clip-path: var(--card-clip);
   transition: background 0.35s ease;
 }
 
@@ -196,14 +174,7 @@
   inset: 1px;
   z-index: -2;
   background: var(--card-glass);
-  clip-path: polygon(
-    var(--card-cut) 0,
-    100% 0,
-    100% calc(100% - var(--card-cut)),
-    calc(100% - var(--card-cut)) 100%,
-    0 100%,
-    0 var(--card-cut)
-  );
+  clip-path: var(--card-clip);
 }
 
 /* Luz que barre la tarjeta al pasar el cursor */

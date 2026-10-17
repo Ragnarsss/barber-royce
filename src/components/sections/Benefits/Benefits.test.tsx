@@ -129,3 +129,35 @@ describe("Benefits (BR-064, HU-EXP-004 CA-16)", () => {
     expect(source).not.toMatch(/whileHover=/);
   });
 });
+
+// BR-069 (HU-EXP-004 CA-20): las tarjetas pasan del blanco del Figma al vidrio oscuro con esquinas cortadas del Hero.
+describe("Benefits: tarjetas de vidrio (BR-069, HU-EXP-004 CA-20)", () => {
+  const rule = (selector: RegExp) => css.match(new RegExp(`\\n${selector.source}\\s*\\{([^}]*)\\}`))?.[1] ?? "";
+
+  it("CA-20: la tarjeta usa el borde, el vidrio y el recorte de los tokens compartidos", () => {
+    expect(rule(/\.card/)).toMatch(/background:\s*var\(--card-edge\)/);
+    expect(rule(/\.card/)).toMatch(/clip-path:\s*var\(--card-clip\)/);
+    expect(rule(/\.card::before/)).toMatch(/background:\s*var\(--card-glass\)/);
+    expect(rule(/\.card::before/)).toMatch(/clip-path:\s*var\(--card-clip\)/);
+  });
+
+  it("CA-20: el texto y el ícono son blancos sobre el vidrio", () => {
+    for (const selector of [/\.cardTitle/, /\.cardIcon/, /\.cardDescription/]) {
+      expect(rule(selector)).toMatch(/color:\s*var\(--color-brand-white\)/);
+    }
+  });
+
+  it("CA-20: el borde se enciende en rojo al pasar el ratón, y la luz que barre solo existe con ratón", () => {
+    expect(css).toMatch(/@media \(hover: hover\) and \(pointer: fine\)\s*\{[^@]*\.card:hover\s*\{[^}]*background:\s*var\(--card-edge-hot\)/);
+    expect(css).toMatch(/@media \(hover: hover\) and \(pointer: fine\)\s*\{[^@]*\.card:hover::after/);
+  });
+
+  it("CP-A11Y-003: con reducir movimiento no hay luz que barra", () => {
+    expect(css).toMatch(/@media \(prefers-reduced-motion: reduce\)\s*\{[^@]*\.card::after\s*\{[^}]*display:\s*none/);
+  });
+
+  it("ADR-002: ni el fondo blanco de antes ni colores escritos a mano en las tarjetas", () => {
+    expect(rule(/\.card/)).not.toMatch(/background-color:\s*var\(--color-brand-white\)/);
+    expect(css).not.toMatch(/#[0-9a-fA-F]{3,6}\b|rgba?\(/);
+  });
+});
