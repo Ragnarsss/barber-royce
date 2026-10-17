@@ -111,17 +111,34 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.85rem;
-  padding: 1.75rem 1.5rem;
   background: var(--card-edge);
   clip-path: var(--card-clip);
   text-align: center;
   transition:
     translate 0.3s ease,
     background 0.35s ease;
+}
+
+/*
+ * El contenido va en un cuerpo nítido y, encima, una copia desenfocada con la misma disposición (BR-074): por eso el
+ * relleno y la columna viven aquí y no en la tarjeta. La copia es de desenfoque fijo; durante el giro solo se cruza su
+ * opacidad con la del cuerpo. Con reducir movimiento no se pinta.
+ */
+.cardBody,
+.cardBlur {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.75rem 1.5rem;
+}
+
+.cardBlur {
+  position: absolute;
+  inset: 0;
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
 }
 
 .card::before {

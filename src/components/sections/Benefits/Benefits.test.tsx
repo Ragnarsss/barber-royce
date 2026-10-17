@@ -1,8 +1,10 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { screen } from "@testing-library/react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SITE } from "@/config/constants";
+import { cardBlurFade, cardBodyFocus, cardSpinReveal, iconHeartbeat } from "@/config/animations.config";
 import { benefitsList } from "@/data/benefitsData";
 import { renderWithProviders } from "@/test/renderWithProviders";
 
@@ -59,7 +61,9 @@ describe("Benefits (BR-064, HU-EXP-004 CA-16)", () => {
 
     const cards = [...document.querySelectorAll("[data-benefit]")];
     expect(cards.map((card) => card.querySelector("h3")?.textContent)).toEqual(benefitsList.map((b) => b.title));
-    expect([...document.querySelectorAll("[data-benefit] strong")].map((s) => s.textContent)).toEqual([
+    // Sin la copia desenfocada de BR-074 (aria-hidden), que repite el texto
+    const strongs = [...document.querySelectorAll("[data-benefit] strong")].filter((s) => !s.closest("[aria-hidden='true']"));
+    expect(strongs.map((s) => s.textContent)).toEqual([
       "maestros en su oficio",
       "comodidad y el buen gusto",
       "escuchamos y asesoramos",
@@ -187,5 +191,99 @@ describe("Benefits: foto puente con dos cuñas (BR-071, HU-EXP-004 CA-22)", () =
   it("las dos cuñas son del rojo de la marca, de un token", () => {
     expect(rule(/\.imageBackground::before/)).toMatch(/background:\s*var\(--color-brand-primary\)/);
     expect(rule(/\.imageBackground::after/)).toMatch(/background:\s*var\(--color-brand-primary\)/);
+  });
+});
+
+// BR-074 (HU-EXP-004 CA-25): título y subtítulo que se enfocan con el scroll, tarjetas que giran 360° y ícono que late.
+describe("Benefits: revelado con el scroll (BR-074, HU-EXP-004 CA-25)", () => {
+  beforeAll(() => {
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      },
+    );
+  });
+
+  beforeEach(() => {
+    state.reducedMotion = false;
+  });
+
+  it("el título y el subtítulo tienen cada uno su copia desenfocada decorativa (aria-hidden)", () => {
+    renderWithProviders(<Benefits />);
+
+    const copies = document.querySelectorAll("#benefits [data-focus-blur]");
+    expect(copies).toHaveLength(2);
+    copies.forEach((copy) => expect(copy.getAttribute("aria-hidden")).toBe("true"));
+  });
+
+  it("CA-25: cada tarjeta lleva una copia desenfocada de su texto, sin ícono, que reserva su lugar", () => {
+    renderWithProviders(<Benefits />);
+
+    const cards = [...document.querySelectorAll("[data-benefit]")];
+    cards.forEach((card, index) => {
+      const copy = card.querySelector("[data-card-blur]")!;
+      expect(copy.getAttribute("aria-hidden")).toBe("true");
+      expect(copy.textContent).toContain(benefitsList[index].title);
+      expect(copy.querySelector("svg")).toBeNull();
+    });
+  });
+
+  it("CA-25: los lectores de pantalla leen cada título de tarjeta una sola vez", () => {
+    renderWithProviders(<Benefits />);
+
+    for (const benefit of benefitsList) {
+      expect(screen.getAllByRole("heading", { name: benefit.title })).toHaveLength(1);
+    }
+  });
+
+  it("CA-25: la tarjeta gira 360° sobre el eje vertical y termina de frente, con perspectiva", () => {
+    expect(cardSpinReveal.hidden).toMatchObject({ rotateY: -360, transformPerspective: expect.any(Number) });
+    expect(cardSpinReveal.visible).toMatchObject({ rotateY: 0, opacity: 1, scale: 1 });
+  });
+
+  it("el contenido nítido aparece cuando la copia desenfocada se desvanece, al mismo tiempo", () => {
+    const delay = (variant: unknown) => (variant as { transition: { delay: number } }).transition.delay;
+
+    expect(delay(cardBodyFocus.visible)).toBe(delay(cardBlurFade.visible));
+    expect(cardBlurFade.hidden).toMatchObject({ opacity: 1 });
+    expect(cardBlurFade.visible).toMatchObject({ opacity: 0 });
+  });
+
+  it("CA-25: el ícono late dos veces, una sola vez, y vuelve a su tamaño", () => {
+    const visible = iconHeartbeat.visible as { scale: number[]; transition: { duration: number; delay: number } };
+    const peaks = visible.scale.filter((value, i, all) => i > 0 && i < all.length - 1 && value > all[i - 1] && value > all[i + 1]);
+
+    expect(peaks).toHaveLength(2);
+    expect(visible.scale[0]).toBe(1);
+    expect(visible.scale.at(-1)).toBe(1);
+    // CP-A11Y-005: menos de 3 pulsos por segundo; y espera a que termine el giro
+    expect(peaks.length / visible.transition.duration).toBeLessThanOrEqual(3);
+    expect((cardSpinReveal.visible as { transition: { duration: number } }).transition.duration).toBeLessThan(visible.transition.delay);
+  });
+
+  it("CP-A11Y-003: con reducir movimiento todo es nítido y quieto: sin copias desenfocadas", () => {
+    state.reducedMotion = true;
+    renderWithProviders(<Benefits />);
+
+    expect(document.querySelector("#benefits [data-focus-blur]")).toBeNull();
+    expect(document.querySelector("#benefits [data-card-blur]")).toBeNull();
+    expect(screen.getAllByRole("heading", { name: benefitsList[0].title })).toHaveLength(1);
+  });
+
+  it("solo se animan propiedades baratas: transform y opacidad, nunca el radio de un desenfoque", () => {
+    const keys = [cardSpinReveal, cardBodyFocus, cardBlurFade, iconHeartbeat].flatMap((variants) =>
+      Object.values(variants).flatMap((variant) => Object.keys(variant as object)),
+    );
+    const allowed = ["opacity", "rotateY", "scale", "y", "transformPerspective", "transition"];
+
+    expect(keys.filter((key) => !allowed.includes(key))).toEqual([]);
+    expect(css).toMatch(/\.cardBlur\s*\{[^}]*filter:\s*blur\(\d+px\)/);
+    expect(css).not.toMatch(/transition:[^;]*filter/);
   });
 });

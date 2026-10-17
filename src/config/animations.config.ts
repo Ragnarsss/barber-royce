@@ -123,6 +123,49 @@ export const iconDraw: Variants = {
 };
 
 /**
+ * Revelado de una tarjeta de beneficios (BR-074): gira 360° sobre su eje vertical, como una moneda, y termina de
+ * frente. `transformPerspective` da profundidad al giro sin tocar al contenedor. Hereda «hidden»/«visible» de la grilla.
+ */
+export const cardSpinReveal: Variants = {
+    hidden: { opacity: 0, rotateY: -360, scale: 0.88, y: 24, transformPerspective: 900 },
+    visible: {
+        opacity: 1,
+        rotateY: 0,
+        scale: 1,
+        y: 0,
+        transformPerspective: 900,
+        transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
+    }
+};
+
+/** Contenido nítido de la tarjeta (BR-074): aparece cuando el giro va a media vuelta. */
+export const cardBodyFocus: Variants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.6, delay: 0.55, ease: "easeOut" } }
+};
+
+/**
+ * Copia desenfocada del contenido (BR-074): se desvanece a la vez que el contenido nítido aparece. El desenfoque es fijo
+ * y lo que se anima es la opacidad: animar el radio de un blur no es barato.
+ */
+export const cardBlurFade: Variants = {
+    hidden: { opacity: 1 },
+    visible: { opacity: 0, transition: { duration: 0.7, delay: 0.55, ease: "easeOut" } }
+};
+
+/**
+ * Latido del ícono (BR-074): se acerca y se aleja dos veces, una sola vez, cuando termina el giro. Son menos de 3
+ * pulsos por segundo y no cambian la luminancia (CP-A11Y-005).
+ */
+export const iconHeartbeat: Variants = {
+    hidden: { scale: 1 },
+    visible: {
+        scale: [1, 1.24, 1, 1.16, 1],
+        transition: { duration: 0.9, delay: 1.4, times: [0, 0.2, 0.4, 0.6, 1], ease: "easeInOut" }
+    }
+};
+
+/**
  * Fade in desde la izquierda
  */
 export const fadeInLeft: Variants = {

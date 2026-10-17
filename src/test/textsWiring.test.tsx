@@ -52,7 +52,11 @@ const home: ReactElement = (
 
 const render = () => {
   renderWithProviders(home);
-  return document.body.textContent ?? "";
+  // Lo que lee un lector de pantalla: sin los nodos aria-hidden. Las copias desenfocadas de BR-074 repiten el texto de
+  // Beneficios solo para el efecto y no cuentan como una aparición más.
+  const clone = document.body.cloneNode(true) as HTMLElement;
+  clone.querySelectorAll("[aria-hidden='true']").forEach((node) => node.remove());
+  return clone.textContent ?? "";
 };
 
 describe("textos editables en la home (BR-042, HU-CNT-002 CA-01 y CA-02)", () => {

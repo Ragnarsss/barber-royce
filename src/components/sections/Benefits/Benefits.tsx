@@ -4,19 +4,24 @@ import styles from "./Benefits.module.css";
 import { useSiteText } from "@/content/useSiteContent";
 import { benefitsList } from "@/data/benefitsData";
 import { SITE } from "@/config/constants";
-import { fadeInUp, staggerContainer } from "@/config/animations.config";
+import { cardBlurFade, cardBodyFocus, cardSpinReveal, iconHeartbeat, staggerContainer } from "@/config/animations.config";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { DrawnIcon } from "./DrawnIcon";
+import { FocusText } from "./FocusText";
 import { CardCarousel } from "@/components/common/CardCarousel/CardCarousel";
 import barberBack954w from "@/assets/optimized/barber_background_954w.webp";
 import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
 
 /**
  * «Estilo que te acompaña» (BR-064), fiel al Figma «Beneficios v2»: fondo charcoal, franja roja diagonal y la foto
- * clara a la derecha; tarjetas blancas con los textos del diseño. Gesto: las tarjetas entran escalonadas y sus
- * íconos se dibujan con un trazo. Con el scroll, la franja entra en diagonal y se asienta, y la foto se acerca hasta
- * su tamaño; al pasar el ratón, el ícono se vuelve a dibujar (CSS: un whileHover de framer haría que la tarjeta dejara
- * de heredar la entrada de la grilla). Con reducir movimiento, todo queda en su posición final.
+ * clara a la derecha; tarjetas con los textos del diseño (de vidrio desde BR-069). Gesto: las tarjetas entran
+ * escalonadas y sus íconos se dibujan con un trazo. Con el scroll, la franja entra en diagonal y se asienta, y la foto
+ * se acerca hasta su tamaño; al pasar el ratón, el ícono se vuelve a dibujar (CSS: un whileHover de framer haría que la
+ * tarjeta dejara de heredar la entrada de la grilla).
+ *
+ * Revelado con el scroll (BR-074): el título y el subtítulo se enfocan con el scroll (`FocusText`); cada tarjeta gira
+ * 360° sobre su eje vertical y su contenido pasa de desenfocado a nítido, y el ícono da un latido al terminar. Con
+ * reducir movimiento, todo queda en su posición final y nítido, sin giro ni latido.
  */
 export function Benefits() {
   const siteText = useSiteText();
@@ -32,6 +37,8 @@ export function Benefits() {
   const bandY = useTransform(scrollYProgress, [0, 1], ["18.75%", "0%"]);
   const photoScale = useTransform(scrollYProgress, [0, 1], [1.14, 1]);
   const photoY = useTransform(scrollYProgress, [0, 1], ["-4%", "0%"]);
+  // Enfoque del título y el subtítulo: de que la sección asoma (borde superior al 85 % de la pantalla) a que sube al 35 %
+  const { scrollYProgress: focusProgress } = useScroll({ target: sectionRef, offset: ["start 85%", "start 35%"] });
 
   return (
     <section id="benefits" className={styles.benefits} ref={sectionRef}>
@@ -67,12 +74,14 @@ export function Benefits() {
       <div className={styles.container}>
         <div className={styles.content}>
           <div className={styles.header}>
-            <h2 className={styles.title}>{siteText("benefits.titulo")}</h2>
+            <FocusText as="h2" className={styles.title} progress={focusProgress} blurPx={9} enabled={!reducedMotion}>
+              {siteText("benefits.titulo")}
+            </FocusText>
             {/* La frase continúa en las tarjetas: por eso termina en dos puntos */}
-            <p className={styles.subtitle}>
+            <FocusText as="p" className={styles.subtitle} progress={focusProgress} blurPx={5} enabled={!reducedMotion}>
               En {SITE.name}, cada visita es una oportunidad para realzar tu estilo. Nos enfocamos en la calidad y la
               exclusividad, ofreciendo:
-            </p>
+            </FocusText>
           </div>
           {/* En móvil las tarjetas son un carrusel con snap (BR-070); en escritorio, la grilla de siempre */}
           <CardCarousel label="Beneficios">
@@ -83,25 +92,38 @@ export function Benefits() {
               animate={controls}
               variants={staggerContainer}
             >
-              {benefitsList.map((benefit) => (
-                <motion.article
-                  key={benefit.title}
-                  className={styles.card}
-                  variants={fadeInUp}
-                  data-benefit
-                >
-                  <h3 className={styles.cardTitle}>{benefit.title}</h3>
-                  <div className={styles.cardIcon}>
-                    <DrawnIcon name={benefit.icon} animate={!reducedMotion} />
-                  </div>
-                  <div className={styles.accent} />
-                  <p className={styles.cardDescription}>
-                    {benefit.description.map((part, index) =>
-                      typeof part === "string" ? part : <strong key={index}>{part.strong}</strong>,
+              {benefitsList.map((benefit) => {
+                const description = benefit.description.map((part, index) =>
+                  typeof part === "string" ? part : <strong key={index}>{part.strong}</strong>,
+                );
+                return (
+                  <motion.article
+                    key={benefit.title}
+                    className={styles.card}
+                    variants={reducedMotion ? undefined : cardSpinReveal}
+                    data-benefit
+                  >
+                    <motion.div className={styles.cardBody} variants={reducedMotion ? undefined : cardBodyFocus}>
+                      <h3 className={styles.cardTitle}>{benefit.title}</h3>
+                      <motion.div className={styles.cardIcon} variants={reducedMotion ? undefined : iconHeartbeat}>
+                        <DrawnIcon name={benefit.icon} animate={!reducedMotion} />
+                      </motion.div>
+                      <div className={styles.accent} />
+                      <p className={styles.cardDescription}>{description}</p>
+                    </motion.div>
+                    {/* Copia desenfocada del texto, encima del contenido nítido: se desvanece durante el giro. Solo
+                        decorativa (aria-hidden) y sin ícono, que se dibuja aparte; reserva su lugar. */}
+                    {!reducedMotion && (
+                      <motion.div className={styles.cardBlur} aria-hidden="true" variants={cardBlurFade} data-card-blur>
+                        <div className={styles.cardTitle}>{benefit.title}</div>
+                        <div className={styles.cardIcon} />
+                        <div className={styles.accent} />
+                        <p className={styles.cardDescription}>{description}</p>
+                      </motion.div>
                     )}
-                  </p>
-                </motion.article>
-              ))}
+                  </motion.article>
+                );
+              })}
             </motion.div>
           </CardCarousel>
         </div>
