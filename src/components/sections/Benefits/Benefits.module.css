@@ -227,11 +227,15 @@
   }
 }
 
-/* Móvil: el texto y las tarjetas arriba, la foto debajo en el flujo con una cuña roja diagonal arriba */
+/*
+ * Móvil: PRUEBA (BR-071, 2026-10-17, a pedido del usuario): la foto va de fondo de toda la sección, detrás del texto y
+ * las tarjetas, con un velo oscuro para que se lean y las dos cuñas rojas en las esquinas. Antes iba debajo, en el
+ * flujo, como puente hacia «Reseñas» (commit d7e20b3).
+ */
 @media (max-width: 768px) {
   .benefits {
     min-height: auto;
-    padding: 6vh 0 0;
+    padding: 6vh 0;
     flex-direction: column;
     align-items: stretch;
   }
@@ -249,21 +253,31 @@
   }
 
   .imageBackground {
-    position: relative;
-    order: 2;
+    inset: 0;
     width: 100%;
-    height: 440px;
-    margin-top: 3rem;
+    height: 100%;
+  }
+
+  /* Velo de charcoal sobre la foto: el título y las tarjetas se leen encima (CP-A11Y-004) */
+  .photoMotion {
+    position: relative;
+  }
+
+  .photoMotion::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-brand-section-bg) 72%, transparent);
   }
 
   /*
-   * Dos cuñas rojas en la foto puente (BR-071): una arriba a la izquierda y otra abajo a la derecha, en espejo. El
-   * tamaño de cada una sale de estas variables (porcentaje de la foto) para ajustarlo a ojo.
+   * Dos cuñas rojas (BR-071): una arriba a la izquierda y otra abajo a la derecha, en espejo. El tamaño de cada una
+   * sale de estas variables (porcentaje de la sección) para ajustarlo a ojo.
    */
   .imageBackground {
-    --wedge-top-height: 50%;
+    --wedge-top-height: 24%;
     --wedge-bottom-width: 65%;
-    --wedge-bottom-height: 30%;
+    --wedge-bottom-height: 14%;
   }
 
   .imageBackground::before {

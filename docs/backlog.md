@@ -2628,6 +2628,14 @@ la derecha, en espejo (dibujó la forma sobre una captura).
 Decisión del usuario (2026-10-17): dos cuñas rojas en la foto puente; solo móvil,
 que es donde existe esa foto.
 
+> **Prueba (2026-10-17, a pedido del usuario):** tras dejar la foto como puente
+> con las dos cuñas (commit `d7e20b3`), el usuario quiso verla **de fondo de la
+> sección**, detrás del texto y las tarjetas, en vez de como puente. Se probó en
+> un commit aparte, con un velo de charcoal al 72 % para que el texto se lea y
+> las cuñas a la altura de la sección (24 % y 14 %). La sección pasa de ~1.100 px
+> a ~640 px. Queda por decidir cuál de las dos versiones se queda; la otra se
+> descarta con un `git revert` del commit de la prueba.
+
 Alcance (solo `max-width: 768px`):
 1. Cuña de arriba a la izquierda, más alta que la actual.
 2. Cuña nueva abajo a la derecha, en espejo: borde diagonal que sube hacia la
