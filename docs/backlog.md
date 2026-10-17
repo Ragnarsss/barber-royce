@@ -2352,6 +2352,26 @@ Criterios de aceptación:
    retrasa el LCP (CP-PERF-003).
 7. Ningún color escrito a mano en los módulos nuevos (ADR-002).
 
+> **Alcance ajustado (2026-10-15):** al construirlo salieron cuatro cosas que
+> el alcance no decía. (1) El panal, el diálogo y la página del equipo pasan a
+> **componentes compartidos** (`Honeycomb`, `ModalDialog`, `HoneycombPage` en
+> `components/common/`): el repo no permite importar el CSS de otro componente,
+> y copiarlos eran ~300 líneas. (2) La hoja trae productos con **el mismo
+> nombre** (34 copias de «Kit Completo» con ids distintos), así que el producto
+> pasa a llevar su **`id`** (`Product.id`, de la columna `id` que ya existía) y
+> es la clave. (3) Las diagonales van en una **banda de una pantalla** y debajo
+> el fondo es liso, como en el Figma; con el alto en porcentaje de la página, el
+> triángulo rojo se movía al cambiar de fuente y daba CLS 0,08. (4) Si la foto
+> falta o la dirección falla (4 de las 6 de Unsplash dan 404, `BR-008`), el
+> hexágono muestra su nombre y precio siempre, en vez de quedar vacío.
+>
+> **Regresión de LCP medida, sin decidir (2026-10-15):** el LCP de `/productos`
+> pasa de ~3,9 s (un párrafo de texto) a ~5,0 s (una foto del panal), y por
+> arrastre el TBT sube porque el TTI llega más tarde. Es estructural: la foto
+> grande que pide el diseño se descubre recién cuando el JavaScript pinta la
+> página. Se descartó que sea la decodificación de la foto o la sombra de cada
+> hexágono. Queda para que el usuario decida si la acepta, como la de `BR-054`.
+
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-067).
 
 #### BR-068 — Productos: carga progresiva (scroll infinito)
@@ -2393,6 +2413,14 @@ Criterios de aceptación:
    (CP-PERF-003).
 6. El scroll no provoca re-renders: el estado cambia solo al cruzar el
    centinela (test).
+
+> **Decisión de construcción (2026-10-15):** el lote se pide cuando el final
+> del relleno entra en pantalla (margen 0), no antes. Con un margen de 400 px
+> el lote llegaba antes de que el relleno asomara y los hexágonos grises, que
+> el Figma sí muestra, nunca se veían. El relleno son 6 hexágonos (dos filas de
+> escritorio, tres de móvil) y el escalonado de la entrada se reinicia cada 6,
+> para que un lote nuevo no espere a los anteriores. Con los 40 productos de
+> la hoja actual, el catálogo carga 12, 24, 36 y 40.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-068).
 
