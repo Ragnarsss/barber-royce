@@ -1613,3 +1613,13 @@ El PR #29 integró a `master` el trabajo de dos sesiones (CTA1, navbar, SocialPr
 - `Honeycomb` acepta elementos de relleno (`placeholder: true`) además de los normales; `ProductsHoneycomb` los suma al final con la misma geometría de filas fijas.
 
 **Verificación:** 12 tests nuevos de `ProductsCatalog` con el observador simulado (un lote o menos, más de un lote, relleno decorativo, llegar al centinela, no cargar si no está a la vista, el botón, la región en vivo, el último lote corto, el reinicio por filtro, la acción de cada producto y la lista vacía) y uno de `Honeycomb` para el relleno. Las mediciones de Lighthouse son las de `BR-067`, hechas ya con la carga progresiva puesta (12 hexágonos iniciales en vez de 40). **Pendiente:** el preview de Vercel.
+
+## Cierre de BR-009, BR-067 y BR-068 (2026-10-17)
+
+El PR #31 integró a `master` el catálogo de productos en panal, con su ficha, la carga progresiva y sin el botón «Comprar». El CI pasó (1 min 32 s) y el usuario lo verificó en producción y dio el visto bueno para cerrar los tres tickets. `HU-INFO-004` pasa a `Aprobada`: se decidió qué pasa con el botón «Comprar» (`BR-009`), que era lo que la mantenía en `Propuesta`.
+
+**Pendientes que no bloquean el cierre:**
+- 4 de las 6 fotos de Unsplash de los productos dan 404 (`BR-008`): mientras no haya fotos propias, esos hexágonos muestran su nombre y precio.
+- La hoja de `productos` trae 34 copias de «Kit Completo» (ids `kit-completo-N`), seguramente de prueba; hay que borrarlas antes de publicar el catálogo real.
+- Regresión aceptada por escrito: LCP de `/productos` 3,9 → 5,0 s y TBT 78 → 150 ms (`BR-067`).
+- Limpieza de ramas: se borraron las 19 remotas y las 49 locales ya fusionadas, y un experimento antiguo de privacidad (`fix/br-044-privacidad-visible`, un *Revert* que habría deshecho el comportamiento actual de `/privacidad`; su commit era `2f817fe`). Queda `feat/br-061-hero-cta1-mobile`, de otra sesión.

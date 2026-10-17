@@ -43,7 +43,7 @@ citan.
 | HU-INFO-001 | INFO | Ver servicios con precio y duración | Alta | 5 | 3 | — | Aprobada |
 | HU-INFO-002 | INFO | Ver sucursales, horarios y contacto correctos | Alta | 5 | 3 | — | Aprobada |
 | HU-INFO-003 | INFO | Conocer al equipo y la barbería | Media | 3 | 2 | — | Aprobada |
-| HU-INFO-004 | INFO | Ver productos disponibles | Baja | 2 | 3 | — | Propuesta |
+| HU-INFO-004 | INFO | Ver productos disponibles | Baja | 2 | 3 | — | Aprobada |
 | HU-INFO-005 | INFO | Resolver dudas frecuentes | Media | 3 | 2 | — | Aprobada |
 | HU-INFO-006 | INFO | Ver el trabajo real de la barbería en sus fotos de Instagram | Media | 4 | 5 | HU-INFO-003 | Propuesta |
 | HU-SEO-001 | SEO | Aparecer en búsquedas locales | Alta | 5 | 5 | HU-INFO-002 | Aprobada |
