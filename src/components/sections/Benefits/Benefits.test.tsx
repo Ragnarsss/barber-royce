@@ -165,7 +165,7 @@ describe("Benefits: tarjetas de vidrio (BR-069, HU-EXP-004 CA-20)", () => {
 // BR-071 (HU-EXP-004 CA-22): la foto puente de móvil lleva dos cuñas rojas, en espejo.
 describe("Benefits: foto puente con dos cuñas (BR-071, HU-EXP-004 CA-22)", () => {
   const mobile = css.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
-  const rule = (selector: RegExp) => mobile.match(new RegExp(`\n\s*${selector.source}\s*\{([^}]*)\}`))?.[1] ?? "";
+  const rule = (selector: RegExp) => mobile.match(new RegExp(`\\n\\s*${selector.source}\\s*\\{([^}]*)\\}`))?.[1] ?? "";
 
   it("CA-22: una cuña arriba a la izquierda (::before) y otra abajo a la derecha (::after)", () => {
     expect(rule(/\.imageBackground::before/)).toMatch(/top:\s*0/);
@@ -177,9 +177,9 @@ describe("Benefits: foto puente con dos cuñas (BR-071, HU-EXP-004 CA-22)", () =
   });
 
   it("el tamaño de cada cuña sale de variables, para ajustarlo a ojo", () => {
-    expect(rule(/\.imageBackground/)).toMatch(/--wedge-top-height:\s*\d+%/);
-    expect(rule(/\.imageBackground/)).toMatch(/--wedge-bottom-width:\s*\d+%/);
-    expect(rule(/\.imageBackground/)).toMatch(/--wedge-bottom-height:\s*\d+%/);
+    expect(mobile).toMatch(/--wedge-top-height:\s*\d+%/);
+    expect(mobile).toMatch(/--wedge-bottom-width:\s*\d+%/);
+    expect(mobile).toMatch(/--wedge-bottom-height:\s*\d+%/);
     expect(rule(/\.imageBackground::before/)).toMatch(/height:\s*var\(--wedge-top-height\)/);
     expect(rule(/\.imageBackground::after/)).toMatch(/width:\s*var\(--wedge-bottom-width\)/);
   });

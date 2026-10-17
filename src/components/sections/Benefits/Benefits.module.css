@@ -261,7 +261,7 @@
    * tamaño de cada una sale de estas variables (porcentaje de la foto) para ajustarlo a ojo.
    */
   .imageBackground {
-    --wedge-top-height: 40%;
+    --wedge-top-height: 50%;
     --wedge-bottom-width: 65%;
     --wedge-bottom-height: 30%;
   }
