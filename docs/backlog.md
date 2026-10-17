@@ -2506,6 +2506,56 @@ Criterios de aceptación:
 5. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
    midiendo alternado (CP-PERF-002, CP-PERF-003).
 
+
+#### BR-069 — Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-056, BR-064
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-20)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** al recorrer la home en móvil (390 px), las tarjetas de
+«Estilo que te acompaña» y de «Lo que dicen nuestros clientes» son blancas,
+redondeadas y van apiladas de a una, y no se parecen a las tarjetas de vidrio
+con esquinas cortadas del Hero (`BR-056`). El usuario pidió unificarlas para
+que den más deleite y tengan juego con las tarjetas de arriba. Avanzamos por
+pasos: primero Beneficios, luego Reseñas. «Innovación y calidad en cada
+detalle» queda para un paso posterior. Los fondos y las franjas quedan fuera
+por ahora (el usuario quiere ver primero algo distinto), y la foto entre
+Beneficios y Reseñas se mantiene porque funciona como puente.
+
+Decisiones del usuario (2026-10-17):
+- Estilo: el vidrio oscuro con esquinas cortadas del Hero.
+- Alcance: móvil y escritorio.
+- Orden: Beneficios y después Reseñas.
+
+> **Alcance ajustado (2026-10-17):** `BR-064` dejó las tarjetas de Beneficios
+> blancas por fidelidad al Figma «Beneficios v2». Por decisión del usuario,
+> pasan al vidrio del Hero. La franja roja, la foto y los íconos que se
+> dibujan de `BR-064` no cambian.
+
+Alcance:
+1. Los valores de la tarjeta (vidrio, borde, tamaño del corte) se vuelven
+   tokens compartidos en `src/styles/tokens/`, hoy viven solo en
+   `Hero.module.css`. El Hero conserva su aspecto.
+2. Beneficios: tarjetas de vidrio oscuro con dos esquinas cortadas y texto
+   blanco; el ícono conserva su trazo.
+3. Reseñas: las mismas tarjetas, con sus estrellas y su texto.
+4. La entrada y el hover de cada sección se mantienen; con reducir movimiento
+   no se agrega ninguna animación.
+
+Criterios de aceptación:
+1. En «Estilo que te acompaña» y en «Lo que dicen nuestros clientes» las
+   tarjetas son de vidrio oscuro con esquinas cortadas, como las del Hero, en
+   móvil y en escritorio (HU-EXP-004 CA-20).
+2. El texto de las tarjetas cumple 4,5:1 sobre el fondo más claro posible
+   (CP-A11Y-004).
+3. Con reducir movimiento no hay animación nueva (CP-A11Y-003).
+4. Los valores de la tarjeta salen de tokens compartidos y las tarjetas no
+   traen colores escritos a mano (tests; ADR-002); el Hero se ve igual.
+5. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-003).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2595,6 +2645,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | Hecho | BR-058 |
 | BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | Hecho | BR-058 |
 | BR-061 | Hero y CTA1 en móvil: fieles al Figma | K | P3 | M | Propuesta | BR-056, BR-058, BR-059 |
+| BR-069 | Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas | K | P3 | M | Propuesta | BR-056, BR-064 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |

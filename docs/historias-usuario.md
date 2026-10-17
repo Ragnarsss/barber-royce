@@ -670,6 +670,10 @@ y confiar en que el servicio está a la altura.
   carga, When llego al final del panal, Then se suman los siguientes (con
   hexágonos grises de relleno mientras llegan), sin saltos de la página, y
   puedo pedirlos también con el teclado.
+- CA-20 (2026-10-17, `BR-069`): Given llego a «Estilo que te acompaña» y a «Lo
+  que dicen nuestros clientes», When veo las tarjetas, Then son de vidrio oscuro
+  con esquinas cortadas, como las del primer bloque, y su texto se lee en móvil
+  y en escritorio.
 
 ---
 
