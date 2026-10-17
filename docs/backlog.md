@@ -2556,6 +2556,58 @@ Criterios de aceptación:
 5. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
    midiendo alternado (CP-PERF-003).
 
+**Notas de construcción:** las tarjetas de «Reseñas» dejan de usar el
+componente `Card` (`@/components/ui/card`) y pasan a un `<article>` propio.
+Las estrellas rojas sobre el vidrio quedan en ~3,4:1: son gráficas (mínimo 3:1),
+no texto.
+
+
+#### BR-070 — Beneficios y Reseñas en móvil: carrusel con snap
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-069
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-21)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** al recorrer la home en móvil (390 px), «Estilo que te
+acompaña» y «Lo que dicen nuestros clientes» suman casi 1.900 px de tarjetas
+apiladas de a una, el mismo patrón repetido tres veces con «Innovación y calidad».
+Entre las direcciones que se propusieron, el usuario quería el carrusel
+horizontal con snap (la dirección C) y lo pidió de nuevo después de unificar las
+tarjetas (`BR-069`).
+
+Decisiones del usuario (2026-10-17):
+- Secciones: «Estilo que te acompaña» y «Lo que dicen nuestros clientes».
+  «Innovación y calidad» queda fuera por ahora.
+- Solo móvil: en escritorio las tarjetas siguen en grilla.
+
+Alcance (solo `max-width: 768px`):
+1. Las tarjetas van en una fila horizontal con `scroll-snap`, cada una al ~82 %
+   del ancho para que asome la siguiente; sin barra de desplazamiento.
+2. La tarjeta que se ve se destaca y las demás se atenúan un poco, sin
+   `setState` por scroll: un `IntersectionObserver` cambia un atributo cuando
+   otra tarjeta pasa a ser la visible, como el centinela de `BR-068`.
+3. Puntos de posición debajo, que son botones: cambian de tarjeta sin gesto de
+   arrastre (WCAG 2.5.1) y dicen cuál es la actual.
+4. La fila es una región enfocable con nombre: con el teclado se recorre con las
+   flechas.
+5. Con reducir movimiento: el snap se mantiene (es funcional), pero sin
+   desplazamiento suave ni atenuado animado.
+6. Un solo componente compartido, para no repetir la lógica en las dos secciones.
+
+Criterios de aceptación:
+1. En móvil, ambas secciones muestran sus tarjetas en una fila que se desliza con
+   snap, y la siguiente asoma (HU-EXP-004 CA-21).
+2. En escritorio nada cambia: siguen en grilla (capturas a 1440 px).
+3. Los puntos son botones con nombre y la fila se recorre con el teclado; axe sin
+   violaciones graves (CP-A11Y-002).
+4. Sin `setState` por scroll (test) y solo `transform`/`opacity` en lo animado.
+5. Con reducir movimiento no hay desplazamiento suave ni atenuado animado
+   (CP-A11Y-003).
+6. Sin colores escritos a mano (tests; ADR-002).
+7. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-003).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2646,6 +2698,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | Hecho | BR-058 |
 | BR-061 | Hero y CTA1 en móvil: fieles al Figma | K | P3 | M | Propuesta | BR-056, BR-058, BR-059 |
 | BR-069 | Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas | K | P3 | M | Propuesta | BR-056, BR-064 |
+| BR-070 | Beneficios y Reseñas en móvil: carrusel con snap | K | P3 | M | Propuesta | BR-069 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |
