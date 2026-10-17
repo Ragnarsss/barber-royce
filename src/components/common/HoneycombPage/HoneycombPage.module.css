@@ -1,5 +1,5 @@
 /*
- * Página del equipo (BR-060): fondo charcoal con un triángulo oscuro arriba a la izquierda y uno rojo abajo a la
+ * Página con un panal (BR-060, BR-067): fondo charcoal con un triángulo oscuro arriba a la izquierda y uno rojo abajo a la
  * derecha, como las diagonales del hero (Figma). El rojo lleva el mismo degradado y filo de luz de 1 px que el
  * hero (BR-055); el filo es un segundo fondo cuyo 50 % cae justo en la diagonal del `clip-path`.
  */
@@ -48,6 +48,21 @@
     ),
     linear-gradient(150deg, var(--red-light) 0%, var(--color-brand-primary) 40%, var(--red-deep) 100%);
   clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+/*
+ * Variante en banda: las diagonales miden una pantalla (no un porcentaje de la página) y debajo el fondo es liso. Si el
+ * alto dependiera del contenido, un cambio de fuente o la carga de más productos movería el triángulo rojo entero.
+ */
+.band {
+  background: var(--color-brand-background);
+}
+
+.band .backdrop {
+  bottom: auto;
+  height: 100vh;
+  height: 100svh;
+  background: var(--color-brand-section-bg);
 }
 
 .content {

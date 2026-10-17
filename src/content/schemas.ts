@@ -248,14 +248,14 @@ export function readProducts(table: CsvTable): TabResult<Product> {
     {
       required: ["id", "nombre", "descripcion", "precio", "categoria"],
       read: (r) => {
-        r.slug("id");
+        const id = r.slug("id");
         const name = r.text("nombre", 60);
         const description = r.text("descripcion", 200);
         const price = r.price("precio");
         const category = r.oneOf("categoria", PRODUCT_CATEGORIES.filter((category) => category !== "Todos"));
         const image = r.image("imagen");
-        if (name === undefined || description === undefined || price === undefined || category === undefined) return undefined;
-        return { name, description, price: formatClp(price), image, category };
+        if (id === undefined || name === undefined || description === undefined || price === undefined || category === undefined) return undefined;
+        return { id, name, description, price: formatClp(price), image, category };
       },
     },
     { unique: "id" },

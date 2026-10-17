@@ -309,21 +309,32 @@ Criterios de aceptación:
 #### BR-009 — Decidir qué hace el botón "Comprar" de productos
 
 - Prioridad: P1 · Esfuerzo: XS · Depende de: —
-- Estado: Propuesta (decisión del usuario pendiente)
+- Estado: En curso (rama `feat/br-009-quitar-boton-comprar`)
 - Historia de usuario: HU-INFO-004 (CA-03, RN-01)
 - RF/RNF: `RF-INFO-002`
 
 **Origen (2026-10-12):** el botón "Comprar" de `/productos` no hace nada y
 los precios tienen formato de dólares.
 
+> **Decisión del usuario (2026-10-15):** se **quita el botón «Comprar»**: por
+> ahora el sitio no vende productos. De las tres opciones de abajo gana una
+> cuarta, la más simple: sin botón ni acción. La página sigue mostrando los
+> productos con su precio. Si más adelante se quiere consultar o comprar, será
+> un ticket nuevo.
+
 Alcance:
-1. Decidir entre: consultar por WhatsApp con el producto prellenado,
+1. ~~Decidir entre: consultar por WhatsApp con el producto prellenado,
    "Disponible en el local" sin botón, u ocultar la página hasta tener
-   catálogo real.
-2. Precios en CLP.
+   catálogo real.~~ Decidido: quitar el botón (ver arriba).
+2. Precios en CLP (ya hecho: `formatClp` en la hoja).
+3. Quitar el botón, su ícono de carrito y el CSS que queda sin uso en
+   `ProductsPage`.
 
 Criterios de aceptación:
-1. Ningún botón visible sin acción (HU-INFO-004 RN-01).
+1. Ningún botón visible sin acción (HU-INFO-004 RN-01): `/productos` no tiene
+   ningún botón «Comprar» (test en `contentWiring.test.tsx`).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-009).
 
 #### BR-010 — Preparar variables de entorno sin secretos
 
@@ -2277,6 +2288,143 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-063).
 
+El usuario pidió (2026-10-15) rehacer el catálogo de `/productos` trasladando el
+panal y las tarjetas del equipo, con scroll infinito. Se parte en dos para poder
+ver y aprobar el panal antes de sumar la carga progresiva (el esfuerzo junto
+sería L). El botón «Comprar» salió aparte, en `BR-009`.
+
+#### BR-067 — Productos: catálogo en panal con hover y ficha
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-060, BR-063, BR-009
+- Estado: En curso (rama `feat/br-067-productos-panal`)
+- Historia de usuario: HU-EXP-004 (CA-18), HU-INFO-004 (CA-01, CA-02)
+- RF/RNF: `RF-INFO-011`, `RF-INFO-002`, `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-15):** el usuario compartió el Figma de «Productos»: un panal de
+hexágonos con marco blanco sobre las diagonales roja y charcoal del hero, y
+hexágonos grises debajo (lo que falta por cargar). Hoy el catálogo es una
+grilla de tarjetas rectangulares con buscador y filtros (`ProductsPage.tsx`),
+6 productos y fotos de 400 × 300.
+
+Decisiones del usuario (2026-10-15):
+1. El marco rojo del Figma es **el estado del cursor o del foco**: todos los
+   hexágonos tienen marco blanco y no hay producto destacado (sin columna nueva
+   en la hoja).
+2. **Se mantienen el buscador y los filtros de categoría**: al filtrar, el
+   panal se reacomoda.
+3. Se trasladan también las «tarjetas» del equipo: nombre y precio al pasar el
+   cursor y una **ficha de producto** al hacer clic.
+
+Alcance:
+1. Panal **sin líder**: todos los hexágonos del mismo tamaño, en filas fijas
+   (3 en escritorio y 2 en móvil) a ras unos de otros y con la misma distancia,
+   como el del equipo (`BR-060`). Se generaliza la geometría de `honeycomb.ts`
+   con una función de filas fijas: fijas, para que sumar productos
+   (`BR-068`) no reacomode los que ya están.
+2. Fondo con las diagonales del equipo y el título compacto; los filtros quedan
+   arriba del panal.
+3. Marco blanco; con cursor o foco de teclado, marco rojo con el resplandor de
+   neón de la navbar. Se ven el nombre y el precio sobre la foto.
+4. **Ficha del producto** en un diálogo accesible: foto grande, categoría en
+   un chip, nombre en Anton, descripción y precio, **sin botón de compra**
+   (`BR-009`). El comportamiento (foco atrapado, Escape, foco de vuelta, Lenis
+   detenido) se extrae de `BarberProfileDialog` a una pieza compartida, en vez
+   de copiarlo.
+5. Buscar o filtrar reacomoda el panal con una transición corta; sin
+   resultados, el estado vacío con acción para limpiar (CP-INFO-002).
+6. Con `prefers-reduced-motion`, sin transiciones. Colores y medidas en
+   tokens.
+
+Criterios de aceptación:
+1. `/productos` muestra todos los productos en panal, a ras y con la misma
+   distancia en 360, 768 y 1440 px; un test geométrico lo exige para catálogos
+   de 1 a 30 productos (HU-EXP-004 CA-18).
+2. Al pasar el cursor o enfocar con teclado un hexágono se ven el nombre y el
+   precio con contraste ≥ 4,5:1 (CP-A11Y-004).
+3. Clic, Enter o Espacio abre la ficha con foto, categoría, nombre, descripción
+   y precio; Escape la cierra, el foco vuelve al hexágono y el fondo no se
+   desplaza; no hay botón de compra (CP-INFO-011, CP-A11Y-002).
+4. Buscar por texto y filtrar por categoría siguen funcionando y el panal
+   queda sin huecos (HU-INFO-004 CA-02).
+5. Sin scroll horizontal; con reducir movimiento, sin animación
+   (CP-A11Y-003).
+6. TBT y CLS móviles no empeoran frente a `master` y la primera foto visible no
+   retrasa el LCP (CP-PERF-003).
+7. Ningún color escrito a mano en los módulos nuevos (ADR-002).
+
+> **Alcance ajustado (2026-10-15):** al construirlo salieron cuatro cosas que
+> el alcance no decía. (1) El panal, el diálogo y la página del equipo pasan a
+> **componentes compartidos** (`Honeycomb`, `ModalDialog`, `HoneycombPage` en
+> `components/common/`): el repo no permite importar el CSS de otro componente,
+> y copiarlos eran ~300 líneas. (2) La hoja trae productos con **el mismo
+> nombre** (34 copias de «Kit Completo» con ids distintos), así que el producto
+> pasa a llevar su **`id`** (`Product.id`, de la columna `id` que ya existía) y
+> es la clave. (3) Las diagonales van en una **banda de una pantalla** y debajo
+> el fondo es liso, como en el Figma; con el alto en porcentaje de la página, el
+> triángulo rojo se movía al cambiar de fuente y daba CLS 0,08. (4) Si la foto
+> falta o la dirección falla (4 de las 6 de Unsplash dan 404, `BR-008`), el
+> hexágono muestra su nombre y precio siempre, en vez de quedar vacío.
+>
+> **Regresión aceptada por escrito (2026-10-15, decisión del usuario):** el LCP
+> móvil de `/productos` pasa de ~3,9 s (un párrafo de texto) a ~5,0 s (una foto
+> del panal), y por arrastre el TBT mediana sube de 78 a 150 ms porque el TTI
+> llega más tarde. Es estructural: la foto grande que pide el diseño se
+> descubre recién cuando el JavaScript pinta la página. Se descartó que sea la
+> decodificación de la foto o la sombra de cada hexágono. El criterio 6 se da por
+> cumplido con esa salvedad, como la de `BR-054`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-067).
+
+#### BR-068 — Productos: carga progresiva (scroll infinito)
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-067
+- Estado: En curso (rama `feat/br-068-productos-scroll-infinito`)
+- Historia de usuario: HU-EXP-004 (CA-19)
+- RF/RNF: `RF-INFO-011`, `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`
+
+**Origen (2026-10-15):** el usuario pidió «scroll infinito» para el catálogo. En
+el Figma, debajo del panal hay hexágonos grises: lo que falta por cargar. El
+usuario eligió la **carga progresiva** (y no un bucle sin fin). Hoy hay 6
+productos, así que no cargará nada más hasta que el catálogo crezca.
+
+Alcance:
+1. Se muestra un primer lote de 12 productos (múltiplo de 3 y de 2, para que
+   las filas queden completas en escritorio y en móvil). Al acercarse al final
+   se suma el siguiente lote: un `IntersectionObserver` sobre un centinela
+   cambia el estado solo cuando lo cruza; nunca un `setState` por scroll.
+2. Mientras queden productos por mostrar, la fila siguiente aparece como
+   **hexágonos grises de relleno** (decorativos, `aria-hidden`) que reservan su
+   lugar; al cargar se reemplazan con una entrada escalonada.
+3. Buscar o filtrar reinicia el conteo a un lote. Si todo cabe en un lote, no
+   hay centinela ni relleno.
+4. Accesibilidad: una región `aria-live="polite"` anuncia «Se cargaron N
+   productos más», y un botón «Ver más productos» queda disponible para quien
+   no puede llegar al final con el desplazamiento (teclado y lectores de
+   pantalla).
+5. Con `prefers-reduced-motion`, sin animación en la carga.
+
+Criterios de aceptación:
+1. Con más de 12 productos, se ven 12 y, al llegar al final, aparecen los
+   siguientes sin saltos de la página (HU-EXP-004 CA-19).
+2. Con 12 o menos no hay centinela, relleno ni botón.
+3. Cambiar de filtro o buscar vuelve a un lote.
+4. «Ver más productos» carga el siguiente lote con el teclado y la región
+   anuncia cuántos llegaron (CP-A11Y-002).
+5. Los hexágonos de relleno reservan su espacio: CLS 0 al cargar un lote
+   (CP-PERF-003).
+6. El scroll no provoca re-renders: el estado cambia solo al cruzar el
+   centinela (test).
+
+> **Decisión de construcción (2026-10-15):** el lote se pide cuando el final
+> del relleno entra en pantalla (margen 0), no antes. Con un margen de 400 px
+> el lote llegaba antes de que el relleno asomara y los hexágonos grises, que
+> el Figma sí muestra, nunca se veían. El relleno son 6 hexágonos (dos filas de
+> escritorio, tres de móvil) y el escalonado de la entrada se reinicia cada 6,
+> para que un lote nuevo no espere a los anteriores. Con los 40 productos de
+> la hoja actual, el catálogo carga 12, 24, 36 y 40.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-068).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2313,7 +2461,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-006 | SEO técnico | B | P0 | S | Propuesta | BR-005 |
 | BR-007 | Enlaces externos seguros | B | P0 | XS | En curso | — |
 | BR-008 | Fotos propias en lugar de Unsplash | B | P0 | M | Bloqueada | — |
-| BR-009 | Decidir botón "Comprar" | B | P1 | XS | Propuesta | — |
+| BR-009 | Quitar el botón "Comprar" (decidido) | B | P1 | XS | En curso | — |
 | BR-010 | Variables de entorno | B | P1 | XS | Hecho | — |
 | BR-011 | Ruta crítica del LCP | F | P1 | S | En curso | — |
 | BR-012 | Imágenes pendientes | F | P1 | S | En curso | BR-011 |
@@ -2370,6 +2518,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |
 | BR-065 | SocialProof2: parrilla bento con las proporciones del Figma | K | P3 | S | Hecho | BR-064 |
 | BR-066 | El respaldo del enlace de reserva apunta a un subdominio que no existe | B | P1 | XS | Hecho | — |
+| BR-067 | Productos: catálogo en panal con hover y ficha | K | P3 | M | En curso | BR-060, BR-063, BR-009 |
+| BR-068 | Productos: carga progresiva (scroll infinito) | K | P3 | M | En curso | BR-067 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

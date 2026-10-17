@@ -19,7 +19,7 @@ import { readAllSources } from "./sourceFiles";
 const hoja = vi.hoisted(() => ({
   content: {
     services: [{ name: "Servicio de la hoja", description: "Descripción de la hoja", price: "$9.990", duration: "99 min", includes: "", image: "", category: "Barba" }],
-    products: [{ name: "Producto de la hoja", description: "Descripción", price: "$12.345", image: "", category: "Cuidado" }],
+    products: [{ id: "producto-de-la-hoja", name: "Producto de la hoja", description: "Descripción", price: "$12.345", image: "", category: "Cuidado" }],
     team: [{ name: "Barbero de la hoja", role: "Cargo de la hoja", experience: "1 año", image: "", isLead: true }],
     faq: [{ category: "Servicios", question: "¿Pregunta de la hoja?", answer: "Respuesta de la hoja", }],
     texts: {},
@@ -78,6 +78,14 @@ describe("las páginas leen el contenido generado (BR-041, RF-CNT-004, CP-CNT-00
     expect(screen.getByText("Producto de la hoja")).toBeInTheDocument();
     expect(screen.getByText("$12.345")).toBeInTheDocument();
     expect(screen.queryByText(snapshot.products[0].name)).not.toBeInTheDocument();
+  });
+
+  it("BR-009: ProductsPage no tiene botón «Comprar» (no se vende por el sitio, HU-INFO-004 RN-01)", () => {
+    renderWithProviders(withLenis(<ProductsPage />), { route: "/productos" });
+
+    expect(screen.getByText("Producto de la hoja")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /comprar/i })).not.toBeInTheDocument();
+    expect(screen.queryByText(/comprar/i)).not.toBeInTheDocument();
   });
 
   it("TeamPage muestra el equipo del contenido", () => {

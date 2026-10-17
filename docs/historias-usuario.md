@@ -304,6 +304,16 @@ ver reseñas de otros clientes, para confiar antes de reservar.
 
 > Actualizada (2026-10-12): queda `Propuesta` hasta decidir qué hace el
 > botón "Comprar" (`BR-009`).
+>
+> Actualizada (2026-10-15, decisión del usuario): el botón «Comprar» se quita
+> (`BR-009`): por ahora el sitio no vende productos. CA-03 y RN-01 se cumplen
+> sin botón.
+>
+> Actualizada (2026-10-15, `BR-067` y `BR-068`): el catálogo pasa a un panal de
+> hexágonos con carga progresiva. CA-01 se cumple así: el nombre y el precio se
+> ven al pasar el cursor o enfocar, y la foto, la categoría y la descripción en
+> la ficha que abre cada producto. CA-02 sigue igual: los filtros reacomodan el
+> panal.
 
 Como cliente, quiero ver los productos que vende la barbería con su
 precio, para saber qué puedo comprar en el local.
@@ -328,6 +338,8 @@ precio, para saber qué puedo comprar en el local.
   la lista se actualiza sin recargar la página.
 - CA-03: Given toco la acción de un producto, When se ejecuta, Then hace lo
   que el texto del botón promete (decisión en `BR-009`).
+  - Resuelto (2026-10-15, `BR-009`): no hay acción de compra; Given entro a
+    `/productos`, When veo un producto, Then no hay ningún botón «Comprar».
 
 ### Reglas de negocio asociadas:
 
@@ -642,6 +654,15 @@ y confiar en que el servicio está a la altura.
 - CA-17: Given llego a «Clientes felices, estilos impecables», When veo la
   parrilla de fotos, Then los recuadros siguen un bento apaisado como en el
   diseño, y en móvil quedan en dos columnas sin recuadros angostos.
+- CA-18 (2026-10-15, `BR-067`): Given entro a `/productos`, When carga, Then veo
+  el catálogo en un panal de hexágonos a la misma distancia entre sí; al pasar
+  el cursor o enfocar uno se ilumina y leo su nombre y su precio, y al
+  activarlo se abre su ficha con foto, categoría, descripción y precio, sin
+  botón de compra.
+- CA-19 (2026-10-15, `BR-068`): Given hay más productos de los que caben en una
+  carga, When llego al final del panal, Then se suman los siguientes (con
+  hexágonos grises de relleno mientras llegan), sin saltos de la página, y
+  puedo pedirlos también con el teclado.
 
 ---
 

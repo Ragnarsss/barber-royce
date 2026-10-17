@@ -139,8 +139,20 @@ describe("pestaña productos", () => {
     const ok = readProducts(table(`${HEAD}\npomada,Pomada,Hold fuerte,15990,Styling,\n`));
     const bad = readProducts(table(`${HEAD}\npomada,Pomada,Hold fuerte,15990,Barba y más,\n`));
 
-    expect(ok.items).toEqual([{ name: "Pomada", description: "Hold fuerte", price: "$15.990", image: "", category: "Styling" }]);
+    expect(ok.items).toEqual([{ id: "pomada", name: "Pomada", description: "Hold fuerte", price: "$15.990", image: "", category: "Styling" }]);
     expect(bad.issues[0]).toMatchObject({ tab: "productos", field: "categoria" });
+  });
+
+  it("BR-067: cada producto lleva el id de su fila, aunque el nombre se repita", () => {
+    const { items, issues } = readProducts(
+      table(`${HEAD}
+kit-1,Kit Completo,Todo en uno,75000,Kits,
+kit-2,Kit Completo,Todo en uno,76000,Kits,
+`),
+    );
+
+    expect(issues).toEqual([]);
+    expect(items.map((product) => product.id)).toEqual(["kit-1", "kit-2"]);
   });
 });
 

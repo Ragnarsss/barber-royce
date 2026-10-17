@@ -1,6 +1,7 @@
 import type { Product } from "@/types/product.types";
 export const productsList: Product[] = [
     {
+        id: "pomada-premium",
         name: "Pomada Premium",
         description: "Hold fuerte, acabado mate. Perfecta para estilos estructurados que duran todo el día.",
         price: "$25",
@@ -8,6 +9,7 @@ export const productsList: Product[] = [
         category: "Styling",
     },
     {
+        id: "cera-modeladora",
         name: "Cera Modeladora",
         description: "Control y flexibilidad. Ideal para estilos naturales con movimiento y textura.",
         price: "$22",
@@ -15,6 +17,7 @@ export const productsList: Product[] = [
         category: "Styling",
     },
     {
+        id: "aceite-para-barba",
         name: "Aceite para Barba",
         description: "Hidratación y brillo natural. Mantén tu barba suave, saludable y con aroma excepcional.",
         price: "$18",
@@ -22,6 +25,7 @@ export const productsList: Product[] = [
         category: "Barba",
     },
     {
+        id: "shampoo-fortificante",
         name: "Shampoo Fortificante",
         description: "Limpieza profunda y fortalecimiento. Fórmula especial para cabello y cuero cabelludo.",
         price: "$20",
@@ -29,6 +33,7 @@ export const productsList: Product[] = [
         category: "Cuidado",
     },
     {
+        id: "balsamo-para-barba",
         name: "Bálsamo para Barba",
         description: "Suavidad y acondicionamiento. Control ligero con nutrición profunda para tu barba.",
         price: "$16",
@@ -36,6 +41,7 @@ export const productsList: Product[] = [
         category: "Barba",
     },
     {
+        id: "kit-completo",
         name: "Kit Completo",
         description: "Todos los esenciales para tu cuidado. El regalo perfecto o tu arsenal completo.",
         price: "$75",

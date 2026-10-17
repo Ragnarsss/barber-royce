@@ -7,7 +7,7 @@ import type { TeamMember } from "@/types/team.types";
  *
  * El líder mide 1,5 veces (6 × 12). Con columnas de medio hexágono su borde diagonal caería a media unidad de los
  * del vecino y quedaría más lejos que los demás entre sí; con cuartos y octavos cabe justo, y cada par de hexágonos
- * vecinos comparte un borde entero (lo comprueba `honeycomb.test.ts`). Los hexágonos son regulares (alto = 2/√3 del
+ * vecinos comparte un borde entero (lo comprueba `honeycombLayout.test.ts`). Los hexágonos son regulares (alto = 2/√3 del
  * ancho), así que separarlos todos igual se hace encogiéndolos por igual en el CSS.
  *
  * En escritorio el líder va a la izquierda y el resto se arma a su derecha, con la fila de abajo corrida hacia él,
@@ -122,4 +122,40 @@ export function buildHoneycomb(team: TeamMember[]): Honeycomb {
   if (hasLead) cells.unshift({ member: lead, isLead: true, desktop: desktopAll[0], mobile: mobileAll[0] });
 
   return { cells, desktop: gridSize(desktopAll), mobile: gridSize(mobileAll) };
+}
+
+/** Hexágonos por fila del catálogo de productos (BR-067): 3 en escritorio, como el Figma, y 2 en móvil. */
+export const PRODUCT_DESKTOP_PER_ROW = 3;
+export const PRODUCT_MOBILE_PER_ROW = 2;
+
+export interface FixedHoneycombCell {
+  desktop: CellPlacement;
+  mobile: CellPlacement;
+}
+
+export interface FixedHoneycomb {
+  cells: FixedHoneycombCell[];
+  desktop: GridSize;
+  mobile: GridSize;
+}
+
+/** Filas de `perRow` (la última con los que sobran); las filas impares se corren media celda hacia la izquierda. */
+function fixedRows(count: number, perRow: number): CellPlacement[] {
+  const sizes = Array.from({ length: Math.ceil(count / perRow) }, (_, r) => Math.min(perRow, count - r * perRow));
+  return toFirstColumn(placeRows(sizes, 1 + HALF_HEX, 1, -HALF_HEX));
+}
+
+/**
+ * Panal sin líder, de filas fijas, para el catálogo de productos (BR-067, HU-EXP-004 CA-18). A diferencia del del
+ * equipo, el largo de cada fila no depende de cuántos hay: sumar productos (la carga progresiva de `BR-068`) solo
+ * agrega filas abajo y no mueve los que ya estaban. Cada par de hexágonos vecinos va a ras, como en el del equipo.
+ */
+export function buildFixedHoneycomb(count: number): FixedHoneycomb {
+  const desktopAll = fixedRows(count, PRODUCT_DESKTOP_PER_ROW);
+  const mobileAll = fixedRows(count, PRODUCT_MOBILE_PER_ROW);
+  return {
+    cells: desktopAll.map((desktop, i) => ({ desktop, mobile: mobileAll[i] })),
+    desktop: gridSize(desktopAll),
+    mobile: gridSize(mobileAll),
+  };
 }
