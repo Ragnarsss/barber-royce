@@ -17,9 +17,20 @@ import { useMagnetic } from "./magnetic";
 /** Hexágono regular de puntas laterales (232 × 200), como las barras de luz del techo de la barbería (BR-058). */
 const HEXAGON = "M60 3H172L228 100L172 197H60L4 100Z";
 
+/**
+ * Separa la primera frase del subtítulo (hasta el primer «?», «!» o «.») del resto, para ponerla en negrita en móvil
+ * (BR-061). El texto sigue siendo uno solo de la hoja; si no hay un resto, no se separa nada.
+ */
+function splitLead(text: string): { lead: string; rest: string } | null {
+  const match = text.match(/^(.+?[?!.])(\s+\S[\s\S]*)$/);
+  return match ? { lead: match[1], rest: match[2] } : null;
+}
+
 export function CTA1() {
   const { business } = useSiteContent();
   const siteText = useSiteText();
+  const subtitle = siteText("cta1.subtitulo");
+  const subtitleParts = splitLead(subtitle);
   const reducedMotion = useReducedMotion() ?? false;
   const { ref, controls } = useScrollAnimation();
   const magnetRef = useRef<HTMLSpanElement>(null);
@@ -108,7 +119,16 @@ export function CTA1() {
         >
           <div className={styles.textContent}>
             <h2 className={styles.title}>{siteText("cta1.titulo")}</h2>
-            <p className={styles.subtitle}>{siteText("cta1.subtitulo")}</p>
+            <p className={styles.subtitle}>
+              {subtitleParts ? (
+                <>
+                  <strong className={styles.lead}>{subtitleParts.lead}</strong>
+                  {subtitleParts.rest}
+                </>
+              ) : (
+                subtitle
+              )}
+            </p>
             <div className={styles.ctaButtons}>
               {/* El envoltorio se mueve con el cursor y dibuja el foco: el chaflán (clip-path) recortaría el contorno */}
               <motion.span ref={magnetRef} className={styles.magnet} style={{ x: magnet.x, y: magnet.y }}>

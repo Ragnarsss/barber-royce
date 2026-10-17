@@ -191,6 +191,8 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
     expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*inset:\s*0/);
     expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*width:\s*100%/);
     expect(mobile).toMatch(/\.heroImageSEO img\s*\{[^}]*object-fit:\s*cover/);
+    // Corrida a la izquierda (decisión del usuario, 2026-10-17): el rostro del barbero no se corta en el borde derecho.
+    expect(mobile).toMatch(/\.heroImageSEO img\s*\{[^}]*object-position:\s*(?:[6-9]\d)% top/);
   });
 
   it("CA-13: en móvil la foto va sin parallax (el inline de framer se pisa) y hay una línea blanca bajo el título", () => {

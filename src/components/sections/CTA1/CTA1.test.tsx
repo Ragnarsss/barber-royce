@@ -115,3 +115,74 @@ describe("CTA1 (BR-058, HU-EXP-004 CA-10)", () => {
     expect(ratio).toBeGreaterThanOrEqual(4.5);
   });
 });
+
+// BR-061 (HU-EXP-004 CA-13): vista móvil fiel al Figma «CTA 1 Mobile». Solo cambia ≤ 768 px; el escritorio queda igual.
+describe("CTA1 en móvil (BR-061, HU-EXP-004 CA-13)", () => {
+  const mobile = css.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+  const rule = (selector: RegExp) => mobile.match(new RegExp(`\\n\\s*${selector.source}\\s*\\{([^}]*)\\}`))?.[1] ?? "";
+
+  beforeAll(() => {
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      },
+    );
+  });
+
+  it("CA-13: la primera frase del subtítulo va en negrita y el texto sigue completo", () => {
+    renderCta();
+
+    const subtitle = document.querySelector("p[class*='subtitle']") as HTMLElement;
+    expect(subtitle.querySelector("strong")?.textContent).toBe("¿Listo para un cambio que te defina?");
+    expect(subtitle.textContent).toMatch(/^¿Listo para un cambio que te defina\? Agenda tu cita/);
+  });
+
+  it("CA-13: la negrita es solo de móvil; en escritorio la primera frase pesa como el resto", () => {
+    expect(css).toMatch(/\n\.lead\s*\{[^}]*font-weight:\s*inherit/);
+    expect(rule(/\.lead/)).toMatch(/font-weight:\s*700/);
+  });
+
+  it("CA-13: en móvil se ocultan los hexágonos y las barras de luz; el fondo es charcoal", () => {
+    const hidden = mobile.match(/([^{}]*)\{\s*display:\s*none;?\s*\}/)?.[1] ?? "";
+
+    for (const name of ["textHexagon", "textHexagonBackground", "imageHexagonBackground", "imageHexagonForeground", "lightBars"]) {
+      expect(hidden).toMatch(new RegExp(`\\.${name}\\b`));
+    }
+    expect(css).toMatch(/\n\.cta\s*\{[^}]*background:\s*var\(--color-brand-section-bg\)/);
+  });
+
+  it("CA-13: la foto va detrás del texto, a la derecha y sin recorte de figura ni parallax", () => {
+    const figure = rule(/\.imageHexagon/);
+
+    expect(figure).toMatch(/inset:\s*0/);
+    expect(figure).toMatch(/clip-path:\s*none/);
+    expect(figure).toMatch(/transform:\s*none\s*!important/);
+    expect(rule(/\.ctaImage/)).toMatch(/right:\s*-\d+%/);
+    // Sin `max-width: none` la regla global de imágenes la limita al 100 % y el rostro no se agranda.
+    expect(rule(/\.ctaImage/)).toMatch(/max-width:\s*none/);
+  });
+
+  it("CA-13: el texto va alineado a la izquierda, con una línea blanca bajo el título", () => {
+    expect(rule(/\.textContent/)).toMatch(/text-align:\s*left/);
+    expect(rule(/\.title::after/)).toMatch(/background:\s*var\(--color-brand-white\)/);
+  });
+
+  it("CA-13: el botón de reservar sigue siendo blanco con ícono rojo y 'Conocer Servicios' se mantiene", () => {
+    renderCta();
+
+    expect(document.querySelector("a[class*='ctaButton'] svg")).not.toBeNull();
+    expect(css).toMatch(/\n\.ctaButton svg\s*\{[^}]*color:\s*var\(--color-brand-primary\)/);
+    expect(document.body.textContent).toContain("Conocer Servicios");
+  });
+
+  it("ADR-002: el bloque móvil no trae colores escritos a mano", () => {
+    expect(mobile.length).toBeGreaterThan(0);
+    expect(mobile).not.toMatch(/#[0-9a-fA-F]{3,6}\b|rgba?\(/);
+  });
+});

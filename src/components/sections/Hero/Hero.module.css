@@ -521,7 +521,8 @@
     width: 100% !important;
     height: 100% !important;
     object-fit: cover;
-    object-position: center top;
+    /* Corrida a la izquierda (más del lado derecho de la foto): el rostro del barbero no se corta en el borde */
+    object-position: 72% top;
   }
 
   .container {
