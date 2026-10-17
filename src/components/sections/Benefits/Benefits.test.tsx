@@ -161,3 +161,31 @@ describe("Benefits: tarjetas de vidrio (BR-069, HU-EXP-004 CA-20)", () => {
     expect(css).not.toMatch(/#[0-9a-fA-F]{3,6}\b|rgba?\(/);
   });
 });
+
+// BR-071 (HU-EXP-004 CA-22): la foto puente de móvil lleva dos cuñas rojas, en espejo.
+describe("Benefits: foto puente con dos cuñas (BR-071, HU-EXP-004 CA-22)", () => {
+  const mobile = css.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+  const rule = (selector: RegExp) => mobile.match(new RegExp(`\n\s*${selector.source}\s*\{([^}]*)\}`))?.[1] ?? "";
+
+  it("CA-22: una cuña arriba a la izquierda (::before) y otra abajo a la derecha (::after)", () => {
+    expect(rule(/\.imageBackground::before/)).toMatch(/top:\s*0/);
+    expect(rule(/\.imageBackground::before/)).toMatch(/left:\s*0/);
+    expect(rule(/\.imageBackground::before/)).toMatch(/clip-path:\s*polygon\(0 0, 100% 0, 0 100%\)/);
+    expect(rule(/\.imageBackground::after/)).toMatch(/bottom:\s*0/);
+    expect(rule(/\.imageBackground::after/)).toMatch(/right:\s*0/);
+    expect(rule(/\.imageBackground::after/)).toMatch(/clip-path:\s*polygon\(100% 0, 100% 100%, 0 100%\)/);
+  });
+
+  it("el tamaño de cada cuña sale de variables, para ajustarlo a ojo", () => {
+    expect(rule(/\.imageBackground/)).toMatch(/--wedge-top-height:\s*\d+%/);
+    expect(rule(/\.imageBackground/)).toMatch(/--wedge-bottom-width:\s*\d+%/);
+    expect(rule(/\.imageBackground/)).toMatch(/--wedge-bottom-height:\s*\d+%/);
+    expect(rule(/\.imageBackground::before/)).toMatch(/height:\s*var\(--wedge-top-height\)/);
+    expect(rule(/\.imageBackground::after/)).toMatch(/width:\s*var\(--wedge-bottom-width\)/);
+  });
+
+  it("las dos cuñas son del rojo de la marca, de un token", () => {
+    expect(rule(/\.imageBackground::before/)).toMatch(/background:\s*var\(--color-brand-primary\)/);
+    expect(rule(/\.imageBackground::after/)).toMatch(/background:\s*var\(--color-brand-primary\)/);
+  });
+});
