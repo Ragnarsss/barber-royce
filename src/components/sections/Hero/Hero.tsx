@@ -5,6 +5,8 @@ import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData.tsx";
 import heroImage842w from "@/assets/optimized/hero_model_left_profile_842w.webp";
 import heroImage1060w from "@/assets/optimized/hero_model_left_profile_1060w.webp";
 import heroImage1684w from "@/assets/optimized/hero_model_left_profile_1684w.webp";
+import heroMobile780w from "@/assets/optimized/hero_mobile_780w.webp";
+import heroMobile1170w from "@/assets/optimized/hero_mobile_1170w.webp";
 
 import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
@@ -102,9 +104,16 @@ export function Hero() {
         className={styles.heroImageSEO}
         style={isReady ? { y: layers.foreground.y, scale: layers.foreground.scale } : {}}
       >
+        {/* Móvil: foto a pantalla completa como fondo (BR-061). El mismo <picture> elige el archivo, no se baja otro. */}
+        <source
+          media="(max-width: 768px)"
+          srcSet={`${heroMobile780w} 780w, ${heroMobile1170w} 1170w`}
+          sizes="100vw"
+          type="image/webp"
+        />
         <source
           srcSet={`${heroImage842w} 842w, ${heroImage1060w} 1060w, ${heroImage1684w} 1684w`}
-          sizes="(max-width: 768px) 100vw, (max-width: 1400px) 50vw, 842px"
+          sizes="(max-width: 1400px) 50vw, 842px"
           type="image/webp"
         />
         <motion.img

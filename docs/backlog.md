@@ -2460,6 +2460,22 @@ Decisiones del usuario (2026-10-17):
   espacio.
 - CTA1: fiel al Figma, pero se mantiene «Conocer Servicios» como segundo
   botón.
+- Hero: más aire entre el título, la línea, el párrafo y las tarjetas, como se
+  ve en el Figma (el usuario, 2026-10-17).
+
+> **Alcance ajustado (2026-10-17, decisión del usuario con el Figma):** en
+> móvil, el fondo del Hero pasa a ser la foto a pantalla completa y **reemplaza
+> al triángulo** que fijó `BR-055` (HU-EXP-004 CA-08, parte móvil). El fondo
+> sigue sin ser un color plano. En escritorio CA-08 no cambia.
+>
+> **Foto provisoria:** `src/assets/hero_mobile.png` es la exportación del Figma
+> como SVG: una foto de 271 × 284 px estirada a 2059 × 2081, ya espejada y con
+> el velo negro al 60 % incorporado. Se ve suave a pantalla completa. Hay que
+> cambiarla por la original en buena resolución (≥ 1200 px de ancho); como esa
+> sí vendrá sin velo, entonces se agrega el velo por CSS con un token.
+> El mismo `<picture>` del Hero elige la foto móvil (`<source media>`) y
+> `index.html` precarga solo una de las dos con `media` excluyentes
+> (`lcpPreload.test.ts`).
 
 Alcance (solo `max-width: 768px`; el escritorio no cambia):
 1. Navbar: hamburguesa roja a la izquierda; la marca en texto, en dos líneas

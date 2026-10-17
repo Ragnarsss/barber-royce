@@ -181,12 +181,31 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
     expect(document.querySelector("[data-spotlight]")).toBeNull();
   });
 
-  it("CA-08: en móvil queda una forma geométrica, no un fondo plano", () => {
+  // BR-061 (2026-10-17, decisión del usuario con el Figma «Resumen Mobile»): en móvil la foto a pantalla completa
+  // reemplaza al triángulo de BR-055 como fondo. Sigue sin ser un color plano.
+  it("CA-08 / CA-13: en móvil el fondo es la foto a pantalla completa, no un fondo plano", () => {
     const mobile = heroCss.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
     const hidden = mobile.match(/([^{}]*)\{\s*display:\s*none;?\s*\}/)?.[1] ?? "";
 
-    expect(hidden).not.toMatch(/\.leftTriangle\s*(,|$)/m);
-    expect(mobile).toMatch(/\.leftTriangle\s*\{[^}]*width:/);
+    expect(hidden).toMatch(/\.leftTriangle\s*(,|$)/m);
+    expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*inset:\s*0/);
+    expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*width:\s*100%/);
+    expect(mobile).toMatch(/\.heroImageSEO img\s*\{[^}]*object-fit:\s*cover/);
+  });
+
+  it("CA-13: en móvil la foto va sin parallax (el inline de framer se pisa) y hay una línea blanca bajo el título", () => {
+    const mobile = heroCss.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+
+    expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*transform:\s*none\s*!important/);
+    expect(mobile).toMatch(/\.title::after\s*\{[^}]*background:\s*var\(--color-brand-white\)/);
+  });
+
+  it("CA-13: el Hero ofrece una foto distinta para móvil en el mismo <picture>", () => {
+    renderHero();
+
+    const source = document.querySelector("picture source[media='(max-width: 768px)']");
+    expect(source).not.toBeNull();
+    expect(source?.getAttribute("srcset")).toMatch(/hero_mobile_\d+w\.webp 780w/);
   });
 
   it("ADR-002: los triángulos, el grano y el haz no traen colores escritos a mano", () => {

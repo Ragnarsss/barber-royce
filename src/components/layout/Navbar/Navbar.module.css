@@ -246,12 +246,9 @@
    * Móvil (BR-061, HU-EXP-004 CA-13): la hamburguesa roja a la izquierda, la marca en dos líneas ("ROYCE" en
    * blanco sobre "BARBERÍA" en rojo) y, a la derecha, el botón de reserva chico, blanco con texto rojo.
    */
-  .navbar,
-  .navbar.scrolled {
-    padding: var(--spacing-3) 0;
-  }
-
+  /* Alto mínimo del contenido: la barra mide lo mismo que antes y el layout sigue reservando 80 px (Layout.module.css) */
   .container {
+    min-height: 3.125rem;
     padding: 0 var(--spacing-4);
     gap: var(--spacing-3);
   }

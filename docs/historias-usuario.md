@@ -641,6 +641,8 @@ y confiar en que el servicio está a la altura.
   al equipo en un panal de hexágonos (como las barras de luz del techo), con el
   líder más grande y con un marco distinto, y al pasar el cursor o enfocar un
   hexágono leo el nombre del barbero.
+- CA-08 (nota 2026-10-17, `BR-061`): en móvil el fondo es ahora la foto a
+  pantalla completa, no la forma geométrica; ver CA-13.
 - CA-13 (2026-10-17, `BR-061`): Given abro la portada en un celular, When veo
   la navegación, la portada y el bloque de reserva, Then la marca va en texto
   junto a la hamburguesa y al botón de agendar, la foto ocupa el fondo con el

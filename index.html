@@ -296,8 +296,18 @@
       as="image"
       type="image/webp"
       fetchpriority="high"
+      media="(max-width: 768px)"
+      imagesrcset="/src/assets/optimized/hero_mobile_780w.webp 780w, /src/assets/optimized/hero_mobile_1170w.webp 1170w"
+      imagesizes="100vw"
+    />
+    <link
+      rel="preload"
+      as="image"
+      type="image/webp"
+      fetchpriority="high"
+      media="(min-width: 769px)"
       imagesrcset="/src/assets/optimized/hero_model_left_profile_842w.webp 842w, /src/assets/optimized/hero_model_left_profile_1060w.webp 1060w, /src/assets/optimized/hero_model_left_profile_1684w.webp 1684w"
-      imagesizes="(max-width: 768px) 100vw, (max-width: 1400px) 50vw, 842px"
+      imagesizes="(max-width: 1400px) 50vw, 842px"
     />
     <!-- Letrero de neón de entrada (BR-054): se pinta antes del JavaScript; src/loader/neonLoader.ts lo apaga.
          El SVG es provisorio (fuente Sacramento, tijera de lucide); el definitivo es BR-057. -->
