@@ -1,0 +1,53 @@
+/*
+ * Ficha del producto (BR-067): el cuadro, el fondo, el botón de cerrar y la mitad de la foto son los de
+ * `ModalDialog`; aquí va solo el texto de adentro, con el mismo estilo que la ficha del barbero.
+ */
+.category {
+  --chip-cut: var(--spacing-2);
+
+  align-self: flex-start;
+  margin: 0;
+  padding: var(--spacing-1) var(--spacing-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
+  background: color-mix(in srgb, var(--color-brand-primary) 22%, var(--surface));
+  box-shadow: inset 0 0 0 1px var(--chip-border);
+  clip-path: polygon(
+    var(--chip-cut) 0,
+    100% 0,
+    100% calc(100% - var(--chip-cut)),
+    calc(100% - var(--chip-cut)) 100%,
+    0 100%,
+    0 var(--chip-cut)
+  );
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: clamp(var(--font-size-4xl), 7vw, var(--font-size-7xl));
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
+}
+
+.description {
+  margin: 0;
+  max-width: 60ch;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  color: var(--muted);
+}
+
+.price {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-5xl);
+  line-height: 1;
+  color: var(--color-brand-primary);
+}

@@ -9,8 +9,8 @@ import { TeamHoneycomb } from "./TeamHoneycomb";
 
 // BR-060 (HU-EXP-004 CA-12): el panal del equipo.
 const here = dirname(fileURLToPath(import.meta.url));
-const css = readFileSync(resolve(here, "TeamHoneycomb.module.css"), "utf8");
-const pageCss = readFileSync(resolve(here, "../../pages/TeamPage.module.css"), "utf8");
+const css = readFileSync(resolve(here, "../common/Honeycomb/Honeycomb.module.css"), "utf8");
+const pageCss = readFileSync(resolve(here, "../common/HoneycombPage/HoneycombPage.module.css"), "utf8");
 
 const team: TeamMember[] = [
   { name: "Ana Rojas", role: "Barber", experience: "3 años", image: "/ana.jpg", isLead: false, specialties: [], description: "", bookingUrl: "", instagram: "", works: [], quote: "", workDays: [], branchIds: [] },

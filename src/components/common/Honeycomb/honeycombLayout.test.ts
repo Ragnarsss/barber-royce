@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { TeamMember } from "@/types/team.types";
-import { buildHoneycomb, HEX_COLS, HEX_ROWS, LEAD_COLS, LEAD_ROWS, ROW_STEP, type CellPlacement } from "./honeycomb";
+import { buildFixedHoneycomb, buildHoneycomb, HEX_COLS, HEX_ROWS, LEAD_COLS, LEAD_ROWS, ROW_STEP, type CellPlacement } from "./honeycombLayout";
 
 // BR-060 (HU-EXP-004 CA-12): el panal se arma en una grilla de cuartos de ancho y octavos de alto de un hexágono.
 const member = (name: string, isLead = false): TeamMember => ({
@@ -182,5 +182,73 @@ describe("buildHoneycomb (BR-060, HU-EXP-004 CA-12)", () => {
       expect(gap(lead, left)).toBeCloseTo(0, 9);
       expect(gap(lead, right)).toBeCloseTo(0, 9);
     });
+  });
+});
+
+// BR-067 (HU-EXP-004 CA-18): el catálogo de productos es un panal sin líder, de filas fijas.
+describe("buildFixedHoneycomb (BR-067, HU-EXP-004 CA-18)", () => {
+  const rowsOf = (placements: CellPlacement[]) => {
+    const rows = new Map<number, number[]>();
+    for (const p of placements) rows.set(p.row, [...(rows.get(p.row) ?? []), p.col]);
+    return [...rows.values()];
+  };
+
+  it("reparte en filas de 3 en escritorio y de 2 en móvil, la última con los que sobran", () => {
+    const { cells } = buildFixedHoneycomb(7);
+    expect(rowsOf(cells.map((cell) => cell.desktop)).map((row) => row.length)).toEqual([3, 3, 1]);
+    expect(rowsOf(cells.map((cell) => cell.mobile)).map((row) => row.length)).toEqual([2, 2, 2, 1]);
+  });
+
+  it("la fila de abajo se corre medio hexágono a la izquierda, y las filas avanzan 3/4 de su alto", () => {
+    const { cells } = buildFixedHoneycomb(6);
+    const [first, , , fourth] = cells.map((cell) => cell.desktop);
+    expect(first.col - fourth.col).toBe(HEX_COLS / 2);
+    expect(fourth.row - first.row).toBe(ROW_STEP);
+    expect(Math.min(...cells.map((cell) => cell.desktop.col))).toBe(1);
+  });
+
+  it("todos son del tamaño de un hexágono normal: no hay líder", () => {
+    const { cells } = buildFixedHoneycomb(5);
+    expect(cells.every((cell) => cell.desktop.cols === HEX_COLS && cell.mobile.rows === HEX_ROWS)).toBe(true);
+  });
+
+  it("sumar productos no mueve los que ya estaban (la carga progresiva solo agrega filas)", () => {
+    const small = buildFixedHoneycomb(12);
+    const large = buildFixedHoneycomb(30);
+    expect(large.cells.slice(0, 12)).toEqual(small.cells);
+    expect(large.desktop.rows).toBeGreaterThan(small.desktop.rows);
+  });
+
+  it("el tamaño de la grilla abarca a todos y no deja columnas vacías", () => {
+    for (const count of [0, 1, 3, 4, 9, 13]) {
+      const layout = buildFixedHoneycomb(count);
+      for (const key of ["desktop", "mobile"] as const) {
+        for (const cell of layout.cells) {
+          expect(cell[key].col).toBeGreaterThanOrEqual(1);
+          expect(cell[key].col + cell[key].cols - 1).toBeLessThanOrEqual(layout[key].cols);
+          expect(cell[key].row + cell[key].rows - 1).toBeLessThanOrEqual(layout[key].rows);
+        }
+      }
+    }
+    expect(buildFixedHoneycomb(0)).toEqual({ cells: [], desktop: { cols: 0, rows: 0 }, mobile: { cols: 0, rows: 0 } });
+  });
+
+  describe("distancia pareja: cada par de hexágonos vecinos va a ras", () => {
+    const NEAR = 0.2;
+    for (const count of [1, 2, 3, 4, 5, 6, 7, 9, 12, 13, 30]) {
+      for (const key of ["desktop", "mobile"] as const) {
+        it(`${key}, ${count} productos`, () => {
+          const polygons = buildFixedHoneycomb(count).cells.map((cell) => polygon(cell[key]));
+          const offenders: string[] = [];
+          for (let i = 0; i < polygons.length; i++) {
+            for (let j = i + 1; j < polygons.length; j++) {
+              const distance = gap(polygons[i], polygons[j]);
+              if (distance > 1e-9 && distance < NEAR) offenders.push(`${i} – ${j}: ${distance.toFixed(3)}`);
+            }
+          }
+          expect(offenders).toEqual([]);
+        });
+      }
+    }
   });
 });
