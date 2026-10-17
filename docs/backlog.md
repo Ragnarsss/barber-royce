@@ -2693,6 +2693,97 @@ Criterios de aceptación:
 6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
    midiendo alternado (CP-PERF-003).
 
+
+#### BR-073 — Reseñas: carrusel también en escritorio, con 3 visibles y profundidad
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-070
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-24)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** `BR-070` dejó las reseñas como carrusel solo en móvil. El
+usuario pidió que exista también en escritorio, porque con las reseñas de
+Google (`BR-052`) van a ser hasta 5 (Places devuelve como máximo 5), y que muestre
+3 a la vez, de forma elegante y con deleite ligado al scroll.
+
+Decisiones del usuario (2026-10-17): snap con profundidad (no una sección fija
+atrapando el scroll): avanza de a una tarjeta; la del centro va más grande y las
+dos de los lados más chicas y atenuadas según su posición.
+
+Por defecto (no se eligió): hoy `reviewsData` trae solo 3 reseñas de ejemplo y
+**no se inventan 2 más** (serían reseñas falsas presentadas como reales). Con 3 o
+menos, las tres caben a la vez: no hay nada que desplazar, así que no se muestran
+flechas ni puntos. El comportamiento con 5 se prueba con datos de prueba y queda
+listo para cuando `BR-052` entregue las reseñas reales.
+
+Alcance:
+1. `CardCarousel` pasa a admitir un modo de escritorio (`desktopVisible`): fila
+   con snap que muestra N tarjetas; el modo móvil de `BR-070` no cambia.
+2. Flechas anterior y siguiente, puntos (uno por posición posible), teclado
+   (flechas), rueda o trackpad horizontal, y arrastre con el ratón.
+3. Profundidad en escritorio con una animación CSS ligada al scroll de la fila
+   (`animation-timeline: view()`): sin JavaScript ni `setState` por scroll, solo
+   `scale` y `opacity`. Donde el navegador no la soporta, las tarjetas se ven
+   iguales entre sí.
+4. Con reducir movimiento: sin la profundidad animada y sin desplazamiento suave.
+
+Criterios de aceptación:
+1. En escritorio, con más de 3 reseñas, se ven 3 a la vez, la del centro destacada,
+   y se avanza de a una con snap (HU-EXP-004 CA-24).
+2. Con 3 reseñas o menos no hay flechas ni puntos y las tres se ven.
+3. Flechas, puntos y teclado cambian de tarjeta; las flechas se deshabilitan en
+   los extremos; axe sin violaciones graves (CP-A11Y-002).
+4. Sin `setState` por scroll (test) y solo `transform`/`opacity` animados.
+5. Con reducir movimiento no hay profundidad animada ni desplazamiento suave
+   (CP-A11Y-003).
+6. En móvil nada cambia respecto de `BR-070`.
+7. CLS y TBT no empeoran frente a `master` con el mismo `.env`, midiendo alternado
+   (CP-PERF-003).
+
+
+#### BR-074 — Beneficios: revelado con el scroll (enfoque, giro de 360° y latido)
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-069
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-25)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-A11Y-005`
+
+**Origen (2026-10-17):** el usuario quiere más deleite visual con el scroll en
+«Estilo que te acompaña»: que el título y el subtítulo aparezcan desenfocados y
+se enfoquen al bajar; que el contenido de las tarjetas también; que cada tarjeta
+dé un giro de 360° y muestre su contenido; y que el ícono dé un pequeño latido, de
+acercarse y alejarse.
+
+Decisiones del usuario (2026-10-17): el giro es sobre el eje vertical, como una
+moneda.
+
+Alcance:
+1. Título y subtítulo: el enfoque va ligado al scroll (`useScroll`, scrub). El
+   desenfoque no se anima por su radio (la skill `diseno-visual` lo desaconseja):
+   hay una copia del texto ya desenfocada, oculta para lectores de pantalla, y
+   lo que se anima es su `opacity`.
+2. Tarjetas: al entrar, giran 360° sobre el eje vertical (con perspectiva) y, en
+   el mismo giro, su contenido pasa de desenfocado a enfocado, con la misma
+   técnica de la copia desenfocada.
+3. Ícono: un latido (acercarse y alejarse, dos pulsos) cuando termina el giro. Una
+   sola vez: nada que parpadee ni se repita (CP-A11Y-005).
+4. La entrada escalonada y el trazo de los íconos de `BR-064` se mantienen.
+5. Con reducir movimiento: todo aparece enfocado y quieto, sin giro ni latido.
+
+Criterios de aceptación:
+1. Al bajar a la sección, el título y el subtítulo pasan de desenfocados a
+   enfocados con el scroll, y se ven nítidos al terminar (HU-EXP-004 CA-25).
+2. Cada tarjeta gira 360° sobre el eje vertical y termina de frente con su
+   contenido enfocado; su ícono da un latido una sola vez.
+3. Los lectores de pantalla leen cada texto una sola vez (la copia desenfocada
+   es `aria-hidden`) (CP-A11Y-002).
+4. Con reducir movimiento no hay giro, latido ni desenfoque (CP-A11Y-003); ningún
+   efecto pasa de 3 destellos por segundo (CP-A11Y-005).
+5. Solo se anima `transform` y `opacity` (test); el texto cumple 4,5:1 una vez
+   enfocado (CP-A11Y-004).
+6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`, midiendo
+   alternado (CP-PERF-003).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2786,6 +2877,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-070 | Beneficios y Reseñas en móvil: carrusel con snap | K | P3 | M | Propuesta | BR-069 |
 | BR-071 | Beneficios en móvil: foto puente con dos cuñas rojas | K | P3 | XS | Propuesta | BR-064 |
 | BR-072 | Innovación y calidad: tarjetas de vidrio y carrusel en móvil | K | P3 | S | Propuesta | BR-069, BR-070 |
+| BR-073 | Reseñas: carrusel también en escritorio, con 3 visibles y profundidad | K | P3 | M | Propuesta | BR-070 |
+| BR-074 | Beneficios: revelado con el scroll (enfoque, giro de 360° y latido) | K | P3 | M | Propuesta | BR-069 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |

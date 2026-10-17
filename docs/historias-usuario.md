@@ -688,6 +688,15 @@ y confiar en que el servicio está a la altura.
   vidrio oscuro con esquinas cortadas, como las del primer bloque; en un celular
   se deslizan con snap, ninguna queda cortada por el borde de la sección y los
   puntos permiten cambiar de tarjeta sin arrastrar.
+- CA-24 (2026-10-17, `BR-073`): Given veo «Lo que dicen nuestros clientes» en un
+  computador y hay más de tres reseñas, When uso las flechas, los puntos, el
+  teclado o arrastro, Then se ven tres a la vez, la del centro destacada y las de
+  los lados más chicas, y se avanza de a una; con tres o menos se ven todas, sin
+  flechas.
+- CA-25 (2026-10-17, `BR-074`): Given bajo a «Estilo que te acompaña», When la
+  sección entra en pantalla, Then el título y el subtítulo se enfocan con el
+  scroll, cada tarjeta gira 360° y muestra su contenido enfocado, y el ícono da un
+  latido una sola vez; con reducir movimiento todo aparece quieto y nítido.
 
 ---
 
