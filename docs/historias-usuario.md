@@ -641,6 +641,11 @@ y confiar en que el servicio está a la altura.
   al equipo en un panal de hexágonos (como las barras de luz del techo), con el
   líder más grande y con un marco distinto, y al pasar el cursor o enfocar un
   hexágono leo el nombre del barbero.
+- CA-13 (2026-10-17, `BR-061`): Given abro la portada en un celular, When veo
+  la navegación, la portada y el bloque de reserva, Then la marca va en texto
+  junto a la hamburguesa y al botón de agendar, la foto ocupa el fondo con el
+  texto alineado a la izquierda bajo una línea blanca, y nada desborda ni tapa
+  el título.
 - CA-14: Given bajo hasta «Respaldados por los mejores», When avanzo con el
   scroll, Then un láser corta en diagonal y revela la foto y luego la tarjeta
   del testimonio, y si subo se vuelven a tapar; con reducir movimiento todo

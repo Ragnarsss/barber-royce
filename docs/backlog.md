@@ -2425,6 +2425,66 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-068).
 
+
+#### BR-061 — Hero y CTA1 en móvil: fieles al Figma
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-056, BR-058, BR-059
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-13)
+- RF/RNF: `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** el usuario compartió los Figma «Resumen Mobile» y
+«CTA 1 Mobile» (390 px). La vista móvil actual se aleja de ambos:
+- Navbar: el logo es la imagen `royce-barber-logo` y la hamburguesa queda a
+  la derecha; el botón «Agendar Sesión» se oculta en móvil
+  (`Navbar.module.css:239`). En el Figma, la hamburguesa es roja y va a la
+  izquierda, luego «ROYCE» en blanco sobre «BARBERÍA» en rojo, y a la derecha
+  un botón chico blanco con texto rojo.
+- Hero: el fondo es un triángulo a todo el ancho y la foto queda en el flujo
+  (`Hero.module.css:490`). En el Figma, la foto ocupa toda la pantalla con un
+  velo oscuro, el texto va alineado a la izquierda, bajo el título hay una
+  línea blanca gruesa y, debajo, un párrafo.
+- CTA1: el texto va centrado sobre un hexágono rojo, la foto en una figura
+  bajo el texto y los botones a todo el ancho (`CTA1.module.css:266`). En el
+  Figma, el fondo es charcoal, la foto de perfil queda a la derecha y recortada
+  detrás del texto, el texto se alinea a la izquierda, lleva la misma línea
+  blanca, el párrafo abre con su primera frase en negrita y hay un botón blanco
+  «Agendar Ahora» con ícono rojo.
+
+Decisiones del usuario (2026-10-17):
+- Hero: se mantiene el «ROYCE» gigante (prefijo, marca y lema, `BR-050`), en
+  vez del título en Montserrat del Figma.
+- Hero: no se agrega el botón «Agendar Ahora» del Figma, porque reservar ya
+  queda a mano con «Agendar Sesión» en la navbar móvil. En su lugar van las
+  tres tarjetas de beneficios (`BR-056`), en un formato compacto que ocupe ese
+  espacio.
+- CTA1: fiel al Figma, pero se mantiene «Conocer Servicios» como segundo
+  botón.
+
+Alcance (solo `max-width: 768px`; el escritorio no cambia):
+1. Navbar: hamburguesa roja a la izquierda; la marca en texto, en dos líneas
+   («ROYCE» y «BARBERÍA», desde `SITE.brand`); botón «Agendar Sesión» chico,
+   blanco con texto rojo, a la derecha.
+2. Hero: la foto a pantalla completa con un velo oscuro; texto alineado a la
+   izquierda; línea blanca gruesa bajo el título; el párrafo; las tarjetas
+   compactas debajo. Sin el triángulo móvil de `BR-055`.
+3. CTA1: fondo charcoal sin hexágonos; la foto a la derecha, recortada, detrás
+   del texto; línea blanca bajo el título; la primera frase del subtítulo en
+   negrita (el texto sigue en la hoja); «Agendar Ahora» blanco con ícono rojo
+   y, debajo, «Conocer Servicios».
+4. Colores con tokens; la marca desde `SITE.brand`, nunca literal.
+
+Criterios de aceptación:
+1. A 390 px, la navbar, el Hero y CTA1 reproducen los Figma con las
+   decisiones de arriba (HU-EXP-004 CA-13).
+2. A 1440 px nada cambia frente a `master` (capturas).
+3. El texto sobre la foto cumple 4,5:1 (CP-A11Y-004); con reducir movimiento
+   no hay animación de entrada (CP-A11Y-003).
+4. Sin colores escritos a mano ni marca literal (tests; `RNF-DATOS-001`); los
+   tests existentes del Hero, CTA1 y la Navbar siguen en verde.
+5. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-002, CP-PERF-003).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2513,6 +2573,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | Hecho | BR-054, BR-056 |
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | Hecho | BR-058 |
 | BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | Hecho | BR-058 |
+| BR-061 | Hero y CTA1 en móvil: fieles al Figma | K | P3 | M | Propuesta | BR-056, BR-058, BR-059 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |
