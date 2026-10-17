@@ -1,163 +1,85 @@
-import { motion } from "framer-motion";
-import { useState, useTransition } from "react";
-import { Helmet } from "react-helmet-async";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { PageHero } from "@/components/common/PageHero/PageHero";
-import { ROUTES } from "@/config/routes";
-import styles from "./ProductsPage.module.css";
-import { useSiteContent } from "@/content/useSiteContent";
-import { PRODUCT_CATEGORIES } from "@/types/product.types";
+import { useDeferredValue, useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import { HoneycombPage } from "@/components/common/HoneycombPage/HoneycombPage";
+import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
 import { SearchIcon } from "@/components/icons";
-import { fadeInUpShort, staggerFast, cardAnimation } from "@/config/animations.config";
+import { filterProducts } from "@/components/products/filterProducts";
+import { ProductDialog } from "@/components/products/ProductDialog";
+import { ProductsHoneycomb } from "@/components/products/ProductsHoneycomb";
+import { ROUTES } from "@/config/routes";
+import { useSiteContent } from "@/content/useSiteContent";
+import { PRODUCT_CATEGORIES, type Product, type ProductCategory } from "@/types/product.types";
+import styles from "./ProductsPage.module.css";
 
+/**
+ * Catálogo de productos (BR-067): el panal de hexágonos sobre las diagonales del hero, con buscador y filtros por
+ * categoría. Cada producto abre su ficha en un diálogo. Sin botón de compra (`BR-009`).
+ */
 export function ProductsPage() {
-  const productsList = useSiteContent().products;
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Todos");
-  const route = ROUTES.products;
+  const products = useSiteContent().products;
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<ProductCategory>("Todos");
+  const [selected, setSelected] = useState<Product | null>(null);
 
-  // ✅ React 19: useTransition para filtrado no bloqueante
-  // Mantiene input responsive durante filtrado pesado (INP optimization)
-  const [isPending, startTransition] = useTransition();
+  // El texto del cuadro se actualiza al instante; el panal se reacomoda con el valor diferido, sin trabar la escritura.
+  const deferredQuery = useDeferredValue(query);
+  const filtered = filterProducts(products, deferredQuery, category);
+  const isPending = query !== deferredQuery;
 
-  // Filtrar productos
-  const filteredProducts = productsList.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "Todos" || product.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  // ✅ React 19: Actualización en transición para búsqueda
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    // Actualización inmediata del input (no bloqueante)
-    startTransition(() => {
-      setSearchTerm(value);
-    });
-  };
-
-  // ✅ React 19: Actualización en transición para categoría
-  const handleCategoryChange = (category: string) => {
-    startTransition(() => {
-      setSelectedCategory(category);
-    });
+  const clearFilters = () => {
+    setQuery("");
+    setCategory("Todos");
   };
 
   return (
-    <div className={styles.page}>
-      <Helmet>
-        <title>{route.title}</title>
-        <meta name="description" content={route.description} />
-        <link rel="canonical" href={`https://roycebarber.com${route.path}`} />
-        <meta property="og:title" content={route.title} />
-        <meta property="og:description" content={route.description} />
-        <meta property="og:url" content={`https://roycebarber.com${route.path}`} />
-      </Helmet>
+    <>
+      <SEOHelmet route={ROUTES.products} />
+      <HoneycombPage title="Productos premium" subtitle="Las mejores marcas para tu cuidado diario" band>
+        <div className={styles.filters}>
+          <div className={styles.search}>
+            <SearchIcon className={styles.searchIcon} />
+            <input
+              type="text"
+              className={styles.searchInput}
+              placeholder="Buscar productos..."
+              aria-label="Buscar productos"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+          </div>
 
-      <PageHero
-        title="Productos Premium"
-        subtitle="Las mejores marcas para tu cuidado diario"
-      />
-
-      {/* Sección de filtros y búsqueda */}
-      <div className={styles.filtersSection}>
-        <div className={styles.container}>
-          <motion.div
-            className={styles.filtersContainer}
-            variants={fadeInUpShort}
-            initial="hidden"
-            animate="visible"
-            style={{ opacity: isPending ? 0.6 : 1 }}
-          >
-            {/* Barra de búsqueda */}
-            <div className={styles.searchBar}>
-              <SearchIcon className={styles.searchIcon} />
-              <Input
-                type="text"
-                placeholder="Buscar productos..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className={styles.searchInput}
-              />
-            </div>
-
-            {/* Filtros de categoría */}
-            <div className={styles.categoryFilters}>
-              {PRODUCT_CATEGORIES.map((category) => (
-                <motion.button
-                  key={category}
-                  className={`${styles.filterButton} ${selectedCategory === category ? styles.filterButtonActive : ''}`}
-                  onClick={() => handleCategoryChange(category)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  {category}
-                </motion.button>
-              ))}
-            </div>
-
-            {/* Separador con gradiente */}
-            <div className={styles.filterSeparator} />
-          </motion.div>
+          <div className={styles.categories}>
+            {PRODUCT_CATEGORIES.map((option) => (
+              <button
+                key={option}
+                type="button"
+                className={styles.category}
+                aria-pressed={category === option}
+                onClick={() => setCategory(option)}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className={styles.content}>
-        <div className={styles.container} style={{ opacity: isPending ? 0.6 : 1, transition: 'opacity 0.2s' }}>
-          {filteredProducts.length === 0 ? (
-            <motion.div
-              className={styles.noResults}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
+        <div className={styles.results} data-pending={isPending || undefined}>
+          {filtered.length === 0 ? (
+            <div className={styles.empty} role="status">
               <p>No se encontraron productos que coincidan con tu búsqueda.</p>
-            </motion.div>
+              <button type="button" className={styles.clear} onClick={clearFilters}>
+                Limpiar filtros
+              </button>
+            </div>
           ) : (
-            <motion.div
-              className={styles.grid}
-              key={`${selectedCategory}-${searchTerm}`}
-              variants={staggerFast}
-              initial="hidden"
-              animate="visible"
-            >
-              {filteredProducts.map((product, index) => (
-                <motion.div
-                  key={`${selectedCategory}-${product.name}-${index}`}
-                  variants={cardAnimation}
-                >
-                  <Card className={styles.card}>
-                    {/* Etiqueta de categoría */}
-                    <div className={styles.categoryBadge}>{product.category}</div>
-
-                    {/* Imagen del producto */}
-                    <div className={styles.imageContainer}>
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className={styles.productImage}
-                        width="400"
-                        height="300"
-                        loading="lazy"
-                      />
-                    </div>
-
-                    <CardContent className={styles.cardContent}>
-                      <h3 className={styles.productName}>{product.name}</h3>
-                      <p className={styles.description}>{product.description}</p>
-                      <div className={styles.footer}>
-                        <span className={styles.price}>{product.price}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
-            </motion.div>
+            <ProductsHoneycomb key={`${category}|${deferredQuery}`} products={filtered} onSelect={setSelected} />
           )}
         </div>
-      </div>
-    </div>
+      </HoneycombPage>
+
+      <AnimatePresence>
+        {selected && <ProductDialog key={selected.id} product={selected} onClose={() => setSelected(null)} />}
+      </AnimatePresence>
+    </>
   );
 }

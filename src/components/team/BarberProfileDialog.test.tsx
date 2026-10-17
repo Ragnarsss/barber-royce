@@ -201,7 +201,7 @@ describe("ficha del barbero (BR-063)", () => {
   it("un clic en el fondo oscuro cierra la ficha", async () => {
     renderPage();
     fireEvent.click(screen.getByRole("button", { name: /Juan Pérez/ }));
-    fireEvent.click(screen.getByTestId("barber-dialog-backdrop"));
+    fireEvent.click(screen.getByTestId("dialog-backdrop"));
 
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
   });
