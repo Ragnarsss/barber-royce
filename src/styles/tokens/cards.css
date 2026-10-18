@@ -1,0 +1,27 @@
+/* ============================================
+   DESIGN TOKENS - TARJETAS DE VIDRIO
+   ============================================ */
+
+/*
+ * Tarjetas de vidrio oscuro con dos esquinas cortadas, como el corte de la navaja (BR-056, BR-069). Las usan las
+ * tarjetas del Hero, las de «Estilo que te acompaña» y las de «Lo que dicen nuestros clientes».
+ *
+ * La tarjeta se arma con su borde como fondo y el vidrio en un ::before 1 px adentro, así el chaflán también lleva
+ * borde. El contraste del texto blanco sobre este vidrio, en el peor caso de fondo, lo verifica
+ * src/components/sections/Hero/cards.test.ts.
+ */
+:root {
+  --card-glass: color-mix(in srgb, var(--color-brand-background) 62%, transparent);
+  --card-edge: color-mix(in srgb, var(--color-brand-white) 18%, transparent);
+  --card-edge-hot: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);
+  --card-sweep: color-mix(in srgb, var(--color-brand-white) 14%, transparent);
+  --card-cut: 14px;
+  --card-clip: polygon(
+    var(--card-cut) 0,
+    100% 0,
+    100% calc(100% - var(--card-cut)),
+    calc(100% - var(--card-cut)) 100%,
+    0 100%,
+    0 var(--card-cut)
+  );
+}

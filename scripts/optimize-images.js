@@ -23,6 +23,11 @@ const images = [
     displayName: "hero_model_left_profile",
   },
   {
+    input: "hero_mobile.png",
+    sizes: [780, 1170], // Fondo a pantalla completa del Hero móvil (390 px de ancho) a 2x y 3x
+    displayName: "hero_mobile",
+  },
+  {
     input: "cta1_model.png",
     sizes: [700, 1400],
     displayName: "cta1_model",

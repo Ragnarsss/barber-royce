@@ -2425,6 +2425,520 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-068).
 
+
+#### BR-061 — Hero y CTA1 en móvil: fieles al Figma
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-056, BR-058, BR-059
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-13)
+- RF/RNF: `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** el usuario compartió los Figma «Resumen Mobile» y
+«CTA 1 Mobile» (390 px). La vista móvil actual se aleja de ambos:
+- Navbar: el logo es la imagen `royce-barber-logo` y la hamburguesa queda a
+  la derecha; el botón «Agendar Sesión» se oculta en móvil
+  (`Navbar.module.css:239`). En el Figma, la hamburguesa es roja y va a la
+  izquierda, luego «ROYCE» en blanco sobre «BARBERÍA» en rojo, y a la derecha
+  un botón chico blanco con texto rojo.
+- Hero: el fondo es un triángulo a todo el ancho y la foto queda en el flujo
+  (`Hero.module.css:490`). En el Figma, la foto ocupa toda la pantalla con un
+  velo oscuro, el texto va alineado a la izquierda, bajo el título hay una
+  línea blanca gruesa y, debajo, un párrafo.
+- CTA1: el texto va centrado sobre un hexágono rojo, la foto en una figura
+  bajo el texto y los botones a todo el ancho (`CTA1.module.css:266`). En el
+  Figma, el fondo es charcoal, la foto de perfil queda a la derecha y recortada
+  detrás del texto, el texto se alinea a la izquierda, lleva la misma línea
+  blanca, el párrafo abre con su primera frase en negrita y hay un botón blanco
+  «Agendar Ahora» con ícono rojo.
+
+Decisiones del usuario (2026-10-17):
+- Hero: se mantiene el «ROYCE» gigante (prefijo, marca y lema, `BR-050`), en
+  vez del título en Montserrat del Figma.
+- Hero: no se agrega el botón «Agendar Ahora» del Figma, porque reservar ya
+  queda a mano con «Agendar Sesión» en la navbar móvil. En su lugar van las
+  tres tarjetas de beneficios (`BR-056`), en un formato compacto que ocupe ese
+  espacio.
+- CTA1: fiel al Figma, pero se mantiene «Conocer Servicios» como segundo
+  botón.
+- Hero: más aire entre el título, la línea, el párrafo y las tarjetas, como se
+  ve en el Figma (el usuario, 2026-10-17).
+
+> **Alcance ajustado (2026-10-17, decisión del usuario con el Figma):** en
+> móvil, el fondo del Hero pasa a ser la foto a pantalla completa y **reemplaza
+> al triángulo** que fijó `BR-055` (HU-EXP-004 CA-08, parte móvil). El fondo
+> sigue sin ser un color plano. En escritorio CA-08 no cambia.
+>
+> **Foto del Hero móvil:** `src/assets/hero_mobile.png` (2439 × 2556 px, sin
+> velo, exportada del Figma por el usuario el 2026-10-17). Se ve algo suave a
+> pantalla completa porque el original del Figma ya era chico; cuando haya una
+> original en mayor resolución, solo se cambia el archivo. El velo negro al
+> 60 % del Figma va por CSS con un token. El mismo `<picture>` del Hero elige la
+> foto móvil (`<source media>`) y `index.html` precarga solo una de las dos con
+> `media` excluyentes (`lcpPreload.test.ts`). La primera exportación (271 px,
+> con el velo incorporado) se descartó.
+>
+> **CTA1 móvil (2026-10-17, el usuario):** usa la foto del Hero de escritorio
+> (`hero_model_left_profile`, los mismos archivos que el Hero) para que el
+> modelo se vea bien, en vez de `cta1_model`. Es un `<source media>` en el
+> mismo `<picture>`; la foto carga solo en móvil y de forma diferida.
+
+Alcance (solo `max-width: 768px`; el escritorio no cambia):
+1. Navbar: hamburguesa roja a la izquierda; la marca en texto, en dos líneas
+   («ROYCE» y «BARBERÍA», desde `SITE.brand`); botón «Agendar Sesión» chico,
+   blanco con texto rojo, a la derecha.
+2. Hero: la foto a pantalla completa con un velo oscuro; texto alineado a la
+   izquierda; línea blanca gruesa bajo el título; el párrafo; las tarjetas
+   compactas debajo. Sin el triángulo móvil de `BR-055`.
+3. CTA1: fondo charcoal sin hexágonos; la foto a la derecha, recortada, detrás
+   del texto; línea blanca bajo el título; la primera frase del subtítulo en
+   negrita (el texto sigue en la hoja); «Agendar Ahora» blanco con ícono rojo
+   y, debajo, «Conocer Servicios».
+4. Colores con tokens; la marca desde `SITE.brand`, nunca literal.
+
+Criterios de aceptación:
+1. A 390 px, la navbar, el Hero y CTA1 reproducen los Figma con las
+   decisiones de arriba (HU-EXP-004 CA-13).
+2. A 1440 px nada cambia frente a `master` (capturas).
+3. El texto sobre la foto cumple 4,5:1 (CP-A11Y-004); con reducir movimiento
+   no hay animación de entrada (CP-A11Y-003).
+4. Sin colores escritos a mano ni marca literal (tests; `RNF-DATOS-001`); los
+   tests existentes del Hero, CTA1 y la Navbar siguen en verde.
+5. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-002, CP-PERF-003).
+
+
+#### BR-069 — Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-056, BR-064
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-20)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** al recorrer la home en móvil (390 px), las tarjetas de
+«Estilo que te acompaña» y de «Lo que dicen nuestros clientes» son blancas,
+redondeadas y van apiladas de a una, y no se parecen a las tarjetas de vidrio
+con esquinas cortadas del Hero (`BR-056`). El usuario pidió unificarlas para
+que den más deleite y tengan juego con las tarjetas de arriba. Avanzamos por
+pasos: primero Beneficios, luego Reseñas. «Innovación y calidad en cada
+detalle» queda para un paso posterior. Los fondos y las franjas quedan fuera
+por ahora (el usuario quiere ver primero algo distinto), y la foto entre
+Beneficios y Reseñas se mantiene porque funciona como puente.
+
+Decisiones del usuario (2026-10-17):
+- Estilo: el vidrio oscuro con esquinas cortadas del Hero.
+- Alcance: móvil y escritorio.
+- Orden: Beneficios y después Reseñas.
+
+> **Alcance ajustado (2026-10-17):** `BR-064` dejó las tarjetas de Beneficios
+> blancas por fidelidad al Figma «Beneficios v2». Por decisión del usuario,
+> pasan al vidrio del Hero. La franja roja, la foto y los íconos que se
+> dibujan de `BR-064` no cambian.
+
+Alcance:
+1. Los valores de la tarjeta (vidrio, borde, tamaño del corte) se vuelven
+   tokens compartidos en `src/styles/tokens/`, hoy viven solo en
+   `Hero.module.css`. El Hero conserva su aspecto.
+2. Beneficios: tarjetas de vidrio oscuro con dos esquinas cortadas y texto
+   blanco; el ícono conserva su trazo.
+3. Reseñas: las mismas tarjetas, con sus estrellas y su texto.
+4. La entrada y el hover de cada sección se mantienen; con reducir movimiento
+   no se agrega ninguna animación.
+
+Criterios de aceptación:
+1. En «Estilo que te acompaña» y en «Lo que dicen nuestros clientes» las
+   tarjetas son de vidrio oscuro con esquinas cortadas, como las del Hero, en
+   móvil y en escritorio (HU-EXP-004 CA-20).
+2. El texto de las tarjetas cumple 4,5:1 sobre el fondo más claro posible
+   (CP-A11Y-004).
+3. Con reducir movimiento no hay animación nueva (CP-A11Y-003).
+4. Los valores de la tarjeta salen de tokens compartidos y las tarjetas no
+   traen colores escritos a mano (tests; ADR-002); el Hero se ve igual.
+5. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-003).
+
+**Notas de construcción:** las tarjetas de «Reseñas» dejan de usar el
+componente `Card` (`@/components/ui/card`) y pasan a un `<article>` propio.
+Las estrellas rojas sobre el vidrio quedan en ~3,4:1: son gráficas (mínimo 3:1),
+no texto.
+
+
+#### BR-070 — Beneficios y Reseñas en móvil: carrusel con snap
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-069
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-21)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** al recorrer la home en móvil (390 px), «Estilo que te
+acompaña» y «Lo que dicen nuestros clientes» suman casi 1.900 px de tarjetas
+apiladas de a una, el mismo patrón repetido tres veces con «Innovación y calidad».
+Entre las direcciones que se propusieron, el usuario quería el carrusel
+horizontal con snap (la dirección C) y lo pidió de nuevo después de unificar las
+tarjetas (`BR-069`).
+
+Decisiones del usuario (2026-10-17):
+- Secciones: «Estilo que te acompaña» y «Lo que dicen nuestros clientes».
+  «Innovación y calidad» queda fuera por ahora.
+- Solo móvil: en escritorio las tarjetas siguen en grilla.
+
+Alcance (solo `max-width: 768px`):
+1. Las tarjetas van en una fila horizontal con `scroll-snap`, cada una al ~82 %
+   del ancho para que asome la siguiente; sin barra de desplazamiento.
+2. La tarjeta que se ve queda a tamaño completo y las demás un poco más chicas
+   (propiedad `scale`: `opacity` la escribe framer en línea en las tarjetas de
+   entrada y pisaría el CSS), sin `setState` por scroll: un
+   `IntersectionObserver` cambia un atributo cuando otra tarjeta pasa a ser la
+   visible, como el centinela de `BR-068`.
+3. Puntos de posición debajo, que son botones: cambian de tarjeta sin gesto de
+   arrastre (WCAG 2.5.1) y dicen cuál es la actual.
+4. La fila es una región enfocable con nombre: con el teclado se recorre con las
+   flechas.
+5. Con reducir movimiento: el snap se mantiene (es funcional), pero sin
+   desplazamiento suave ni atenuado animado.
+6. Un solo componente compartido, para no repetir la lógica en las dos secciones.
+
+Criterios de aceptación:
+1. En móvil, ambas secciones muestran sus tarjetas en una fila que se desliza con
+   snap, y la siguiente asoma (HU-EXP-004 CA-21).
+2. En escritorio nada cambia: siguen en grilla (capturas a 1440 px).
+3. Los puntos son botones con nombre y la fila se recorre con el teclado; axe sin
+   violaciones graves (CP-A11Y-002).
+4. Sin `setState` por scroll (test) y solo `transform`/`opacity` en lo animado.
+5. Con reducir movimiento no hay desplazamiento suave ni atenuado animado
+   (CP-A11Y-003).
+6. Sin colores escritos a mano (tests; ADR-002).
+7. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-003).
+
+
+#### BR-071 — Beneficios en móvil: foto puente con dos cuñas rojas
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: BR-064
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-22)
+- RF/RNF: `RNF-PERF-003`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** en móvil, la foto entre «Estilo que te acompaña» y «Lo
+que dicen nuestros clientes» (la chaqueta «BARBER ROYCE») lleva una sola cuña
+roja arriba, de 72 px (`Benefits.module.css`, `.imageBackground::before`). El
+usuario decidió mantener la foto como puente entre las dos secciones y pidió que
+tenga dos figuras: la cuña de arriba a la izquierda, más grande, y otra abajo a
+la derecha, en espejo (dibujó la forma sobre una captura).
+
+Decisión del usuario (2026-10-17): dos cuñas rojas en la foto puente; solo móvil,
+que es donde existe esa foto.
+
+> **Prueba (2026-10-17, a pedido del usuario):** tras dejar la foto como puente
+> con las dos cuñas (commit `d7e20b3`), el usuario quiso verla **de fondo de la
+> sección**, detrás del texto y las tarjetas, en vez de como puente. Se probó en
+> un commit aparte, con un velo de charcoal al 72 % para que el texto se lea y
+> las cuñas a la altura de la sección (24 % y 14 %). La sección pasa de ~1.100 px
+> a ~640 px. Queda por decidir cuál de las dos versiones se queda; la otra se
+> descarta con un `git revert` del commit de la prueba.
+
+Alcance (solo `max-width: 768px`):
+1. Cuña de arriba a la izquierda, más alta que la actual.
+2. Cuña nueva abajo a la derecha, en espejo: borde diagonal que sube hacia la
+   derecha.
+3. El tamaño de cada cuña sale de una variable CSS al comienzo de la regla, para
+   ajustarlo a ojo.
+4. La foto, su recorte y el escritorio no cambian.
+
+Criterios de aceptación:
+1. La foto puente muestra las dos cuñas rojas, con la chaqueta «BARBER ROYCE»
+   legible (HU-EXP-004 CA-22).
+2. En escritorio nada cambia.
+3. Sin colores escritos a mano (test; ADR-002).
+
+
+#### BR-072 — Innovación y calidad: tarjetas de vidrio y carrusel en móvil
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-069, BR-070
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-23)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** «Innovación y calidad en cada detalle» (la sección
+`Features`, las características del servicio) quedó fuera de `BR-069` y
+`BR-070`, que cubrieron Beneficios y Reseñas. El usuario pidió ahora que reciba
+lo mismo. Hoy sus tarjetas son blancas, usan el componente `Card`, miden 17,5 rem
+de alto con mucho vacío adentro y van apiladas; su CSS trae colores escritos a
+mano (`#1a1a1a`, `#d52323`, `rgba(...)`); y la última tarjeta se corta contra el
+borde de la sección en móvil, porque el parallax de `AnimatedGridSection` baja el
+contenedor hasta un 10 % y la sección tiene `overflow: hidden`.
+
+Decisión del usuario (2026-10-17): lo mismo que a las otras dos secciones, tarjetas
+de vidrio (móvil y escritorio, como `BR-069`) y carrusel con snap (solo móvil,
+como `BR-070`). Por defecto (no se eligió): el ícono sigue el estilo de las
+tarjetas del Hero, un cuadrado rojo con esquinas cortadas y el ícono blanco.
+
+Alcance:
+1. Tarjetas de vidrio con esquinas cortadas y los tokens compartidos; texto
+   blanco; sin el componente `Card`.
+2. Ícono en un cuadrado rojo con esquinas cortadas, como el del Hero.
+3. En móvil, el carrusel con snap de `BR-070` (`carouselLabel` en
+   `AnimatedGridSection`) y el contenedor a todo el ancho.
+4. En móvil, sin el parallax del contenedor: arregla la tarjeta cortada.
+5. Todos los colores de la sección a tokens.
+
+Criterios de aceptación:
+1. Las tarjetas son de vidrio oscuro con esquinas cortadas, en móvil y escritorio
+   (HU-EXP-004 CA-23).
+2. En móvil se deslizan con snap, asoma la siguiente y los puntos son botones con
+   nombre; en escritorio siguen en grilla (CP-A11Y-002).
+3. Ninguna tarjeta queda cortada por el borde de la sección en móvil.
+4. El texto cumple 4,5:1 (CP-A11Y-004); con reducir movimiento no hay animación
+   nueva (CP-A11Y-003).
+5. Sin colores escritos a mano en `Features.module.css` (test; ADR-002).
+6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
+   midiendo alternado (CP-PERF-003).
+
+
+#### BR-073 — Reseñas: carrusel también en escritorio, con 3 visibles y profundidad
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-070
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-24)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-17):** `BR-070` dejó las reseñas como carrusel solo en móvil. El
+usuario pidió que exista también en escritorio, porque con las reseñas de
+Google (`BR-052`) van a ser hasta 5 (Places devuelve como máximo 5), y que muestre
+3 a la vez, de forma elegante y con deleite ligado al scroll.
+
+Decisiones del usuario (2026-10-17): snap con profundidad (no una sección fija
+atrapando el scroll): avanza de a una tarjeta; la del centro va más grande y las
+dos de los lados más chicas y atenuadas según su posición.
+
+Por defecto (no se eligió): hoy `reviewsData` trae solo 3 reseñas de ejemplo y
+**no se inventan 2 más** (serían reseñas falsas presentadas como reales). Con 3 o
+menos, las tres caben a la vez: no hay nada que desplazar, así que no se muestran
+flechas ni puntos. El comportamiento con 5 se prueba con datos de prueba y queda
+listo para cuando `BR-052` entregue las reseñas reales.
+
+> **Alcance ajustado (2026-10-17, decisión del usuario):** se agregan 2 reseñas
+> más de ejemplo («Andrés V.» y «Felipe S.», como las otras tres) para ver el
+> carrusel de escritorio con 5. Siguen siendo provisorias y falsas: `BR-052` las
+> reemplaza por las de Google, y no se agrega `aggregateRating` con estos datos.
+> Se anotó en `reviewsData.ts`. Antes de publicar, conviene que sean reemplazadas
+> o retiradas: mostrar como reales opiniones inventadas puede incumplir las normas
+> de publicidad y de protección al consumidor.
+
+Alcance:
+1. `CardCarousel` pasa a admitir un modo de escritorio (`desktopVisible`): fila
+   con snap que muestra N tarjetas; el modo móvil de `BR-070` no cambia.
+2. Flechas anterior y siguiente, puntos (uno por posición posible), teclado
+   (flechas), rueda o trackpad horizontal, y arrastre con el ratón.
+3. Profundidad en escritorio con una animación CSS ligada al scroll de la fila
+   (`animation-timeline: view()`): sin JavaScript ni `setState` por scroll, solo
+   `scale` y `opacity`. Donde el navegador no la soporta, las tarjetas se ven
+   iguales entre sí.
+4. Con reducir movimiento: sin la profundidad animada y sin desplazamiento suave.
+
+Criterios de aceptación:
+1. En escritorio, con más de 3 reseñas, se ven 3 a la vez, la del centro destacada,
+   y se avanza de a una con snap (HU-EXP-004 CA-24).
+2. Con 3 reseñas o menos no hay flechas ni puntos y las tres se ven.
+3. Flechas, puntos y teclado cambian de tarjeta; las flechas se deshabilitan en
+   los extremos; axe sin violaciones graves (CP-A11Y-002).
+4. Sin `setState` por scroll (test) y solo `transform`/`opacity` animados.
+5. Con reducir movimiento no hay profundidad animada ni desplazamiento suave
+   (CP-A11Y-003).
+6. En móvil nada cambia respecto de `BR-070`.
+7. CLS y TBT no empeoran frente a `master` con el mismo `.env`, midiendo alternado
+   (CP-PERF-003).
+
+
+#### BR-074 — Beneficios: revelado con el scroll (enfoque, giro de 360° y latido)
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-069
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-25)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-A11Y-005`
+
+**Origen (2026-10-17):** el usuario quiere más deleite visual con el scroll en
+«Estilo que te acompaña»: que el título y el subtítulo aparezcan desenfocados y
+se enfoquen al bajar; que el contenido de las tarjetas también; que cada tarjeta
+dé un giro de 360° y muestre su contenido; y que el ícono dé un pequeño latido, de
+acercarse y alejarse.
+
+Decisiones del usuario (2026-10-17): el giro es sobre el eje vertical, como una
+moneda.
+
+> **Alcance ajustado (2026-10-17, decisión del usuario, tras ver la primera
+> versión):**
+> 1. **Todo va ligado al scroll** (avanza y retrocede), no como una animación que
+>    corre una vez al entrar: la primera versión solo ataba al scroll el título y el
+>    subtítulo.
+> 2. **El desenfoque se ve de verdad:** antes era un resplandor leve. Ahora el texto
+>    se ve solo borroso (radio 18 px el título, 10 px el subtítulo, 14 px las
+>    tarjetas) durante la primera mitad y recién después se enfoca.
+> 3. **Secuencia:** todo se ve borroso (los títulos y las tres tarjetas, a la vista);
+>    se enfocan los títulos; la primera tarjeta gira, se revela y su ícono late
+>    mientras las otras dos siguen borrosas; después la segunda; después la tercera.
+>    Cada tarjeta tiene su propio tramo, sin superponerse.
+> 4. **La sección queda fija** en pantalla mientras se revela (escritorio, sin reducir
+>    movimiento): el scroll avanza la secuencia en vez de subir la sección y dejarla
+>    cortada. En móvil no se fija. Al terminar, la página sigue.
+> 4b. **Los títulos quedan fuera del desenfoque (2026-10-17, el usuario):** el `h2`
+>    de la sección se ve siempre nítido; el desenfoque es del subtítulo, las
+>    tarjetas y la foto.
+> 5. **Regla para toda la landing:** el usuario quiere este mismo patrón (escena fija
+>    y animaciones ligadas al scroll y a la pantalla) en las demás secciones. Se
+>    trabaja sección por sección, cada una con su ticket; el primero es
+>    «Respaldados por los mejores» (`SocialProof1`) y su corte láser.
+
+Alcance:
+1. Título y subtítulo: el enfoque va ligado al scroll (`useScroll`, scrub). El
+   desenfoque no se anima por su radio (la skill `diseno-visual` lo desaconseja):
+   hay una copia del texto ya desenfocada, oculta para lectores de pantalla, y
+   lo que se anima es su `opacity`.
+2. Tarjetas: al entrar, giran 360° sobre el eje vertical (con perspectiva) y, en
+   el mismo giro, su contenido pasa de desenfocado a enfocado, con la misma
+   técnica de la copia desenfocada.
+3. Ícono: un latido (acercarse y alejarse, dos pulsos) cuando termina el giro. Una
+   sola vez: nada que parpadee ni se repita (CP-A11Y-005).
+4. La entrada escalonada y el trazo de los íconos de `BR-064` se mantienen.
+5. Con reducir movimiento: todo aparece enfocado y quieto, sin giro ni latido.
+
+Criterios de aceptación:
+1. Al bajar a la sección, el título y el subtítulo pasan de desenfocados a
+   enfocados con el scroll, y se ven nítidos al terminar (HU-EXP-004 CA-25).
+2. Cada tarjeta gira 360° sobre el eje vertical y termina de frente con su
+   contenido enfocado; su ícono da un latido una sola vez.
+3. Los lectores de pantalla leen cada texto una sola vez (la copia desenfocada
+   es `aria-hidden`) (CP-A11Y-002).
+4. Con reducir movimiento no hay giro, latido ni desenfoque (CP-A11Y-003); ningún
+   efecto pasa de 3 destellos por segundo (CP-A11Y-005).
+5. Solo se anima `transform` y `opacity` (test); el texto cumple 4,5:1 una vez
+   enfocado (CP-A11Y-004).
+6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`, midiendo
+   alternado (CP-PERF-003).
+
+
+#### BR-075 — Respaldados por los mejores: escena fija, corte láser y revelado con el scroll
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-062, BR-074
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-26)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-005`
+
+**Origen (2026-10-17):** el usuario quiere para toda la landing el patrón de
+`BR-074` (sección fija en pantalla y animaciones ligadas al scroll), y pidió
+empezar por «Respaldados por los mejores» (`SocialProof1`) y su show de láseres. Hoy
+la sección sube con la página mientras el láser corta la foto y la tarjeta
+(`BR-062`), y el corte se ve a medias y cortado por el borde de la pantalla. Además
+pidió que, una vez concluido el láser, la imagen y el texto estén desenfocados y se
+revelen con el scroll.
+
+Decisiones del usuario (2026-10-17): sección fija mientras ocurre todo; después del
+láser, la imagen y el texto se ven borrosos y se enfocan con el scroll. El título
+(`h2`) queda fuera del desenfoque, siempre nítido. El texto del testimonio se
+desenfoca más (22 px) y empieza a enfocarse cuando la foto ya terminó, no a la vez.
+
+Alcance (solo escritorio, sin reducir movimiento; en móvil la sección no cambia):
+1. Contenedor alto con la sección pegada arriba (`position: sticky`), como `BR-074`.
+2. El corte láser, los haces, el subrayado y el destello del marco pasan a seguir una
+   sola línea de tiempo: el avance del recorrido fijo, no el scroll de cada elemento.
+3. Cuando el láser termina, el título, el subtítulo, la foto y el texto del
+   testimonio están desenfocados y se enfocan con el scroll, uno tras otro. La foto
+   lleva una copia desenfocada (decorativa, `aria-hidden`) que se cruza con la nítida.
+4. Con reducir movimiento: sin sección fija, sin láser y todo nítido.
+5. Las piezas comunes con `BR-074` pasan a un lugar compartido (el texto que se enfoca,
+   la rampa y el hook de la sección fija), en vez de copiarse.
+
+Criterios de aceptación:
+1. En escritorio, la sección queda fija mientras el láser corta la foto y la tarjeta
+   y luego se enfocan los textos y la foto; después la página sigue (HU-EXP-004 CA-26).
+2. Todo avanza y retrocede con el scroll.
+3. Los lectores de pantalla leen cada texto una sola vez (copias `aria-hidden`)
+   (CP-A11Y-002).
+4. Con reducir movimiento no hay sección fija, láser ni desenfoque (CP-A11Y-003); el
+   destello del marco no pasa de 3 por segundo (CP-A11Y-005).
+5. En móvil nada cambia respecto de `BR-062`.
+6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`, midiendo
+   alternado (CP-PERF-003).
+
+
+#### BR-076 — Respaldados por los mejores: lens flare en lugar de los láseres
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-075
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-27)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
+
+**Origen (2026-10-17):** al ver la escena fija de `BR-075`, el usuario propuso
+reemplazar los láseres por un efecto de lens flare: los hexágonos del fondo ya se
+mueven un poco y le pareció que quedaría mejor que las líneas láser. Los destellos
+secundarios de un lente real salen con la forma del diafragma, que muy a menudo es
+hexagonal, así que el flare conversa con los hexágonos del fondo.
+
+Decisiones del usuario (2026-10-17): lens flare en vez de los láseres, solo en
+escritorio (la sección móvil no cambia), con el flare viajando por el borde del
+corte que revela la foto y la tarjeta; se retiran las pistas láser con sus haces.
+
+Alcance (solo escritorio, con la sección fija de `BR-075`):
+1. Un flare cálido y contenido: núcleo blanco cálido, un halo con el rojo de la marca
+   y cuatro fantasmas hexagonales alineados sobre un eje diagonal. Solo degradados y
+   formas; se anima `transform` y `opacity`, sin `mix-blend-mode`.
+2. El flare viaja con el borde de cada panel de corte (el de la foto y el de la
+   tarjeta, que viene del lado contrario), aparece y se apaga junto con su corte.
+3. Se retiran las tres pistas láser con sus haces y la línea láser del borde del
+   panel. Los paneles, el recorrido fijo y el revelado posterior no cambian.
+4. Con reducir movimiento: sin flare (ya no hay corte ni sección fija).
+
+Criterios de aceptación:
+1. En escritorio, un flare con fantasmas hexagonales viaja con el borde del corte de
+   la foto y de la tarjeta y se apaga al terminar; ya no hay pistas ni haces láser
+   (HU-EXP-004 CA-27).
+2. El flare es decorativo (`aria-hidden`), su movimiento es suave y no pasa de 3
+   destellos por segundo (CP-A11Y-005).
+3. Con reducir movimiento no hay flare (CP-A11Y-003).
+4. Solo `transform` y `opacity`, sin `mix-blend-mode`, y sin colores escritos a mano
+   (tests; ADR-002).
+5. En móvil nada cambia.
+6. CLS y TBT no empeoran frente a `master` con el mismo `.env`, midiendo alternado
+   (CP-PERF-003).
+
+
+#### BR-077 — Escenas fijas: scroll más pesado (la rueda más lenta en toda la página)
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: BR-074, BR-075
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-28)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
+
+**Origen (2026-10-17):** al probar las escenas fijas (`BR-074`, `BR-075`), el usuario
+siente que el scroll se puede pasar muy rápido y entonces el efecto no se nota. Propuso
+hacer más «pesado» el scroll aprovechando el smooth de Lenis. Con un trackpad o una
+rueda con inercia, una sola pasada de dedo cruza todo el recorrido fijo (unos 1.600 a
+1.800 px) en una fracción de segundo.
+
+Decisión del usuario (2026-10-17): hacer el scroll más pesado, aprovechando el smooth de
+Lenis.
+
+> **Alcance ajustado (2026-10-18, decisión del usuario):** la primera versión
+> (commit `6d5f868`) limitaba la velocidad de la rueda solo dentro de las escenas
+> fijas, con el gancho `virtualScroll` de Lenis, y alargaba los recorridos a
+> 360vh y 380vh. Se deshizo (revert `910b463`) por simplicidad: en su lugar, un
+> solo número al crear Lenis baja la velocidad de la rueda para **toda** la página,
+> a un punto medio (`wheelMultiplier` 0,6). Los recorridos vuelven a 280vh y 300vh.
+> Mediciones de la primera versión: dentro de la escena, una pasada de 12.000 px
+> pedidos en 1 s avanzaba unos 914 px, contra 2.800 a 3.100 px fuera de ella.
+
+Alcance (vigente):
+1. Al crear Lenis (`useCreateLenis`), `wheelMultiplier: 0.6`: la rueda y el trackpad
+   avanzan el 60 % de lo normal en todas las secciones.
+2. El teclado, el arrastre de la barra y el toque no cambian (el multiplicador solo
+   afecta a la rueda).
+3. Sin Lenis (reducir movimiento) no cambia nada.
+
+Criterios de aceptación:
+1. Con la rueda, el scroll avanza más despacio que antes, pero sin sentirse trabado
+   (HU-EXP-004 CA-28).
+2. El teclado y el toque siguen funcionando igual (CP-A11Y-002).
+3. Con reducir movimiento no hay smooth scroll ni cambio (CP-A11Y-003).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2513,6 +3027,16 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | Hecho | BR-054, BR-056 |
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | Hecho | BR-058 |
 | BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | Hecho | BR-058 |
+| BR-061 | Hero y CTA1 en móvil: fieles al Figma | K | P3 | M | Propuesta | BR-056, BR-058, BR-059 |
+| BR-069 | Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas | K | P3 | M | Propuesta | BR-056, BR-064 |
+| BR-070 | Beneficios y Reseñas en móvil: carrusel con snap | K | P3 | M | Propuesta | BR-069 |
+| BR-071 | Beneficios en móvil: foto puente con dos cuñas rojas | K | P3 | XS | Propuesta | BR-064 |
+| BR-072 | Innovación y calidad: tarjetas de vidrio y carrusel en móvil | K | P3 | S | Propuesta | BR-069, BR-070 |
+| BR-073 | Reseñas: carrusel también en escritorio, con 3 visibles y profundidad | K | P3 | M | Propuesta | BR-070 |
+| BR-074 | Beneficios: revelado con el scroll (enfoque, giro de 360° y latido) | K | P3 | M | Propuesta | BR-069 |
+| BR-075 | Respaldados por los mejores: escena fija, corte láser y revelado con el scroll | K | P3 | M | Propuesta | BR-062, BR-074 |
+| BR-076 | Respaldados por los mejores: lens flare en lugar de los láseres | K | P3 | M | Propuesta | BR-075 |
+| BR-077 | Escenas fijas: scroll más pesado (la rueda más lenta en toda la página) | K | P3 | XS | Propuesta | BR-074, BR-075 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |

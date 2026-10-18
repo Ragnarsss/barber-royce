@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import styles from "./Reviews.module.css";
 import { useSiteText } from "@/content/useSiteContent";
 import { reviewsList } from "@/data/reviewsData";
@@ -20,14 +19,15 @@ export function Reviews() {
       title={siteText("reviews.titulo")}
       subtitle={siteText("reviews.subtitulo")}
       items={reviewsList}
+      carouselLabel="Reseñas de clientes"
+      carouselDesktopVisible={3}
       renderItem={(review) => (
-        <Card className={styles.card}>
-          <CardContent className={styles.cardContent}>
-            <div className={styles.rating}>{"★".repeat(review.rating)}</div>
-            <p className={styles.comment}>"{review.comment}"</p>
-            <div className={styles.author}>{review.name}</div>
-          </CardContent>
-        </Card>
+        // Tarjeta de vidrio con esquinas cortadas, como las del Hero (BR-069)
+        <article className={styles.card}>
+          <div className={styles.rating}>{"★".repeat(review.rating)}</div>
+          <p className={styles.comment}>"{review.comment}"</p>
+          <div className={styles.author}>{review.name}</div>
+        </article>
       )}
     />
   );

@@ -8,6 +8,7 @@ import { useLenisInstance } from "@/hooks/useLenisContext";
 import { getNavRoutes } from "@/config/routes";
 import { useSiteContent } from "@/content/useSiteContent";
 import { trackReserve } from "@/analytics/track";
+import { SITE } from "@/config/constants";
 
 export const Navbar = () => {
   const { business } = useSiteContent();
@@ -61,6 +62,11 @@ export const Navbar = () => {
             />
             <img src={logo46w} alt="Barber Royce" className={styles.logoImage} width="46" height="56" />
           </picture>
+          {/* En móvil la marca va en texto, en dos líneas, en vez del logo (BR-061) */}
+          <span className={styles.logoWordmark} aria-hidden="true" data-wordmark>
+            <span className={styles.logoName}>{SITE.brand.name}</span>
+            <span className={styles.logoPrefix}>{SITE.brand.prefix}</span>
+          </span>
         </Link>
 
         {/* Desktop Navigation */}

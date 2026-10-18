@@ -83,26 +83,116 @@
   gap: 1.5rem;
 }
 
+/*
+ * Tarjetas de vidrio oscuro con esquinas cortadas, las mismas del Hero y de «Estilo que te acompaña» (BR-069; antes,
+ * blancas). Los valores son tokens compartidos (src/styles/tokens/cards.css). El borde es el fondo de la tarjeta y el
+ * vidrio un ::before 1 px adentro. El hover usa `translate`: la entrada la anima el envoltorio con framer.
+ */
 .card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 100%;
   padding: 2rem;
-  background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-  border-radius: 1.25rem;
-  border: 2px solid rgba(213, 35, 35, 0.08);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  background: var(--card-edge);
+  clip-path: var(--card-clip);
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    translate 0.3s ease,
+    background 0.35s ease;
 }
 
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
-  border-color: rgba(213, 35, 35, 0.15);
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -2;
+  background: var(--card-glass);
+  clip-path: var(--card-clip);
+}
+
+/* Luz que barre la tarjeta al pasar el cursor */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 35%, var(--card-sweep) 50%, transparent 65%);
+  transform: translateX(-120%);
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    translate: 0 -4px;
+    background: var(--card-edge-hot);
+  }
+
+  .card:hover::after {
+    transform: translateX(120%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
+
+  .card::after {
+    display: none;
+  }
+}
+
+/*
+ * Profundidad del carrusel en escritorio (BR-073): la tarjeta del centro va a tamaño completo y las de los lados más
+ * chicas y atenuadas, según dónde estén en la fila. Es una animación CSS ligada a la posición de cada tarjeta dentro de
+ * la fila (`animation-timeline: view()`): sin JavaScript ni `setState` por scroll, solo `scale` y `opacity` (propiedades
+ * sueltas: framer escribe el `transform` en línea). Con tres visibles, el centro de cada tarjeta recorre el 25 %, 50 % y
+ * 75 % de su rango. Donde el navegador no soporta la línea de tiempo, o con reducir movimiento, las tarjetas son iguales.
+ */
+@keyframes reviewDepth {
+  0% {
+    scale: 0.82;
+    opacity: 0.35;
+  }
+
+  25% {
+    scale: 0.92;
+    opacity: 0.7;
+  }
+
+  50% {
+    scale: 1;
+    opacity: 1;
+  }
+
+  75% {
+    scale: 0.92;
+    opacity: 0.7;
+  }
+
+  100% {
+    scale: 0.82;
+    opacity: 0.35;
+  }
+}
+
+@media (min-width: 769px) {
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .card {
+        animation: reviewDepth linear both;
+        animation-timeline: view(inline);
+      }
+    }
+  }
 }
 
 .rating {
-  color: #d52323;
+  color: var(--color-brand-primary);
   font-size: 20px;
   letter-spacing: 2px;
 }
@@ -110,7 +200,7 @@
 .comment {
   font-size: clamp(0.8rem, 1.2vw, 0.875rem);
   line-height: 1.8;
-  color: #1a1a1a;
+  color: var(--color-brand-white);
   font-style: italic;
   font-weight: 400;
   margin: 0;
@@ -119,7 +209,7 @@
 
 .author {
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--color-brand-white);
   font-size: clamp(0.9rem, 1.2vw, 1rem);
 }
 
@@ -128,8 +218,14 @@
     padding: clamp(3rem, 8vh, 4rem) 0;
   }
 
+  /* Con `margin: 0 auto` el contenedor se ajusta a su contenido y, con el carrusel, se estiraba más allá de la pantalla */
+  .container {
+    width: 100%;
+  }
+
   .grid {
     grid-template-columns: 1fr;
+    --carousel-gutter: 3rem; /* el relleno lateral de .container: el carrusel llega hasta el borde (BR-070) */
   }
 
   .card {

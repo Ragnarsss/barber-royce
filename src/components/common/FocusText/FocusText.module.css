@@ -1,0 +1,21 @@
+/*
+ * Texto que se enfoca con el scroll (BR-074). El texto nítido va en el flujo y la copia desenfocada se superpone con el
+ * mismo ancho; entre las dos solo se cruza la opacidad (compositor), el desenfoque es de radio fijo.
+ */
+.focus {
+  position: relative;
+  display: block;
+}
+
+.sharp {
+  display: block;
+}
+
+.blur {
+  position: absolute;
+  inset: 0;
+  display: block;
+  filter: blur(var(--focus-blur, 8px));
+  pointer-events: none;
+  user-select: none;
+}

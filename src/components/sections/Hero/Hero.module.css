@@ -151,24 +151,9 @@
  * Tarjetas de beneficios (BR-056): vidrio oscuro con dos esquinas cortadas, como el corte de la navaja. El borde
  * es el fondo de la tarjeta y el vidrio un ::before 1 px adentro, así el chaflán también lleva borde. Al pasar el
  * cursor (solo con ratón) una luz barre la tarjeta y el borde se enciende en rojo. Texto blanco: el contraste
- * contra el vidrio sobre el fondo más claro posible lo verifica cards.test.ts.
+ * contra el vidrio sobre el fondo más claro posible lo verifica cards.test.ts. Los valores (vidrio, borde, corte)
+ * son tokens compartidos con otras secciones desde BR-069: src/styles/tokens/cards.css.
  */
-.hero {
-  --card-glass: color-mix(
-    in srgb,
-    var(--color-brand-background) 62%,
-    transparent
-  );
-  --card-edge: color-mix(in srgb, var(--color-brand-white) 18%, transparent);
-  --card-edge-hot: color-mix(
-    in srgb,
-    var(--color-brand-primary) 75%,
-    transparent
-  );
-  --card-sweep: color-mix(in srgb, var(--color-brand-white) 14%, transparent);
-  --card-cut: 14px;
-}
-
 .benefit {
   position: relative;
   isolation: isolate;
@@ -179,14 +164,7 @@
   max-width: 560px;
   overflow: hidden;
   background: var(--card-edge);
-  clip-path: polygon(
-    var(--card-cut) 0,
-    100% 0,
-    100% calc(100% - var(--card-cut)),
-    calc(100% - var(--card-cut)) 100%,
-    0 100%,
-    0 var(--card-cut)
-  );
+  clip-path: var(--card-clip);
   transition: background 0.35s ease;
 }
 
@@ -196,14 +174,7 @@
   inset: 1px;
   z-index: -2;
   background: var(--card-glass);
-  clip-path: polygon(
-    var(--card-cut) 0,
-    100% 0,
-    100% calc(100% - var(--card-cut)),
-    calc(100% - var(--card-cut)) 100%,
-    0 100%,
-    0 var(--card-cut)
-  );
+  clip-path: var(--card-clip);
 }
 
 /* Luz que barre la tarjeta al pasar el cursor */
@@ -489,9 +460,10 @@
 
 @media (max-width: 768px) {
   /*
-   * En móvil queda una sola forma (BR-055): el triángulo principal izquierdo, a todo el ancho y en la parte de
-   * arriba, en vez de un fondo de un solo color. Las demás capas se ocultan.
+   * Móvil (BR-061, HU-EXP-004 CA-13): la foto ocupa toda la portada como fondo y el texto va a la izquierda, bajo
+   * la navbar. Los triángulos se ocultan todos (BR-055 dejaba uno); la foto los reemplaza como fondo.
    */
+  .leftTriangle,
   .rightTriangle,
   .leftTriangleBackground,
   .rightTriangleBackground,
@@ -500,36 +472,93 @@
     display: none;
   }
 
-  .leftTriangle {
-    width: 100vw;
-    height: 58%;
+  /* El layout ya deja 80 px arriba para la navbar fija (Layout.module.css): la portada llena el resto de la pantalla */
+  .hero {
+    height: auto;
+    min-height: calc(100vh - 80px);
+    min-height: calc(100svh - 80px);
+    align-items: flex-start;
   }
 
-  .hero {
-    min-height: 90vh;
+  /* Sin parallax en móvil: la foto cubre la pantalla y, al bajar, dejaría una franja vacía arriba. El inline de framer se pisa con !important. */
+  .heroImageSEO {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: none !important;
+  }
+
+  .heroImageSEO img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    /* Ajustada a mano con el usuario (2026-10-17): más del lado derecho de la foto a la izquierda; menos %, más a la derecha */
+    object-position: 50% top;
+  }
+
+  /* Velo oscuro sobre la foto (60 %, como en el Figma): el texto blanco se lee sobre las zonas claras (CP-A11Y-004) */
+  .heroImageSEO::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--color-primary-900) 60%, transparent);
+    pointer-events: none;
   }
 
   .container {
-    padding: 2.5rem 1.5rem;
+    padding: 3.5rem 1.5rem 3rem;
+    align-items: flex-start;
   }
 
+  /* Aire entre los bloques, como en el Figma: título, línea, párrafo y tarjetas */
   .content {
     padding-left: 0;
     max-width: 100%;
+    gap: 2rem;
+  }
+
+  .tagline {
+    margin-top: 0.75rem;
+  }
+
+  /* Línea blanca gruesa bajo el título, como en el Figma */
+  .title::after {
+    content: "";
+    display: block;
+    align-self: stretch;
+    height: 0.375rem;
+    margin-top: 1.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-brand-white);
+  }
+
+  .subtitle {
+    max-width: 100%;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  /* Tarjetas compactas: en el lugar del botón del Figma */
+  .benefits {
+    gap: 0.75rem;
+    margin-top: 0.25rem;
   }
 
   .benefit {
     max-width: 100%;
-    padding: 0.8rem 1rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.85rem;
   }
 
   .benefitIcon {
-    width: 2rem;
-    height: 2rem;
+    width: 1.75rem;
+    height: 1.75rem;
   }
 
   .benefitText {
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
+    line-height: 1.35;
   }
 
   .imageWrapper {

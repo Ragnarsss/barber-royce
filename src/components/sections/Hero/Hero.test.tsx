@@ -33,6 +33,7 @@ vi.mock("framer-motion", async (importOriginal) => ({
 import { Hero } from "./Hero";
 
 const heroCss = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "Hero.module.css"), "utf8");
+const cardTokensCss = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../../styles/tokens/cards.css"), "utf8");
 
 const renderHero = () => {
   renderWithProviders(
@@ -181,12 +182,35 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
     expect(document.querySelector("[data-spotlight]")).toBeNull();
   });
 
-  it("CA-08: en móvil queda una forma geométrica, no un fondo plano", () => {
+  // BR-061 (2026-10-17, decisión del usuario con el Figma «Resumen Mobile»): en móvil la foto a pantalla completa
+  // reemplaza al triángulo de BR-055 como fondo. Sigue sin ser un color plano.
+  it("CA-08 / CA-13: en móvil el fondo es la foto a pantalla completa, no un fondo plano", () => {
     const mobile = heroCss.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
     const hidden = mobile.match(/([^{}]*)\{\s*display:\s*none;?\s*\}/)?.[1] ?? "";
 
-    expect(hidden).not.toMatch(/\.leftTriangle\s*(,|$)/m);
-    expect(mobile).toMatch(/\.leftTriangle\s*\{[^}]*width:/);
+    expect(hidden).toMatch(/\.leftTriangle\s*(,|$)/m);
+    expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*inset:\s*0/);
+    expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*width:\s*100%/);
+    expect(mobile).toMatch(/\.heroImageSEO img\s*\{[^}]*object-fit:\s*cover/);
+    // Posición horizontal explícita, ajustada a mano por el usuario (2026-10-17, quedó en 50 %): el rostro del barbero se ve entero.
+    expect(mobile).toMatch(/\.heroImageSEO img\s*\{[^}]*object-position:\s*\d{1,3}% top/);
+  });
+
+  it("CA-13: en móvil la foto va sin parallax (el inline de framer se pisa) y hay una línea blanca bajo el título", () => {
+    const mobile = heroCss.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+
+    expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*transform:\s*none\s*!important/);
+    // El velo del Figma (60 % negro) va por CSS y con un token: la foto viene sin velo y se puede cambiar sin tocarlo.
+    expect(mobile).toMatch(/\.heroImageSEO::after\s*\{[^}]*color-mix\(in srgb, var\(--color-primary-900\) 60%, transparent\)/);
+    expect(mobile).toMatch(/\.title::after\s*\{[^}]*background:\s*var\(--color-brand-white\)/);
+  });
+
+  it("CA-13: el Hero ofrece una foto distinta para móvil en el mismo <picture>", () => {
+    renderHero();
+
+    const source = document.querySelector("picture source[media='(max-width: 768px)']");
+    expect(source).not.toBeNull();
+    expect(source?.getAttribute("srcset")).toMatch(/hero_mobile_\d+w\.webp 780w/);
   });
 
   it("ADR-002: los triángulos, el grano y el haz no traen colores escritos a mano", () => {
@@ -246,7 +270,9 @@ describe("Hero: tarjetas de beneficios (BR-056, HU-EXP-004 CA-09)", () => {
   });
 
   it("la tarjeta tiene las esquinas cortadas y la luz que barre solo existe con ratón", () => {
-    expect(heroCss).toMatch(/\n\.benefit\s*\{[^}]*clip-path:\s*polygon\(/);
+    // Desde BR-069 el recorte es un token compartido: el Hero lo usa y el token define las esquinas cortadas
+    expect(heroCss).toMatch(/\n\.benefit\s*\{[^}]*clip-path:\s*var\(--card-clip\)/);
+    expect(cardTokensCss).toMatch(/--card-clip:\s*polygon\(/);
     expect(heroCss).toMatch(/@media \(hover: hover\) and \(pointer: fine\)\s*\{[^@]*\.benefit:hover::after/);
   });
 

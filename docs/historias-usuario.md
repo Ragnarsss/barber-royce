@@ -641,6 +641,13 @@ y confiar en que el servicio está a la altura.
   al equipo en un panal de hexágonos (como las barras de luz del techo), con el
   líder más grande y con un marco distinto, y al pasar el cursor o enfocar un
   hexágono leo el nombre del barbero.
+- CA-08 (nota 2026-10-17, `BR-061`): en móvil el fondo es ahora la foto a
+  pantalla completa, no la forma geométrica; ver CA-13.
+- CA-13 (2026-10-17, `BR-061`): Given abro la portada en un celular, When veo
+  la navegación, la portada y el bloque de reserva, Then la marca va en texto
+  junto a la hamburguesa y al botón de agendar, la foto ocupa el fondo con el
+  texto alineado a la izquierda bajo una línea blanca, y nada desborda ni tapa
+  el título.
 - CA-14: Given bajo hasta «Respaldados por los mejores», When avanzo con el
   scroll, Then un láser corta en diagonal y revela la foto y luego la tarjeta
   del testimonio, y si subo se vuelven a tapar; con reducir movimiento todo
@@ -663,6 +670,47 @@ y confiar en que el servicio está a la altura.
   carga, When llego al final del panal, Then se suman los siguientes (con
   hexágonos grises de relleno mientras llegan), sin saltos de la página, y
   puedo pedirlos también con el teclado.
+- CA-20 (2026-10-17, `BR-069`): Given llego a «Estilo que te acompaña» y a «Lo
+  que dicen nuestros clientes», When veo las tarjetas, Then son de vidrio oscuro
+  con esquinas cortadas, como las del primer bloque, y su texto se lee en móvil
+  y en escritorio.
+- CA-21 (2026-10-17, `BR-070`): Given veo «Estilo que te acompaña» y «Lo que
+  dicen nuestros clientes» en un celular, When deslizo las tarjetas, Then cada
+  una se asienta en su lugar dejando asomar la siguiente, un indicador marca
+  cuál veo y puedo cambiar de tarjeta con el teclado o con los puntos; en
+  escritorio siguen en grilla.
+- CA-22 (2026-10-17, `BR-071`): Given paso de «Estilo que te acompaña» a «Lo que
+  dicen nuestros clientes» en un celular, When veo la foto que une las dos
+  secciones, Then lleva dos cuñas rojas, una arriba a la izquierda y otra abajo a
+  la derecha, y se lee la chaqueta «BARBER ROYCE».
+- CA-23 (2026-10-17, `BR-072`): Given llego a «Innovación y calidad en cada
+  detalle», When veo las características del servicio, Then son tarjetas de
+  vidrio oscuro con esquinas cortadas, como las del primer bloque; en un celular
+  se deslizan con snap, ninguna queda cortada por el borde de la sección y los
+  puntos permiten cambiar de tarjeta sin arrastrar.
+- CA-24 (2026-10-17, `BR-073`): Given veo «Lo que dicen nuestros clientes» en un
+  computador y hay más de tres reseñas, When uso las flechas, los puntos, el
+  teclado o arrastro, Then se ven tres a la vez, la del centro destacada y las de
+  los lados más chicas, y se avanza de a una; con tres o menos se ven todas, sin
+  flechas.
+- CA-25 (2026-10-17, `BR-074`): Given bajo a «Estilo que te acompaña», When la
+  sección entra en pantalla, Then el título y el subtítulo se enfocan con el
+  scroll, cada tarjeta gira 360° y muestra su contenido enfocado, y el ícono da un
+  latido una sola vez; con reducir movimiento todo aparece quieto y nítido.
+- CA-26 (2026-10-17, `BR-075`): Given bajo a «Respaldados por los mejores» en un
+  computador, When la sección entra en pantalla, Then queda fija mientras el láser
+  corta la foto y la tarjeta y, al terminar, el título, la foto y el texto se
+  enfocan con el scroll; después la página sigue. Con reducir movimiento no hay
+  láser ni desenfoque.
+- CA-27 (2026-10-17, `BR-076`): Given bajo a «Respaldados por los mejores» en un
+  computador, When el corte revela la foto y la tarjeta, Then un lens flare con
+  destellos hexagonales viaja con el borde del corte y se apaga al terminar, sin
+  líneas láser; con reducir movimiento no hay flare.
+- CA-28 (2026-10-17, `BR-077`): Given paso por una escena fija (Beneficios o
+  Respaldados por los mejores) con la rueda o el trackpad, When giro, Then el
+  scroll avanza más despacio que antes, para que se aprecie el efecto, sin
+  sentirse trabado. (Ajustado el 2026-10-18: en lugar de un límite solo dentro de
+  las escenas, la rueda es más lenta en toda la página.)
 
 ---
 

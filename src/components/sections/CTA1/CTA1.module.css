@@ -69,6 +69,11 @@
   font-style: italic;
 }
 
+/* Primera frase del subtítulo: solo se destaca en móvil (BR-061); en escritorio se lee igual que el resto */
+.lead {
+  font-weight: inherit;
+}
+
 .ctaButtons {
   display: flex;
   gap: 16px;
@@ -265,26 +270,24 @@
 
 @media (max-width: 768px) {
   /*
-   * Móvil: el texto arriba y la figura con la foto debajo, en el flujo (antes la foto, absoluta, tapaba el
-   * título). Queda el hexágono rojo del texto como forma, en vez de un fondo plano.
+   * Móvil (BR-061, HU-EXP-004 CA-13): fondo charcoal sin hexágonos, la foto de perfil recortada a la derecha y
+   * detrás del texto, que va alineado a la izquierda. Antes (BR-058) el texto iba sobre un hexágono rojo y la
+   * foto, en una figura blanca bajo el texto.
    */
   .cta {
     height: auto;
-    min-height: auto;
+    min-height: calc(100vh - 80px);
+    min-height: calc(100svh - 80px);
     flex-direction: column;
   }
 
   .textHexagonBackground,
   .imageHexagonBackground,
+  .textHexagon,
   .textHexagonForeground,
+  .imageHexagonForeground,
   .lightBars {
     display: none;
-  }
-
-  .textHexagon {
-    left: -15%;
-    width: 110vw;
-    height: 70vh;
   }
 
   .container {
@@ -292,47 +295,109 @@
     grid-template-columns: 1fr;
   }
 
+  /* La figura deja de ser una figura: es solo el recuadro que ancla la foto abajo, sin parallax (el inline de framer se pisa) */
   .imageHexagon {
-    position: relative;
-    order: 2;
+    inset: 0;
     width: 100%;
-    height: min(110vw, 520px);
-    clip-path: polygon(14% 0, 100% 0, 100% 100%, 14% 100%, 0 50%);
+    height: 100%;
+    background: none;
+    clip-path: none;
+    transform: none !important;
+    pointer-events: none;
   }
 
+  /* Velo de charcoal de izquierda a derecha: el texto se lee sobre la foto (CP-A11Y-004) */
+  .imageHexagon::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-brand-section-bg) 92%, transparent) 0%,
+      color-mix(in srgb, var(--color-brand-section-bg) 55%, transparent) 55%,
+      transparent 100%
+    );
+  }
+
+  /*
+   * El rostro grande, de perfil, ocupa el fondo desde el título hasta abajo y se corta por el borde derecho, como en
+   * el Figma. Va por el ancho (no por el alto de la sección) para que el tamaño no dependa del largo del texto.
+   */
   .ctaImage {
-    right: -4%;
-    width: 100%;
+    right: -94%;
+    width: 140%;
+    max-width: none; /* sin esto, la regla global de imágenes la limita al 100 % del contenedor */
   }
 
   .content {
-    padding: 60px 24px;
-    justify-content: center;
+    padding: 3.5rem 1.5rem 3rem;
+    justify-content: flex-start;
   }
 
   .textContent {
     padding-left: 0;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
     max-width: 100%;
+    gap: 1.75rem;
   }
 
+  .title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+
+  /* Línea blanca gruesa bajo el título, como en el Figma */
+  .title::after {
+    content: "";
+    display: block;
+    height: 0.375rem;
+    margin-top: 1.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-brand-white);
+  }
+
+  .subtitle {
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    font-style: normal;
+    color: var(--color-brand-white);
+  }
+
+  .lead {
+    font-weight: 700;
+  }
+
+  /* Los dos botones miden lo mismo (el del texto más largo), alineados a la izquierda */
   .ctaButtons {
     flex-direction: column;
-    width: 100%;
-    gap: 12px;
+    align-items: stretch;
+    align-self: flex-start;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
   }
 
-  .magnet,
-  .ctaButton,
-  .ctaButtonGhost {
-    width: 100%;
-    min-width: unset;
+  .magnet {
+    display: flex;
   }
 
-  .ctaButton,
+  .magnet .ctaButton {
+    flex: 1;
+  }
+
+  /* Botón blanco redondeado, como el del Figma (en escritorio sigue con el chaflán de BR-056) */
+  .ctaButton {
+    min-width: 0;
+    padding: 0.875rem 1.5rem;
+    font-size: 1.125rem;
+    clip-path: none;
+    border-radius: var(--radius-md);
+  }
+
   .ctaButtonGhost {
-    padding: 14px 24px;
-    justify-content: center;
+    min-width: 0;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
   }
 }

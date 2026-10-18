@@ -1,13 +1,12 @@
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform, type MotionValue } from "framer-motion";
 import type { BenefitIconName } from "@/data/benefitsData";
-import { iconDraw } from "@/config/animations.config";
 
 /**
- * Íconos de los beneficios que se dibujan con un trazo al entrar la tarjeta (BR-064).
+ * Íconos de los beneficios que se dibujan con un trazo (BR-064), ahora al ritmo del scroll (BR-074).
  *
  * Grilla de 24 × 24 y trazo como lucide, para que convivan con el resto del sitio. La tijera y la persona vienen de
  * lucide (licencia ISC); la silla de barbero y la estrella son propias, porque lucide no las tiene. Cada trazo es un
- * `motion.path`/`motion.circle`: hereda «hidden»/«visible» de la tarjeta y anima su `pathLength`.
+ * `motion.path`/`motion.circle` cuyo `pathLength` sigue el avance que se le pase; sin avance, el ícono se ve dibujado.
  */
 type Shape = { kind: "path"; d: string } | { kind: "circle"; cx: number; cy: number; r: number };
 
@@ -34,11 +33,18 @@ const ICONS: Record<BenefitIconName, Shape[]> = {
   ],
 };
 
-export function DrawnIcon({ name, animate }: { name: BenefitIconName; animate: boolean }) {
+/**
+ * `progress` es el avance del trazo de 0 a 1. Sin él (reducir movimiento), el ícono se pinta dibujado y sin estilos de
+ * animación. Con trazo en 0 el extremo redondeado dejaría un punto, así que la opacidad espera a que haya trazo.
+ */
+export function DrawnIcon({ name, progress }: { name: BenefitIconName; progress?: MotionValue<number> }) {
+  // Valor de respaldo para llamar siempre a los mismos hooks, con o sin avance
+  const fallback = useMotionValue(1);
+  const visible = useTransform(progress ?? fallback, (value) => (value > 0 ? 1 : 0));
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       {ICONS[name].map((shape, index) => {
-        const motionProps = animate ? { variants: iconDraw } : {};
+        const motionProps = progress ? { style: { pathLength: progress, opacity: visible } } : {};
         return shape.kind === "path" ? (
           <motion.path key={index} d={shape.d} {...motionProps} data-stroke />
         ) : (
