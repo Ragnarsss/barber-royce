@@ -2765,6 +2765,26 @@ acercarse y alejarse.
 Decisiones del usuario (2026-10-17): el giro es sobre el eje vertical, como una
 moneda.
 
+> **Alcance ajustado (2026-10-17, decisión del usuario, tras ver la primera
+> versión):**
+> 1. **Todo va ligado al scroll** (avanza y retrocede), no como una animación que
+>    corre una vez al entrar: la primera versión solo ataba al scroll el título y el
+>    subtítulo.
+> 2. **El desenfoque se ve de verdad:** antes era un resplandor leve. Ahora el texto
+>    se ve solo borroso (radio 18 px el título, 10 px el subtítulo, 14 px las
+>    tarjetas) durante la primera mitad y recién después se enfoca.
+> 3. **Secuencia:** todo se ve borroso (los títulos y las tres tarjetas, a la vista);
+>    se enfocan los títulos; la primera tarjeta gira, se revela y su ícono late
+>    mientras las otras dos siguen borrosas; después la segunda; después la tercera.
+>    Cada tarjeta tiene su propio tramo, sin superponerse.
+> 4. **La sección queda fija** en pantalla mientras se revela (escritorio, sin reducir
+>    movimiento): el scroll avanza la secuencia en vez de subir la sección y dejarla
+>    cortada. En móvil no se fija. Al terminar, la página sigue.
+> 5. **Regla para toda la landing:** el usuario quiere este mismo patrón (escena fija
+>    y animaciones ligadas al scroll y a la pantalla) en las demás secciones. Se
+>    trabaja sección por sección, cada una con su ticket; el primero es
+>    «Respaldados por los mejores» (`SocialProof1`) y su corte láser.
+
 Alcance:
 1. Título y subtítulo: el enfoque va ligado al scroll (`useScroll`, scrub). El
    desenfoque no se anima por su radio (la skill `diseno-visual` lo desaconseja):

@@ -4,29 +4,34 @@ import styles from "./Benefits.module.css";
 import { useSiteText } from "@/content/useSiteContent";
 import { benefitsList } from "@/data/benefitsData";
 import { SITE } from "@/config/constants";
-import { cardBlurFade, cardBodyFocus, cardSpinReveal, iconHeartbeat, staggerContainer } from "@/config/animations.config";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { DrawnIcon } from "./DrawnIcon";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { BenefitCard } from "./BenefitCard";
 import { FocusText } from "./FocusText";
+import { PIN_TITLE_END, ramp } from "./reveal";
 import { CardCarousel } from "@/components/common/CardCarousel/CardCarousel";
 import barberBack954w from "@/assets/optimized/barber_background_954w.webp";
 import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
 
 /**
  * «Estilo que te acompaña» (BR-064), fiel al Figma «Beneficios v2»: fondo charcoal, franja roja diagonal y la foto
- * clara a la derecha; tarjetas con los textos del diseño (de vidrio desde BR-069). Gesto: las tarjetas entran
- * escalonadas y sus íconos se dibujan con un trazo. Con el scroll, la franja entra en diagonal y se asienta, y la foto
- * se acerca hasta su tamaño; al pasar el ratón, el ícono se vuelve a dibujar (CSS: un whileHover de framer haría que la
- * tarjeta dejara de heredar la entrada de la grilla).
+ * clara a la derecha; tarjetas con los textos del diseño (de vidrio desde BR-069). Con el scroll, la franja entra en
+ * diagonal y se asienta, y la foto se acerca hasta su tamaño; al pasar el ratón, el ícono se vuelve a dibujar (CSS).
  *
- * Revelado con el scroll (BR-074): el título y el subtítulo se enfocan con el scroll (`FocusText`); cada tarjeta gira
- * 360° sobre su eje vertical y su contenido pasa de desenfocado a nítido, y el ícono da un latido al terminar. Con
- * reducir movimiento, todo queda en su posición final y nítido, sin giro ni latido.
+ * Revelado ligado al scroll (BR-074): el título y el subtítulo se enfocan (`FocusText`) y cada tarjeta (`BenefitCard`)
+ * gira 360° sobre su eje vertical, enfoca su contenido, dibuja su ícono y le da un latido, todo al ritmo del scroll:
+ * al subir de nuevo, se deshace. Con reducir movimiento, todo queda de frente, nítido y quieto.
+ *
+ * En escritorio la sección queda fija en pantalla mientras se revela (`position: sticky` dentro de un contenedor
+ * alto): el scroll avanza la secuencia en vez de subir la sección y dejarla cortada. Al terminar, la página sigue. En
+ * móvil no se fija: la sección sube normal y cada elemento se revela según dónde esté en la pantalla.
  */
 export function Benefits() {
   const siteText = useSiteText();
   const reducedMotion = useReducedMotion() ?? false;
-  const { ref, controls } = useScrollAnimation();
+  const isDesktop = useMediaQuery("(min-width: 769px)");
+  const pinned = isDesktop && !reducedMotion;
+  const pinRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   // Escena ligada al scroll (scrub): de que la sección asoma por abajo a que queda centrada
   const sectionRef = useRef<HTMLElement>(null);
@@ -37,97 +42,73 @@ export function Benefits() {
   const bandY = useTransform(scrollYProgress, [0, 1], ["18.75%", "0%"]);
   const photoScale = useTransform(scrollYProgress, [0, 1], [1.14, 1]);
   const photoY = useTransform(scrollYProgress, [0, 1], ["-4%", "0%"]);
-  // Enfoque del título y el subtítulo: de que la sección asoma (borde superior al 85 % de la pantalla) a que sube al 35 %
-  const { scrollYProgress: focusProgress } = useScroll({ target: sectionRef, offset: ["start 85%", "start 35%"] });
+  // Sin fijar (móvil): el enfoque del título y el subtítulo va desde que la sección asoma por abajo hasta que sube al
+  // 45 %, y el de las tarjetas, una tras otra, desde que el borde de la grilla está al 80 % hasta que sube al 20 %.
+  const { scrollYProgress: freeFocus } = useScroll({ target: sectionRef, offset: ["start 100%", "start 45%"] });
+  const { scrollYProgress: freeCards } = useScroll({ target: gridRef, offset: ["start 80%", "start 20%"] });
+  // Fijada (escritorio): una sola línea de tiempo mientras la sección está fija, de que se pega arriba a que se suelta.
+  // Primero se enfocan los títulos y después, una tras otra, las tarjetas; mientras no le toca, cada una se ve borrosa.
+  const { scrollYProgress: pinProgress } = useScroll({ target: pinRef, offset: ["start start", "end end"] });
+  const pinFocus = useTransform(pinProgress, (value) => ramp(0, PIN_TITLE_END)(value));
+  const pinCards = useTransform(pinProgress, (value) => ramp(PIN_TITLE_END, 1)(value));
+  const focusProgress = pinned ? pinFocus : freeFocus;
+  const cardsProgress = pinned ? pinCards : freeCards;
 
   return (
-    <section id="benefits" className={styles.benefits} ref={sectionRef}>
-      <div className={styles.imageBackground}>
-        <motion.picture
-          className={styles.photoMotion}
-          data-photo-motion
-          style={reducedMotion ? undefined : { scale: photoScale, y: photoY }}
-        >
-          <source
-            srcSet={`${barberBack954w} 954w, ${barberBack1908w} 1908w`}
-            sizes="(max-width: 768px) 100vw, (max-width: 1400px) 45vw, 954px"
-            type="image/webp"
-          />
-          <img
-            src={barberBack954w}
-            alt="Barbero profesional trabajando"
-            className={styles.backgroundImage}
-            loading="lazy"
-            width="954"
-            height="1304"
-          />
-        </motion.picture>
-      </div>
-      {/* Franja roja diagonal entre el contenido y la foto: entra en diagonal con el scroll y se asienta */}
-      <motion.div
-        className={styles.band}
-        aria-hidden="true"
-        data-band
-        style={reducedMotion ? undefined : { x: bandX, y: bandY }}
-      />
-
-      <div className={styles.container}>
-        <div className={styles.content}>
-          <div className={styles.header}>
-            <FocusText as="h2" className={styles.title} progress={focusProgress} blurPx={9} enabled={!reducedMotion}>
-              {siteText("benefits.titulo")}
-            </FocusText>
-            {/* La frase continúa en las tarjetas: por eso termina en dos puntos */}
-            <FocusText as="p" className={styles.subtitle} progress={focusProgress} blurPx={5} enabled={!reducedMotion}>
-              En {SITE.name}, cada visita es una oportunidad para realzar tu estilo. Nos enfocamos en la calidad y la
-              exclusividad, ofreciendo:
-            </FocusText>
-          </div>
-          {/* En móvil las tarjetas son un carrusel con snap (BR-070); en escritorio, la grilla de siempre */}
-          <CardCarousel label="Beneficios">
-            <motion.div
-              ref={ref}
-              className={styles.grid}
-              initial={reducedMotion ? false : "hidden"}
-              animate={controls}
-              variants={staggerContainer}
-            >
-              {benefitsList.map((benefit) => {
-                const description = benefit.description.map((part, index) =>
-                  typeof part === "string" ? part : <strong key={index}>{part.strong}</strong>,
-                );
-                return (
-                  <motion.article
-                    key={benefit.title}
-                    className={styles.card}
-                    variants={reducedMotion ? undefined : cardSpinReveal}
-                    data-benefit
-                  >
-                    <motion.div className={styles.cardBody} variants={reducedMotion ? undefined : cardBodyFocus}>
-                      <h3 className={styles.cardTitle}>{benefit.title}</h3>
-                      <motion.div className={styles.cardIcon} variants={reducedMotion ? undefined : iconHeartbeat}>
-                        <DrawnIcon name={benefit.icon} animate={!reducedMotion} />
-                      </motion.div>
-                      <div className={styles.accent} />
-                      <p className={styles.cardDescription}>{description}</p>
-                    </motion.div>
-                    {/* Copia desenfocada del texto, encima del contenido nítido: se desvanece durante el giro. Solo
-                        decorativa (aria-hidden) y sin ícono, que se dibuja aparte; reserva su lugar. */}
-                    {!reducedMotion && (
-                      <motion.div className={styles.cardBlur} aria-hidden="true" variants={cardBlurFade} data-card-blur>
-                        <div className={styles.cardTitle}>{benefit.title}</div>
-                        <div className={styles.cardIcon} />
-                        <div className={styles.accent} />
-                        <p className={styles.cardDescription}>{description}</p>
-                      </motion.div>
-                    )}
-                  </motion.article>
-                );
-              })}
-            </motion.div>
-          </CardCarousel>
+    <div ref={pinRef} className={`${styles.pin} ${pinned ? styles.pinned : ""}`}>
+      <section id="benefits" className={styles.benefits} ref={sectionRef}>
+        <div className={styles.imageBackground}>
+          <motion.picture
+            className={styles.photoMotion}
+            data-photo-motion
+            style={reducedMotion ? undefined : { scale: photoScale, y: photoY }}
+          >
+            <source
+              srcSet={`${barberBack954w} 954w, ${barberBack1908w} 1908w`}
+              sizes="(max-width: 768px) 100vw, (max-width: 1400px) 45vw, 954px"
+              type="image/webp"
+            />
+            <img
+              src={barberBack954w}
+              alt="Barbero profesional trabajando"
+              className={styles.backgroundImage}
+              loading="lazy"
+              width="954"
+              height="1304"
+            />
+          </motion.picture>
         </div>
-      </div>
-    </section>
+        {/* Franja roja diagonal entre el contenido y la foto: entra en diagonal con el scroll y se asienta */}
+        <motion.div
+          className={styles.band}
+          aria-hidden="true"
+          data-band
+          style={reducedMotion ? undefined : { x: bandX, y: bandY }}
+        />
+
+        <div className={styles.container}>
+          <div className={styles.content}>
+            <div className={styles.header}>
+              <FocusText as="h2" className={styles.title} progress={focusProgress} blurPx={18} enabled={!reducedMotion}>
+                {siteText("benefits.titulo")}
+              </FocusText>
+              {/* La frase continúa en las tarjetas: por eso termina en dos puntos */}
+              <FocusText as="p" className={styles.subtitle} progress={focusProgress} blurPx={10} enabled={!reducedMotion}>
+                En {SITE.name}, cada visita es una oportunidad para realzar tu estilo. Nos enfocamos en la calidad y la
+                exclusividad, ofreciendo:
+              </FocusText>
+            </div>
+            {/* En móvil las tarjetas son un carrusel con snap (BR-070); en escritorio, la grilla de siempre */}
+            <CardCarousel label="Beneficios">
+              <div ref={gridRef} className={styles.grid}>
+                {benefitsList.map((benefit, index) => (
+                  <BenefitCard key={benefit.title} benefit={benefit} index={index} progress={cardsProgress} animated={!reducedMotion} />
+                ))}
+              </div>
+            </CardCarousel>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

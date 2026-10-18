@@ -1,6 +1,32 @@
 /*
  * «Estilo que te acompaña» (BR-064), fiel al Figma «Beneficios v2». Todo color sale de los tokens.
  */
+
+/*
+ * Sección fija mientras se revela (BR-074), solo en escritorio y sin reducir movimiento: el contenedor es alto y la
+ * sección queda pegada arriba (`position: sticky`) todo ese recorrido; el scroll avanza la secuencia en vez de subir la
+ * sección y dejarla cortada. La altura del contenedor menos una pantalla es el scroll que dura el revelado.
+ */
+.pin {
+  position: relative;
+}
+
+@media (min-width: 769px) {
+  .pinned {
+    height: 280vh;
+  }
+
+  .pinned > .benefits {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 0;
+    /* La navbar fija ocupa los primeros 80 px: el contenido empieza debajo y se centra en el resto */
+    padding: 5rem 0 0;
+    /* content-visibility: auto saltaría el dibujo de una sección fija cuando está fuera de pantalla */
+    content-visibility: visible;
+  }
+}
 .benefits {
   min-height: 100vh;
   padding: 8vh 0;
@@ -136,7 +162,7 @@
 .cardBlur {
   position: absolute;
   inset: 0;
-  filter: blur(6px);
+  filter: blur(14px);
   pointer-events: none;
   user-select: none;
 }

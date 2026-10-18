@@ -2,10 +2,22 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { screen } from "@testing-library/react";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SITE } from "@/config/constants";
-import { cardBlurFade, cardBodyFocus, cardSpinReveal, iconHeartbeat } from "@/config/animations.config";
 import { benefitsList } from "@/data/benefitsData";
+import {
+  BEAT_FROM,
+  BEAT_SCALE,
+  PIN_TITLE_END,
+  SPIN_END,
+  TEXT_FOCUS_FROM,
+  cardProgress,
+  cardScale,
+  drawProgress,
+  heartbeatScale,
+  sharpness,
+  spinAngle,
+} from "./reveal";
 import { renderWithProviders } from "@/test/renderWithProviders";
 
 // BR-064: «Estilo que te acompaña» fiel al Figma «Beneficios v2», con íconos que se dibujan.
@@ -242,29 +254,73 @@ describe("Benefits: revelado con el scroll (BR-074, HU-EXP-004 CA-25)", () => {
     }
   });
 
-  it("CA-25: la tarjeta gira 360° sobre el eje vertical y termina de frente, con perspectiva", () => {
-    expect(cardSpinReveal.hidden).toMatchObject({ rotateY: -360, transformPerspective: expect.any(Number) });
-    expect(cardSpinReveal.visible).toMatchObject({ rotateY: 0, opacity: 1, scale: 1 });
+  it("CA-25: las tarjetas giran con el scroll sobre el eje vertical, con perspectiva, y las copias se cruzan por opacidad", () => {
+    renderWithProviders(<Benefits />);
+
+    const cards = [...document.querySelectorAll("[data-benefit]")];
+    for (const card of cards) {
+      // Con el scroll en 0, toda tarjeta está a la vista (sin opacidad 0), de frente y borrosa: no corre nada sola
+      expect(card.getAttribute("style")).toMatch(/perspective\(900px\)/);
+      expect(card.getAttribute("style") ?? "").not.toMatch(/opacity:\s*0/);
+      expect((card.querySelector("[data-card-blur]") as HTMLElement).getAttribute("style")).toMatch(/opacity:\s*1/);
+      expect((card.firstElementChild as HTMLElement).getAttribute("style")).toMatch(/opacity:\s*0/);
+    }
   });
 
-  it("el contenido nítido aparece cuando la copia desenfocada se desvanece, al mismo tiempo", () => {
-    const delay = (variant: unknown) => (variant as { transition: { delay: number } }).transition.delay;
-
-    expect(delay(cardBodyFocus.visible)).toBe(delay(cardBlurFade.visible));
-    expect(cardBlurFade.hidden).toMatchObject({ opacity: 1 });
-    expect(cardBlurFade.visible).toMatchObject({ opacity: 0 });
+  it("CA-25: el giro de 360° parte y termina de frente, y el giro, el enfoque y el trazo se deshacen al volver (scrub)", () => {
+    expect(spinAngle(0)).toBe(0);
+    expect(spinAngle(1)).toBe(360);
+    const angles = [0, 0.1, 0.3, 0.5, 0.7, 1].map(spinAngle);
+    expect(angles).toEqual([...angles].sort((a, b) => a - b));
+    expect(spinAngle(SPIN_END / 2)).toBeGreaterThan(0);
+    expect(spinAngle(SPIN_END / 2)).toBeLessThan(360);
+    expect(sharpness(0)).toBe(0);
+    expect(sharpness(1)).toBe(1);
+    expect(drawProgress(0)).toBe(0);
+    expect(drawProgress(1)).toBe(1);
+    expect(cardScale(0)).toBeCloseTo(0.95);
+    expect(cardScale(1)).toBeCloseTo(1);
   });
 
-  it("CA-25: el ícono late dos veces, una sola vez, y vuelve a su tamaño", () => {
-    const visible = iconHeartbeat.visible as { scale: number[]; transition: { duration: number; delay: number } };
-    const peaks = visible.scale.filter((value, i, all) => i > 0 && i < all.length - 1 && value > all[i - 1] && value > all[i + 1]);
+  it("el contenido de la tarjeta sigue borroso la primera parte del giro y se enfoca en la segunda", () => {
+    expect(sharpness(0.35)).toBe(0);
+    expect(sharpness(SPIN_END)).toBe(1);
+    expect(sharpness((0.35 + SPIN_END) / 2)).toBeCloseTo(0.5);
+  });
 
+  it("el título y el subtítulo se ven solo borrosos hasta la mitad del avance y recién después se enfocan", () => {
+    expect(TEXT_FOCUS_FROM).toBe(0.5);
+  });
+
+  it("CA-25: las tarjetas se revelan una tras otra, cada una en su tramo, sin superponerse", () => {
+    // Al comienzo: ninguna empezó
+    expect([0, 1, 2].map((i) => cardProgress(0, i))).toEqual([0, 0, 0]);
+    // En el primer tramo solo avanza la primera; al terminar, la segunda y la tercera aún no empezaron
+    expect(cardProgress(1 / 6, 0)).toBeCloseTo(0.5);
+    expect(cardProgress(1 / 6, 1)).toBe(0);
+    expect(cardProgress(1 / 6, 2)).toBe(0);
+    // Al empezar el segundo tramo, la primera ya terminó
+    expect(cardProgress(1 / 3, 0)).toBe(1);
+    expect(cardProgress(0.5, 1)).toBeCloseTo(0.5);
+    expect(cardProgress(0.5, 2)).toBe(0);
+    // La tercera termina justo al final
+    expect(cardProgress(5 / 6, 2)).toBeCloseTo(0.5);
+    expect(cardProgress(1, 2)).toBe(1);
+    // Nunca hay dos tarjetas a mitad de camino a la vez
+    for (let p = 0; p <= 1; p += 0.01) {
+      const inProgress = [0, 1, 2].filter((i) => cardProgress(p, i) > 0.001 && cardProgress(p, i) < 0.999);
+      expect(inProgress.length).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it("CA-25: el ícono late dos veces, solo en el último tramo del avance, y vuelve a su tamaño", () => {
+    expect(heartbeatScale(0)).toBe(1);
+    expect(heartbeatScale(BEAT_FROM)).toBe(1);
+    expect(heartbeatScale(1)).toBeCloseTo(1);
+    const samples = Array.from({ length: 201 }, (_, i) => heartbeatScale(BEAT_FROM + ((1 - BEAT_FROM) * i) / 200));
+    const peaks = samples.filter((value, i) => i > 0 && i < samples.length - 1 && value > samples[i - 1] && value >= samples[i + 1] && value > 1.05);
     expect(peaks).toHaveLength(2);
-    expect(visible.scale[0]).toBe(1);
-    expect(visible.scale.at(-1)).toBe(1);
-    // CP-A11Y-005: menos de 3 pulsos por segundo; y espera a que termine el giro
-    expect(peaks.length / visible.transition.duration).toBeLessThanOrEqual(3);
-    expect((cardSpinReveal.visible as { transition: { duration: number } }).transition.duration).toBeLessThan(visible.transition.delay);
+    expect(Math.max(...samples)).toBeCloseTo(1 + BEAT_SCALE, 1);
   });
 
   it("CP-A11Y-003: con reducir movimiento todo es nítido y quieto: sin copias desenfocadas", () => {
@@ -276,14 +332,79 @@ describe("Benefits: revelado con el scroll (BR-074, HU-EXP-004 CA-25)", () => {
     expect(screen.getAllByRole("heading", { name: benefitsList[0].title })).toHaveLength(1);
   });
 
-  it("solo se animan propiedades baratas: transform y opacidad, nunca el radio de un desenfoque", () => {
-    const keys = [cardSpinReveal, cardBodyFocus, cardBlurFade, iconHeartbeat].flatMap((variants) =>
-      Object.values(variants).flatMap((variant) => Object.keys(variant as object)),
-    );
-    const allowed = ["opacity", "rotateY", "scale", "y", "transformPerspective", "transition"];
-
-    expect(keys.filter((key) => !allowed.includes(key))).toEqual([]);
-    expect(css).toMatch(/\.cardBlur\s*\{[^}]*filter:\s*blur\(\d+px\)/);
+  it("solo se animan propiedades baratas (transform y opacidad): el desenfoque es de radio fijo y fuerte", () => {
+    expect(css).toMatch(/\.cardBlur\s*\{[^}]*filter:\s*blur\((?:1[2-9]|[2-9]\d)px\)/);
     expect(css).not.toMatch(/transition:[^;]*filter/);
+    expect(source).not.toMatch(/useScrollAnimation|whileInView|animate=\{controls\}/);
+  });
+});
+
+// BR-074: en escritorio la sección queda fija en pantalla mientras se revela, y el scroll avanza la secuencia.
+describe("Benefits: sección fija mientras se revela (BR-074, HU-EXP-004 CA-25)", () => {
+  const desktop = css.match(/@media \(min-width: 769px\)\s*\{\s*\.pinned\s*\{([\s\S]*?)\n\}/)?.[0] ?? "";
+
+  const stubViewport = (wide: boolean) =>
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: wide && query === "(min-width: 769px)",
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }));
+
+  beforeEach(() => {
+    state.reducedMotion = false;
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      },
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("en escritorio, el contenedor alto fija la sección (la clase pinned)", () => {
+    stubViewport(true);
+    renderWithProviders(<Benefits />);
+
+    const section = document.getElementById("benefits")!;
+    expect(section.parentElement?.className).toMatch(/pinned/);
+  });
+
+  it("en móvil la sección no se fija: sube con la página", () => {
+    stubViewport(false);
+    renderWithProviders(<Benefits />);
+
+    expect(document.getElementById("benefits")!.parentElement?.className).not.toMatch(/pinned/);
+  });
+
+  it("CP-A11Y-003: con reducir movimiento tampoco se fija, aunque la pantalla sea ancha", () => {
+    stubViewport(true);
+    state.reducedMotion = true;
+    renderWithProviders(<Benefits />);
+
+    expect(document.getElementById("benefits")!.parentElement?.className).not.toMatch(/pinned/);
+  });
+
+  it("el CSS: contenedor de 280vh y sección pegada arriba a pantalla completa, solo desde 769 px", () => {
+    expect(desktop).toMatch(/\.pinned\s*\{[^}]*height:\s*280vh/);
+    expect(desktop).toMatch(/\.pinned > \.benefits\s*\{[^}]*position:\s*sticky/);
+    expect(desktop).toMatch(/\.pinned > \.benefits\s*\{[^}]*top:\s*0/);
+    expect(desktop).toMatch(/\.pinned > \.benefits\s*\{[^}]*height:\s*100vh/);
+  });
+
+  it("la navbar fija (80 px) no tapa el contenido de la sección fija", () => {
+    expect(desktop).toMatch(/\.pinned > \.benefits\s*\{[^}]*padding:\s*5rem 0 0/);
+  });
+
+  it("el recorrido fijo: primero los títulos y luego las tarjetas, una detrás de otra", () => {
+    expect(PIN_TITLE_END).toBe(0.2);
+    expect(source).toMatch(/offset:\s*\["start start",\s*"end end"\]/);
   });
 });

@@ -1,6 +1,7 @@
 import { createElement, type CSSProperties, type ElementType, type ReactNode } from "react";
 import { motion, useTransform, type MotionValue } from "framer-motion";
 import styles from "./FocusText.module.css";
+import { ramp, TEXT_FOCUS_FROM } from "./reveal";
 
 interface FocusTextProps {
   /** Etiqueta del texto: «h2» para el título, «p» para el subtítulo. */
@@ -20,14 +21,13 @@ interface FocusTextProps {
  * es barato, así que hay dos capas: el texto nítido y una copia ya desenfocada (radio fijo), y con el scroll solo se
  * cruzan sus opacidades. La copia es `aria-hidden`: los lectores de pantalla leen el texto una sola vez.
  */
-/** Rampa de 0 a 1 entre dos puntos del avance, fuera de ellos queda en 0 o en 1. */
-const ramp = (from: number, to: number) => (value: number) => Math.min(1, Math.max(0, (value - from) / (to - from)));
-
 export function FocusText({ as = "p", className, progress, blurPx = 8, enabled, children }: FocusTextProps) {
   // Con una función y no con rangos: framer acelera los rangos con la API de animaciones web (ScrollTimeline), que jsdom
   // no trae. Son dos escrituras de `opacity` por fotograma, sin pasar por React: el costo es mínimo.
-  const sharpOpacity = useTransform(progress, (value) => ramp(0.15, 1)(value));
-  const blurOpacity = useTransform(progress, (value) => 1 - ramp(0, 0.85)(value));
+  // La primera mitad del avance el texto se ve solo borroso; recién en la segunda se cruza con el nítido. Si el nítido
+  // empezara a aparecer antes, se vería un texto legible con un resplandor, no un texto desenfocado.
+  const sharpOpacity = useTransform(progress, (value) => ramp(TEXT_FOCUS_FROM, 1)(value));
+  const blurOpacity = useTransform(progress, (value) => 1 - ramp(TEXT_FOCUS_FROM, 1)(value));
 
   if (!enabled) return createElement(as, { className }, children);
 
