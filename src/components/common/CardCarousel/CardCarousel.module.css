@@ -1,5 +1,6 @@
 /*
- * Carrusel con snap (BR-070, HU-EXP-004 CA-21; escritorio, BR-073, CA-24). Sin `desktopVisible`, en escritorio el
+ * Carrusel con snap (BR-070, HU-EXP-004 CA-21; escritorio, BR-073, CA-24). Mobile-first (BR-083, ADR-009): el componente
+ * pone la clase `.snap` solo en móvil, así que su fila no hay que deshacerla en escritorio. Sin `desktopVisible`, en escritorio el
  * envoltorio no existe (`display: contents`) y la grilla de la sección queda como estaba. En móvil, el primer hijo (la
  * grilla de tarjetas de la sección) pasa a ser una fila desplazable y cada tarjeta, un paso del snap. La sección define
  * `--carousel-gutter` (el relleno lateral de su contenedor) para que la fila llegue hasta el borde de la pantalla y se
@@ -59,43 +60,41 @@
   display: none;
 }
 
-@media (max-width: 768px) {
-  .carousel {
-    display: block;
-  }
+.snap {
+  display: block;
+}
 
-  .carousel > :first-child {
-    display: flex;
-    gap: 1rem;
-    margin-inline: calc(var(--carousel-gutter, 0px) * -1);
-    padding-inline: var(--carousel-gutter, 0px);
-    scroll-padding-inline: var(--carousel-gutter, 0px);
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-  }
+.snap > :first-child {
+  display: flex;
+  gap: 1rem;
+  margin-inline: calc(var(--carousel-gutter, 0px) * -1);
+  padding-inline: var(--carousel-gutter, 0px);
+  scroll-padding-inline: var(--carousel-gutter, 0px);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
 
-  .carousel > :first-child::-webkit-scrollbar {
-    display: none;
-  }
+.snap > :first-child::-webkit-scrollbar {
+  display: none;
+}
 
-  .carousel > :first-child:focus-visible {
-    outline: 2px solid var(--color-brand-white);
-    outline-offset: -2px;
-  }
+.snap > :first-child:focus-visible {
+  outline: 2px solid var(--color-brand-white);
+  outline-offset: -2px;
+}
 
-  /* Cada tarjeta deja ver un trozo de la siguiente. `scale` (y no `transform`) porque framer escribe el transform en línea */
-  .carousel > :first-child > * {
-    flex: 0 0 calc(100% - 2.5rem);
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    transition: scale 0.3s ease;
-  }
+/* Cada tarjeta deja ver un trozo de la siguiente. `scale` (y no `transform`) porque framer escribe el transform en línea */
+.snap > :first-child > * {
+  flex: 0 0 calc(100% - 2.5rem);
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  transition: scale 0.3s ease;
+}
 
-  .carousel > :first-child > [data-active="false"] {
-    scale: 0.94;
-  }
+.snap > :first-child > [data-active="false"] {
+  scale: 0.94;
 }
 
 @media (min-width: 769px) {
@@ -182,7 +181,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .carousel > :first-child > *,
+  .snap > :first-child > *,
   .dot::before,
   .arrow {
     transition: none;

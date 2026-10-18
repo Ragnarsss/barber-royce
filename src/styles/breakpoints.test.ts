@@ -10,23 +10,6 @@ const WIDTHS: number[] = Object.values(BREAKPOINTS);
 /** Alto mínimo de las escenas fijas: el único corte de alto permitido. */
 const HEIGHTS = [720];
 
-/**
- * Archivos que todavía no migran a mobile-first. La lista solo se achica: cada ticket de grupo (`BR-080` a `BR-083`)
- * saca los suyos, y un archivo que ya cumple no puede quedarse en ella.
- */
-const PENDING = new Set([
-  // BR-081: secciones de la home
-  // BR-082: páginas internas
-  // BR-083: componentes comunes
-  "components/common/CardCarousel/CardCarousel.module.css",
-  "components/common/CardCarousel/CardCarousel.tsx",
-  "components/common/ErrorBoundary/CatastrophicError.module.css",
-  "components/common/Honeycomb/Honeycomb.module.css",
-  "components/common/HoneycombPage/HoneycombPage.module.css",
-  "components/common/ModalDialog/ModalDialog.module.css",
-  "components/team/BarberProfileDialog.module.css",
-]);
-
 /** Por qué una hoja de estilos incumple el patrón: un `max-width` o `max-height`, o un corte fuera del conjunto. */
 function cssViolations(css: string): string[] {
   const code = css.replace(/\/\*[\s\S]*?\*\//g, "");
@@ -66,16 +49,8 @@ const violations = new Map(
 );
 
 describe("Breakpoints mobile-first (BR-024, RNF-MANT-004)", () => {
-  it("ningún archivo fuera de la lista de pendientes usa max-width o un corte fuera del conjunto", () => {
-    const offenders = [...violations].filter(([path]) => !PENDING.has(path));
-
-    expect(offenders).toEqual([]);
-  });
-
-  it("la lista de pendientes solo se achica: un archivo que ya cumple sale de ella", () => {
-    const clean = [...PENDING].filter((path) => !violations.has(path));
-
-    expect(clean).toEqual([]);
+  it("ningún archivo de src usa max-width ni un corte fuera del conjunto (la migración de BR-080 a BR-083 terminó)", () => {
+    expect([...violations]).toEqual([]);
   });
 
   it("detecta max-width, cortes fuera del conjunto y la sintaxis de rango; acepta los del conjunto", () => {

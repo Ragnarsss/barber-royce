@@ -97,7 +97,7 @@
   color: var(--color-brand-white);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
   .content {
     gap: var(--spacing-10);
     padding-bottom: var(--spacing-section-desktop);

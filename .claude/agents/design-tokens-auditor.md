@@ -45,9 +45,12 @@ o `tailwind-merge`.
 - En TypeScript: media queries de ancho escritas como texto o `innerWidth`
   comparado a mano, en lugar de `MEDIA` de `src/config/breakpoints.ts`. Las
   listas `sizes` de las imágenes quedan fuera.
-- Separa lo que está en la lista de pendientes de
-  `src/styles/breakpoints.test.ts` (migración en curso, `BR-080`..`BR-083`)
-  de lo que es nuevo: lo nuevo es un hallazgo; lo pendiente, un conteo.
+- La migración a mobile-first terminó (`BR-080`..`BR-083`): cualquier
+  `max-width` de ancho o corte fuera del conjunto es un hallazgo nuevo (y el
+  test `src/styles/breakpoints.test.ts` ya debería estar fallando).
+- Un `!important` en un módulo de las secciones, o un estilo de móvil que
+  solo se deshace con otra regla, huele a un caso que debió decidir el
+  componente con `useMediaQuery(MEDIA.…)` (`ADR-009`).
 - Un componente que importa el `*.module.css` de otro componente o de una
   página.
 

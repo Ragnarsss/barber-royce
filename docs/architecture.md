@@ -80,9 +80,9 @@ descripción de cada una.
   `COLORS` en `config/constants.ts`) y unos 120 colores hex escritos a mano
   en los módulos (`BR-021`, `BR-022`).
 - **Mobile-first** con un conjunto cerrado de cortes (640, 769, 1025 y 1280
-  px; `ADR-009`). **Gap:** la migración del código existente está en curso
-  (`BR-080` a `BR-083`); los archivos sin migrar figuran en la lista de
-  pendientes de `src/styles/breakpoints.test.ts`.
+  px; `ADR-009`). Todo el CSS de `src/` ya está migrado (`BR-080` a
+  `BR-083`) y `src/styles/breakpoints.test.ts` falla con cualquier
+  `max-width` o corte fuera del conjunto.
 
 ## 5. Animación y scroll
 
@@ -362,9 +362,15 @@ No hay gestor de estado global (ADR-004).
      funcionan dentro de `@media`). En TypeScript, salen de `MEDIA`
      (`src/config/breakpoints.ts`) y se leen con `useMediaQuery`.
   4. `src/styles/breakpoints.test.ts` lo hace cumplir (`RNF-MANT-004`).
-     Mientras dure la migración (`BR-080` a `BR-083`), lleva una lista de
-     archivos pendientes que solo puede achicarse.
-  5. Fuera de la regla: las listas `sizes` de las imágenes, que eligen qué
+     Durante la migración (`BR-080` a `BR-083`) llevó una lista de archivos
+     pendientes que solo podía achicarse; ya quedó vacía y se quitó.
+  5. Lo que solo existe en móvil y no se puede deshacer desde un bloque de
+     escritorio (un `!important` sobre un estilo de framer, o reglas que
+     pisan las de otra sección) no va en una media query: lo decide el
+     componente con `useMediaQuery(MEDIA.…)` y una clase o un estilo que
+     solo existen en móvil (`CardCarousel`, `AnimatedGridSection`, `CTA1`,
+     `Hero`).
+  6. Fuera de la regla: las listas `sizes` de las imágenes, que eligen qué
      archivo descargar, y las media queries de preferencias (`hover`,
      `prefers-reduced-motion`, `print`).
 - **Por qué:** el usuario no quiere que la deuda se enrede más. La mayoría de

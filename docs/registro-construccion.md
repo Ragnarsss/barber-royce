@@ -1833,3 +1833,22 @@ Tres PR integraron el lote a `master`: #33 (BR-061, BR-069 a BR-077), #34 (tarje
 - 36 capturas de página completa antes y después (`/nosotros`, `/faq`, `/ubicacion` y `/servicios` a 320, 390, 640, 768, 769, 1024, 1025, 1280 y 1920 px) y una segunda corrida «antes» para medir el ruido.
 - **Resultado:** idénticas, salvo `/ubicacion` entre 969 y 1024 px (previsto) y el recuadro del mapa de Google (tercero; cambia entre cargas): fuera del mapa, 0 píxeles de diferencia a 1280 px, y tres capturas nuevas seguidas coincidieron entre sí.
 - Lint, tipos, build y 851 tests en verde. **Pendiente:** el preview de Vercel.
+
+<a id="br-083"></a>
+
+## BR-083 — Mobile-first: componentes comunes
+
+**Notas de construcción (2026-10-18):**
+- `Honeycomb`, `HoneycombPage`, `ModalDialog` y `BarberProfileDialog` ya eran `min-width`, pero en 768 px, que chocaba con el `max-width: 768px` del resto (a 768 px se mezclaban los dos): pasan a 769 px. `CatastrophicError` pasa su corte de 640 a mobile-first (base móvil y `min-width: 640px` con el ícono de 80 px escrito explícito, porque el CSS lo pisaba con 60 px y el SVG no admite deshacerlo con `revert`).
+- **`CardCarousel`:** sus reglas de móvil pisaban el `display` de la grilla de cada sección, y eso no se puede deshacer desde un bloque de escritorio. El componente ya sabía en JS si era móvil; ahora pone la clase `.snap` solo en móvil y las reglas de la fila cuelgan de ella. El estado `isMobile` pasa de un `useState` con su propio `matchMedia` y su efecto a `useMediaQuery(MEDIA.desktop)` negado; sin `matchMedia` (jsdom) no se asume móvil, como antes.
+- **Cambio visible previsto:** a 768 px exactos, la ficha del equipo y de los productos, y el panal, muestran la versión móvil completa (antes mezclaban el diseño de escritorio con el ancho de un móvil).
+- Con esto, `src/styles/breakpoints.test.ts` ya no necesita su lista de pendientes: queda vacía y se quitó, y el test falla con cualquier `max-width` o corte fuera del conjunto en todo `src/`.
+
+**Verificación:**
+- 38 capturas por corrida (home, `/equipo` y `/productos` de página completa a 320, 390, 640, 641, 768, 769, 1024, 1025, 1280 y 1920 px, y la ficha abierta de cada uno a 390, 768, 769 y 1280 px) contra el build del commit anterior (BR-082), servido aparte. La línea base no tuvo ruido entre dos corridas.
+- **Resultado:** idénticas byte a byte, salvo las cuatro de 768 px (previsto): `equipo-768`, `productos-768` y sus dos fichas.
+- Lint, tipos, build y 851 tests en verde. **No cubierto con captura:** la pantalla de error (`CatastrophicError`), que solo aparece ante un fallo. **Pendiente:** el preview de Vercel.
+
+## Cierre de la migración mobile-first (2026-10-18)
+
+`BR-024` (base) y `BR-080` a `BR-083` quedaron implementados y verificados en local; no se integraron todavía. Con ellos, todo el CSS de `src/` es mobile-first, el único cambio visible está acotado (footer y `/ubicacion` entre 969 y 1024 px; la ficha y el panal a 768 px exactos) y el test lo hace cumplir. Las fichas siguen en `Propuesta` hasta que el preview de Vercel las verifique.

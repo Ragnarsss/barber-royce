@@ -253,7 +253,7 @@
     inset 0 0 0 4px var(--surface);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
   .role {
     font-size: var(--font-size-sm);
   }
