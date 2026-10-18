@@ -1,7 +1,7 @@
 import { createElement, type CSSProperties, type ElementType, type ReactNode } from "react";
 import { motion, useTransform, type MotionValue } from "framer-motion";
 import styles from "./FocusText.module.css";
-import { ramp, TEXT_FOCUS_FROM } from "./reveal";
+import { ramp, TEXT_FOCUS_FROM } from "@/utils/scrollReveal";
 
 interface FocusTextProps {
   /** Etiqueta del texto: «h2» para el título, «p» para el subtítulo. */

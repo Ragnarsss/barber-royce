@@ -9,17 +9,10 @@
  * tercera. Cada tarjeta tiene su propio tramo del scroll, sin superponerse con el de las demás.
  */
 
-/** Rampa de 0 a 1 entre dos puntos del avance; fuera de ellos queda en 0 o en 1. */
-export const ramp = (from: number, to: number) => (value: number) => Math.min(1, Math.max(0, (value - from) / (to - from)));
+import { easeInOut, easeOut, ramp } from "@/utils/scrollReveal";
 
-/** Desaceleración suave: arranca rápido y se asienta. */
-export const easeOut = (t: number) => 1 - (1 - t) ** 3;
-
-/** Aceleración y desaceleración suaves: el giro arranca y frena con calma. */
-export const easeInOut = (t: number) => (t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2);
-
-/** Hasta dónde se ve solo la copia desenfocada del título y el subtítulo; desde ahí se cruzan con el texto nítido. */
-export const TEXT_FOCUS_FROM = 0.5;
+// La rampa, las curvas y el punto de enfoque de los textos son comunes con otras secciones (BR-075)
+export { easeInOut, easeOut, ramp, TEXT_FOCUS_FROM } from "@/utils/scrollReveal";
 
 /**
  * Con la sección fija en pantalla (escritorio), el primer quinto del tiempo en que está fija es para enfocar los

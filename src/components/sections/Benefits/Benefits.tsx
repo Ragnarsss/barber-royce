@@ -4,9 +4,9 @@ import styles from "./Benefits.module.css";
 import { useSiteText } from "@/content/useSiteContent";
 import { benefitsList } from "@/data/benefitsData";
 import { SITE } from "@/config/constants";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { usePinnedScene } from "@/hooks/usePinnedScene";
 import { BenefitCard } from "./BenefitCard";
-import { FocusText } from "./FocusText";
+import { FocusText } from "@/components/common/FocusText/FocusText";
 import { PIN_TITLE_END, photoLift, photoScale as pinnedPhotoScale, ramp } from "./reveal";
 import { CardCarousel } from "@/components/common/CardCarousel/CardCarousel";
 import barberBack954w from "@/assets/optimized/barber_background_954w.webp";
@@ -28,9 +28,8 @@ import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
 export function Benefits() {
   const siteText = useSiteText();
   const reducedMotion = useReducedMotion() ?? false;
-  const isDesktop = useMediaQuery("(min-width: 769px)");
-  const pinned = isDesktop && !reducedMotion;
-  const pinRef = useRef<HTMLDivElement>(null);
+  // Escena fija en escritorio (sin reducir movimiento): `progress` va de que se pega a que se suelta
+  const { pinRef, pinned, progress: pinProgress } = usePinnedScene();
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Escena ligada al scroll (scrub): de que la sección asoma por abajo a que queda centrada
@@ -49,7 +48,6 @@ export function Benefits() {
   const { scrollYProgress: freeCards } = useScroll({ target: gridRef, offset: ["start 80%", "start 20%"] });
   // Fijada (escritorio): una sola línea de tiempo mientras la sección está fija, de que se pega arriba a que se suelta.
   // Primero se enfocan los títulos y después, una tras otra, las tarjetas; mientras no le toca, cada una se ve borrosa.
-  const { scrollYProgress: pinProgress } = useScroll({ target: pinRef, offset: ["start start", "end end"] });
   const pinFocus = useTransform(pinProgress, (value) => ramp(0, PIN_TITLE_END)(value));
   const pinCards = useTransform(pinProgress, (value) => ramp(PIN_TITLE_END, 1)(value));
   const focusProgress = pinned ? pinFocus : freeFocus;

@@ -422,6 +422,8 @@ describe("Benefits: sección fija mientras se revela (BR-074, HU-EXP-004 CA-25)"
 
   it("el recorrido fijo: primero los títulos y luego las tarjetas, una detrás de otra", () => {
     expect(PIN_TITLE_END).toBe(0.2);
-    expect(source).toMatch(/offset:\s*\["start start",\s*"end end"\]/);
+    // La sección usa el hook compartido de la escena fija, que mide de que se pega a que se suelta
+    expect(source).toContain("usePinnedScene()");
+    expect(readFileSync(resolve(here, "../../../hooks/usePinnedScene.ts"), "utf8")).toMatch(/offset:\s*\["start start",\s*"end end"\]/);
   });
 });
