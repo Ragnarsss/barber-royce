@@ -2943,6 +2943,44 @@ Criterios de aceptación:
 2. El teclado y el toque siguen funcionando igual (CP-A11Y-002).
 3. Con reducir movimiento no hay smooth scroll ni cambio (CP-A11Y-003).
 
+
+#### BR-078 — Respaldados por los mejores en móvil: tarjeta con la forma de escritorio y revelado con desenfoque
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-075
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-29)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`
+
+**Origen (2026-10-18):** en móvil, «Respaldados por los mejores» muestra la tarjeta del
+testimonio como un rectángulo redondeado apilado bajo la foto, sin relación con la
+versión de escritorio (`SocialProof1.module.css`, `.testimonialCard` con
+`clip-path: none` en el bloque móvil), y sin el desenfoque de `BR-075`, que solo
+existe con la sección fija. El usuario pidió el desenfoque en la imagen y en el texto
+también en móvil, y que la tarjeta se vea con la forma y el solape de escritorio.
+
+Decisiones del usuario (2026-10-18): desenfoque en la foto y en el texto también en
+móvil; la tarjeta con la forma de escritorio, solapada con la foto.
+
+Alcance (solo `max-width: 768px`; el escritorio no cambia):
+1. La tarjeta conserva su forma de escritorio (el polígono), a la derecha y solapada
+   con la parte baja de la foto, que queda por encima, como en escritorio.
+2. El subtítulo, la foto y el texto del testimonio se ven borrosos y se enfocan con
+   el scroll, cada uno según dónde esté en la pantalla (en móvil no hay sección fija).
+   El título queda siempre nítido, igual que en escritorio.
+3. Misma técnica que `BR-075`: copias desenfocadas decorativas (`aria-hidden`) y solo
+   se cruza la opacidad; el desenfoque es de radio fijo.
+4. Con reducir movimiento: todo nítido, sin copias.
+
+Criterios de aceptación:
+1. En móvil, la tarjeta tiene la forma de escritorio y se solapa con la foto
+   (HU-EXP-004 CA-29).
+2. El subtítulo, la foto y el testimonio empiezan borrosos y se enfocan con el scroll;
+   el título no se desenfoca.
+3. Los lectores de pantalla leen cada texto una sola vez (CP-A11Y-002) y el texto de
+   la tarjeta cumple 4,5:1 (CP-A11Y-004).
+4. Con reducir movimiento no hay copias desenfocadas (CP-A11Y-003).
+5. En escritorio nada cambia.
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
