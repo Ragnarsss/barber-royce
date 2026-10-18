@@ -706,6 +706,11 @@ y confiar en que el servicio está a la altura.
   computador, When el corte revela la foto y la tarjeta, Then un lens flare con
   destellos hexagonales viaja con el borde del corte y se apaga al terminar, sin
   líneas láser; con reducir movimiento no hay flare.
+- CA-28 (2026-10-17, `BR-077`): Given paso por una escena fija (Beneficios o
+  Respaldados por los mejores) con la rueda o el trackpad, When giro muy rápido,
+  Then el scroll no cruza el recorrido en un instante: avanza con un límite de
+  velocidad y un deslizamiento más largo, para que se aprecie el efecto; fuera de
+  las escenas fijas el scroll es el de siempre.
 
 ---
 

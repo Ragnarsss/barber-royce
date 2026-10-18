@@ -2900,6 +2900,45 @@ Criterios de aceptación:
 6. CLS y TBT no empeoran frente a `master` con el mismo `.env`, midiendo alternado
    (CP-PERF-003).
 
+
+#### BR-077 — Escenas fijas: scroll más pesado y recorrido más largo
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-074, BR-075
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-28)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
+
+**Origen (2026-10-17):** al probar las escenas fijas (`BR-074`, `BR-075`), el usuario
+siente que el scroll se puede pasar muy rápido y entonces el efecto no se nota. Propuso
+hacer más «pesado» el scroll aprovechando el smooth de Lenis. Con un trackpad o una
+rueda con inercia, una sola pasada de dedo cruza todo el recorrido fijo (unos 1.600 a
+1.800 px) en una fracción de segundo.
+
+Decisión del usuario (2026-10-17): hacer el scroll más pesado dentro de las escenas
+fijas, con Lenis. Por defecto (no se eligió): solo con la rueda o el trackpad y solo
+mientras la sección está fija; el resto de la página conserva el scroll de siempre.
+
+Alcance (solo escritorio, mientras una escena está fija):
+1. El recorrido fijo se alarga: más scroll por efecto, para que se aprecie.
+2. Límite de velocidad del scroll con la rueda o el trackpad: dentro del recorrido, el
+   scroll avanza como máximo a una velocidad fija, con una ráfaga pequeña de margen, y
+   el movimiento llega con un deslizamiento más largo. Se usa el gancho público
+   `virtualScroll` de Lenis, que se instala al entrar al recorrido y se retira al salir;
+   el multiplicador interno de la rueda no se toca.
+3. El teclado, el arrastre de la barra y el toque no se limitan (no es el caso de uso).
+4. Los valores (velocidad máxima, ráfaga, duración, alto del recorrido) quedan en un
+   solo lugar para ajustarlos a ojo.
+5. Sin Lenis (reducir movimiento) no cambia nada: ya no hay escenas fijas.
+
+Criterios de aceptación:
+1. Con la rueda, cruzar todo el recorrido fijo toma al menos unos 3 segundos aunque se
+   gire muy rápido (HU-EXP-004 CA-28).
+2. Fuera de las escenas fijas, el scroll es el de siempre.
+3. Al salir del recorrido, el límite se retira (con dos escenas seguidas no queda uno
+   pegado de la anterior).
+4. El teclado y el toque siguen funcionando igual (CP-A11Y-002).
+5. Con reducir movimiento no hay límite (CP-A11Y-003).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2997,6 +3036,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-074 | Beneficios: revelado con el scroll (enfoque, giro de 360° y latido) | K | P3 | M | Propuesta | BR-069 |
 | BR-075 | Respaldados por los mejores: escena fija, corte láser y revelado con el scroll | K | P3 | M | Propuesta | BR-062, BR-074 |
 | BR-076 | Respaldados por los mejores: lens flare en lugar de los láseres | K | P3 | M | Propuesta | BR-075 |
+| BR-077 | Escenas fijas: scroll más pesado y recorrido más largo | K | P3 | S | Propuesta | BR-074, BR-075 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |
