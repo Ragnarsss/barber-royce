@@ -27,6 +27,24 @@ export const TEXT_FOCUS_FROM = 0.5;
  */
 export const PIN_TITLE_END = 0.2;
 
+/**
+ * Zoom de la foto de fondo: parte un 50 % más grande y se asienta a su tamaño en el primer 60 % del tiempo en que la
+ * sección está fija, con una desaceleración marcada: el alejamiento es brusco al comienzo y se nota cómo se asienta.
+ */
+export const PHOTO_ZOOM = 0.5;
+export const PHOTO_SETTLE_END = 0.6;
+/** Cuánto sube la foto (en % de su alto) al partir; baja a 0 junto con el zoom. */
+export const PHOTO_LIFT = 6;
+
+/** Cuánto falta para que la foto termine de asentarse: 1 al comienzo, 0 cuando ya está en su tamaño. */
+const photoRemaining = (progress: number) => 1 - easeOut(ramp(0, PHOTO_SETTLE_END)(progress));
+
+/** Escala de la foto con la sección fija: de 1,5 a 1. */
+export const photoScale = (progress: number) => 1 + PHOTO_ZOOM * photoRemaining(progress);
+
+/** Desplazamiento vertical de la foto con la sección fija, en %: de -6 % a 0. */
+export const photoLift = (progress: number) => `${-PHOTO_LIFT * photoRemaining(progress)}%`;
+
 /** Número de tarjetas de la grilla: cada una recibe un tercio del avance, uno detrás de otro y sin superponerse. */
 const CARDS = 3;
 

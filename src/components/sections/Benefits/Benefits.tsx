@@ -7,7 +7,7 @@ import { SITE } from "@/config/constants";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { BenefitCard } from "./BenefitCard";
 import { FocusText } from "./FocusText";
-import { PIN_TITLE_END, ramp } from "./reveal";
+import { PIN_TITLE_END, photoLift, photoScale as pinnedPhotoScale, ramp } from "./reveal";
 import { CardCarousel } from "@/components/common/CardCarousel/CardCarousel";
 import barberBack954w from "@/assets/optimized/barber_background_954w.webp";
 import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
@@ -40,8 +40,9 @@ export function Benefits() {
   // 18,75 % de su alto (30 % de la sección) hacia abajo y lo que corresponde en x para seguir la diagonal
   const bandX = useTransform(scrollYProgress, [0, 1], ["-10%", "0%"]);
   const bandY = useTransform(scrollYProgress, [0, 1], ["18.75%", "0%"]);
-  const photoScale = useTransform(scrollYProgress, [0, 1], [1.14, 1]);
-  const photoY = useTransform(scrollYProgress, [0, 1], ["-4%", "0%"]);
+  // Sin fijar (móvil): la foto parte un 40 % más grande y se asienta mientras la sección sube
+  const freePhotoScale = useTransform(scrollYProgress, [0, 1], [1.4, 1]);
+  const freePhotoY = useTransform(scrollYProgress, [0, 1], ["-6%", "0%"]);
   // Sin fijar (móvil): el enfoque del título y el subtítulo va desde que la sección asoma por abajo hasta que sube al
   // 45 %, y el de las tarjetas, una tras otra, desde que el borde de la grilla está al 80 % hasta que sube al 20 %.
   const { scrollYProgress: freeFocus } = useScroll({ target: sectionRef, offset: ["start 100%", "start 45%"] });
@@ -53,6 +54,12 @@ export function Benefits() {
   const pinCards = useTransform(pinProgress, (value) => ramp(PIN_TITLE_END, 1)(value));
   const focusProgress = pinned ? pinFocus : freeFocus;
   const cardsProgress = pinned ? pinCards : freeCards;
+  // Fijada: la foto parte un 50 % más grande y se asienta, con desaceleración marcada, durante el primer 60 % del tiempo
+  // en que la sección está fija, para que el alejamiento se note mientras la pantalla está quieta
+  const pinPhotoScale = useTransform(pinProgress, pinnedPhotoScale);
+  const pinPhotoY = useTransform(pinProgress, photoLift);
+  const photoScale = pinned ? pinPhotoScale : freePhotoScale;
+  const photoY = pinned ? pinPhotoY : freePhotoY;
 
   return (
     <div ref={pinRef} className={`${styles.pin} ${pinned ? styles.pinned : ""}`}>

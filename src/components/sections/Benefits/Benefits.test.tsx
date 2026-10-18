@@ -8,6 +8,8 @@ import { benefitsList } from "@/data/benefitsData";
 import {
   BEAT_FROM,
   BEAT_SCALE,
+  PHOTO_SETTLE_END,
+  PHOTO_ZOOM,
   PIN_TITLE_END,
   SPIN_END,
   TEXT_FOCUS_FROM,
@@ -15,6 +17,8 @@ import {
   cardScale,
   drawProgress,
   heartbeatScale,
+  photoLift,
+  photoScale,
   sharpness,
   spinAngle,
 } from "./reveal";
@@ -290,6 +294,19 @@ describe("Benefits: revelado con el scroll (BR-074, HU-EXP-004 CA-25)", () => {
 
   it("el título y el subtítulo se ven solo borrosos hasta la mitad del avance y recién después se enfocan", () => {
     expect(TEXT_FOCUS_FROM).toBe(0.5);
+  });
+
+  it("la foto parte un 50 % más grande y se asienta con desaceleración marcada en el primer 60 % de la sección fija", () => {
+    expect(PHOTO_ZOOM).toBe(0.5);
+    expect(photoScale(0)).toBeCloseTo(1.5);
+    expect(photoScale(PHOTO_SETTLE_END)).toBeCloseTo(1);
+    expect(photoScale(1)).toBe(1);
+    // Brusco al comienzo: en el primer 20 % del asentamiento ya recorrió casi la mitad del zoom
+    expect(photoScale(PHOTO_SETTLE_END * 0.2)).toBeLessThan(1.3);
+    const scales = [0, 0.1, 0.2, 0.3, 0.45, 0.6, 1].map(photoScale);
+    expect(scales).toEqual([...scales].sort((a, b) => b - a));
+    expect(photoLift(0)).toBe("-6%");
+    expect(photoLift(1)).toBe("0%");
   });
 
   it("CA-25: las tarjetas se revelan una tras otra, cada una en su tramo, sin superponerse", () => {
