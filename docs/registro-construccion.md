@@ -1623,3 +1623,150 @@ El PR #31 integró a `master` el catálogo de productos en panal, con su ficha, 
 - La hoja de `productos` trae 34 copias de «Kit Completo» (ids `kit-completo-N`), seguramente de prueba; hay que borrarlas antes de publicar el catálogo real.
 - Regresión aceptada por escrito: LCP de `/productos` 3,9 → 5,0 s y TBT 78 → 150 ms (`BR-067`).
 - Limpieza de ramas: se borraron las 19 remotas y las 49 locales ya fusionadas, y un experimento antiguo de privacidad (`fix/br-044-privacidad-visible`, un *Revert* que habría deshecho el comportamiento actual de `/privacidad`; su commit era `2f817fe`). Queda `feat/br-061-hero-cta1-mobile`, de otra sesión.
+
+<a id="br-061"></a>
+
+## BR-061 — Hero y CTA1 en móvil: fieles al Figma
+
+**Notas de construcción (2026-10-17):**
+- Referencia: los Figma «Resumen Mobile» y «CTA 1 Mobile» (390 px). Decisiones del usuario: el «ROYCE» gigante se mantiene, el hero no lleva botón (la reserva va en la navbar) y las tarjetas compactas ocupan el lugar del botón; en CTA1 se mantiene «Conocer Servicios».
+- **Navbar móvil:** hamburguesa roja a la izquierda, marca en dos líneas (ROYCE / BARBERÍA) y «Agendar Sesión» como botón blanco visible. Se conserva el `min-height` de la navbar: el `Layout` reserva 80 px arriba y una navbar más baja dejaba una franja blanca.
+- **Hero:** foto móvil propia a pantalla completa (`hero_mobile`, exportada por el usuario sin velo y optimizada a 780 y 1170 px), velo por CSS, línea blanca y tarjetas compactas. El encuadre de la foto (`object-position` 50 %) lo fijó el usuario probándolo a mano. El preload del LCP se actualizó en `index.html` (con su test, `lcpPreload.test.ts`).
+- **CTA1:** sin hexágonos ni barras de luz en móvil; el rostro grande de fondo a la derecha es la foto del Hero de escritorio, en el mismo `<picture>` y con los mismos archivos. `max-width: none` en la foto: la regla global de imágenes la limitaba al 100 % y el rostro no crecía. La primera frase del subtítulo va en negrita solo en móvil (`splitLead`, sobre el mismo texto de la hoja).
+- Escritorio sin cambios: todo vive en `@media (max-width: 768px)`.
+
+**Verificación:** tests de `Hero`, `CTA1` y del preload escritos con cada cambio; capturas a 390 y 1440 px en cada iteración con el usuario.
+
+<a id="br-069"></a>
+
+## BR-069 — Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas
+
+**Notas de construcción (2026-10-17):**
+- Las tarjetas de Beneficios y Reseñas adoptan el vidrio del Hero (fondo translúcido, borde fino y esquinas cortadas). Los valores comunes pasan a `src/styles/tokens/cards.css`, importado en `tokens/index.css`, y el Hero los consume también (`cards.test.ts` lo fija).
+- Reseñas deja de usar el componente `Card` (`@/components/ui/card`) y pasa a un `<article>` propio.
+- Las estrellas rojas sobre el vidrio quedan en ~3,4:1: son gráficas (mínimo 3:1), no texto.
+- Decisión del usuario: la imagen puente de Beneficios se queda, porque une las dos secciones.
+
+**Verificación:** tests de cada sección y de los tokens compartidos; capturas en móvil y escritorio.
+
+<a id="br-070"></a>
+
+## BR-070 — Beneficios y Reseñas en móvil: carrusel con snap
+
+**Notas de construcción (2026-10-17):**
+- `CardCarousel` en `components/common/`: pista con `scroll-snap`, región enfocable con nombre (`label`), puntos que llevan a cada tarjeta y tarjeta activa por `IntersectionObserver` (nunca por evento de scroll). `AnimatedGridSection` gana `carouselLabel`.
+- Ir a una tarjeta usa `track.scrollBy`: `scrollIntoView` desplazaba también la sección (que tiene `overflow: hidden`).
+- `width: 100%` en el contenedor: dentro de una columna flex con márgenes automáticos se encogía al contenido.
+- El conteo de tarjetas se actualiza en el callback del observador; un `setState` síncrono en el efecto no pasaba el lint.
+
+**Verificación:** `CardCarousel.test.tsx` con el observador simulado; capturas a 390 px.
+
+<a id="br-071"></a>
+
+## BR-071 — Beneficios en móvil: foto puente con dos cuñas rojas
+
+**Notas de construcción (2026-10-17):**
+- Dos cuñas rojas en espejo sobre la foto puente. A pedido del usuario, la cuña de arriba crece hasta la mitad de la foto (`--wedge-top-height: 24%`) y se probó la foto como fondo de toda la sección en móvil, que es lo que quedó.
+- El commit `3e637a3` entró con tests en rojo (un comando encadenado con `;` commiteó igual); `d7e20b3` los corrigió en el siguiente paso.
+
+**Verificación:** tests de las cuñas en `Benefits.test.tsx`; capturas a 390 px.
+
+<a id="br-072"></a>
+
+## BR-072 — Innovación y calidad: tarjetas de vidrio y carrusel en móvil
+
+**Notas de construcción (2026-10-17):**
+- Features usa los mismos tokens de vidrio de `BR-069` y el `CardCarousel` de `BR-070` en móvil; en escritorio sigue en grilla.
+
+**Verificación:** `Features.test.tsx`; capturas a 390 y 1440 px.
+
+<a id="br-073"></a>
+
+## BR-073 — Reseñas: carrusel también en escritorio, con 3 visibles y profundidad
+
+**Notas de construcción (2026-10-17):**
+- `CardCarousel` acepta `desktopVisible`: en escritorio muestra 3 tarjetas, con flechas y arrastre con el mouse. Decisión del usuario: profundidad ligada al scroll del carrusel (`animation-timeline: view(inline)`), con las tarjetas laterales más chicas; `scale` y `translate` como propiedades sueltas, porque framer pisa el `transform`.
+- Se sumaron 2 reseñas de ejemplo (5 en total, como pidió el usuario para ver el carrusel completo). Son provisorias y lo dice un comentario en `reviewsData.ts`: las reemplazan las de Google (`BR-052`).
+
+**Verificación:** tests del carrusel (flechas, puntos, arrastre); capturas a 1440 px.
+
+<a id="br-074"></a>
+
+## BR-074 — Beneficios: revelado con el scroll (enfoque, giro de 360° y latido)
+
+**Notas de construcción (2026-10-17 y 2026-10-18):**
+- Secuencia pedida por el usuario: aparecen los títulos, todo borroso; la primera tarjeta se enfoca, gira y late mientras las otras siguen borrosas; luego la segunda; al final la tercera. Todo **ligado al scroll** y con la sección fija mientras ocurre.
+- `usePinnedScene` (en `hooks/`) da la escena fija solo en escritorio (≥ 769 px) y sin reducir movimiento. Beneficios mide 280vh y su contenido queda `sticky`.
+- `reveal.ts` reparte el avance (`cardProgress`, `spinAngle`, `cardScale`, `sharpness`, `drawProgress`, `heartbeatScale`, `photoScale`). El ícono se dibuja con `pathLength` ligado al avance.
+- **Desenfoque:** no se anima el radio de un `filter: blur`. Hay una copia desenfocada fija (`aria-hidden`) y se cruzan las opacidades (`FocusText`). Los `useTransform` son de función: los de rango sobre opacidad framer los acelera con WAAPI y jsdom no tiene `element.animate`.
+- Decisiones del usuario durante la iteración: el desenfoque de entrada más marcado, la foto de fondo con más zoom para que el asentamiento se note, y los `h2` siempre nítidos.
+- **2026-10-18 (PR #34):** en móvil las tarjetas quedan estáticas, sin desenfoque, giro ni latido (`animated={pinned}`), a pedido del usuario.
+- `textsWiring.test.tsx` cuenta textos sin los nodos `aria-hidden`, porque las copias desenfocadas los duplicaban.
+
+**Verificación:** tests de `reveal.ts`, `FocusText` y de la sección; capturas por avance del scroll a 1440 px y estáticas a 390 px. El movimiento lo revisó el usuario en producción.
+
+<a id="br-075"></a>
+
+## BR-075 — Respaldados por los mejores: escena fija, corte láser y revelado con el scroll
+
+**Notas de construcción (2026-10-17):**
+- `FocusText`, `ramp`/`easeOut` (`utils/scrollReveal.ts`) y `usePinnedScene` pasan a lugares compartidos para usarlos en las dos escenas.
+- SocialProof1 queda fija en escritorio: primero el corte (luego reemplazado por `BR-076`) y después se revelan título, foto y testimonio con desenfoque. El testimonio se enfoca después de la foto (`TEXT_FOCUS_FROM`), a pedido del usuario, porque se veía al mismo tiempo.
+
+**Verificación:** tests de la línea de tiempo y de la sección; capturas por avance a 1440 px.
+
+<a id="br-076"></a>
+
+## BR-076 — Respaldados por los mejores: lens flare en lugar de los láseres
+
+**Notas de construcción (2026-10-17):**
+- Decisión del usuario: solo en escritorio. `LensFlare` recorre el borde de los cortes con fantasmas hexagonales (`trail`, `tone`). Los tramos viven en `sceneTimeline.ts` (`CUT`, `FLARE`, `REVEAL`), con su test de orden y solapes.
+- Sin destellos que superen 3 por segundo (`RNF-A11Y-005`); con reducir movimiento no se monta.
+
+**Verificación:** `sceneTimeline.test.ts` y tests de la sección; capturas por avance a 1440 px. El movimiento lo revisó el usuario.
+
+<a id="br-077"></a>
+
+## BR-077 — Escenas fijas: scroll más pesado (la rueda más lenta en toda la página)
+
+**Notas de construcción (2026-10-18):**
+- Primer intento: límite de velocidad propio en las escenas fijas (`heavyScroll`) y recorridos más largos. Lo revirtió el usuario (`910b463`).
+- Lo que quedó: `wheelMultiplier: 0.6` al crear Lenis (`useCreateLenis.ts`), en toda la página. Es un punto medio pedido por el usuario.
+
+**Verificación:** `useCreateLenis.test.tsx`; la sensación la revisó el usuario en producción (PR #33).
+
+<a id="br-078"></a>
+
+## BR-078 — Respaldados por los mejores en móvil: tarjeta con la forma de escritorio y revelado con desenfoque
+
+**Notas de construcción (2026-10-18):**
+- En móvil la tarjeta del testimonio conserva el `clip-path` poligonal de escritorio, más angosta (`min(88vw, 23rem)`) y solapada con la foto (margen negativo arriba).
+- Sin escena fija en móvil, el desenfoque usa un `useScroll` libre por elemento (subtítulo, foto, cita); en escritorio sigue el avance de la escena.
+- **Foto:** cruzar dos capas translúcidas dejaba ver el marco rojo. La copia desenfocada va abajo y opaca, y la nítida aparece encima; la desenfocada se apaga solo al llegar a 1.
+- El test del `alt` busca `img[alt]:not([alt=''])`: la primera imagen ahora es la copia sin texto alternativo.
+
+**Verificación:** tests de la sección; capturas a 390 px por avance del scroll; producción (PR #35).
+
+<a id="br-079"></a>
+
+## BR-079 — Hero y CTA1: zoom-in marcado de las fotos con el scroll
+
+**Notas de construcción (2026-10-18):**
+- Hero: `scale` de 1 a 1,4 (escritorio) o 1,5 (móvil) con el avance de la sección, desde el rostro (`heroZoom.ts`). Se quitó el `transform: none !important` móvil, que anulaba el zoom; el desplazamiento vertical sigue solo en escritorio.
+- CTA1: `scale` de 1 a 1,35 o 1,4 entre el 10 % y el 85 % del cruce de la sección (`ctaZoom.ts`), en el `motion.picture`.
+- Con reducir movimiento no hay zoom. Todo con `MotionValue`, sin `setState` por scroll.
+
+**Verificación:** tests de ambos componentes (rango del zoom, punto de apoyo, reducir movimiento); producción (PR #35): el bundle publicado trae los puntos de apoyo nuevos.
+
+## Cierre de BR-061 y BR-069 a BR-079 (2026-10-18)
+
+Tres PR integraron el lote a `master`: #33 (BR-061, BR-069 a BR-077), #34 (tarjetas estáticas de Beneficios en móvil, BR-074) y #35 (BR-078 y BR-079). El CI pasó en los tres. El deploy de producción de `df6aae5` quedó en `success` y el usuario revisó el sitio en `barber-royce.vercel.app` y dio el visto bueno para cerrar los doce tickets.
+
+**Mediciones (`RNF-PERF-002`, `RNF-PERF-003`):**
+- Lighthouse móvil de la home en producción, mediana de 3: LCP 5,72 s · CLS 0 · TBT 120 ms.
+- Sin línea base anotada al iniciar los tickets, se comparó en local el build anterior al lote (`8e0a568`) contra el actual (`df6aae5`), los dos con el mismo `.env` y corridas alternadas ×3: **LCP 6,37 → 6,24 s · TBT 148 → 127 ms · CLS 0 → 0.** El lote no empeora nada. CLS y TBT cumplen sus umbrales.
+- **El LCP no cumple `RNF-PERF-001` (≤ 2,5 s), antes ni después del lote.** El elemento LCP es la foto del hero (`#hero picture img`). Es deuda previa, no la causa este lote; queda como hallazgo P0 en el handoff.
+
+**Pendientes que no bloquean el cierre:**
+- Las 5 reseñas son de ejemplo (`reviewsData.ts`); las reemplaza `BR-052`.
+- El handoff de hallazgos de la vista móvil y la auditoría responsive quedan en `docs/handoff-movil-2026-10-18.md`, como insumo para tickets nuevos.

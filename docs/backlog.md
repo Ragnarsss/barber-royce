@@ -2429,7 +2429,7 @@ Criterios de aceptación:
 #### BR-061 — Hero y CTA1 en móvil: fieles al Figma
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-056, BR-058, BR-059
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-061-hero-cta1-mobile` → master, PR #33; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-13)
 - RF/RNF: `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
 
@@ -2506,11 +2506,13 @@ Criterios de aceptación:
 5. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
    midiendo alternado (CP-PERF-002, CP-PERF-003).
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-061).
+
 
 #### BR-069 — Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-056, BR-064
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-069-tarjetas-unificadas` → master, PR #33; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-20)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
 
@@ -2556,16 +2558,13 @@ Criterios de aceptación:
 5. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
    midiendo alternado (CP-PERF-003).
 
-**Notas de construcción:** las tarjetas de «Reseñas» dejan de usar el
-componente `Card` (`@/components/ui/card`) y pasan a un `<article>` propio.
-Las estrellas rojas sobre el vidrio quedan en ~3,4:1: son gráficas (mínimo 3:1),
-no texto.
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-069).
 
 
 #### BR-070 — Beneficios y Reseñas en móvil: carrusel con snap
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-069
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-070-carrusel-snap` → master, PR #33; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-21)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
 
@@ -2610,11 +2609,13 @@ Criterios de aceptación:
 7. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
    midiendo alternado (CP-PERF-003).
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-070).
+
 
 #### BR-071 — Beneficios en móvil: foto puente con dos cuñas rojas
 
 - Prioridad: P3 · Esfuerzo: XS · Depende de: BR-064
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-071-foto-puente` → master, PR #33; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-22)
 - RF/RNF: `RNF-PERF-003`, `RNF-DATOS-001`
 
@@ -2650,11 +2651,13 @@ Criterios de aceptación:
 2. En escritorio nada cambia.
 3. Sin colores escritos a mano (test; ADR-002).
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-071).
+
 
 #### BR-072 — Innovación y calidad: tarjetas de vidrio y carrusel en móvil
 
 - Prioridad: P3 · Esfuerzo: S · Depende de: BR-069, BR-070
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-072-innovacion-tarjetas` → master, PR #33; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-23)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
 
@@ -2693,11 +2696,13 @@ Criterios de aceptación:
 6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`,
    midiendo alternado (CP-PERF-003).
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-072).
+
 
 #### BR-073 — Reseñas: carrusel también en escritorio, con 3 visibles y profundidad
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-070
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-073-resenas-carrusel-escritorio` → master, PR #33; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-24)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-001`
 
@@ -2748,11 +2753,13 @@ Criterios de aceptación:
 7. CLS y TBT no empeoran frente a `master` con el mismo `.env`, midiendo alternado
    (CP-PERF-003).
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-073).
+
 
 #### BR-074 — Beneficios: revelado con el scroll (enfoque, giro de 360° y latido)
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-069
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-074-beneficios-revelado` → master, PR #33 y `fix/br-074-tarjetas-estaticas-en-movil`, PR #34; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-25)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-A11Y-005`
 
@@ -2819,11 +2826,13 @@ Criterios de aceptación:
 6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`, midiendo
    alternado (CP-PERF-003).
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-074).
+
 
 #### BR-075 — Respaldados por los mejores: escena fija, corte láser y revelado con el scroll
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-062, BR-074
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-075-prueba-social-fija` → master, PR #33; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-26)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-005`
 
@@ -2863,11 +2872,13 @@ Criterios de aceptación:
 6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`, midiendo
    alternado (CP-PERF-003).
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-075).
+
 
 #### BR-076 — Respaldados por los mejores: lens flare en lugar de los láseres
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-075
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-076-lens-flare` → master, PR #33; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-27)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
 
@@ -2904,11 +2915,13 @@ Criterios de aceptación:
 6. CLS y TBT no empeoran frente a `master` con el mismo `.env`, midiendo alternado
    (CP-PERF-003).
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-076).
+
 
 #### BR-077 — Escenas fijas: scroll más pesado (la rueda más lenta en toda la página)
 
 - Prioridad: P3 · Esfuerzo: XS · Depende de: BR-074, BR-075
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-077-scroll-pesado` → master, PR #33; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-28)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
 
@@ -2943,11 +2956,13 @@ Criterios de aceptación:
 2. El teclado y el toque siguen funcionando igual (CP-A11Y-002).
 3. Con reducir movimiento no hay smooth scroll ni cambio (CP-A11Y-003).
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-077).
+
 
 #### BR-078 — Respaldados por los mejores en móvil: tarjeta con la forma de escritorio y revelado con desenfoque
 
 - Prioridad: P3 · Esfuerzo: S · Depende de: BR-075
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-078-prueba-social-movil` → master, PR #35; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-29)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-004`
 
@@ -2981,11 +2996,13 @@ Criterios de aceptación:
 4. Con reducir movimiento no hay copias desenfocadas (CP-A11Y-003).
 5. En escritorio nada cambia.
 
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-078).
+
 
 #### BR-079 — Hero y CTA1: zoom-in marcado de las fotos con el scroll
 
 - Prioridad: P3 · Esfuerzo: XS · Depende de: BR-061
-- Estado: Propuesta
+- Estado: Hecho (2026-10-18, rama `feat/br-079-hero-zoom-in` → master, PR #35; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-30)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
 
@@ -3022,6 +3039,8 @@ Criterios de aceptación:
 3. Con reducir movimiento la foto no hace zoom (CP-A11Y-003).
 4. TBT y CLS móviles no empeoran frente a `master` con el mismo `.env`
    (CP-PERF-003).
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-079).
+
 
 ---
 
@@ -3111,18 +3130,18 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | Hecho | BR-054, BR-056 |
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | Hecho | BR-058 |
 | BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | Hecho | BR-058 |
-| BR-061 | Hero y CTA1 en móvil: fieles al Figma | K | P3 | M | Propuesta | BR-056, BR-058, BR-059 |
-| BR-069 | Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas | K | P3 | M | Propuesta | BR-056, BR-064 |
-| BR-070 | Beneficios y Reseñas en móvil: carrusel con snap | K | P3 | M | Propuesta | BR-069 |
-| BR-071 | Beneficios en móvil: foto puente con dos cuñas rojas | K | P3 | XS | Propuesta | BR-064 |
-| BR-072 | Innovación y calidad: tarjetas de vidrio y carrusel en móvil | K | P3 | S | Propuesta | BR-069, BR-070 |
-| BR-073 | Reseñas: carrusel también en escritorio, con 3 visibles y profundidad | K | P3 | M | Propuesta | BR-070 |
-| BR-074 | Beneficios: revelado con el scroll (enfoque, giro de 360° y latido) | K | P3 | M | Propuesta | BR-069 |
-| BR-075 | Respaldados por los mejores: escena fija, corte láser y revelado con el scroll | K | P3 | M | Propuesta | BR-062, BR-074 |
-| BR-076 | Respaldados por los mejores: lens flare en lugar de los láseres | K | P3 | M | Propuesta | BR-075 |
-| BR-077 | Escenas fijas: scroll más pesado (la rueda más lenta en toda la página) | K | P3 | XS | Propuesta | BR-074, BR-075 |
-| BR-078 | Respaldados por los mejores en móvil: tarjeta con la forma de escritorio y revelado con desenfoque | K | P3 | S | Propuesta | BR-075 |
-| BR-079 | Hero y CTA1: zoom-in marcado de las fotos con el scroll | K | P3 | XS | Propuesta | BR-061 |
+| BR-061 | Hero y CTA1 en móvil: fieles al Figma | K | P3 | M | Hecho | BR-056, BR-058, BR-059 |
+| BR-069 | Tarjetas unificadas con el vidrio del Hero: Beneficios y Reseñas | K | P3 | M | Hecho | BR-056, BR-064 |
+| BR-070 | Beneficios y Reseñas en móvil: carrusel con snap | K | P3 | M | Hecho | BR-069 |
+| BR-071 | Beneficios en móvil: foto puente con dos cuñas rojas | K | P3 | XS | Hecho | BR-064 |
+| BR-072 | Innovación y calidad: tarjetas de vidrio y carrusel en móvil | K | P3 | S | Hecho | BR-069, BR-070 |
+| BR-073 | Reseñas: carrusel también en escritorio, con 3 visibles y profundidad | K | P3 | M | Hecho | BR-070 |
+| BR-074 | Beneficios: revelado con el scroll (enfoque, giro de 360° y latido) | K | P3 | M | Hecho | BR-069 |
+| BR-075 | Respaldados por los mejores: escena fija, corte láser y revelado con el scroll | K | P3 | M | Hecho | BR-062, BR-074 |
+| BR-076 | Respaldados por los mejores: lens flare en lugar de los láseres | K | P3 | M | Hecho | BR-075 |
+| BR-077 | Escenas fijas: scroll más pesado (la rueda más lenta en toda la página) | K | P3 | XS | Hecho | BR-074, BR-075 |
+| BR-078 | Respaldados por los mejores en móvil: tarjeta con la forma de escritorio y revelado con desenfoque | K | P3 | S | Hecho | BR-075 |
+| BR-079 | Hero y CTA1: zoom-in marcado de las fotos con el scroll | K | P3 | XS | Hecho | BR-061 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |
