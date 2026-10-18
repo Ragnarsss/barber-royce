@@ -10,7 +10,7 @@
 
 @media (min-width: 769px) {
   .pinned {
-    height: 300vh;
+    height: 380vh;
   }
 
   .pinned > .socialProof {

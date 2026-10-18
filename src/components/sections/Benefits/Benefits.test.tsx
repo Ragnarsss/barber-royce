@@ -5,6 +5,7 @@ import { screen } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SITE } from "@/config/constants";
 import { benefitsList } from "@/data/benefitsData";
+import { HEAVY_SCROLL } from "@/utils/heavyScroll";
 import {
   BEAT_FROM,
   BEAT_SCALE,
@@ -410,8 +411,15 @@ describe("Benefits: sección fija mientras se revela (BR-074, HU-EXP-004 CA-25)"
     expect(document.getElementById("benefits")!.parentElement?.className).not.toMatch(/pinned/);
   });
 
-  it("el CSS: contenedor de 280vh y sección pegada arriba a pantalla completa, solo desde 769 px", () => {
-    expect(desktop).toMatch(/\.pinned\s*\{[^}]*height:\s*280vh/);
+  it("BR-077: el recorrido fijo es largo: a la velocidad máxima del scroll pesado toma unos 3 segundos o más", () => {
+    const vh = Number(desktop.match(/\.pinned\s*\{[^}]*height:\s*(\d+)vh/)?.[1]);
+    const pixels = (vh - 100) * 9; // referencia: una pantalla de 900 px de alto
+
+    expect(pixels / HEAVY_SCROLL.MAX_SPEED).toBeGreaterThanOrEqual(2.8);
+  });
+
+  it("el CSS: contenedor alto y sección pegada arriba a pantalla completa, solo desde 769 px", () => {
+    expect(desktop).toMatch(/\.pinned\s*\{[^}]*height:\s*\d+vh/);
     expect(desktop).toMatch(/\.pinned > \.benefits\s*\{[^}]*position:\s*sticky/);
     expect(desktop).toMatch(/\.pinned > \.benefits\s*\{[^}]*top:\s*0/);
     expect(desktop).toMatch(/\.pinned > \.benefits\s*\{[^}]*height:\s*100vh/);
