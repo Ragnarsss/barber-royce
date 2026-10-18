@@ -2716,6 +2716,14 @@ menos, las tres caben a la vez: no hay nada que desplazar, así que no se muestr
 flechas ni puntos. El comportamiento con 5 se prueba con datos de prueba y queda
 listo para cuando `BR-052` entregue las reseñas reales.
 
+> **Alcance ajustado (2026-10-17, decisión del usuario):** se agregan 2 reseñas
+> más de ejemplo («Andrés V.» y «Felipe S.», como las otras tres) para ver el
+> carrusel de escritorio con 5. Siguen siendo provisorias y falsas: `BR-052` las
+> reemplaza por las de Google, y no se agrega `aggregateRating` con estos datos.
+> Se anotó en `reviewsData.ts`. Antes de publicar, conviene que sean reemplazadas
+> o retiradas: mostrar como reales opiniones inventadas puede incumplir las normas
+> de publicidad y de protección al consumidor.
+
 Alcance:
 1. `CardCarousel` pasa a admitir un modo de escritorio (`desktopVisible`): fila
    con snap que muestra N tarjetas; el modo móvil de `BR-070` no cambia.
