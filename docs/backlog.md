@@ -2859,6 +2859,47 @@ Criterios de aceptación:
 6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`, midiendo
    alternado (CP-PERF-003).
 
+
+#### BR-076 — Respaldados por los mejores: lens flare en lugar de los láseres
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-075
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-27)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
+
+**Origen (2026-10-17):** al ver la escena fija de `BR-075`, el usuario propuso
+reemplazar los láseres por un efecto de lens flare: los hexágonos del fondo ya se
+mueven un poco y le pareció que quedaría mejor que las líneas láser. Los destellos
+secundarios de un lente real salen con la forma del diafragma, que muy a menudo es
+hexagonal, así que el flare conversa con los hexágonos del fondo.
+
+Decisiones del usuario (2026-10-17): lens flare en vez de los láseres, solo en
+escritorio (la sección móvil no cambia), con el flare viajando por el borde del
+corte que revela la foto y la tarjeta; se retiran las pistas láser con sus haces.
+
+Alcance (solo escritorio, con la sección fija de `BR-075`):
+1. Un flare cálido y contenido: núcleo blanco cálido, un halo con el rojo de la marca
+   y cuatro fantasmas hexagonales alineados sobre un eje diagonal. Solo degradados y
+   formas; se anima `transform` y `opacity`, sin `mix-blend-mode`.
+2. El flare viaja con el borde de cada panel de corte (el de la foto y el de la
+   tarjeta, que viene del lado contrario), aparece y se apaga junto con su corte.
+3. Se retiran las tres pistas láser con sus haces y la línea láser del borde del
+   panel. Los paneles, el recorrido fijo y el revelado posterior no cambian.
+4. Con reducir movimiento: sin flare (ya no hay corte ni sección fija).
+
+Criterios de aceptación:
+1. En escritorio, un flare con fantasmas hexagonales viaja con el borde del corte de
+   la foto y de la tarjeta y se apaga al terminar; ya no hay pistas ni haces láser
+   (HU-EXP-004 CA-27).
+2. El flare es decorativo (`aria-hidden`), su movimiento es suave y no pasa de 3
+   destellos por segundo (CP-A11Y-005).
+3. Con reducir movimiento no hay flare (CP-A11Y-003).
+4. Solo `transform` y `opacity`, sin `mix-blend-mode`, y sin colores escritos a mano
+   (tests; ADR-002).
+5. En móvil nada cambia.
+6. CLS y TBT no empeoran frente a `master` con el mismo `.env`, midiendo alternado
+   (CP-PERF-003).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2955,6 +2996,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-073 | Reseñas: carrusel también en escritorio, con 3 visibles y profundidad | K | P3 | M | Propuesta | BR-070 |
 | BR-074 | Beneficios: revelado con el scroll (enfoque, giro de 360° y latido) | K | P3 | M | Propuesta | BR-069 |
 | BR-075 | Respaldados por los mejores: escena fija, corte láser y revelado con el scroll | K | P3 | M | Propuesta | BR-062, BR-074 |
+| BR-076 | Respaldados por los mejores: lens flare en lugar de los láseres | K | P3 | M | Propuesta | BR-075 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |

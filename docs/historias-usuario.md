@@ -702,6 +702,10 @@ y confiar en que el servicio está a la altura.
   corta la foto y la tarjeta y, al terminar, el título, la foto y el texto se
   enfocan con el scroll; después la página sigue. Con reducir movimiento no hay
   láser ni desenfoque.
+- CA-27 (2026-10-17, `BR-076`): Given bajo a «Respaldados por los mejores» en un
+  computador, When el corte revela la foto y la tarjeta, Then un lens flare con
+  destellos hexagonales viaja con el borde del corte y se apaga al terminar, sin
+  líneas láser; con reducir movimiento no hay flare.
 
 ---
 
