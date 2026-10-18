@@ -1783,3 +1783,21 @@ Tres PR integraron el lote a `master`: #33 (BR-061, BR-069 a BR-077), #34 (tarje
 - Sin cambio visible: este ticket no migra ningún archivo.
 
 **Verificación:** test primero con los casos del detector. La lista de pendientes se ajustó con el propio test: los dos `sizes` aparecieron como falsos positivos y `Navbar.tsx` como pendiente sin detectar (`innerWidth > 768`), y se corrigieron los dos detectores.
+
+<a id="br-080"></a>
+
+## BR-080 — Mobile-first: navbar, footer y estilos globales
+
+**Notas de construcción (2026-10-18):**
+- **Navbar:** la base es la barra móvil de `BR-061` y el bloque `min-width: 769px` devuelve la de escritorio. Lo que solo se ve en móvil y en escritorio queda oculto (la hamburguesa, la marca en texto) no se restaura. El brillo del botón al pasar el cursor pasa a `--nav-cta-glow`, para no repetir sus `rgba` en los dos bloques. `Navbar.tsx` cierra el menú escuchando `matchMedia(MEDIA.desktop)` en vez de `resize` con `innerWidth > 768`: solo actúa al cruzar el corte.
+- **Footer:** una columna en la base, dos desde 769 px y cuatro desde 1025 px. **Único cambio visible del ticket:** entre 969 y 1024 px el footer pasa de cuatro columnas a dos, porque el corte 968 no está en el conjunto de `ADR-009`.
+- **`global.css`:** `h1` a `h3` parten en su tamaño móvil y crecen un paso desde 769 px.
+- **Código muerto encontrado (para `BR-025`):** `styles/shared/page.css` no lo importa nadie (se migró igual, porque cuesta poco); `.container` y `.section` de `mixins.css` no tienen uso (se movieron a 769 y 1025). Se **quitaron** las tres `.hidden-*` de `mixins.css` y `.isAnimating--filter` y `.section-container--strict` de `performance.css`: no tienen uso y no admiten una traducción exacta a mobile-first. La primera versión de las de `performance.css` habría pisado el `will-change: auto` de movimiento reducido y, con `revert-layer`, el `filter` propio del elemento.
+- **Error encontrado en las capturas:** el logo de escritorio quedó como `display: inline` y la barra creció 4 px (87 → 91). `reset.css` deja toda imagen en `block`; el bloque de escritorio ahora restaura `block`.
+
+**Verificación:**
+- 67 capturas antes y después (home, `/ubicacion`, `/servicios` y la 404, a 320, 390, 768, 769, 1024, 1025, 1280 y 1920 px, arriba y al final, más el menú móvil abierto), con movimiento reducido, en el build local.
+- Se repitió la captura «antes» para medir el ruido: el mapa de `/ubicacion` y el reescalado del logo encogido varían entre corridas sin cambios.
+- **Resultado:** idénticas byte a byte en todo el móvil y a 769 px, menú incluido. Las diferencias restantes son el footer entre 969 y 1024 px (previsto) y ruido: el mapa en la misma franja que varía sola, y el logo a 1024 px en `/ubicacion`. Para el logo se construyó la navbar vieja aparte: las cajas de la barra coinciden al centésimo de píxel a 769, 900 y 1024 px, y el mismo build viejo dio dos recortes distintos en dos rondas, el segundo igual al nuevo.
+- Lint, tipos, build y la suite completa en verde. `liveContent.e2e.test.ts` falló una vez al arrancar dentro de la suite completa y pasó sola con sus 5 tests.
+- **Pendiente:** el preview de Vercel.
