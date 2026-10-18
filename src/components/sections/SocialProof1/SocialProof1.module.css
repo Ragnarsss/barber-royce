@@ -222,7 +222,7 @@
 
   .content {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 0;
     padding: 0 1rem;
   }
 
@@ -231,15 +231,17 @@
     margin: 0 auto;
   }
 
+  /*
+   * La tarjeta conserva su forma de escritorio (el polígono del `clip-path` y su proporción) y, como allí, queda metida
+   * bajo la foto: el margen negativo la sube sobre la parte baja de la foto, que está por encima (BR-078). A la derecha,
+   * como en escritorio sale por el lado de la foto.
+   */
   .testimonialCard {
-    clip-path: none;
-    border-radius: 1.25rem;
-    width: 100%;
-    max-width: clamp(18rem, 85vw, 24rem);
-    margin: 0 auto;
-    padding: 2rem 1.75rem;
-    aspect-ratio: auto;
-    overflow: hidden;
+    width: min(88vw, 23rem);
+    margin: -3.5rem 0 0 auto;
+    /* El relleno de escritorio es en rem/vw y deja el texto dentro del polígono; en pantalla chica se ajusta a su ancho */
+    padding: clamp(2.5rem, 12vw, 3.25rem) clamp(2.25rem, 10vw, 3rem) clamp(2.5rem, 12vw, 3.25rem) clamp(2.5rem, 11vw, 3.25rem);
+    margin-left: auto;
   }
 
   .testimonialText {

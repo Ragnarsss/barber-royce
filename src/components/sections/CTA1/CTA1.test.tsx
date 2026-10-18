@@ -18,6 +18,7 @@ vi.mock("framer-motion", async (importOriginal) => ({
 }));
 
 import { CTA1 } from "./CTA1";
+import { CTA_ZOOM, CTA_ZOOM_ORIGIN, CTA_ZOOM_WINDOW } from "./ctaZoom";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const css = readFileSync(resolve(here, "CTA1.module.css"), "utf8");
@@ -192,5 +193,65 @@ describe("CTA1 en móvil (BR-061, HU-EXP-004 CA-13)", () => {
   it("ADR-002: el bloque móvil no trae colores escritos a mano", () => {
     expect(mobile.length).toBeGreaterThan(0);
     expect(mobile).not.toMatch(/#[0-9a-fA-F]{3,6}\b|rgba?\(/);
+  });
+});
+
+// BR-079 (HU-EXP-004 CA-30): zoom-in marcado de la foto con el scroll.
+describe("CTA1: zoom-in de la foto con el scroll (BR-079, HU-EXP-004 CA-30)", () => {
+  beforeAll(() => {
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      },
+    );
+  });
+
+  beforeEach(() => {
+    state.reducedMotion = false;
+  });
+
+  it("CA-30: el zoom es claro (al menos un 30 %) y no tanto que pixele la foto", () => {
+    expect(CTA_ZOOM.DESKTOP).toBeGreaterThanOrEqual(1.3);
+    expect(CTA_ZOOM.MOBILE).toBeGreaterThanOrEqual(1.3);
+    expect(CTA_ZOOM.DESKTOP).toBeLessThanOrEqual(1.8);
+    expect(CTA_ZOOM.MOBILE).toBeLessThanOrEqual(1.8);
+  });
+
+  it("el zoom ocurre mientras la sección está en pantalla, no antes ni después", () => {
+    const [from, to] = CTA_ZOOM_WINDOW;
+
+    expect(from).toBeGreaterThan(0);
+    expect(to).toBeLessThan(1);
+    expect(to).toBeGreaterThan(from);
+  });
+
+  it("el zoom parte del rostro en cada tamaño (un punto de apoyo dentro de la foto)", () => {
+    for (const origin of [CTA_ZOOM_ORIGIN.DESKTOP, CTA_ZOOM_ORIGIN.MOBILE]) {
+      const [x, y] = origin.split(" ").map((value) => Number.parseFloat(value));
+      expect(x).toBeGreaterThan(0);
+      expect(x).toBeLessThan(100);
+      expect(y).toBeGreaterThan(0);
+      expect(y).toBeLessThan(100);
+    }
+  });
+
+  it("CA-30: la foto recibe un `scale` por un MotionValue (sin setState por scroll) y su punto de apoyo", () => {
+    expect(source).toMatch(/useTransform\(scrollYProgress, CTA_ZOOM_WINDOW, \[1, isWide \? CTA_ZOOM\.DESKTOP : CTA_ZOOM\.MOBILE\]\)/);
+    expect(source).toMatch(/scale: zoom/);
+    expect(source).toMatch(/style=\{imageStyle\}/);
+  });
+
+  it("CP-A11Y-003: con reducir movimiento la foto no recibe estilo de zoom", () => {
+    state.reducedMotion = true;
+    renderCta();
+
+    const picture = document.querySelector("[data-figure] picture")!;
+    expect(picture.getAttribute("style") ?? "").not.toMatch(/scale/);
   });
 });

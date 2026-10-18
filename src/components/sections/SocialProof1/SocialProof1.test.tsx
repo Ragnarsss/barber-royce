@@ -92,7 +92,8 @@ describe("SocialProof1: corte láser (BR-062, HU-EXP-004 CA-14)", () => {
     renderSection();
 
     expect(document.body.textContent).toContain(`confío en ${SITE.name}`);
-    expect(document.querySelector("img")?.getAttribute("alt")).toContain(SITE.name);
+    // La primera imagen del documento es la copia desenfocada, decorativa y sin alt: se busca la que describe la foto
+    expect(document.querySelector("img[alt]:not([alt=''])")?.getAttribute("alt")).toContain(SITE.name);
     expect(source).not.toMatch(/Royce|Barbería/);
   });
 
@@ -140,6 +141,18 @@ describe("SocialProof1: escena fija y revelado (BR-075, HU-EXP-004 CA-26)", () =
     expect(copy.getAttribute("style")).toMatch(/opacity:\s*1/);
   });
 
+  it("regresión: la copia desenfocada va debajo de la foto nítida y se mantiene opaca, para no dejar ver el marco rojo", () => {
+    renderSection();
+
+    const clip = document.querySelector("[data-photo-blur]")!.parentElement!;
+    const layers = [...clip.querySelectorAll("picture")];
+    // La copia borrosa es la primera: queda debajo (la nítida se pinta después, encima)
+    expect(layers[0].hasAttribute("data-photo-blur")).toBe(true);
+    expect(layers[1].getAttribute("style")).toMatch(/opacity:\s*0/);
+    // Solo se retira cuando la nítida ya es del todo opaca: nunca se cruzan dos capas translúcidas
+    expect(source).toMatch(/useTransform\(photoFocusProgress, \(value\) => \(value >= 1 \? 0 : 1\)\)/);
+  });
+
   it("CP-A11Y-002: los lectores de pantalla encuentran el título y la foto una sola vez", () => {
     renderSection();
 
@@ -169,10 +182,15 @@ describe("SocialProof1: escena fija y revelado (BR-075, HU-EXP-004 CA-26)", () =
     expect(css).not.toMatch(/transition:[^;]*filter/);
   });
 
-  it("la sección usa el hook compartido y no mide el scroll de cada elemento por separado", () => {
+  it("en escritorio los cortes, el flare y el enfoque salen del recorrido fijo del hook compartido, no del scroll de cada elemento", () => {
     expect(source).toContain("usePinnedScene()");
-    expect(source).not.toMatch(/useScroll\(/);
-    expect(source).not.toMatch(/photoRef|cardRef/);
+    for (const timeline of ["CUT.PHOTO", "CUT.CARD", "CUT.FLASH", "FLARE.PHOTO", "FLARE.CARD"]) {
+      expect(source).toContain(`useTransform(pinProgress, ${timeline}`);
+    }
+    // El avance de cada elemento (`useScroll` sobre su propia referencia) solo alimenta el desenfoque de móvil (BR-078)
+    expect(source).toMatch(/const subtitleFocus = scrub \? titleFocus : freeSubtitle/);
+    expect(source).toMatch(/const photoFocusProgress = scrub \? photoFocus : freePhoto/);
+    expect(source).toMatch(/const quoteFocusProgress = scrub \? quoteFocus : freeQuote/);
   });
 });
 
@@ -239,5 +257,87 @@ describe("SocialProof1: lens flare (BR-076, HU-EXP-004 CA-27)", () => {
     renderSection();
 
     expect(document.querySelector("[data-flare]")).toBeNull();
+  });
+});
+
+// BR-078 (HU-EXP-004 CA-29): en móvil, la tarjeta con la forma de escritorio y el revelado con desenfoque.
+describe("SocialProof1 en móvil (BR-078, HU-EXP-004 CA-29)", () => {
+  const mobileCss = css.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+  const card = mobileCss.match(/\.testimonialCard\s*\{([^}]*)\}/)?.[1] ?? "";
+
+  /** Simula una pantalla angosta: la sección no se fija y el avance sale de cada elemento. */
+  const withMobile = (run: () => void) => {
+    const original = window.matchMedia;
+    window.matchMedia = ((query: string) => ({ matches: false, media: query, addEventListener() {}, removeEventListener() {} })) as unknown as typeof window.matchMedia;
+    try {
+      run();
+    } finally {
+      window.matchMedia = original;
+    }
+  };
+
+  beforeEach(() => {
+    state.reducedMotion = false;
+  });
+
+  it("CA-29: la foto, el subtítulo y el texto del testimonio tienen su copia desenfocada decorativa; el título, no", () => {
+    withMobile(() => {
+      renderSection();
+
+      expect(document.querySelectorAll("[data-photo-blur]")).toHaveLength(1);
+      const copies = document.querySelectorAll("#social-proof-1 [data-focus-blur]");
+      expect(copies).toHaveLength(2);
+      copies.forEach((copy) => expect(copy.getAttribute("aria-hidden")).toBe("true"));
+      expect(document.querySelector("#social-proof-1 h2 [data-focus-blur]")).toBeNull();
+    });
+  });
+
+  it("empieza borroso: la copia de la foto se ve y la nítida está apagada", () => {
+    withMobile(() => {
+      renderSection();
+
+      const clip = document.querySelector("[data-photo-blur]")!.parentElement!;
+      const [blurred, sharp] = [...clip.querySelectorAll("picture")];
+      expect(blurred.getAttribute("style")).toMatch(/opacity:\s*1/);
+      expect(sharp.getAttribute("style")).toMatch(/opacity:\s*0/);
+    });
+  });
+
+  it("en móvil la sección no se fija y no hay flare, pero sí el corte que revela la foto y la tarjeta", () => {
+    withMobile(() => {
+      renderSection();
+
+      expect(document.getElementById("social-proof-1")!.parentElement?.className).not.toMatch(/pinned/);
+      expect(document.querySelector("[data-flare]")).toBeNull();
+      expect(document.querySelector('[data-cut="photo"]')).not.toBeNull();
+      expect(document.querySelector('[data-cut="card"]')).not.toBeNull();
+    });
+  });
+
+  it("CP-A11Y-003: con reducir movimiento, en móvil todo nítido y sin copias", () => {
+    state.reducedMotion = true;
+    withMobile(() => {
+      renderSection();
+
+      expect(document.querySelector("[data-photo-blur]")).toBeNull();
+      expect(document.querySelector("#social-proof-1 [data-focus-blur]")).toBeNull();
+    });
+  });
+
+  it("CA-29: la tarjeta conserva la forma de escritorio (sin quitar el recorte ni redondearla)", () => {
+    expect(card.length).toBeGreaterThan(0);
+    expect(card).not.toMatch(/clip-path:\s*none|border-radius|aspect-ratio:\s*auto|overflow:\s*hidden/);
+  });
+
+  it("CA-29: la tarjeta queda a la derecha y metida bajo la parte baja de la foto, con un margen negativo", () => {
+    expect(card).toMatch(/margin:\s*-[\d.]+rem 0 0 auto/);
+    // La foto está por encima de la tarjeta, como en escritorio
+    const zIndex = (selector: RegExp) => Number(css.match(new RegExp(`\\n${selector.source}\\s*\\{[^}]*z-index:\\s*(\\d+)`))?.[1]);
+    expect(zIndex(/\.imageContainer/)).toBeGreaterThan(zIndex(/\.testimonialCard/));
+  });
+
+  it("el texto de la tarjeta sigue dentro del polígono: el relleno se ajusta al ancho de la pantalla", () => {
+    expect(card).toMatch(/padding:\s*clamp\(/);
+    expect(card).toMatch(/width:\s*min\(\d+vw,/);
   });
 });

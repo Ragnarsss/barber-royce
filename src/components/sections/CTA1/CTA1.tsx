@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useTransform } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
 import styles from "./CTA1.module.css";
 import cta700w from "@/assets/optimized/cta1_model_700w.webp";
@@ -16,6 +16,8 @@ import { Link } from "react-router-dom";
 import { trackReserve } from "@/analytics/track";
 import { useSiteContent, useSiteText } from "@/content/useSiteContent";
 import { useMagnetic } from "./magnetic";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { CTA_ZOOM, CTA_ZOOM_ORIGIN, CTA_ZOOM_WINDOW } from "./ctaZoom";
 
 /** Hexágono regular de puntas laterales (232 × 200), como las barras de luz del techo de la barbería (BR-058). */
 const HEXAGON = "M60 3H172L228 100L172 197H60L4 100Z";
@@ -51,6 +53,10 @@ export function CTA1() {
     slow: useSlowLayer(scrollYProgress),
     fast: useFastLayer(scrollYProgress),
   };
+  // Zoom-in de la foto mientras la sección cruza la pantalla (BR-079); sin zoom con reducir movimiento
+  const isWide = useMediaQuery("(min-width: 769px)");
+  const zoom = useTransform(scrollYProgress, CTA_ZOOM_WINDOW, [1, isWide ? CTA_ZOOM.DESKTOP : CTA_ZOOM.MOBILE]);
+  const imageStyle = reducedMotion ? undefined : { scale: zoom, transformOrigin: isWide ? CTA_ZOOM_ORIGIN.DESKTOP : CTA_ZOOM_ORIGIN.MOBILE };
 
   return (
     <section id="cta-1" className={styles.cta} ref={sectionRef}>
@@ -103,6 +109,7 @@ export function CTA1() {
           initial="hidden"
           animate={controls}
           variants={fadeInRight}
+          style={imageStyle}
         >
           {/* Móvil: la foto del Hero de escritorio, que muestra mejor al modelo (BR-061); son los mismos archivos del Hero */}
           <source

@@ -1,4 +1,4 @@
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, useTransform } from "framer-motion";
 import { useCallback, useState } from "react";
 import styles from "./Hero.module.css";
 import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData.tsx";
@@ -17,6 +17,7 @@ import { useSiteText } from "@/content/useSiteContent";
 import { useNeonLoaderDone } from "@/loader/neonLoader";
 import { SPOTLIGHT_SIZE, usePointerSpotlight } from "./spotlight";
 import { BenefitCard } from "./BenefitCard";
+import { HERO_ZOOM, HERO_ZOOM_ORIGIN } from "./heroZoom";
 
 export function Hero() {
   const siteText = useSiteText();
@@ -44,6 +45,21 @@ export function Hero() {
     foreground: useForegroundLayer(scrollYProgress),
     fast: useFastLayer(scrollYProgress),
   };
+  // Zoom-in de la foto mientras el Hero sale de la pantalla (BR-079): capa propia, más marcada que la «foreground»
+  const zoom = useTransform(scrollYProgress, [0, 1], [1, isWide ? HERO_ZOOM.DESKTOP : HERO_ZOOM.MOBILE]);
+  const heroImageStyle = !isReady
+    ? {}
+    : reducedMotion
+      ? // Sin zoom. En móvil, sin ningún movimiento: el desplazamiento vertical dejaría una franja vacía arriba
+        isWide
+        ? { y: layers.foreground.y, scale: layers.foreground.scale }
+        : {}
+      : {
+          // El parallax vertical solo en escritorio: en móvil la foto cubre toda la portada y el zoom no deja huecos
+          ...(isWide ? { y: layers.foreground.y } : {}),
+          scale: zoom,
+          transformOrigin: isWide ? HERO_ZOOM_ORIGIN.DESKTOP : HERO_ZOOM_ORIGIN.MOBILE,
+        };
 
   const handleImageLoad = useCallback(() => {
     refreshLenis();
@@ -100,10 +116,7 @@ export function Hero() {
       )}
 
       {/* Imagen del modelo - <picture> tag para SEO con parallax y responsive images */}
-      <motion.picture
-        className={styles.heroImageSEO}
-        style={isReady ? { y: layers.foreground.y, scale: layers.foreground.scale } : {}}
-      >
+      <motion.picture className={styles.heroImageSEO} style={heroImageStyle}>
         {/* Móvil: foto a pantalla completa como fondo (BR-061). El mismo <picture> elige el archivo, no se baja otro. */}
         <source
           media="(max-width: 768px)"
