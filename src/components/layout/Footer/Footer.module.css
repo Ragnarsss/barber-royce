@@ -1,7 +1,8 @@
+/* Mobile-first (BR-080, ADR-009): una columna en móvil, dos desde 769 px y cuatro desde 1025 px */
 .footer {
   background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
   color: var(--color-white, #ffffff);
-  padding: 80px 0 24px;
+  padding: 60px 0 24px;
   position: relative;
 }
 
@@ -28,9 +29,9 @@
 
 .grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr;
-  gap: 60px;
-  margin-bottom: 60px;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
 }
 
 .column {
@@ -42,7 +43,8 @@
 /* Brand section */
 .brand {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
   margin-bottom: 8px;
 }
@@ -190,27 +192,27 @@
   margin: 0;
 }
 
-@media (max-width: 968px) {
+@media (min-width: 769px) {
+  .footer {
+    padding: 80px 0 24px;
+  }
+
   .grid {
     grid-template-columns: 1fr 1fr;
-    gap: 40px;
-  }
-}
-
-@media (max-width: 768px) {
-  .footer {
-    padding: 60px 0 24px;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
   }
 
   .brand {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Cuatro columnas desde 1025 px (antes desde 969 px: el corte se movió al conjunto de ADR-009) */
+@media (min-width: 1025px) {
+  .grid {
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 60px;
   }
 }
 

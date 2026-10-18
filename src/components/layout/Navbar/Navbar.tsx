@@ -9,6 +9,7 @@ import { getNavRoutes } from "@/config/routes";
 import { useSiteContent } from "@/content/useSiteContent";
 import { trackReserve } from "@/analytics/track";
 import { SITE } from "@/config/constants";
+import { MEDIA } from "@/config/breakpoints";
 
 export const Navbar = () => {
   const { business } = useSiteContent();
@@ -17,16 +18,17 @@ export const Navbar = () => {
   const location = useLocation();
   const lenis = useLenisInstance();
 
-  // Cerrar menú móvil automáticamente cuando se cambia a resolución desktop
+  // Cerrar menú móvil automáticamente cuando la ventana cruza a escritorio (solo al cruzar el corte, no en cada resize)
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768) {
+    const desktop = window.matchMedia?.(MEDIA.desktop);
+    const handleChange = (event: MediaQueryListEvent) => {
+      if (event.matches) {
         setIsMobileMenuOpen(false);
       }
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    desktop?.addEventListener("change", handleChange);
+    return () => desktop?.removeEventListener("change", handleChange);
   }, []);
 
   function handleLogoClick(e: React.MouseEvent<HTMLAnchorElement>) {

@@ -15,14 +15,6 @@ const HEIGHTS = [720];
  * saca los suyos, y un archivo que ya cumple no puede quedarse en ella.
  */
 const PENDING = new Set([
-  // BR-080: navbar, footer y estilos globales
-  "components/layout/Footer/Footer.module.css",
-  "components/layout/Navbar/Navbar.module.css",
-  "components/layout/Navbar/Navbar.tsx",
-  "styles/global.css",
-  "styles/mixins.css",
-  "styles/performance.css",
-  "styles/shared/page.css",
   // BR-081: secciones de la home
   "components/sections/Benefits/Benefits.module.css",
   "components/sections/CTA1/CTA1.module.css",
