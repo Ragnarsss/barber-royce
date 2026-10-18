@@ -2812,6 +2812,48 @@ Criterios de aceptación:
 6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`, midiendo
    alternado (CP-PERF-003).
 
+
+#### BR-075 — Respaldados por los mejores: escena fija, corte láser y revelado con el scroll
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-062, BR-074
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-26)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-A11Y-005`
+
+**Origen (2026-10-17):** el usuario quiere para toda la landing el patrón de
+`BR-074` (sección fija en pantalla y animaciones ligadas al scroll), y pidió
+empezar por «Respaldados por los mejores» (`SocialProof1`) y su show de láseres. Hoy
+la sección sube con la página mientras el láser corta la foto y la tarjeta
+(`BR-062`), y el corte se ve a medias y cortado por el borde de la pantalla. Además
+pidió que, una vez concluido el láser, la imagen y el texto estén desenfocados y se
+revelen con el scroll.
+
+Decisiones del usuario (2026-10-17): sección fija mientras ocurre todo; después del
+láser, la imagen y el texto se ven borrosos y se enfocan con el scroll.
+
+Alcance (solo escritorio, sin reducir movimiento; en móvil la sección no cambia):
+1. Contenedor alto con la sección pegada arriba (`position: sticky`), como `BR-074`.
+2. El corte láser, los haces, el subrayado y el destello del marco pasan a seguir una
+   sola línea de tiempo: el avance del recorrido fijo, no el scroll de cada elemento.
+3. Cuando el láser termina, el título, el subtítulo, la foto y el texto del
+   testimonio están desenfocados y se enfocan con el scroll, uno tras otro. La foto
+   lleva una copia desenfocada (decorativa, `aria-hidden`) que se cruza con la nítida.
+4. Con reducir movimiento: sin sección fija, sin láser y todo nítido.
+5. Las piezas comunes con `BR-074` pasan a un lugar compartido (el texto que se enfoca,
+   la rampa y el hook de la sección fija), en vez de copiarse.
+
+Criterios de aceptación:
+1. En escritorio, la sección queda fija mientras el láser corta la foto y la tarjeta
+   y luego se enfocan los textos y la foto; después la página sigue (HU-EXP-004 CA-26).
+2. Todo avanza y retrocede con el scroll.
+3. Los lectores de pantalla leen cada texto una sola vez (copias `aria-hidden`)
+   (CP-A11Y-002).
+4. Con reducir movimiento no hay sección fija, láser ni desenfoque (CP-A11Y-003); el
+   destello del marco no pasa de 3 por segundo (CP-A11Y-005).
+5. En móvil nada cambia respecto de `BR-062`.
+6. CLS y TBT móviles no empeoran frente a `master` con el mismo `.env`, midiendo
+   alternado (CP-PERF-003).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -2907,6 +2949,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-072 | Innovación y calidad: tarjetas de vidrio y carrusel en móvil | K | P3 | S | Propuesta | BR-069, BR-070 |
 | BR-073 | Reseñas: carrusel también en escritorio, con 3 visibles y profundidad | K | P3 | M | Propuesta | BR-070 |
 | BR-074 | Beneficios: revelado con el scroll (enfoque, giro de 360° y latido) | K | P3 | M | Propuesta | BR-069 |
+| BR-075 | Respaldados por los mejores: escena fija, corte láser y revelado con el scroll | K | P3 | M | Propuesta | BR-062, BR-074 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |

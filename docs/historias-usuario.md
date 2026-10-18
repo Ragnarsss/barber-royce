@@ -697,6 +697,11 @@ y confiar en que el servicio está a la altura.
   sección entra en pantalla, Then el título y el subtítulo se enfocan con el
   scroll, cada tarjeta gira 360° y muestra su contenido enfocado, y el ícono da un
   latido una sola vez; con reducir movimiento todo aparece quieto y nítido.
+- CA-26 (2026-10-17, `BR-075`): Given bajo a «Respaldados por los mejores» en un
+  computador, When la sección entra en pantalla, Then queda fija mientras el láser
+  corta la foto y la tarjeta y, al terminar, el título, la foto y el texto se
+  enfocan con el scroll; después la página sigue. Con reducir movimiento no hay
+  láser ni desenfoque.
 
 ---
 
