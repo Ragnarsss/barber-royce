@@ -261,12 +261,13 @@
 }
 
 /* ═════════════════════════════════════════════════════════════
-   CORTE LÁSER (BR-062)
-   Pistas diagonales tenues con un haz que viaja por cada una, y paneles que
-   se retiran en diagonal con un láser en su borde para revelar la foto y la
-   tarjeta. Solo transform y opacity. Las rotaciones e inclinaciones que se
-   combinan con un movimiento de framer van por framer (skewX), no por CSS:
-   su transform en línea pisaría el del CSS (era el bug de los rayos).
+   CORTE QUE REVELA (BR-062) Y LENS FLARE (BR-076)
+   Paneles que se retiran en diagonal para revelar la foto y la tarjeta, con
+   un lens flare que viaja por su borde (LensFlare.tsx). Antes (BR-062) llevaban
+   pistas láser con un haz y una línea láser en el borde: el flare las reemplaza.
+   Solo transform y opacity. Las rotaciones e inclinaciones que se combinan con
+   un movimiento de framer van por framer (skewX), no por CSS: su transform en
+   línea pisaría el del CSS.
 ═════════════════════════════════════════════════════════════ */
 
 .socialProof {
@@ -278,57 +279,6 @@
     0 0 36px color-mix(in srgb, var(--color-brand-primary) 45%, transparent);
 }
 
-/* La pista rota por CSS: no lleva transform de framer. El haz, su hijo, se mueve en el eje de la pista. */
-.laserTrack {
-  position: absolute;
-  left: 50%;
-  width: 150%;
-  margin-left: -75%;
-  height: 2px;
-  pointer-events: none;
-  z-index: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--color-brand-primary) 25%, transparent) 20%,
-    color-mix(in srgb, var(--color-brand-primary) 25%, transparent) 80%,
-    transparent 100%
-  );
-}
-
-.laserTrack1 {
-  top: 28%;
-  transform: rotate(-32deg);
-}
-
-.laserTrack2 {
-  top: 52%;
-  transform: rotate(26deg);
-}
-
-.laserTrack3 {
-  top: 76%;
-  transform: rotate(-20deg);
-}
-
-/* Haz: 1/8 de la pista, con la cabeza brillante adelante */
-.bolt {
-  position: absolute;
-  top: -2px;
-  left: 0;
-  width: 12.5%;
-  height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--sp-laser) 55%, transparent) 45%,
-    var(--sp-laser-core) 94%,
-    transparent 100%
-  );
-  box-shadow: var(--sp-laser-glow);
-}
-
 /* Recorte de la foto: contiene la imagen y su panel de corte */
 .imageClip {
   position: relative;
@@ -336,7 +286,7 @@
   z-index: 1;
 }
 
-/* Panel del color del fondo; el láser va en su borde de ataque (izquierdo en la foto) */
+/* Panel del color del fondo que se retira para revelar; su borde de ataque es el izquierdo en la foto */
 .cutCover {
   position: absolute;
   top: -25%;
@@ -348,26 +298,30 @@
   background: var(--color-brand-section-bg);
 }
 
-.cutCover::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 3px;
-  background: var(--sp-laser-core);
-  box-shadow: var(--sp-laser-glow);
-}
-
-/* En la tarjeta el corte viene desde el lado contrario: el láser va a la derecha */
+/* En la tarjeta el corte viene desde el lado contrario: su borde de ataque es el derecho */
 .cutCoverCard {
   left: auto;
   right: -30%;
 }
 
-.cutCoverCard::before {
+/*
+ * Contenedor del lens flare (BR-076): mismo recuadro y mismo movimiento que el panel de corte, pero sin fondo ni
+ * inclinación. El flare se ancla en su borde de ataque a media altura, donde la inclinación del panel no lo desplaza.
+ * Va fuera del recorte de la foto, sobre ella, para que el halo no se corte en seco.
+ */
+.cutFlare {
+  position: absolute;
+  top: -25%;
+  bottom: -25%;
+  left: -30%;
+  width: 160%;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.cutFlareCard {
   left: auto;
-  right: 0;
+  right: -30%;
 }
 
 /* Destello del marco rojo: misma forma que el marco, solo cambia su opacidad */
@@ -593,7 +547,6 @@
 
 @media (max-width: 1024px) {
   /* Ocultar decoración en tablets */
-  .laserTrack,
   .hexagonBackground1,
   .hexagonBackground2,
   .hexagonBackground3,

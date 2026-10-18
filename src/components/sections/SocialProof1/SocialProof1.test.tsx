@@ -18,7 +18,6 @@ vi.mock("framer-motion", async (importOriginal) => ({
 }));
 
 import { SocialProof1 } from "./SocialProof1";
-import { BOLT } from "./laserCut";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const css = readFileSync(resolve(here, "SocialProof1.module.css"), "utf8");
@@ -72,27 +71,20 @@ describe("SocialProof1: corte láser (BR-062, HU-EXP-004 CA-14)", () => {
     expect(document.querySelector('[data-cut="card"]')).not.toBeNull();
   });
 
-  it("los rayos son pistas diagonales con un haz cada una", () => {
+  it("CA-27: ya no hay pistas ni haces láser: el lens flare los reemplaza", () => {
     renderSection();
 
-    const tracks = document.querySelectorAll("[data-laser-track]");
-    expect(tracks).toHaveLength(BOLT.TRACKS);
-    for (const track of tracks) expect(track.children).toHaveLength(1);
+    expect(document.querySelector("[data-laser-track]")).toBeNull();
+    expect(css).not.toMatch(/\.laserTrack|\.bolt\b/);
+    expect(source).not.toMatch(/LaserBolt|BOLT|laserTrack/);
   });
 
-  it("regresión del bug: la pista no lleva transform en línea, así su rotación del CSS no se pisa", () => {
-    renderSection();
-
-    for (const track of document.querySelectorAll("[data-laser-track]")) expect(track.getAttribute("style")).toBeNull();
-    for (const n of [1, 2, 3]) expect(css).toMatch(new RegExp(`\\.laserTrack${n}\\s*\\{[^}]*transform:\\s*rotate\\(`));
-  });
-
-  it("CP-A11Y-003: con reducir movimiento, todo revelado: sin paneles de corte, sin haces ni destello", () => {
+  it("CP-A11Y-003: con reducir movimiento, todo revelado: sin paneles de corte, sin flare ni destello", () => {
     state.reducedMotion = true;
     renderSection();
 
     expect(document.querySelector("[data-cut]")).toBeNull();
-    for (const track of document.querySelectorAll("[data-laser-track]")) expect(track.children).toHaveLength(0);
+    expect(document.querySelector("[data-lens-flare]")).toBeNull();
     expect(document.querySelector("[data-title-underline]")?.getAttribute("style") ?? "").not.toMatch(/scale/);
   });
 
@@ -181,5 +173,71 @@ describe("SocialProof1: escena fija y revelado (BR-075, HU-EXP-004 CA-26)", () =
     expect(source).toContain("usePinnedScene()");
     expect(source).not.toMatch(/useScroll\(/);
     expect(source).not.toMatch(/photoRef|cardRef/);
+  });
+});
+
+// BR-076 (HU-EXP-004 CA-27): lens flare que viaja con el borde de cada corte, en lugar de los láseres.
+describe("SocialProof1: lens flare (BR-076, HU-EXP-004 CA-27)", () => {
+  beforeEach(() => {
+    state.reducedMotion = false;
+  });
+
+  it("CA-27: hay un flare en el borde del corte de la foto y otro en el de la tarjeta, decorativos (aria-hidden)", () => {
+    renderSection();
+
+    for (const which of ["photo", "card"]) {
+      const flare = document.querySelector(`[data-flare="${which}"]`)!;
+      expect(flare).not.toBeNull();
+      expect(flare.getAttribute("aria-hidden")).toBe("true");
+      expect(flare.querySelector("[data-lens-flare]")).not.toBeNull();
+    }
+  });
+
+  it("el flare se mueve con el mismo recorrido que el panel de su corte y arranca apagado", () => {
+    renderSection();
+
+    for (const which of ["photo", "card"]) {
+      const flare = document.querySelector(`[data-flare="${which}"]`)!;
+      // Con el scroll en 0, el flare todavía no se enciende
+      expect(flare.getAttribute("style")).toMatch(/opacity:\s*0/);
+    }
+    expect(source).toContain("x: photoCutX");
+    expect(source).toContain("x: cardCutX");
+  });
+
+  it("el flare de la tarjeta es de núcleo rojo (la tarjeta es blanca) y los fantasmas quedan del lado ya revelado", () => {
+    renderSection();
+
+    expect(document.querySelector('[data-flare="photo"] [data-lens-flare]')?.className).not.toMatch(/light/);
+    expect(document.querySelector('[data-flare="card"] [data-lens-flare]')?.className).toMatch(/light/);
+    // Por defecto los fantasmas quedan a la izquierda; solo la tarjeta los lleva a la derecha, y no hay clases sueltas
+    expect(document.querySelector('[data-flare="photo"] [data-lens-flare]')?.className).not.toMatch(/trailRight|undefined/);
+    expect(document.querySelector('[data-flare="card"] [data-lens-flare]')?.className).toMatch(/trailRight/);
+    expect(document.querySelector('[data-flare="card"] [data-lens-flare]')?.className).not.toMatch(/undefined/);
+  });
+
+  it("cada flare tiene núcleo, halo, trazo y cuatro fantasmas", () => {
+    renderSection();
+
+    const flare = document.querySelector("[data-lens-flare]")!;
+    expect(flare.children).toHaveLength(7);
+  });
+
+  it("el contenedor del flare repite el recuadro del panel de corte, sin recorte ni fondo", () => {
+    const flare = css.match(/\n\.cutFlare\s*\{([^}]*)\}/)?.[1] ?? "";
+    const cover = css.match(/\n\.cutCover\s*\{([^}]*)\}/)?.[1] ?? "";
+
+    for (const prop of ["top: -25%", "bottom: -25%", "left: -30%", "width: 160%"]) {
+      expect(flare).toContain(prop);
+      expect(cover).toContain(prop);
+    }
+    expect(flare).not.toMatch(/background|overflow/);
+  });
+
+  it("solo móvil o sin sección fija: no hay flare", () => {
+    state.reducedMotion = true;
+    renderSection();
+
+    expect(document.querySelector("[data-flare]")).toBeNull();
   });
 });

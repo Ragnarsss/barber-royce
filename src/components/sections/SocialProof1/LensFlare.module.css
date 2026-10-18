@@ -1,0 +1,100 @@
+/*
+ * Lens flare (BR-076). Es un punto de luz anclado en el borde del panel de corte, con un halo, un trazo horizontal y
+ * fantasmas hexagonales alineados sobre un eje diagonal a un lado. Solo degradados y formas (sin colores escritos a mano
+ * ni `mix-blend-mode`); lo que se anima desde fuera es la posición y la opacidad del contenedor.
+ */
+.flare {
+  --flare-warm: color-mix(in srgb, var(--color-brand-white) 80%, var(--color-brand-primary-hover));
+  /* Hacia qué lado quedan los fantasmas: -1 a la izquierda, 1 a la derecha */
+  --dir: -1;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.trailRight {
+  --dir: 1;
+  left: auto;
+  right: 0;
+}
+
+/* Todas las capas se centran en el punto de luz */
+.halo,
+.streak,
+.core,
+.ghost {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.halo {
+  width: 26rem;
+  height: 26rem;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand-primary) 42%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand-primary) 16%, transparent) 38%,
+    transparent 70%
+  );
+}
+
+/* Trazo horizontal de un lente anamórfico: fino y largo, más intenso en el centro */
+.streak {
+  width: 44rem;
+  height: 0.2rem;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-brand-primary-hover) 55%, transparent) 30%,
+    var(--flare-warm) 50%,
+    color-mix(in srgb, var(--color-brand-primary-hover) 55%, transparent) 70%,
+    transparent 100%
+  );
+}
+
+.core {
+  width: 6rem;
+  height: 6rem;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--color-brand-white) 96%, transparent) 0%,
+    color-mix(in srgb, var(--flare-warm) 55%, transparent) 30%,
+    transparent 68%
+  );
+}
+
+/* Hexágono regular de lados planos arriba y abajo, con un brillo en una esquina */
+.ghost {
+  width: var(--ghost-size);
+  height: var(--ghost-size);
+  /* Sobre el eje: se alejan de la luz hacia el lado ya revelado, con una pendiente suave */
+  translate: calc(-50% + var(--dir) * var(--ghost-distance)) calc(-50% - var(--dir) * var(--ghost-distance) * 0.36);
+  clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0 50%);
+  background:
+    radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--color-brand-white) 38%, transparent), transparent 62%),
+    color-mix(in srgb, var(--color-brand-primary) var(--ghost-mix), transparent);
+}
+
+/* Sobre la tarjeta blanca un núcleo blanco no se vería: el núcleo y el trazo pasan al rojo de la marca */
+.light {
+  --flare-warm: var(--color-brand-primary-hover);
+}
+
+.light .core {
+  background: radial-gradient(
+    circle,
+    var(--color-brand-primary-hover) 0%,
+    color-mix(in srgb, var(--color-brand-primary) 55%, transparent) 32%,
+    transparent 68%
+  );
+}

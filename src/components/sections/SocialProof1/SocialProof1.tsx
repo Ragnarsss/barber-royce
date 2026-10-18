@@ -1,4 +1,4 @@
-import { motion, useReducedMotion, useTransform, type MotionValue } from "framer-motion";
+import { motion, useReducedMotion, useTransform } from "framer-motion";
 import styles from "./SocialProof1.module.css";
 import socialProof560w from "@/assets/optimized/social_proof_560w.webp";
 import socialProof1120w from "@/assets/optimized/social_proof_1120w.webp";
@@ -14,16 +14,11 @@ import { SITE } from "@/config/constants";
 import { FocusText } from "@/components/common/FocusText/FocusText";
 import { usePinnedScene } from "@/hooks/usePinnedScene";
 import { ramp } from "@/utils/scrollReveal";
-import { BOLT, LASER_CUT, REVEAL, boltWindow } from "./laserCut";
+import { LensFlare } from "./LensFlare";
+import { CUT, FLARE, REVEAL } from "./sceneTimeline";
 
 const PHOTO_SRCSET = `${socialProof560w} 560w, ${socialProof1120w} 1120w, ${socialProof1680w} 1680w`;
 const PHOTO_SIZES = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px";
-
-/** Haz corto que viaja por su pista diagonal con el scroll (BR-062). La pista rota por CSS; el haz se mueve en su eje. */
-function LaserBolt({ index, progress }: { index: number; progress: MotionValue<number> }) {
-  const x = useTransform(progress, boltWindow(index), BOLT.TRAVEL);
-  return <motion.span className={styles.bolt} style={{ x }} />;
-}
 
 export function SocialProof1() {
   const siteText = useSiteText();
@@ -49,10 +44,13 @@ export function SocialProof1() {
     slow: useSlowLayer(motionProgress),
     fast: useFastLayer(motionProgress),
   };
-  const photoCutX = useTransform(pinProgress, LASER_CUT.PHOTO, ["0%", LASER_CUT.COVER_TRAVEL]);
-  const cardCutX = useTransform(pinProgress, LASER_CUT.CARD, ["0%", LASER_CUT.COVER_TRAVEL_BACK]);
-  const frameFlash = useTransform(pinProgress, LASER_CUT.FLASH, [0, 1, 0]);
-  const underline = useTransform(motionProgress, scrub ? LASER_CUT.UNDERLINE : LASER_CUT.UNDERLINE_FREE, [0, 1]);
+  const photoCutX = useTransform(pinProgress, CUT.PHOTO, ["0%", CUT.COVER_TRAVEL]);
+  const cardCutX = useTransform(pinProgress, CUT.CARD, ["0%", CUT.COVER_TRAVEL_BACK]);
+  const frameFlash = useTransform(pinProgress, CUT.FLASH, [0, 1, 0]);
+  // Lens flare que viaja por el borde de cada corte: aparece con él y se apaga un poco después de que termina (BR-076)
+  const photoFlareOpacity = useTransform(pinProgress, FLARE.PHOTO, [0, 1, 0]);
+  const cardFlareOpacity = useTransform(pinProgress, FLARE.CARD, [0, 1, 0]);
+  const underline = useTransform(motionProgress, scrub ? CUT.UNDERLINE : CUT.UNDERLINE_FREE, [0, 1]);
 
   // Revelado después del láser (BR-075): cada cosa se ve borrosa hasta su tramo y se enfoca con el scroll, una tras otra
   const titleFocus = useTransform(pinProgress, (value) => ramp(REVEAL.TITLE[0], REVEAL.TITLE[1])(value));
@@ -79,13 +77,6 @@ export function SocialProof1() {
         className={styles.socialProof}
         ref={sectionRef}
       >
-        {/* Pistas láser diagonales con un haz que viaja por cada una al hacer scroll (BR-062) */}
-        {Array.from({ length: BOLT.TRACKS }, (_, index) => (
-          <div key={index} className={`${styles.laserTrack} ${styles[`laserTrack${index + 1}`]}`} aria-hidden="true" data-laser-track>
-            {!reducedMotion && <LaserBolt index={index} progress={motionProgress} />}
-          </div>
-        ))}
-
         {/* ═══════════════════════════════════════════════
             CAPA DE FONDO - Hexágonos grandes
         ═══════════════════════════════════════════════ */}
@@ -192,7 +183,7 @@ export function SocialProof1() {
               style={scrub ? undefined : { y: layers.slow.y }}
             >
               <div className={styles.imageFrame}>
-                {/* El marco rojo se enciende una vez cuando el láser termina de cortar la foto */}
+                {/* El marco rojo se enciende una vez cuando el corte termina de revelar la foto */}
                 {!reducedMotion && (
                   <motion.div className={styles.frameFlash} aria-hidden="true" style={{ opacity: scrub ? frameFlash : 0 }} />
                 )}
@@ -217,7 +208,7 @@ export function SocialProof1() {
                     <img src={socialProof560w} className={styles.image} loading="lazy" alt="" width="560" height="330" />
                   </motion.picture>
                 )}
-                {/* Panel del color del fondo que se retira en diagonal, con el láser en su borde (BR-062) */}
+                {/* Panel del color del fondo que se retira en diagonal para revelar la foto (BR-062) */}
                 {!reducedMotion && (
                   <motion.div
                     className={styles.cutCover}
@@ -226,10 +217,18 @@ export function SocialProof1() {
                     style={scrub ? { x: photoCutX, skewX: -18 } : { skewX: -18 }}
                     initial={scrub ? false : "hidden"}
                     animate={scrub ? undefined : controls}
-                    variants={scrub ? undefined : laserCutOneShot(LASER_CUT.COVER_TRAVEL)}
+                    variants={scrub ? undefined : laserCutOneShot(CUT.COVER_TRAVEL)}
                   />
                 )}
                 </div>
+                {/* Lens flare en el borde del panel (BR-076): fuera del recorte para que su halo no se corte. Mismo
+                    recuadro y mismo movimiento que el panel; el flare queda en el borde, a media altura, donde la
+                    inclinación del panel no lo desplaza. */}
+                {scrub && (
+                  <motion.div className={styles.cutFlare} aria-hidden="true" data-flare="photo" style={{ x: photoCutX, opacity: photoFlareOpacity }}>
+                    <LensFlare trail="left" tone="dark" />
+                  </motion.div>
+                )}
               </div>
             </motion.div>
 
@@ -249,8 +248,20 @@ export function SocialProof1() {
                   style={scrub ? { x: cardCutX, skewX: 18 } : { skewX: 18 }}
                   initial={scrub ? false : "hidden"}
                   animate={scrub ? undefined : controls}
-                  variants={scrub ? undefined : laserCutOneShot(LASER_CUT.COVER_TRAVEL_BACK)}
+                  variants={scrub ? undefined : laserCutOneShot(CUT.COVER_TRAVEL_BACK)}
                 />
+              )}
+              {/* Lens flare en el borde derecho del panel de la tarjeta, que avanza hacia la izquierda y deja lo ya
+                  revelado a su derecha. La tarjeta es blanca y recorta su contenido: el núcleo del flare es rojo (BR-076). */}
+              {scrub && (
+                <motion.div
+                  className={`${styles.cutFlare} ${styles.cutFlareCard}`}
+                  aria-hidden="true"
+                  data-flare="card"
+                  style={{ x: cardCutX, opacity: cardFlareOpacity }}
+                >
+                  <LensFlare trail="right" tone="light" />
+                </motion.div>
               )}
               {/* El texto del testimonio se ve borroso hasta su tramo y se enfoca con el scroll, al final (BR-075) */}
               <FocusText as="div" block className={styles.testimonialContent} progress={quoteFocus} focusFrom={0} blurPx={22} enabled={scrub}>
