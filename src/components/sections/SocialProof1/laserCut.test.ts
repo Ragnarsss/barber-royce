@@ -43,6 +43,10 @@ describe("revelado después del láser (BR-075, HU-EXP-004 CA-26)", () => {
     expect(REVEAL.QUOTE[1]).toBeGreaterThan(REVEAL.PHOTO[1]);
   });
 
+  it("el texto del testimonio empieza a enfocarse cuando la foto ya terminó, no a la vez", () => {
+    expect(REVEAL.QUOTE[0]).toBeGreaterThanOrEqual(REVEAL.PHOTO[1]);
+  });
+
   it("todo queda nítido antes de soltar la sección: hay una pausa final", () => {
     expect(REVEAL.QUOTE[1]).toBeLessThan(1);
   });

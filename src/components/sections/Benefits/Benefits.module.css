@@ -162,7 +162,7 @@
 .cardBlur {
   position: absolute;
   inset: 0;
-  filter: blur(14px);
+  filter: blur(18px);
   pointer-events: none;
   user-select: none;
 }

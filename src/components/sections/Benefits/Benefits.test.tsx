@@ -230,12 +230,13 @@ describe("Benefits: revelado con el scroll (BR-074, HU-EXP-004 CA-25)", () => {
     state.reducedMotion = false;
   });
 
-  it("el título y el subtítulo tienen cada uno su copia desenfocada decorativa (aria-hidden)", () => {
+  it("solo el subtítulo tiene copia desenfocada decorativa (aria-hidden): el título queda siempre nítido", () => {
     renderWithProviders(<Benefits />);
 
     const copies = document.querySelectorAll("#benefits [data-focus-blur]");
-    expect(copies).toHaveLength(2);
+    expect(copies).toHaveLength(1);
     copies.forEach((copy) => expect(copy.getAttribute("aria-hidden")).toBe("true"));
+    expect(document.querySelector("#benefits h2 [data-focus-blur]")).toBeNull();
   });
 
   it("CA-25: cada tarjeta lleva una copia desenfocada de su texto, sin ícono, que reserva su lugar", () => {

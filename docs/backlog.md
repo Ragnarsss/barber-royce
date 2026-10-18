@@ -2780,6 +2780,9 @@ moneda.
 > 4. **La sección queda fija** en pantalla mientras se revela (escritorio, sin reducir
 >    movimiento): el scroll avanza la secuencia en vez de subir la sección y dejarla
 >    cortada. En móvil no se fija. Al terminar, la página sigue.
+> 4b. **Los títulos quedan fuera del desenfoque (2026-10-17, el usuario):** el `h2`
+>    de la sección se ve siempre nítido; el desenfoque es del subtítulo, las
+>    tarjetas y la foto.
 > 5. **Regla para toda la landing:** el usuario quiere este mismo patrón (escena fija
 >    y animaciones ligadas al scroll y a la pantalla) en las demás secciones. Se
 >    trabaja sección por sección, cada una con su ticket; el primero es
@@ -2829,7 +2832,9 @@ pidió que, una vez concluido el láser, la imagen y el texto estén desenfocado
 revelen con el scroll.
 
 Decisiones del usuario (2026-10-17): sección fija mientras ocurre todo; después del
-láser, la imagen y el texto se ven borrosos y se enfocan con el scroll.
+láser, la imagen y el texto se ven borrosos y se enfocan con el scroll. El título
+(`h2`) queda fuera del desenfoque, siempre nítido. El texto del testimonio se
+desenfoca más (22 px) y empieza a enfocarse cuando la foto ya terminó, no a la vez.
 
 Alcance (solo escritorio, sin reducir movimiento; en móvil la sección no cambia):
 1. Contenedor alto con la sección pegada arriba (`position: sticky`), como `BR-074`.

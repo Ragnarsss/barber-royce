@@ -169,10 +169,8 @@ export function SocialProof1() {
             animate={scrub ? undefined : controls}
             variants={fadeInUp}
           >
-            {/* Con la sección fija, el título se ve borroso hasta su tramo y se enfoca con el scroll (BR-075) */}
-            <FocusText as="h2" className={styles.title} progress={titleFocus} focusFrom={0} blurPx={18} enabled={scrub}>
-              {siteText("socialproof1.titulo")}
-            </FocusText>
+            {/* El título queda siempre nítido: solo el subtítulo, la foto y el testimonio se revelan con el scroll (BR-075) */}
+            <h2 className={styles.title}>{siteText("socialproof1.titulo")}</h2>
             {/* Subrayado láser que se dibuja con el scroll (BR-062) */}
             <motion.span
               className={styles.titleUnderline}
@@ -180,7 +178,7 @@ export function SocialProof1() {
               data-title-underline
               style={reducedMotion ? undefined : { scaleX: underline }}
             />
-            <FocusText as="p" className={styles.subtitle} progress={titleFocus} focusFrom={0} blurPx={10} enabled={scrub}>
+            <FocusText as="p" className={styles.subtitle} progress={titleFocus} focusFrom={0} blurPx={16} enabled={scrub}>
               {siteText("socialproof1.subtitulo")}
             </FocusText>
           </motion.div>
@@ -255,7 +253,7 @@ export function SocialProof1() {
                 />
               )}
               {/* El texto del testimonio se ve borroso hasta su tramo y se enfoca con el scroll, al final (BR-075) */}
-              <FocusText as="div" block className={styles.testimonialContent} progress={quoteFocus} focusFrom={0} blurPx={9} enabled={scrub}>
+              <FocusText as="div" block className={styles.testimonialContent} progress={quoteFocus} focusFrom={0} blurPx={22} enabled={scrub}>
                 <p className={styles.testimonialText}>
                   "Cuando necesito un corte que hable por sí solo, confío en {SITE.name}. Su profesionalismo y atención
                   al detalle son inigualables."

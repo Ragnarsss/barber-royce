@@ -130,11 +130,12 @@ describe("SocialProof1: escena fija y revelado (BR-075, HU-EXP-004 CA-26)", () =
     expect(document.getElementById("social-proof-1")!.parentElement?.className).toMatch(/pinned/);
   });
 
-  it("CA-26: el título, el subtítulo y el texto del testimonio tienen su copia desenfocada decorativa (aria-hidden)", () => {
+  it("CA-26: el subtítulo y el texto del testimonio tienen su copia desenfocada decorativa (aria-hidden); el título, no", () => {
     renderSection();
 
     const copies = document.querySelectorAll("#social-proof-1 [data-focus-blur]");
-    expect(copies).toHaveLength(3);
+    expect(copies).toHaveLength(2);
+    expect(document.querySelector("#social-proof-1 h2 [data-focus-blur]")).toBeNull();
     copies.forEach((copy) => expect(copy.getAttribute("aria-hidden")).toBe("true"));
   });
 

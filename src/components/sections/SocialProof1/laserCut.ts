@@ -38,9 +38,11 @@ export const LASER_CUT: {
  * pausa con todo nítido antes de soltar la sección.
  */
 export const REVEAL: { TITLE: number[]; PHOTO: number[]; QUOTE: number[] } = {
-  TITLE: [0.4, 0.58],
-  PHOTO: [0.5, 0.72],
-  QUOTE: [0.66, 0.88],
+  /** Subtítulo (el título queda siempre nítido). */
+  TITLE: [0.4, 0.56],
+  PHOTO: [0.48, 0.68],
+  /** Empieza cuando la foto ya terminó: el texto del testimonio no se enfoca a la vez que la foto. */
+  QUOTE: [0.72, 0.92],
 };
 
 /** Haces que viajan por las pistas diagonales del fondo. */

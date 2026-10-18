@@ -94,11 +94,10 @@ export function Benefits() {
         <div className={styles.container}>
           <div className={styles.content}>
             <div className={styles.header}>
-              <FocusText as="h2" className={styles.title} progress={focusProgress} blurPx={18} enabled={!reducedMotion}>
-                {siteText("benefits.titulo")}
-              </FocusText>
+              {/* El título queda siempre nítido: solo el subtítulo, las tarjetas y la foto se revelan con el scroll */}
+              <h2 className={styles.title}>{siteText("benefits.titulo")}</h2>
               {/* La frase continúa en las tarjetas: por eso termina en dos puntos */}
-              <FocusText as="p" className={styles.subtitle} progress={focusProgress} blurPx={10} enabled={!reducedMotion}>
+              <FocusText as="p" className={styles.subtitle} progress={focusProgress} blurPx={16} enabled={!reducedMotion}>
                 En {SITE.name}, cada visita es una oportunidad para realzar tu estilo. Nos enfocamos en la calidad y la
                 exclusividad, ofreciendo:
               </FocusText>
