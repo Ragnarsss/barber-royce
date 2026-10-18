@@ -5,7 +5,6 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SITE } from "@/config/constants";
 import { LenisContext } from "@/contexts/lenisContextValue";
 import { renderWithProviders } from "@/test/renderWithProviders";
-import { HEAVY_SCROLL } from "@/utils/heavyScroll";
 
 // BR-062: corte láser cinematográfico de SocialProof1 y su deuda saldada.
 const state = vi.hoisted(() => ({ reducedMotion: false }));
@@ -157,15 +156,8 @@ describe("SocialProof1: escena fija y revelado (BR-075, HU-EXP-004 CA-26)", () =
     expect(document.querySelector("[data-photo-blur]")).toBeNull();
   });
 
-  it("BR-077: el recorrido fijo es largo: a la velocidad máxima del scroll pesado toma unos 3 segundos o más", () => {
-    const vh = Number(desktop.match(/\.pinned\s*\{[^}]*height:\s*(\d+)vh/)?.[1]);
-    const pixels = (vh - 100) * 9; // referencia: una pantalla de 900 px de alto
-
-    expect(pixels / HEAVY_SCROLL.MAX_SPEED).toBeGreaterThanOrEqual(2.8);
-  });
-
-  it("el CSS: contenedor alto y sección pegada arriba a pantalla completa, solo desde 769 px", () => {
-    expect(desktop).toMatch(/\.pinned\s*\{[^}]*height:\s*\d+vh/);
+  it("el CSS: contenedor de 300vh y sección pegada arriba a pantalla completa, solo desde 769 px", () => {
+    expect(desktop).toMatch(/\.pinned\s*\{[^}]*height:\s*300vh/);
     expect(desktop).toMatch(/\.pinned > \.socialProof\s*\{[^}]*position:\s*sticky/);
     expect(desktop).toMatch(/\.pinned > \.socialProof\s*\{[^}]*top:\s*0/);
     expect(desktop).toMatch(/\.pinned > \.socialProof\s*\{[^}]*height:\s*100vh/);

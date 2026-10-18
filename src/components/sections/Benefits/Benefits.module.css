@@ -13,7 +13,7 @@
 
 @media (min-width: 769px) {
   .pinned {
-    height: 360vh;
+    height: 280vh;
   }
 
   .pinned > .benefits {
