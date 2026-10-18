@@ -37,9 +37,17 @@ o `tailwind-merge`.
 
 ## Chequeo 4 — Breakpoints y acoplamiento
 
-- `@media` con anchos fuera del conjunto de
-  `src/styles/tokens/breakpoints.css`, y mezcla de `max-width` y
-  `min-width` en un mismo archivo.
+- El CSS es **mobile-first** (`ADR-009`): base móvil y `@media
+  (min-width: …)`. Reporta cualquier `@media` con `max-width` de ancho, con
+  un ancho fuera de 640, 769, 1025 y 1280 px, o con un alto distinto de
+  `min-height: 720px` (solo válido junto a 769). Las media queries de
+  preferencias (`hover`, `prefers-reduced-motion`, `print`) quedan fuera.
+- En TypeScript: media queries de ancho escritas como texto o `innerWidth`
+  comparado a mano, en lugar de `MEDIA` de `src/config/breakpoints.ts`. Las
+  listas `sizes` de las imágenes quedan fuera.
+- Separa lo que está en la lista de pendientes de
+  `src/styles/breakpoints.test.ts` (migración en curso, `BR-080`..`BR-083`)
+  de lo que es nuevo: lo nuevo es un hallazgo; lo pendiente, un conteo.
 - Un componente que importa el `*.module.css` de otro componente o de una
   página.
 

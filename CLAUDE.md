@@ -72,6 +72,12 @@ Tests junto al archivo que prueban (`*.test.ts(x)`); helper de render en `src/te
    el dueño confirma contenido nuevo). No se editan a mano en dos lugares.
 5. **Estilos:** CSS Modules + tokens de `src/styles/tokens/`. Nada de
    colores hex en los módulos ni clases de Tailwind (ADR-002).
+   **Mobile-first** (ADR-009, decisión del usuario 2026-10-18): la base es el
+   móvil y cada corte suma con `min-width`, solo 640, 769, 1025 o 1280 px (y
+   `min-height: 720px` junto a 769 para las escenas fijas). Nunca `max-width`
+   de ancho. En TypeScript, `useMediaQuery(MEDIA.…)` de
+   `src/config/breakpoints.ts`, nunca una query escrita a mano ni
+   `innerWidth`. Lo verifica `src/styles/breakpoints.test.ts`.
 6. **Animación:** nunca `setState` por evento de scroll; usar `MotionValue`.
    Respetar `prefers-reduced-motion`. Nunca leer `window.lenis`
    (`architecture.md` §5).

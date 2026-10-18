@@ -1770,3 +1770,16 @@ Tres PR integraron el lote a `master`: #33 (BR-061, BR-069 a BR-077), #34 (tarje
 **Pendientes que no bloquean el cierre:**
 - Las 5 reseñas son de ejemplo (`reviewsData.ts`); las reemplaza `BR-052`.
 - El handoff de hallazgos de la vista móvil y la auditoría responsive quedan en `docs/handoff-movil-2026-10-18.md`, como insumo para tickets nuevos.
+
+<a id="br-024"></a>
+
+## BR-024 — Breakpoints unificados, mobile-first (base de la migración)
+
+**Notas de construcción (2026-10-18):**
+- Decisión del usuario: migrar **todo** el CSS a mobile-first y adoptarlo como patrón. Se descartó la alternativa de cerrar los cortes y escribir mobile-first solo en lo nuevo. Conjunto elegido: 640, 769, 1025 y 1280 px, más `min-height: 720px` para las escenas fijas. Queda en `ADR-009`, en la regla 5 de `CLAUDE.md`, en `engineering-guidelines.md` §13, en la skill `diseno-visual` y en el chequeo 4 de `design-tokens-auditor`.
+- `src/config/breakpoints.ts`: `BREAKPOINTS` y `MEDIA` (las queries con nombre para `useMediaQuery`). `src/styles/tokens/breakpoints.css` documenta el conjunto, y sus variables se alinean a él (nadie las usaba).
+- `src/styles/breakpoints.test.ts` (`RNF-MANT-004`) recorre los `.css`, `.ts` y `.tsx` de `src/`. Falla con un `max-width` o `max-height` en un `@media`, con un corte fuera del conjunto, con la sintaxis de rango, con una media query de ancho escrita como texto en TypeScript o con `innerWidth` comparado a mano. La **lista de pendientes** tiene los 30 archivos que hoy incumplen, agrupados por ticket (`BR-080` a `BR-083`). Un archivo nuevo que incumpla falla, y uno de la lista que ya cumpla también, así que la lista solo se achica.
+- Fuera de la regla: las listas `sizes` de las imágenes (una condición seguida del ancho de la foto). Eligen qué archivo descargar, no aplican estilos, y su forma habitual es con `max-width`; el test lo reconoce por el ancho que sigue a la condición (`Benefits.tsx`, `SocialProof1.tsx`, `CTA1.tsx`).
+- Sin cambio visible: este ticket no migra ningún archivo.
+
+**Verificación:** test primero con los casos del detector. La lista de pendientes se ajustó con el propio test: los dos `sizes` aparecieron como falsos positivos y `Navbar.tsx` como pendiente sin detectar (`innerWidth > 768`), y se corrigieron los dos detectores.

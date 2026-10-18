@@ -234,6 +234,12 @@ umbrales están en `rf-rnf-catalogo.md` (`RNF-PERF-*`).
   clase: los globales son oscuros y, sin esto, el texto desaparece
   (`BR-045`). Lo vigilan `contrast.e2e.test.ts` (Chrome real, todas las
   rutas) y `darkSurfaceTitles.test.ts`.
+- **CSS mobile-first** (`ADR-009`): la base del módulo es el móvil y cada
+  corte suma con `@media (min-width: …)`, solo 640, 769, 1025 o 1280 px
+  (`min-height: 720px` junto a 769, para las escenas fijas). Nunca
+  `max-width` de ancho. En TypeScript, `useMediaQuery(MEDIA.…)` de
+  `src/config/breakpoints.ts`. Lo vigila `src/styles/breakpoints.test.ts`
+  (`RNF-MANT-004`).
 - Formato: Prettier y `.editorconfig` (`BR-028`). Imports con el alias
   `@/`, sin `../`.
 
