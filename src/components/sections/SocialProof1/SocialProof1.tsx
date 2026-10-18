@@ -1,4 +1,5 @@
-import { motion, useReducedMotion, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import styles from "./SocialProof1.module.css";
 import socialProof560w from "@/assets/optimized/social_proof_560w.webp";
 import socialProof1120w from "@/assets/optimized/social_proof_1120w.webp";
@@ -56,8 +57,24 @@ export function SocialProof1() {
   const titleFocus = useTransform(pinProgress, (value) => ramp(REVEAL.TITLE[0], REVEAL.TITLE[1])(value));
   const photoFocus = useTransform(pinProgress, (value) => ramp(REVEAL.PHOTO[0], REVEAL.PHOTO[1])(value));
   const quoteFocus = useTransform(pinProgress, (value) => ramp(REVEAL.QUOTE[0], REVEAL.QUOTE[1])(value));
-  // La foto nítida y su copia desenfocada se cruzan por opacidad; el desenfoque es de radio fijo (animarlo no es barato)
-  const photoBlurOpacity = useTransform(photoFocus, (value) => 1 - value);
+  // Sin la sección fija (móvil, BR-078) el desenfoque también existe, pero cada cosa se enfoca según dónde esté en la
+  // pantalla: de que asoma por abajo a que sube hacia el centro
+  const headerRef = useRef<HTMLDivElement>(null);
+  const photoRef = useRef<HTMLDivElement>(null);
+  const quoteRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: freeSubtitle } = useScroll({ target: headerRef, offset: ["start 95%", "start 55%"] });
+  const { scrollYProgress: freePhoto } = useScroll({ target: photoRef, offset: ["start 92%", "start 42%"] });
+  const { scrollYProgress: freeQuote } = useScroll({ target: quoteRef, offset: ["start 92%", "start 48%"] });
+  const blurOn = !reducedMotion;
+  const subtitleFocus = scrub ? titleFocus : freeSubtitle;
+  const photoFocusProgress = scrub ? photoFocus : freePhoto;
+  const quoteFocusProgress = scrub ? quoteFocus : freeQuote;
+  // La copia desenfocada queda opaca debajo mientras la foto nítida se enciende encima, y se retira cuando esta ya es
+  // del todo nítida; el desenfoque es de radio fijo (animarlo no es barato)
+  const photoBlurOpacity = useTransform(photoFocusProgress, (value) => (value >= 1 ? 0 : 1));
+  // Con una función (aunque no cambie el valor): el avance de scroll crudo como opacidad lo acelera framer con la API de
+  // animaciones web (ScrollTimeline), que jsdom no trae; una función lo mantiene en el hilo principal, sin pasar por React
+  const photoSharpOpacity = useTransform(photoFocusProgress, (value) => value);
 
   // Movimiento personalizado para testimonial
   const testimonialY = useTransform(
@@ -155,6 +172,7 @@ export function SocialProof1() {
 
         <div className={styles.container} ref={ref}>
           <motion.div
+            ref={headerRef}
             className={styles.header}
             initial={scrub ? false : "hidden"}
             animate={scrub ? undefined : controls}
@@ -169,7 +187,7 @@ export function SocialProof1() {
               data-title-underline
               style={reducedMotion ? undefined : { scaleX: underline }}
             />
-            <FocusText as="p" className={styles.subtitle} progress={titleFocus} focusFrom={0} blurPx={16} enabled={scrub}>
+            <FocusText as="p" className={styles.subtitle} progress={subtitleFocus} focusFrom={0} blurPx={16} enabled={blurOn}>
               {siteText("socialproof1.subtitulo")}
             </FocusText>
           </motion.div>
@@ -182,14 +200,23 @@ export function SocialProof1() {
               variants={fadeInLeft}
               style={scrub ? undefined : { y: layers.slow.y }}
             >
-              <div className={styles.imageFrame}>
+              <div className={styles.imageFrame} ref={photoRef}>
                 {/* El marco rojo se enciende una vez cuando el corte termina de revelar la foto */}
                 {!reducedMotion && (
                   <motion.div className={styles.frameFlash} aria-hidden="true" style={{ opacity: scrub ? frameFlash : 0 }} />
                 )}
                 <div className={styles.imageClip}>
-                {/* Foto nítida; con la sección fija se cruza con su copia desenfocada (más abajo) al enfocarse (BR-075) */}
-                <motion.picture className={styles.pictureLayer} style={scrub ? { opacity: photoFocus } : undefined}>
+                {/* Copia desenfocada de la misma foto (mismos archivos: no baja nada más): decorativa y de radio fijo.
+                    Va primero, siempre opaca, y la foto nítida se enciende encima: si las dos fueran translúcidas a la vez, a
+                    mitad de camino se asomaría el marco rojo que hay detrás y la foto se vería con un tinte rojo. */}
+                {blurOn && (
+                  <motion.picture className={`${styles.pictureLayer} ${styles.pictureBlur}`} aria-hidden="true" data-photo-blur style={{ opacity: photoBlurOpacity }}>
+                    <source srcSet={PHOTO_SRCSET} sizes={PHOTO_SIZES} type="image/webp" />
+                    <img src={socialProof560w} className={styles.image} loading="lazy" alt="" width="560" height="330" />
+                  </motion.picture>
+                )}
+                {/* Foto nítida: aparece sobre la copia desenfocada al enfocarse (BR-075, y en móvil BR-078) */}
+                <motion.picture className={styles.pictureLayer} style={blurOn ? { opacity: photoSharpOpacity } : undefined}>
                   <source srcSet={PHOTO_SRCSET} sizes={PHOTO_SIZES} type="image/webp" />
                   <img
                     src={socialProof560w}
@@ -201,13 +228,6 @@ export function SocialProof1() {
                     onLoad={refreshLenis}
                   />
                 </motion.picture>
-                {/* Copia desenfocada de la misma foto (mismos archivos: no baja nada más): decorativa y de radio fijo */}
-                {scrub && (
-                  <motion.picture className={`${styles.pictureLayer} ${styles.pictureBlur}`} aria-hidden="true" data-photo-blur style={{ opacity: photoBlurOpacity }}>
-                    <source srcSet={PHOTO_SRCSET} sizes={PHOTO_SIZES} type="image/webp" />
-                    <img src={socialProof560w} className={styles.image} loading="lazy" alt="" width="560" height="330" />
-                  </motion.picture>
-                )}
                 {/* Panel del color del fondo que se retira en diagonal para revelar la foto (BR-062) */}
                 {!reducedMotion && (
                   <motion.div
@@ -233,6 +253,7 @@ export function SocialProof1() {
             </motion.div>
 
             <motion.div
+              ref={quoteRef}
               className={styles.testimonialCard}
               initial={scrub ? false : "hidden"}
               animate={scrub ? undefined : controls}
@@ -264,7 +285,7 @@ export function SocialProof1() {
                 </motion.div>
               )}
               {/* El texto del testimonio se ve borroso hasta su tramo y se enfoca con el scroll, al final (BR-075) */}
-              <FocusText as="div" block className={styles.testimonialContent} progress={quoteFocus} focusFrom={0} blurPx={22} enabled={scrub}>
+              <FocusText as="div" block className={styles.testimonialContent} progress={quoteFocusProgress} focusFrom={0} blurPx={22} enabled={blurOn}>
                 <p className={styles.testimonialText}>
                   "Cuando necesito un corte que hable por sí solo, confío en {SITE.name}. Su profesionalismo y atención
                   al detalle son inigualables."
