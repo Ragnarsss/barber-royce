@@ -707,10 +707,10 @@ y confiar en que el servicio está a la altura.
   destellos hexagonales viaja con el borde del corte y se apaga al terminar, sin
   líneas láser; con reducir movimiento no hay flare.
 - CA-28 (2026-10-17, `BR-077`): Given paso por una escena fija (Beneficios o
-  Respaldados por los mejores) con la rueda o el trackpad, When giro muy rápido,
-  Then el scroll no cruza el recorrido en un instante: avanza con un límite de
-  velocidad y un deslizamiento más largo, para que se aprecie el efecto; fuera de
-  las escenas fijas el scroll es el de siempre.
+  Respaldados por los mejores) con la rueda o el trackpad, When giro, Then el
+  scroll avanza más despacio que antes, para que se aprecie el efecto, sin
+  sentirse trabado. (Ajustado el 2026-10-18: en lugar de un límite solo dentro de
+  las escenas, la rueda es más lenta en toda la página.)
 
 ---
 

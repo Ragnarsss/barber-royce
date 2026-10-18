@@ -11,6 +11,9 @@ const LENIS_CONFIG: LenisOptions = {
   duration: 1.2,
   easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   smoothWheel: true,
+  // Un punto medio entre el scroll normal (1) y uno muy lento: con las escenas fijas (BR-074, BR-075), una pasada de la
+  // rueda o del trackpad cruzaba el recorrido tan rápido que el efecto no se apreciaba (BR-077). Vale para toda la página.
+  wheelMultiplier: 0.6,
   touchMultiplier: 2,
   // Lenis lleva su propio loop y observa el tamaño de la ventana y del contenido
   autoRaf: true,

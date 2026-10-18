@@ -47,6 +47,15 @@ describe("useCreateLenis (BR-014, BR-017, BR-049)", () => {
     unmount();
   });
 
+  it("BR-077 CA-28: la rueda avanza más despacio que lo normal, pero no tan poco que se sienta trabada", () => {
+    const { unmount } = renderHook(() => useCreateLenis());
+
+    const multiplier = lenisCalls.options?.wheelMultiplier as number;
+    expect(multiplier).toBeLessThan(1);
+    expect(multiplier).toBeGreaterThanOrEqual(0.4);
+    unmount();
+  });
+
   it("BR-049: Lenis lleva su propio loop y su propio resize, sin loop ni observer del hook", () => {
     const resizeObserver = vi.fn();
     vi.stubGlobal("ResizeObserver", resizeObserver);
