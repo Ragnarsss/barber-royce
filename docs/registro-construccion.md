@@ -1819,3 +1819,17 @@ Tres PR integraron el lote a `master`: #33 (BR-061, BR-069 a BR-077), #34 (tarje
 - **Resultado:** idénticas byte a byte, salvo las dos páginas móviles completas, que difieren en el codificado pero sin un solo píxel sobre el umbral de comparación, y el ruido que ya tenían CTA2 y SocialProof2 a 1440 px.
 - Lint, tipos, build y 851 tests en verde.
 - **Pendiente:** el preview de Vercel y que el usuario vea el movimiento (escenas fijas y zoom).
+
+<a id="br-082"></a>
+
+## BR-082 — Mobile-first: páginas internas
+
+**Notas de construcción (2026-10-18):**
+- `PageHero`, `AboutPage`, `FAQPage`, `ServicesPage` y `LocationPage` pasan a mobile-first: base móvil y `min-width: 769px` (y 1025 px en `LocationPage`) con los valores de escritorio. Cada regla que el bloque móvil pisaba se restauró en el bloque de escritorio, incluidos los valores que eran el comportamiento por omisión (`align-items: normal`, `justify-content: normal`, `white-space: normal`).
+- **Cambio visible previsto:** en `/ubicacion`, entre 969 y 1024 px la ficha de la sucursal pasa de dos columnas a una, porque el corte 968 no está en el conjunto de `ADR-009` (a 1025 px vuelven las dos columnas).
+- Código muerto quitado: `ServicesPage` tenía reglas móviles de `.hero`, `.title` y `.subtitle` sin su contraparte base (el hero es `PageHero`).
+
+**Verificación:**
+- 36 capturas de página completa antes y después (`/nosotros`, `/faq`, `/ubicacion` y `/servicios` a 320, 390, 640, 768, 769, 1024, 1025, 1280 y 1920 px) y una segunda corrida «antes» para medir el ruido.
+- **Resultado:** idénticas, salvo `/ubicacion` entre 969 y 1024 px (previsto) y el recuadro del mapa de Google (tercero; cambia entre cargas): fuera del mapa, 0 píxeles de diferencia a 1280 px, y tres capturas nuevas seguidas coincidieron entre sí.
+- Lint, tipos, build y 851 tests en verde. **Pendiente:** el preview de Vercel.

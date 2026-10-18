@@ -17,11 +17,6 @@ const HEIGHTS = [720];
 const PENDING = new Set([
   // BR-081: secciones de la home
   // BR-082: páginas internas
-  "components/common/PageHero/PageHero.module.css",
-  "pages/AboutPage.module.css",
-  "pages/FAQPage.module.css",
-  "pages/LocationPage.module.css",
-  "pages/ServicesPage.module.css",
   // BR-083: componentes comunes
   "components/common/CardCarousel/CardCarousel.module.css",
   "components/common/CardCarousel/CardCarousel.tsx",
