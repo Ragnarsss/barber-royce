@@ -1,8 +1,15 @@
+/*
+ * Mobile-first (BR-081, ADR-009): la base es el móvil (BR-061, HU-EXP-004 CA-13): la foto ocupa toda la portada como
+ * fondo y el texto va a la izquierda, bajo la navbar. Los triángulos se ocultan todos; la foto los reemplaza como fondo.
+ * Desde 769 px y 1025 px se suma el escritorio (al final del archivo).
+ */
 .hero {
-  height: 100vh;
-  min-height: 100vh;
+  /* El layout ya deja 80 px arriba para la navbar fija (Layout.module.css): la portada llena el resto de la pantalla */
+  height: auto;
+  min-height: calc(100vh - 80px);
+  min-height: calc(100svh - 80px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   padding: 0;
   background: var(--color-brand-section-bg);
   position: relative;
@@ -15,19 +22,20 @@
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 3.5rem 1.5rem 3rem;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   position: relative;
   z-index: 2;
 }
 
+/* Aire entre los bloques, como en el Figma: título, línea, párrafo y tarjetas */
 .content {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding-left: 2.5rem;
-  max-width: 600px;
+  gap: 2rem;
+  padding-left: 0;
+  max-width: 100%;
 }
 
 /* Título en tres niveles (BR-050): prefijo, marca y lema. La marca sale de SITE; el lema, de la hoja. */
@@ -39,6 +47,17 @@
   margin: 0;
   color: var(--color-brand-white);
   font-weight: var(--font-weight-bold);
+}
+
+/* Línea blanca gruesa bajo el título, como en el Figma (solo en móvil) */
+.title::after {
+  content: "";
+  display: block;
+  align-self: stretch;
+  height: 0.375rem;
+  margin-top: 1.75rem;
+  border-radius: var(--radius-full);
+  background: var(--color-brand-white);
 }
 
 .prefix {
@@ -112,7 +131,7 @@
 .tagline {
   display: block;
   max-width: 520px;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
   white-space: pre-line; /* los saltos de línea del texto editable de la hoja se respetan (BR-042) */
   font-size: clamp(1.1rem, 2.4vw, 1.75rem);
   font-weight: var(--font-weight-semibold);
@@ -132,19 +151,20 @@
 }
 
 .subtitle {
-  font-size: clamp(0.9rem, 1.5vw, 0.95rem);
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.6;
   color: #ffffff;
-  max-width: 520px;
+  max-width: 100%;
   margin: 0;
   opacity: 0.95;
 }
 
+/* Tarjetas compactas en móvil: en el lugar del botón del Figma */
 .benefits {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 }
 
 /*
@@ -158,10 +178,10 @@
   position: relative;
   isolation: isolate;
   display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 0.95rem 1.35rem;
-  max-width: 560px;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  max-width: 100%;
   overflow: hidden;
   background: var(--card-edge);
   clip-path: var(--card-clip);
@@ -217,8 +237,8 @@
 
 .benefitIcon {
   flex-shrink: 0;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 1.75rem;
+  height: 1.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -243,8 +263,8 @@
 }
 
 .benefitText {
-  font-size: clamp(0.75rem, 1.2vw, 0.82rem);
-  line-height: 1.6;
+  font-size: 0.8125rem;
+  line-height: 1.35;
   color: var(--color-brand-white);
   margin: 0;
   padding-top: 0.4rem;
@@ -274,19 +294,44 @@
   z-index: 1;
 }
 
-/* ✅ SEO: Nueva clase para <img> tag con alt text */
+/*
+ * ✅ SEO: <picture> con la foto y su alt. En móvil cubre toda la portada, sin parallax vertical: al bajar dejaría una
+ * franja vacía arriba (el zoom de BR-079 lo pone framer en línea). Desde 769 px va a la derecha, a media pantalla.
+ */
 .heroImageSEO {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 50%;
+  inset: 0;
+  width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: right bottom;
   z-index: 1;
 }
 
+.heroImageSEO img {
+  object-fit: cover;
+  /* Ajustada a mano con el usuario (2026-10-17): más del lado derecho de la foto a la izquierda; menos %, más a la derecha */
+  object-position: 50% top;
+}
+
+/* Velo oscuro sobre la foto en móvil (60 %, como en el Figma): el texto blanco se lee sobre las zonas claras (CP-A11Y-004) */
+.heroImageSEO::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--color-primary-900) 60%, transparent);
+  pointer-events: none;
+}
+
 /* ===== CAPAS DE TRIÁNGULOS PARALLAX ===== */
+
+/* Los triángulos solo existen desde 769 px: en móvil la foto es el fondo (BR-061) */
+.leftTriangle,
+.rightTriangle,
+.leftTriangleBackground,
+.rightTriangleBackground,
+.leftTriangleForeground,
+.rightTriangleForeground {
+  display: none;
+}
 
 /*
  * Profundidad del fondo (BR-055): los triángulos llevan un degradado con la luz arriba a la izquierda y un filo de
@@ -448,137 +493,99 @@
   );
 }
 
-@media (max-width: 1024px) {
-  .content {
-    padding-left: 1.5rem;
-    max-width: 550px;
+@media (prefers-reduced-motion: reduce) {
+  .shine {
+    animation: none;
+    display: none;
   }
 }
 
-@media (min-width: 768px) {
-}
-
-@media (max-width: 768px) {
-  /*
-   * Móvil (BR-061, HU-EXP-004 CA-13): la foto ocupa toda la portada como fondo y el texto va a la izquierda, bajo
-   * la navbar. Los triángulos se ocultan todos (BR-055 dejaba uno); la foto los reemplaza como fondo.
-   */
+/*
+ * Escritorio (desde 769 px, BR-055 y BR-056): la foto a la derecha, a media pantalla; los triángulos de fondo, y el
+ * texto centrado en vertical con tarjetas más grandes. Hasta 1024 px el texto es un poco más angosto.
+ */
+@media (min-width: 769px) {
   .leftTriangle,
   .rightTriangle,
   .leftTriangleBackground,
   .rightTriangleBackground,
   .leftTriangleForeground,
   .rightTriangleForeground {
-    display: none;
+    display: block;
   }
 
-  /* El layout ya deja 80 px arriba para la navbar fija (Layout.module.css): la portada llena el resto de la pantalla */
   .hero {
-    height: auto;
-    min-height: calc(100vh - 80px);
-    min-height: calc(100svh - 80px);
-    align-items: flex-start;
+    height: 100vh;
+    min-height: 100vh;
+    align-items: center;
   }
 
-  /* Sin parallax en móvil: la foto cubre la pantalla y, al bajar, dejaría una franja vacía arriba. El inline de framer se pisa con !important. */
-  /* El movimiento de la foto en móvil (el zoom de BR-079) lo pone framer en línea: sin parallax vertical, que dejaba un hueco */
   .heroImageSEO {
-    inset: 0;
-    width: 100%;
+    inset: auto 0 0 auto;
+    width: 50%;
     height: 100%;
+    object-fit: contain;
+    object-position: right bottom;
   }
 
+  /* Sin el ajuste de la foto móvil: la imagen toma su proporción y llena el ancho de su caja */
   .heroImageSEO img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
-    /* Ajustada a mano con el usuario (2026-10-17): más del lado derecho de la foto a la izquierda; menos %, más a la derecha */
-    object-position: 50% top;
+    object-fit: fill;
+    object-position: 50% 50%;
   }
 
-  /* Velo oscuro sobre la foto (60 %, como en el Figma): el texto blanco se lee sobre las zonas claras (CP-A11Y-004) */
-  .heroImageSEO::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: color-mix(in srgb, var(--color-primary-900) 60%, transparent);
-    pointer-events: none;
+  .heroImageSEO::after,
+  .title::after {
+    content: none;
   }
 
   .container {
-    padding: 3.5rem 1.5rem 3rem;
-    align-items: flex-start;
+    padding: 0 2rem;
+    align-items: center;
   }
 
-  /* Aire entre los bloques, como en el Figma: título, línea, párrafo y tarjetas */
   .content {
-    padding-left: 0;
-    max-width: 100%;
-    gap: 2rem;
+    gap: 1.5rem;
+    padding-left: 1.5rem;
+    max-width: 550px;
   }
 
   .tagline {
-    margin-top: 0.75rem;
-  }
-
-  /* Línea blanca gruesa bajo el título, como en el Figma */
-  .title::after {
-    content: "";
-    display: block;
-    align-self: stretch;
-    height: 0.375rem;
-    margin-top: 1.75rem;
-    border-radius: var(--radius-full);
-    background: var(--color-brand-white);
+    margin-top: 0.5rem;
   }
 
   .subtitle {
-    max-width: 100%;
-    font-size: 1rem;
-    line-height: 1.6;
+    max-width: 520px;
+    font-size: clamp(0.9rem, 1.5vw, 0.95rem);
+    line-height: 1.7;
   }
 
-  /* Tarjetas compactas: en el lugar del botón del Figma */
   .benefits {
-    gap: 0.75rem;
-    margin-top: 0.25rem;
+    margin-top: 0.5rem;
   }
 
   .benefit {
-    max-width: 100%;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.55rem 0.85rem;
+    max-width: 560px;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.95rem 1.35rem;
   }
 
   .benefitIcon {
-    width: 1.75rem;
-    height: 1.75rem;
+    width: 2.25rem;
+    height: 2.25rem;
   }
 
   .benefitText {
-    font-size: 0.8125rem;
-    line-height: 1.35;
-  }
-
-  .imageWrapper {
-    min-height: 350px;
-  }
-
-  .imageWrapper::before {
-    width: 120px;
-    height: 120px;
-  }
-
-  .imageWrapper::after {
-    width: 100px;
-    height: 100px;
+    font-size: clamp(0.75rem, 1.2vw, 0.82rem);
+    line-height: 1.6;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .shine {
-    animation: none;
-    display: none;
+/* Escritorio amplio (desde 1025 px): el texto con su relleno y su ancho completos */
+@media (min-width: 1025px) {
+  .content {
+    padding-left: 2.5rem;
+    max-width: 600px;
   }
 }

@@ -16,17 +16,6 @@ const HEIGHTS = [720];
  */
 const PENDING = new Set([
   // BR-081: secciones de la home
-  "components/sections/Benefits/Benefits.module.css",
-  "components/sections/CTA1/CTA1.module.css",
-  "components/sections/CTA1/CTA1.tsx",
-  "components/sections/CTA2/CTA2.module.css",
-  "components/sections/Features/Features.module.css",
-  "components/sections/Hero/Hero.module.css",
-  "components/sections/Hero/Hero.tsx",
-  "components/sections/Reviews/Reviews.module.css",
-  "components/sections/SocialProof1/SocialProof1.module.css",
-  "components/sections/SocialProof2/SocialProof2.module.css",
-  "hooks/usePinnedScene.ts",
   // BR-082: páginas internas
   "components/common/PageHero/PageHero.module.css",
   "pages/AboutPage.module.css",
@@ -109,6 +98,14 @@ describe("Breakpoints mobile-first (BR-024, RNF-MANT-004)", () => {
     expect(scriptViolations("useMediaQuery(MEDIA.desktop)")).toEqual([]);
     expect(scriptViolations('<source sizes="(max-width: 768px) 100vw, 700px" />')).toEqual([]);
     expect(scriptViolations('const SIZES = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px";')).toEqual([]);
+  });
+
+  it("las precargas de index.html tampoco usan max-width: la de móvil es el complemento (`not all and …`) de la de escritorio", () => {
+    const indexHtml = readFileSync(resolve(src, "../index.html"), "utf8");
+    const medias = [...indexHtml.matchAll(/\bmedia="([^"]*)"/g)].map(([, media]) => media);
+
+    expect(medias.length).toBeGreaterThan(0);
+    expect(medias.filter((media) => /max-(width|height)/.test(media))).toEqual([]);
   });
 
   it("MEDIA se arma con el conjunto de cortes", () => {

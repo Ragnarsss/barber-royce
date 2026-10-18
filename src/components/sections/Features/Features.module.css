@@ -2,9 +2,10 @@
  * «Innovación y calidad en cada detalle» (BR-072): tarjetas de vidrio con esquinas cortadas, las mismas del Hero y de
  * las otras secciones de tarjetas (BR-069), y carrusel con snap en móvil (BR-070). Todo color sale de los tokens.
  */
+/* Mobile-first (BR-081, ADR-009): la base es el móvil; desde 769 px y desde 1025 px se suman los valores de escritorio (al final) */
 .features {
   min-height: 100vh;
-  padding: clamp(4rem, 10vh, 6.25rem) 0;
+  padding: clamp(3rem, 8vh, 4rem) 0;
   background-color: var(--color-brand-background);
   position: relative;
   overflow: hidden;
@@ -45,7 +46,12 @@
   z-index: 0;
 }
 
+/*
+ * Con `margin: 0 auto` el contenedor se ajusta a su contenido y, con el carrusel, se estiraba más allá de la pantalla:
+ * en móvil ocupa todo el ancho. Su parallax lo pone `AnimatedGridSection` solo en escritorio.
+ */
 .container {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1.5rem;
@@ -79,8 +85,9 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  --carousel-gutter: 1.5rem; /* el relleno lateral de .container: el carrusel llega hasta el borde (BR-070) */
 }
 
 /*
@@ -93,7 +100,7 @@
   isolation: isolate;
   overflow: hidden;
   height: 100%;
-  padding: 2.5rem 2rem;
+  padding: 2rem 1.5rem;
   background: var(--card-edge);
   clip-path: var(--card-clip);
   display: flex;
@@ -195,35 +202,29 @@
   }
 }
 
-@media (max-width: 1024px) {
+/* Escritorio: dos columnas, con el contenedor ajustado a su contenido */
+@media (min-width: 769px) {
+  .features {
+    padding: clamp(4rem, 10vh, 6.25rem) 0;
+  }
+
+  .container {
+    width: auto;
+  }
+
   .grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .features {
-    padding: clamp(3rem, 8vh, 4rem) 0;
-  }
-
-  /*
-   * Con `margin: 0 auto` el contenedor se ajusta a su contenido y, con el carrusel, se estiraba más allá de la
-   * pantalla. Sin el parallax del contenedor (el inline de framer se pisa): bajaba hasta un 10 % y la última tarjeta
-   * quedaba cortada contra el borde de la sección.
-   */
-  .container {
-    width: 100%;
-    transform: none !important;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-    --carousel-gutter: 1.5rem; /* el relleno lateral de .container: el carrusel llega hasta el borde (BR-070) */
   }
 
   .card {
-    padding: 2rem 1.5rem;
+    padding: 2.5rem 2rem;
+  }
+}
+
+/* Escritorio amplio: tres columnas */
+@media (min-width: 1025px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
   }
 }

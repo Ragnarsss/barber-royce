@@ -4,6 +4,8 @@ import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
 import { CardCarousel } from "@/components/common/CardCarousel/CardCarousel";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { MEDIA } from "@/config/breakpoints";
 
 
 interface AnimatedGridSectionProps<T> {
@@ -19,6 +21,8 @@ interface AnimatedGridSectionProps<T> {
     items: T[];
     renderItem: (item: T, index: number) => ReactNode;
     enableParallax?: boolean;
+    /** Con `false`, el parallax del contenedor solo existe en escritorio (en móvil bajaba y cortaba la última tarjeta del carrusel). */
+    parallaxOnMobile?: boolean;
     /** Si se indica, en móvil la grilla pasa a ser un carrusel con snap con este nombre (BR-070). */
     carouselLabel?: string;
     /** Con `carouselLabel`, si se indica el carrusel también existe en escritorio con tantas tarjetas visibles (BR-073). */
@@ -38,12 +42,15 @@ export function AnimatedGridSection<T>({
     items,
     renderItem,
     enableParallax = true,
+    parallaxOnMobile = true,
     carouselLabel,
     carouselDesktopVisible,
 }: AnimatedGridSectionProps<T>) {
     const { ref, controls } = useScrollAnimation();
     const { ref: sectionRef, scrollYProgress } = useParallaxProgress();
     const layers = { slow: useSlowLayer(scrollYProgress) };
+    const isDesktop = useMediaQuery(MEDIA.desktop);
+    const parallax = enableParallax && (isDesktop || parallaxOnMobile);
 
     const grid = (
         <motion.div
@@ -64,7 +71,7 @@ export function AnimatedGridSection<T>({
         <section id={id} className={className} ref={sectionRef}>
             <motion.div
                 className={containerClassName}
-                style={enableParallax ? { y: layers.slow.y } : undefined}
+                style={parallax ? { y: layers.slow.y } : undefined}
                 ref={ref}
             >
                 <motion.div

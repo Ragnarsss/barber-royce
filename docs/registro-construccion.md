@@ -1801,3 +1801,21 @@ Tres PR integraron el lote a `master`: #33 (BR-061, BR-069 a BR-077), #34 (tarje
 - **Resultado:** idénticas byte a byte en todo el móvil y a 769 px, menú incluido. Las diferencias restantes son el footer entre 969 y 1024 px (previsto) y ruido: el mapa en la misma franja que varía sola, y el logo a 1024 px en `/ubicacion`. Para el logo se construyó la navbar vieja aparte: las cajas de la barra coinciden al centésimo de píxel a 769, 900 y 1024 px, y el mismo build viejo dio dos recortes distintos en dos rondas, el segundo igual al nuevo.
 - Lint, tipos, build y la suite completa en verde. `liveContent.e2e.test.ts` falló una vez al arrancar dentro de la suite completa y pasó sola con sus 5 tests.
 - **Pendiente:** el preview de Vercel.
+
+<a id="br-081"></a>
+
+## BR-081 — Mobile-first: secciones de la home
+
+**Notas de construcción (2026-10-18):**
+- Hero, CTA1, SocialProof1, Benefits, Reviews, Features, SocialProof2 y CTA2 pasan a mobile-first: la base de cada módulo es el móvil y `min-width: 769px` (y 1025 px donde antes había 1024) restaura el escritorio. Cada valor de escritorio se restauró explícitamente, también los de pseudoelementos que solo existían en móvil (`content: none`) y las propiedades que el móvil pisaba (`display`, `inset`, `object-fit`).
+- **`!important` sobre estilos de framer:** tres casos (`transform: none !important` en Features y CTA1; `height: 100% !important` en la foto del Hero) no pueden vivir en la base, porque un `!important` no se deshace desde un bloque de escritorio. Pasaron a JS, como ya hacía el Hero con su parallax: `AnimatedGridSection` (prop nueva `parallaxOnMobile`, que solo Features apaga: Reviews conserva su parallax en móvil), `CTA1.tsx` (la figura recibe el estilo solo en escritorio) y `Hero.tsx` (el alto de la foto según el ancho). El CSS del Hero ya no tiene ningún `!important`.
+- **`<picture>`:** en Hero y CTA1 la fuente de escritorio lleva `media={MEDIA.desktop}` y va primero (gana la primera que coincide); la de móvil es la base. La precarga del LCP en `index.html` pasa de `(max-width: 768px)` a `not all and (min-width: 769px)`, el complemento exacto de la de escritorio, que además cierra el hueco entre 768 y 769 px. Se verificó en `lcpPreload.test.ts`; `breakpoints.test.ts` vigila ahora también el `media` de `index.html`.
+- `Hero.tsx` leía el ancho una sola vez dentro de un `useState` y no reaccionaba al rotar un tablet; ahora usa `useMediaQuery(MEDIA.desktop)`. `usePinnedScene` y `CTA1` usan `MEDIA` en vez de la query escrita a mano.
+- **Cambio visible documentado:** el relleno lateral de SocialProof2 crecía a 1200 y a 1600 px, cortes fuera del conjunto; ahora crece a 1280 px. Las capturas no mostraron diferencia (a 1920 px el contenedor ya está limitado por su `max-width`).
+- Se quitaron las reglas muertas `.imageWrapper` y el bloque vacío `@media (min-width: 768px)` del Hero.
+
+**Verificación:**
+- 106 capturas antes y después (página completa con movimiento reducido a 320, 390, 640, 641, 768, 769, 1024, 1025, 1280 y 1920 px; y 4 puntos del recorrido de cada sección, con movimiento, a 900, 1100 y 1440 px, para las escenas fijas), más una segunda corrida «antes» para medir el ruido.
+- **Resultado:** idénticas byte a byte, salvo las dos páginas móviles completas, que difieren en el codificado pero sin un solo píxel sobre el umbral de comparación, y el ruido que ya tenían CTA2 y SocialProof2 a 1440 px.
+- Lint, tipos, build y 851 tests en verde.
+- **Pendiente:** el preview de Vercel y que el usuario vea el movimiento (escenas fijas y zoom).

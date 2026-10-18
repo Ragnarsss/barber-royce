@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { MEDIA } from "@/config/breakpoints";
 import { featuresList } from "@/data/featuresData";
 import { renderWithProviders } from "@/test/renderWithProviders";
 
@@ -17,7 +18,6 @@ const here = dirname(fileURLToPath(import.meta.url));
 const css = readFileSync(resolve(here, "Features.module.css"), "utf8");
 const source = readFileSync(resolve(here, "Features.tsx"), "utf8");
 const rule = (selector: RegExp) => css.match(new RegExp(`\\n${selector.source}\\s*\\{([^}]*)\\}`))?.[1] ?? "";
-const mobile = css.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
 
 describe("Features: tarjetas de vidrio (BR-072, HU-EXP-004 CA-23)", () => {
   beforeAll(() => {
@@ -83,14 +83,56 @@ describe("Features en móvil: carrusel (BR-072, BR-070)", () => {
   });
 
   it("el contenedor ocupa todo el ancho: con `margin: 0 auto` se estiraba más allá de la pantalla", () => {
-    expect(mobile).toMatch(/\.container\s*\{[^}]*width:\s*100%/);
+    expect(rule(/\.container/)).toMatch(/width:\s*100%/);
   });
 
   it("la fila define el relleno lateral del contenedor para llegar hasta el borde", () => {
-    expect(mobile).toMatch(/\.grid\s*\{[^}]*--carousel-gutter:\s*1\.5rem/);
+    expect(rule(/\.grid/)).toMatch(/--carousel-gutter:\s*1\.5rem/);
+  });
+
+  it("mobile-first (ADR-009): la base es el móvil, de una columna, y el escritorio suma dos y tres columnas", () => {
+    expect(rule(/\.grid/)).toMatch(/grid-template-columns:\s*1fr;/);
+    expect(css).toMatch(/@media \(min-width: 769px\)\s*\{[^@]*\.grid\s*\{[^}]*repeat\(2, 1fr\)/);
+    expect(css).toMatch(/@media \(min-width: 1025px\)\s*\{[^@]*\.grid\s*\{[^}]*repeat\(3, 1fr\)/);
+  });
+});
+
+describe("Features: parallax del contenedor solo en escritorio (BR-081)", () => {
+  const container = () => document.querySelector("#features > div") as HTMLElement;
+
+  beforeAll(() => {
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      },
+    );
+  });
+
+  afterEach(() => {
+    // jsdom no trae `matchMedia`: se vuelve a ese estado sin tocar el IntersectionObserver simulado
+    vi.stubGlobal("matchMedia", undefined);
   });
 
   it("sin el parallax del contenedor en móvil: ninguna tarjeta queda cortada por el borde de la sección", () => {
-    expect(mobile).toMatch(/\.container\s*\{[^}]*transform:\s*none\s*!important/);
+    renderWithProviders(<Features />);
+
+    expect(container().getAttribute("style") ?? "").not.toMatch(/transform/);
+  });
+
+  it("en escritorio el contenedor conserva su parallax", () => {
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: query === MEDIA.desktop,
+      addEventListener() {},
+      removeEventListener() {},
+    }));
+    renderWithProviders(<Features />);
+
+    expect(container().getAttribute("style") ?? "").toMatch(/transform/);
   });
 });
