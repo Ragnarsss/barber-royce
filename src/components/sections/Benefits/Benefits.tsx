@@ -23,14 +23,14 @@ import barberBack1908w from "@/assets/optimized/barber_background_1908w.webp";
  *
  * En escritorio la sección queda fija en pantalla mientras se revela (`position: sticky` dentro de un contenedor
  * alto): el scroll avanza la secuencia en vez de subir la sección y dejarla cortada. Al terminar, la página sigue. En
- * móvil no se fija: la sección sube normal y cada elemento se revela según dónde esté en la pantalla.
+ * móvil no se fija: la sección sube normal, el subtítulo se enfoca con el scroll y las tarjetas se ven siempre de frente,
+ * nítidas y quietas (sin giro, desenfoque ni latido).
  */
 export function Benefits() {
   const siteText = useSiteText();
   const reducedMotion = useReducedMotion() ?? false;
   // Escena fija en escritorio (sin reducir movimiento): `progress` va de que se pega a que se suelta
   const { pinRef, pinned, progress: pinProgress } = usePinnedScene();
-  const gridRef = useRef<HTMLDivElement>(null);
 
   // Escena ligada al scroll (scrub): de que la sección asoma por abajo a que queda centrada
   const sectionRef = useRef<HTMLElement>(null);
@@ -42,16 +42,14 @@ export function Benefits() {
   // Sin fijar (móvil): la foto parte un 40 % más grande y se asienta mientras la sección sube
   const freePhotoScale = useTransform(scrollYProgress, [0, 1], [1.4, 1]);
   const freePhotoY = useTransform(scrollYProgress, [0, 1], ["-6%", "0%"]);
-  // Sin fijar (móvil): el enfoque del título y el subtítulo va desde que la sección asoma por abajo hasta que sube al
-  // 45 %, y el de las tarjetas, una tras otra, desde que el borde de la grilla está al 80 % hasta que sube al 20 %.
+  // Sin fijar (móvil): el enfoque del subtítulo va desde que la sección asoma por abajo hasta que sube al 45 %.
   const { scrollYProgress: freeFocus } = useScroll({ target: sectionRef, offset: ["start 100%", "start 45%"] });
-  const { scrollYProgress: freeCards } = useScroll({ target: gridRef, offset: ["start 80%", "start 20%"] });
   // Fijada (escritorio): una sola línea de tiempo mientras la sección está fija, de que se pega arriba a que se suelta.
-  // Primero se enfocan los títulos y después, una tras otra, las tarjetas; mientras no le toca, cada una se ve borrosa.
+  // Primero se enfoca el subtítulo y después, una tras otra, las tarjetas; mientras no le toca, cada una se ve borrosa.
+  // Las tarjetas no se revelan en móvil: allí se ven siempre de frente, nítidas y quietas (decisión del 2026-10-18).
   const pinFocus = useTransform(pinProgress, (value) => ramp(0, PIN_TITLE_END)(value));
-  const pinCards = useTransform(pinProgress, (value) => ramp(PIN_TITLE_END, 1)(value));
+  const cardsProgress = useTransform(pinProgress, (value) => ramp(PIN_TITLE_END, 1)(value));
   const focusProgress = pinned ? pinFocus : freeFocus;
-  const cardsProgress = pinned ? pinCards : freeCards;
   // Fijada: la foto parte un 50 % más grande y se asienta, con desaceleración marcada, durante el primer 60 % del tiempo
   // en que la sección está fija, para que el alejamiento se note mientras la pantalla está quieta
   const pinPhotoScale = useTransform(pinProgress, pinnedPhotoScale);
@@ -104,9 +102,9 @@ export function Benefits() {
             </div>
             {/* En móvil las tarjetas son un carrusel con snap (BR-070); en escritorio, la grilla de siempre */}
             <CardCarousel label="Beneficios">
-              <div ref={gridRef} className={styles.grid}>
+              <div className={styles.grid}>
                 {benefitsList.map((benefit, index) => (
-                  <BenefitCard key={benefit.title} benefit={benefit} index={index} progress={cardsProgress} animated={!reducedMotion} />
+                  <BenefitCard key={benefit.title} benefit={benefit} index={index} progress={cardsProgress} animated={pinned} />
                 ))}
               </div>
             </CardCarousel>

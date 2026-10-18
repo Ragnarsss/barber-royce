@@ -53,6 +53,22 @@ const withAnimateStub = (run: () => void) => {
   }
 };
 
+/** Simula una pantalla ancha (escritorio): el revelado de las tarjetas (giro, desenfoque, latido) solo existe ahí. */
+const withDesktop = (run: () => void) => {
+  const original = window.matchMedia;
+  window.matchMedia = ((query: string) => ({
+    matches: query === "(min-width: 769px)",
+    media: query,
+    addEventListener() {},
+    removeEventListener() {},
+  })) as unknown as typeof window.matchMedia;
+  try {
+    run();
+  } finally {
+    window.matchMedia = original;
+  }
+};
+
 describe("Benefits (BR-064, HU-EXP-004 CA-16)", () => {
   beforeAll(() => {
     vi.stubGlobal(
@@ -86,12 +102,14 @@ describe("Benefits (BR-064, HU-EXP-004 CA-16)", () => {
     ]);
   });
 
-  it("CA-16: cada ícono se dibuja con un trazo (pathLength) que arranca oculto", () => {
-    renderWithProviders(<Benefits />);
+  it("CA-16: en escritorio, cada ícono se dibuja con un trazo (pathLength) que arranca oculto", () => {
+    withDesktop(() => {
+      renderWithProviders(<Benefits />);
 
-    const strokes = document.querySelectorAll("[data-benefit] [data-stroke]");
-    expect(strokes.length).toBeGreaterThanOrEqual(9);
-    for (const stroke of strokes) expect(stroke.getAttribute("stroke-dasharray")).not.toBeNull();
+      const strokes = document.querySelectorAll("[data-benefit] [data-stroke]");
+      expect(strokes.length).toBeGreaterThanOrEqual(9);
+      for (const stroke of strokes) expect(stroke.getAttribute("stroke-dasharray")).not.toBeNull();
+    });
   });
 
   it("CP-A11Y-003: con reducir movimiento, íconos y tarjetas aparecen sin animar", () => {
@@ -239,16 +257,39 @@ describe("Benefits: revelado con el scroll (BR-074, HU-EXP-004 CA-25)", () => {
     expect(document.querySelector("#benefits h2 [data-focus-blur]")).toBeNull();
   });
 
-  it("CA-25: cada tarjeta lleva una copia desenfocada de su texto, sin ícono, que reserva su lugar", () => {
+  it("CA-25: en escritorio, cada tarjeta lleva una copia desenfocada de su texto, sin ícono, que reserva su lugar", () => {
+    withDesktop(() => {
+      renderWithProviders(<Benefits />);
+
+      const cards = [...document.querySelectorAll("[data-benefit]")];
+      cards.forEach((card, index) => {
+        const copy = card.querySelector("[data-card-blur]")!;
+        expect(copy.getAttribute("aria-hidden")).toBe("true");
+        expect(copy.textContent).toContain(benefitsList[index].title);
+        expect(copy.querySelector("svg")).toBeNull();
+      });
+    });
+  });
+
+  it("CA-25: en móvil las tarjetas se ven de frente, nítidas y quietas: sin copia desenfocada, giro, latido ni trazo", () => {
     renderWithProviders(<Benefits />);
 
     const cards = [...document.querySelectorAll("[data-benefit]")];
-    cards.forEach((card, index) => {
-      const copy = card.querySelector("[data-card-blur]")!;
-      expect(copy.getAttribute("aria-hidden")).toBe("true");
-      expect(copy.textContent).toContain(benefitsList[index].title);
-      expect(copy.querySelector("svg")).toBeNull();
-    });
+    expect(cards).toHaveLength(benefitsList.length);
+    for (const card of cards) {
+      expect(card.querySelector("[data-card-blur]")).toBeNull();
+      // Sin estilos de movimiento en línea (perspectiva, giro, escala, opacidad): es una tarjeta común
+      expect(card.getAttribute("style")).toBeNull();
+      expect((card.firstElementChild as HTMLElement).getAttribute("style")).toBeNull();
+      // El ícono ya está dibujado: sin `pathLength` animado
+      for (const stroke of card.querySelectorAll("[data-stroke]")) expect(stroke.getAttribute("stroke-dasharray")).toBeNull();
+    }
+  });
+
+  it("en móvil el subtítulo sigue enfocándose con el scroll: la decisión del 2026-10-18 es solo de las tarjetas", () => {
+    renderWithProviders(<Benefits />);
+
+    expect(document.querySelectorAll("#benefits [data-focus-blur]")).toHaveLength(1);
   });
 
   it("CA-25: los lectores de pantalla leen cada título de tarjeta una sola vez", () => {
@@ -259,17 +300,19 @@ describe("Benefits: revelado con el scroll (BR-074, HU-EXP-004 CA-25)", () => {
     }
   });
 
-  it("CA-25: las tarjetas giran con el scroll sobre el eje vertical, con perspectiva, y las copias se cruzan por opacidad", () => {
-    renderWithProviders(<Benefits />);
+  it("CA-25: en escritorio las tarjetas giran con el scroll sobre el eje vertical, con perspectiva, y las copias se cruzan por opacidad", () => {
+    withDesktop(() => {
+      renderWithProviders(<Benefits />);
 
-    const cards = [...document.querySelectorAll("[data-benefit]")];
-    for (const card of cards) {
-      // Con el scroll en 0, toda tarjeta está a la vista (sin opacidad 0), de frente y borrosa: no corre nada sola
-      expect(card.getAttribute("style")).toMatch(/perspective\(900px\)/);
-      expect(card.getAttribute("style") ?? "").not.toMatch(/opacity:\s*0/);
-      expect((card.querySelector("[data-card-blur]") as HTMLElement).getAttribute("style")).toMatch(/opacity:\s*1/);
-      expect((card.firstElementChild as HTMLElement).getAttribute("style")).toMatch(/opacity:\s*0/);
-    }
+      const cards = [...document.querySelectorAll("[data-benefit]")];
+      for (const card of cards) {
+        // Con el scroll en 0, toda tarjeta está a la vista (sin opacidad 0), de frente y borrosa: no corre nada sola
+        expect(card.getAttribute("style")).toMatch(/perspective\(900px\)/);
+        expect(card.getAttribute("style") ?? "").not.toMatch(/opacity:\s*0/);
+        expect((card.querySelector("[data-card-blur]") as HTMLElement).getAttribute("style")).toMatch(/opacity:\s*1/);
+        expect((card.firstElementChild as HTMLElement).getAttribute("style")).toMatch(/opacity:\s*0/);
+      }
+    });
   });
 
   it("CA-25: el giro de 360° parte y termina de frente, y el giro, el enfoque y el trazo se deshacen al volver (scrub)", () => {

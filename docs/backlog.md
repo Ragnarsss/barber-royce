@@ -2787,6 +2787,10 @@ moneda.
 >    y animaciones ligadas al scroll y a la pantalla) en las demás secciones. Se
 >    trabaja sección por sección, cada una con su ticket; el primero es
 >    «Respaldados por los mejores» (`SocialProof1`) y su corte láser.
+> 6. **Las tarjetas no se revelan en móvil (2026-10-18, el usuario):** el giro, el
+>    desenfoque, el trazo del ícono y el latido existen solo en escritorio, con la
+>    sección fija. En móvil las tarjetas se ven siempre de frente, nítidas y quietas
+>    (en el carrusel de `BR-070`). El subtítulo sí sigue enfocándose con el scroll.
 
 Alcance:
 1. Título y subtítulo: el enfoque va ligado al scroll (`useScroll`, scrub). El
