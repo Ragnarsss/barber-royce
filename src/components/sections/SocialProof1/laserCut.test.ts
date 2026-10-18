@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { BOLT, LASER_CUT, boltWindow } from "./laserCut";
+import { BOLT, LASER_CUT, REVEAL, boltWindow } from "./laserCut";
 
-// BR-062: coreografía del corte láser de SocialProof1. Cada corte se mide sobre el scroll de su elemento: 0 cuando
-// asoma por abajo, 1 cuando llega al centro de la pantalla.
+// BR-062 y BR-075: coreografía de SocialProof1. Con la sección fija en escritorio, todo se mide sobre el avance de ese
+// recorrido fijo: 0 cuando se pega arriba, 1 cuando se suelta.
 describe("corte láser: tiempos del revelado (BR-062, HU-EXP-004 CA-14)", () => {
-  it("CA-14: la foto y la tarjeta quedan reveladas antes de llegar al centro de la pantalla", () => {
+  it("CA-14: la foto y la tarjeta quedan reveladas antes de que termine el recorrido fijo", () => {
     expect(LASER_CUT.PHOTO[1]).toBeLessThan(1);
     expect(LASER_CUT.CARD[1]).toBeLessThan(1);
   });
@@ -25,6 +25,38 @@ describe("corte láser: tiempos del revelado (BR-062, HU-EXP-004 CA-14)", () => 
     expect(start).toBeLessThanOrEqual(LASER_CUT.PHOTO[1]);
     expect(peak).toBeGreaterThanOrEqual(LASER_CUT.PHOTO[1]);
     expect(start < peak && peak < end).toBe(true);
+  });
+});
+
+// BR-075 (HU-EXP-004 CA-26): después del láser, el título, la foto y el texto del testimonio se enfocan, uno tras otro.
+describe("revelado después del láser (BR-075, HU-EXP-004 CA-26)", () => {
+  const laserEnd = Math.max(LASER_CUT.PHOTO[1], LASER_CUT.CARD[1], LASER_CUT.FLASH[2], boltWindow(BOLT.TRACKS - 1)[1]);
+
+  it("el enfoque empieza cuando el láser ya terminó: todo se ve borroso mientras corta", () => {
+    expect(REVEAL.TITLE[0]).toBeGreaterThanOrEqual(laserEnd);
+  });
+
+  it("primero se enfoca el título, luego la foto y por último el texto del testimonio", () => {
+    expect(REVEAL.PHOTO[0]).toBeGreaterThan(REVEAL.TITLE[0]);
+    expect(REVEAL.QUOTE[0]).toBeGreaterThan(REVEAL.PHOTO[0]);
+    expect(REVEAL.PHOTO[1]).toBeGreaterThan(REVEAL.TITLE[1]);
+    expect(REVEAL.QUOTE[1]).toBeGreaterThan(REVEAL.PHOTO[1]);
+  });
+
+  it("todo queda nítido antes de soltar la sección: hay una pausa final", () => {
+    expect(REVEAL.QUOTE[1]).toBeLessThan(1);
+  });
+
+  it("cada ventana tiene un comienzo y un fin dentro del recorrido", () => {
+    for (const [from, to] of [REVEAL.TITLE, REVEAL.PHOTO, REVEAL.QUOTE]) {
+      expect(from).toBeGreaterThanOrEqual(0);
+      expect(to).toBeGreaterThan(from);
+      expect(to).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it("el subrayado sin la sección fija (móvil) conserva el tramo de BR-062", () => {
+    expect(LASER_CUT.UNDERLINE_FREE).toEqual([0.06, 0.26]);
   });
 });
 

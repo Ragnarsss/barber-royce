@@ -115,3 +115,70 @@ describe("SocialProof1: corte láser (BR-062, HU-EXP-004 CA-14)", () => {
     expect(rule).toMatch(/color:\s*var\(--color-neutral-600\)/);
   });
 });
+
+// BR-075 (HU-EXP-004 CA-26): sección fija mientras ocurre el láser, y revelado con el scroll al terminar.
+describe("SocialProof1: escena fija y revelado (BR-075, HU-EXP-004 CA-26)", () => {
+  const desktop = css.match(/@media \(min-width: 769px\)\s*\{\s*\.pinned\s*\{([\s\S]*?)\n\}/)?.[0] ?? "";
+
+  beforeEach(() => {
+    state.reducedMotion = false;
+  });
+
+  it("CA-26: en escritorio el contenedor alto fija la sección (la clase pinned)", () => {
+    renderSection();
+
+    expect(document.getElementById("social-proof-1")!.parentElement?.className).toMatch(/pinned/);
+  });
+
+  it("CA-26: el título, el subtítulo y el texto del testimonio tienen su copia desenfocada decorativa (aria-hidden)", () => {
+    renderSection();
+
+    const copies = document.querySelectorAll("#social-proof-1 [data-focus-blur]");
+    expect(copies).toHaveLength(3);
+    copies.forEach((copy) => expect(copy.getAttribute("aria-hidden")).toBe("true"));
+  });
+
+  it("CA-26: la foto lleva una copia desenfocada decorativa, sin texto alternativo, que se ve primero", () => {
+    renderSection();
+
+    const copy = document.querySelector("[data-photo-blur]")!;
+    expect(copy.getAttribute("aria-hidden")).toBe("true");
+    expect(copy.querySelector("img")?.getAttribute("alt")).toBe("");
+    expect(copy.getAttribute("style")).toMatch(/opacity:\s*1/);
+  });
+
+  it("CP-A11Y-002: los lectores de pantalla encuentran el título y la foto una sola vez", () => {
+    renderSection();
+
+    expect(document.querySelectorAll("#social-proof-1 h2")).toHaveLength(1);
+    expect(document.querySelectorAll("#social-proof-1 img[alt]:not([alt=''])")).toHaveLength(1);
+  });
+
+  it("CP-A11Y-003: con reducir movimiento no se fija ni hay copias desenfocadas: todo nítido", () => {
+    state.reducedMotion = true;
+    renderSection();
+
+    expect(document.getElementById("social-proof-1")!.parentElement?.className).not.toMatch(/pinned/);
+    expect(document.querySelector("#social-proof-1 [data-focus-blur]")).toBeNull();
+    expect(document.querySelector("[data-photo-blur]")).toBeNull();
+  });
+
+  it("el CSS: contenedor de 300vh y sección pegada arriba a pantalla completa, solo desde 769 px", () => {
+    expect(desktop).toMatch(/\.pinned\s*\{[^}]*height:\s*300vh/);
+    expect(desktop).toMatch(/\.pinned > \.socialProof\s*\{[^}]*position:\s*sticky/);
+    expect(desktop).toMatch(/\.pinned > \.socialProof\s*\{[^}]*top:\s*0/);
+    expect(desktop).toMatch(/\.pinned > \.socialProof\s*\{[^}]*height:\s*100vh/);
+    expect(desktop).toMatch(/\.pinned > \.socialProof\s*\{[^}]*padding:\s*5rem 0 2rem/);
+  });
+
+  it("la copia de la foto es de desenfoque fijo y fuerte: lo que se anima es su opacidad", () => {
+    expect(css).toMatch(/\.pictureBlur\s*\{[^}]*filter:\s*blur\((?:1[8-9]|[2-9]\d)px\)/);
+    expect(css).not.toMatch(/transition:[^;]*filter/);
+  });
+
+  it("la sección usa el hook compartido y no mide el scroll de cada elemento por separado", () => {
+    expect(source).toContain("usePinnedScene()");
+    expect(source).not.toMatch(/useScroll\(/);
+    expect(source).not.toMatch(/photoRef|cardRef/);
+  });
+});

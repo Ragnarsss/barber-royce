@@ -1,3 +1,45 @@
+/*
+ * Sección fija mientras ocurre el láser y el revelado (BR-075), solo en escritorio y sin reducir movimiento: el
+ * contenedor es alto y la sección queda pegada arriba (`position: sticky`) todo ese recorrido; el scroll avanza la
+ * secuencia en vez de subir la sección y dejarla cortada. La altura del contenedor menos una pantalla es el scroll que
+ * dura todo: el láser, los textos y la foto enfocándose, y una pausa final con todo nítido.
+ */
+.pin {
+  position: relative;
+}
+
+@media (min-width: 769px) {
+  .pinned {
+    height: 300vh;
+  }
+
+  .pinned > .socialProof {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    min-height: 0;
+    /* La navbar fija ocupa los primeros 80 px: el contenido empieza debajo */
+    padding: 5rem 0 2rem;
+    /* content-visibility: auto saltaría el dibujo de una sección fija cuando está fuera de pantalla */
+    content-visibility: visible;
+  }
+}
+
+/* La foto nítida y su copia desenfocada (BR-075): la copia se superpone con el mismo tamaño y solo cruza su opacidad */
+.pictureLayer {
+  display: block;
+}
+
+.pictureBlur {
+  position: absolute;
+  inset: 0;
+  /* Un poco más grande para que el borde difuminado quede fuera del recorte de la foto */
+  scale: 1.08;
+  filter: blur(22px);
+  pointer-events: none;
+  user-select: none;
+}
+
 .socialProof {
   min-height: 100vh;
   background-color: var(--color-brand-section-bg);
