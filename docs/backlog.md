@@ -3041,6 +3041,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-075 | Respaldados por los mejores: escena fija, corte láser y revelado con el scroll | K | P3 | M | Propuesta | BR-062, BR-074 |
 | BR-076 | Respaldados por los mejores: lens flare en lugar de los láseres | K | P3 | M | Propuesta | BR-075 |
 | BR-077 | Escenas fijas: scroll más pesado (la rueda más lenta en toda la página) | K | P3 | XS | Propuesta | BR-074, BR-075 |
+| BR-078 | Respaldados por los mejores en móvil: tarjeta con la forma de escritorio y revelado con desenfoque | K | P3 | S | Propuesta | BR-075 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |

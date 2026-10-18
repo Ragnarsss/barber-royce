@@ -711,6 +711,11 @@ y confiar en que el servicio está a la altura.
   scroll avanza más despacio que antes, para que se aprecie el efecto, sin
   sentirse trabado. (Ajustado el 2026-10-18: en lugar de un límite solo dentro de
   las escenas, la rueda es más lenta en toda la página.)
+- CA-29 (2026-10-18, `BR-078`): Given llego a «Respaldados por los mejores» en un
+  celular, When la sección entra en pantalla, Then la tarjeta del testimonio tiene
+  la forma de escritorio y se solapa con la foto, y el subtítulo, la foto y el
+  texto del testimonio se enfocan con el scroll; con reducir movimiento todo se ve
+  nítido.
 
 ---
 
