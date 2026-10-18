@@ -31,8 +31,10 @@ vi.mock("framer-motion", async (importOriginal) => ({
 }));
 
 import { Hero } from "./Hero";
+import { HERO_ZOOM, HERO_ZOOM_ORIGIN } from "./heroZoom";
 
 const heroCss = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "Hero.module.css"), "utf8");
+const heroSource = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "Hero.tsx"), "utf8");
 const cardTokensCss = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "../../../styles/tokens/cards.css"), "utf8");
 
 const renderHero = () => {
@@ -196,13 +198,53 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
     expect(mobile).toMatch(/\.heroImageSEO img\s*\{[^}]*object-position:\s*\d{1,3}% top/);
   });
 
-  it("CA-13: en móvil la foto va sin parallax (el inline de framer se pisa) y hay una línea blanca bajo el título", () => {
+  it("CA-13: en móvil la foto cubre toda la portada, con el velo por CSS y una línea blanca bajo el título", () => {
     const mobile = heroCss.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
 
-    expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*transform:\s*none\s*!important/);
+    expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*inset:\s*0/);
+    // Desde BR-079 el transform de la foto ya no se anula: el zoom lo pone framer en línea
+    expect(mobile).not.toMatch(/transform:\s*none\s*!important/);
     // El velo del Figma (60 % negro) va por CSS y con un token: la foto viene sin velo y se puede cambiar sin tocarlo.
     expect(mobile).toMatch(/\.heroImageSEO::after\s*\{[^}]*color-mix\(in srgb, var\(--color-primary-900\) 60%, transparent\)/);
     expect(mobile).toMatch(/\.title::after\s*\{[^}]*background:\s*var\(--color-brand-white\)/);
+  });
+
+  // BR-079 (HU-EXP-004 CA-30): zoom-in marcado de la foto con el scroll, en escritorio y en móvil.
+  it("CA-30: el zoom es claro (al menos un 30 %) y más fuerte que el parallax compartido de 1,12", () => {
+    expect(HERO_ZOOM.DESKTOP).toBeGreaterThanOrEqual(1.3);
+    expect(HERO_ZOOM.MOBILE).toBeGreaterThanOrEqual(1.3);
+    expect(HERO_ZOOM.DESKTOP).toBeGreaterThan(1.12);
+    // Un acercamiento excesivo pixelaría la foto y sacaría el rostro de cuadro
+    expect(HERO_ZOOM.DESKTOP).toBeLessThanOrEqual(1.8);
+    expect(HERO_ZOOM.MOBILE).toBeLessThanOrEqual(1.8);
+  });
+
+  it("CA-30: el zoom parte del rostro en cada tamaño (un punto de apoyo dentro de la foto)", () => {
+    for (const origin of [HERO_ZOOM_ORIGIN.DESKTOP, HERO_ZOOM_ORIGIN.MOBILE]) {
+      const [x, y] = origin.split(" ").map((value) => Number.parseFloat(value));
+      expect(x).toBeGreaterThan(0);
+      expect(x).toBeLessThan(100);
+      expect(y).toBeGreaterThan(0);
+      expect(y).toBeLessThan(100);
+    }
+  });
+
+  it("CA-30: el zoom usa una capa propia del Hero, con transform y un MotionValue, sin tocar la capa compartida", () => {
+    expect(heroSource).toMatch(/useTransform\(scrollYProgress, \[0, 1\], \[1, isWide \? HERO_ZOOM\.DESKTOP : HERO_ZOOM\.MOBILE\]\)/);
+    expect(heroSource).toMatch(/scale: zoom/);
+    expect(heroSource).not.toMatch(/setState|useState\(.*scroll/i);
+  });
+
+  it("CA-30: el parallax vertical solo existe en escritorio, para que en móvil el zoom no deje un hueco arriba", () => {
+    expect(heroSource).toMatch(/\.\.\.\(isWide \? \{ y: layers\.foreground\.y \} : \{\}\)/);
+  });
+
+  it("CP-A11Y-003: con reducir movimiento no hay zoom: en móvil la foto no recibe ningún estilo de movimiento", () => {
+    state.reducedMotion = true;
+    renderHero();
+
+    const picture = document.querySelector("picture")!;
+    expect(picture.getAttribute("style") ?? "").not.toMatch(/transform|scale/);
   });
 
   it("CA-13: el Hero ofrece una foto distinta para móvil en el mismo <picture>", () => {

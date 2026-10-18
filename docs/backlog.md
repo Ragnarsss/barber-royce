@@ -2981,6 +2981,48 @@ Criterios de aceptación:
 4. Con reducir movimiento no hay copias desenfocadas (CP-A11Y-003).
 5. En escritorio nada cambia.
 
+
+#### BR-079 — Hero y CTA1: zoom-in marcado de las fotos con el scroll
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: BR-061
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-30)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
+
+**Origen (2026-10-18):** el usuario pidió que la foto del Hero tenga un zoom-in con el
+scroll, que se note bien. Hoy, en escritorio, la foto solo hace un parallax leve (escala
+de 1 a 1,12 con la capa «foreground» compartida) y en móvil nada: su `transform` está
+anulado con `!important` (`Hero.module.css`, `.heroImageSEO` del bloque móvil) porque el
+desplazamiento vertical del parallax dejaba una franja vacía arriba.
+
+Decisión del usuario (2026-10-18): zoom-in marcado de la foto del Hero con el scroll.
+Por defecto (no se eligió): escritorio y móvil, de 1,4 y de 1,5 veces su tamaño
+respectivamente, con un punto de apoyo distinto en cada uno (el rostro).
+
+> **Alcance ajustado (2026-10-18, decisión del usuario, un mensaje después):** la
+> misma idea para la foto de CTA1 («Reserva tu experiencia premium»), que hoy solo
+> hace un parallax leve. Se acerca de 1 a 1,35× (escritorio, dentro de la figura
+> blanca que la recorta) o 1,4× (móvil) mientras la sección cruza la pantalla
+> (tramo 0,1 a 0,85 de su avance), con el punto de apoyo en el rostro.
+
+Alcance:
+1. La foto escala de 1 a 1,4× (escritorio) o 1,5× (móvil) mientras el Hero sale de la
+   pantalla (`scrollYProgress` del Hero), sobre `transform` con `MotionValue`, sin
+   `setState` por scroll. No se cambia la capa compartida `foreground`.
+2. En móvil se quita la anulación del `transform` y el desplazamiento vertical se
+   excluye por código: un zoom hacia adentro no deja huecos.
+3. El punto de apoyo del zoom queda en el rostro del modelo en cada tamaño.
+4. Con reducir movimiento: sin zoom.
+
+Criterios de aceptación:
+1. Al bajar, la foto del Hero se acerca de forma clara en escritorio y en móvil
+   (HU-EXP-004 CA-30).
+2. No quedan huecos ni franjas al hacer zoom; el texto sigue legible
+   (CP-A11Y-004).
+3. Con reducir movimiento la foto no hace zoom (CP-A11Y-003).
+4. TBT y CLS móviles no empeoran frente a `master` con el mismo `.env`
+   (CP-PERF-003).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3080,6 +3122,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-076 | Respaldados por los mejores: lens flare en lugar de los láseres | K | P3 | M | Propuesta | BR-075 |
 | BR-077 | Escenas fijas: scroll más pesado (la rueda más lenta en toda la página) | K | P3 | XS | Propuesta | BR-074, BR-075 |
 | BR-078 | Respaldados por los mejores en móvil: tarjeta con la forma de escritorio y revelado con desenfoque | K | P3 | S | Propuesta | BR-075 |
+| BR-079 | Hero y CTA1: zoom-in marcado de las fotos con el scroll | K | P3 | XS | Propuesta | BR-061 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |

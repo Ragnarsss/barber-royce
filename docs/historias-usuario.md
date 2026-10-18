@@ -716,6 +716,9 @@ y confiar en que el servicio está a la altura.
   la forma de escritorio y se solapa con la foto, y el subtítulo, la foto y el
   texto del testimonio se enfocan con el scroll; con reducir movimiento todo se ve
   nítido.
+- CA-30 (2026-10-18, `BR-079`): Given bajo desde la portada, When la foto del Hero
+  sale de la pantalla (y la de CTA1 al cruzar la sección), Then se acercan con un zoom claro, en escritorio y en móvil,
+  sin dejar huecos; con reducir movimiento no hay zoom.
 
 ---
 
