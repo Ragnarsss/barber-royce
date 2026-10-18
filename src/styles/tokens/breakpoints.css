@@ -2,14 +2,24 @@
    BREAKPOINT TOKENS
    ============================================ */
 
+/*
+ * Mobile-first con un conjunto cerrado de cortes (BR-024, ADR-009, RNF-MANT-004):
+ * - La base de cada módulo es el móvil, sin @media.
+ * - Cada corte suma estilos con min-width, y solo con estos valores:
+ *     (min-width: 640px)   móvil grande
+ *     (min-width: 769px)   escritorio: el corte principal
+ *     (min-width: 1025px)  escritorio amplio
+ *     (min-width: 1280px)  escritorio grande
+ * - (min-height: 720px), solo junto a 769, para las escenas fijas.
+ * - Nunca max-width de ancho. En TypeScript, las queries salen de src/config/breakpoints.ts (MEDIA).
+ * src/styles/breakpoints.test.ts hace cumplir estas reglas.
+ */
 :root {
-  /* Breakpoints para media queries */
-  --breakpoint-xs: 320px; /* Móviles muy pequeños */
-  --breakpoint-sm: 640px; /* Móviles grandes */
-  --breakpoint-md: 768px; /* Tablets */
-  --breakpoint-lg: 1024px; /* Laptops pequeñas */
-  --breakpoint-xl: 1280px; /* Desktops */
-  --breakpoint-2xl: 1536px; /* Pantallas grandes */
+  /* Referencia del conjunto, para calc() o container queries (no sirven dentro de @media) */
+  --breakpoint-sm: 640px;
+  --breakpoint-desktop: 769px;
+  --breakpoint-lg: 1025px;
+  --breakpoint-xl: 1280px;
 
   /* Container max-widths por breakpoint */
   --container-sm: 640px;
@@ -24,12 +34,9 @@
   --container-padding-desktop: var(--spacing-8); /* 32px */
 }
 
-/* 
- * Nota: Los breakpoints aquí son solo para referencia.
- * En CSS, úsalos directamente en media queries:
- * 
- * @media (min-width: 768px) { ... }
- * 
- * No se pueden usar custom properties en media queries
- * porque se evalúan antes de que el CSS procese las variables.
+/*
+ * Las custom properties no funcionan dentro de @media: el navegador evalúa la condición antes que las variables.
+ * Por eso, en las media queries los cortes se escriben como literal:
+ *
+ * @media (min-width: 769px) { ... }
  */
