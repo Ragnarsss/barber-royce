@@ -3432,6 +3432,35 @@ Criterios de aceptación:
 7. **A confirmar por el usuario en el navegador:** la ola, el parallax y el anillo solo se ven en movimiento.
 
 
+#### BR-090 — Productos de prueba: 50 filas con fotos de stock que cargan
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: —
+- Estado: Propuesta
+- Historia de usuario: no aplica — contenido de prueba para el catálogo (el contenido real lo pone el dueño en la hoja).
+- RF/RNF: `RF-INFO-002`
+
+**Origen (2026-10-19):** 4 de las 6 fotos de producto del respaldo daban 404 en Unsplash (`BR-008`) y la hoja
+de prueba repetía «Kit Completo» (precios 76 a 100) sin foto para probar el scroll infinito (`BR-068`).
+El usuario pidió 50 productos, todos con imagen.
+
+> **Decisión del usuario (2026-10-19):** usar fotos de stock de Unsplash de forma **temporal**, hasta tener las
+> fotos propias de `BR-008`, que sigue bloqueada. Esto no cierra `BR-008`: sigue habiendo peticiones a
+> `images.unsplash.com`.
+
+Alcance:
+1. `docs/contenido/productos.csv`: 50 filas (15 Styling, 15 Barba, 10 Cuidado, 10 Kits) con ids únicos y
+   17 fotos distintas, cada una comprobada con respuesta 200 y vista una por una.
+2. `src/content/snapshot/products.ts` (respaldo): las 6 fotos de los productos originales pasan a las del CSV.
+3. Para la hoja: importar el CSV en la pestaña `productos` (ver `docs/contenido-hoja.md`). El `gid` no cambia,
+   así que las variables `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` tampoco.
+
+Criterios de aceptación:
+1. Los 50 productos se leen sin errores con el lector del sitio (`src/content/schemas.ts`).
+2. Ninguno de los 50 hexágonos de `/productos` queda sin foto.
+3. Las fotos muestran marcas reales (Bombay Shaving Company, L'Oréal, Kiehl's, Nivea…): es contenido de prueba y
+   se reemplaza por fotos propias antes de publicar el catálogo real.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3549,6 +3578,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-087 | Filtros, búsqueda y fichas con un mismo lenguaje: chaflán, vidrio y brillo | K | P3 | S | Propuesta | BR-067, BR-063 |
 | BR-088 | Cabecera de página unificada: título en Anton y diagonales compactas | K | P3 | S | Propuesta | BR-087 |
 | BR-089 | Productos: encendido en ola, parallax interior, contador y botón de volver arriba | K | P3 | M | Propuesta | BR-068, BR-088 |
+| BR-090 | Productos de prueba: 50 filas con fotos de stock que cargan | K | P3 | XS | Propuesta | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
