@@ -2,6 +2,16 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithProviders } from "@/test/renderWithProviders";
 import { Footer } from "./Footer";
+import { SITE } from "@/config/constants";
+
+describe("Footer: marca (BR-084, RNF-DATOS-001)", () => {
+  it("el título y el copyright salen de SITE.name, no de un literal", () => {
+    renderWithProviders(<Footer />);
+
+    expect(screen.getByRole("heading", { level: 3, name: SITE.name })).toBeInTheDocument();
+    expect(screen.getByText(new RegExp(`© 2026 ${SITE.name}\\.`))).toBeInTheDocument();
+  });
+});
 
 describe("Footer: privacidad (BR-037, BR-044)", () => {
   afterEach(() => {

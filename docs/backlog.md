@@ -3208,6 +3208,37 @@ Criterios de aceptación:
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-079).
 
 
+#### BR-084 — Footer: títulos invisibles, marca desde SITE y colores a tokens
+
+- Prioridad: P1 · Esfuerzo: XS · Depende de: BR-080
+- Estado: Propuesta
+- Historia de usuario: no aplica — corrección de contraste y de datos sin superficie nueva (hallazgo del handoff móvil del 2026-10-18).
+- RF/RNF: `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-18):** `docs/handoff-movil-2026-10-18.md` §3 (Footer).
+**Causa:** la regla global de `h1`–`h6` (`src/styles/global.css:25`) pinta los títulos con
+`--color-text-primary` (`rgb(23, 23, 23)`) y `Footer.module.css` no define color para
+`.title` ni `.columnTitle`: «Barber Royce», «Navegación», «Contacto» y «Síguenos» quedan
+casi invisibles sobre el fondo oscuro (WCAG 1.4.3). Además la marca está escrita a mano como
+«Barber Royce» (`Footer.tsx:30` y el copyright de `Footer.tsx:126`), cuando es «Royce
+Barbería» y sale de `SITE.name`; y `Footer.module.css` tiene colores hex y `rgba` (ADR-002).
+
+Alcance:
+1. Los títulos del footer usan un token de texto claro.
+2. La marca del título y del copyright sale de `SITE.name`. Esto cambia el texto visible
+   de «Barber Royce» a «Royce Barbería»: es la marca oficial, pero se avisa al usuario.
+3. Los colores hex y `rgba` de `Footer.module.css` pasan a tokens (con el mismo aspecto).
+4. Un test del footer compara el título y el copyright con `SITE.name`.
+5. Fuera de alcance (se anota): el `alt` «Barber Royce» del logo de `Navbar.tsx:65`, el
+   texto de la descripción del footer (copy del dueño) y las áreas táctiles de los enlaces.
+
+Criterios de aceptación:
+1. Los títulos del footer cumplen 4,5:1 contra su fondo en todas las rutas (CP-A11Y-004).
+2. El nombre del título y del copyright es `SITE.name` (CP-DATOS-001).
+3. Sin hex ni `rgba` literales en `Footer.module.css` (ADR-002).
+4. Capturas antes y después iguales salvo los títulos, en 320, 390, 769, 1025 y 1280 px.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3319,6 +3350,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-066 | El respaldo del enlace de reserva apunta a un subdominio que no existe | B | P1 | XS | Hecho | — |
 | BR-067 | Productos: catálogo en panal con hover y ficha | K | P3 | M | Hecho | BR-060, BR-063, BR-009 |
 | BR-068 | Productos: carga progresiva (scroll infinito) | K | P3 | M | Hecho | BR-067 |
+| BR-084 | Footer: títulos invisibles, marca desde SITE y colores a tokens | K | P1 | XS | Propuesta | BR-080 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
