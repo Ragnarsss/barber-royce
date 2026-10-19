@@ -3402,6 +3402,9 @@ cambiar de ruta.
 
 > **Decisión del usuario (2026-10-19):** dirección 2 de la propuesta de `diseno-visual`. Por defecto (no se
 > eligió): el botón es una pieza reutilizable y se monta solo en Productos.
+>
+> **Alcance ajustado (2026-10-19, decisión del usuario):** el botón también va en la portada; en las demás
+> páginas no le interesa.
 
 Alcance:
 1. **Encendido en ola:** los hexágonos de cada lote nuevo (no los de la carga inicial) encienden su marco
