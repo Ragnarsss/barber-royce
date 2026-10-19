@@ -158,7 +158,8 @@ describe("plantillas CSV de docs/contenido (BR-041, HU-CNT-001)", () => {
     const { content } = resolveContent(sheet, emptyFallback);
 
     expect(content.services).toEqual(snapshot.services);
-    expect(content.products).toEqual(snapshot.products);
+    // La plantilla de productos puede traer más filas que el respaldo (BR-090: 50 de prueba), pero empieza con las suyas.
+    expect(content.products.slice(0, snapshot.products.length)).toEqual(snapshot.products);
     expect(content.team).toEqual(snapshot.team);
     expect(content.faq).toEqual(snapshot.faq);
   });
@@ -174,6 +175,15 @@ describe("plantillas CSV de docs/contenido (BR-041, HU-CNT-001)", () => {
     const generated = contentToSheet(snapshot);
 
     // `textos` lista los textos por defecto del código (`texts.ts`), no el respaldo: se prueba aparte.
-    for (const tab of CONTENT_TABS.filter((tab) => tab !== "textos")) expect(sheet[tab], tab).toBe(generated[tab]?.replace(/\r\n/g, "\n"));
+    // `productos` puede tener más filas que el respaldo (BR-090, decisión del usuario 2026-10-19): se prueba abajo.
+    for (const tab of CONTENT_TABS.filter((tab) => tab !== "textos" && tab !== "productos")) {
+      expect(sheet[tab], tab).toBe(generated[tab]?.replace(/\r\n/g, "\n"));
+    }
+  });
+
+  it("BR-090: la plantilla de productos empieza con exactamente las filas del respaldo y puede sumar más", () => {
+    const generatedRows = (contentToSheet(snapshot).productos ?? "").replace(/\r\n/g, "\n").trimEnd().split("\n");
+
+    expect(sheet.productos?.split("\n").slice(0, generatedRows.length)).toEqual(generatedRows);
   });
 });

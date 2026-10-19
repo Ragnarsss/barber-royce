@@ -3448,11 +3448,17 @@ El usuario pidió 50 productos, todos con imagen.
 > `images.unsplash.com`.
 
 Alcance:
-1. `docs/contenido/productos.csv`: 50 filas (15 Styling, 15 Barba, 10 Cuidado, 10 Kits) con ids únicos y
-   17 fotos distintas, cada una comprobada con respuesta 200 y vista una por una.
-2. `src/content/snapshot/products.ts` (respaldo): las 6 fotos de los productos originales pasan a las del CSV.
-3. Para la hoja: importar el CSV en la pestaña `productos` (ver `docs/contenido-hoja.md`). El `gid` no cambia,
-   así que las variables `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` tampoco.
+1. `docs/contenido/productos.csv`: 50 filas (15 Styling, 15 Barba, 10 Cuidado, 10 Kits) con ids únicos y 17
+   fotos distintas, cada una comprobada con respuesta 200 y vista una por una.
+2. `src/content/snapshot/products.ts` (respaldo): las fotos de los 6 productos originales pasan a las nuevas
+   (las filas 1 a 6 del CSV). El respaldo sigue con 6 productos: no lleva datos de prueba.
+3. `src/test/contentWiring.test.tsx`: la plantilla de productos ya no tiene que ser idéntica al respaldo
+   (BR-048). Debe empezar con exactamente las filas del respaldo y puede sumar más, y las 50 filas pasan el esquema.
+4. Para la hoja: importar `productos.csv` en la pestaña `productos` (ver `docs/contenido-hoja.md`). El `gid` no
+   cambia, así que las variables `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` tampoco.
+
+> **Decisión del usuario (2026-10-19):** la regla de `BR-048` que exigía que cada plantilla fuera idéntica al
+> respaldo le parece absurda para productos; se relaja solo ahí. Las demás pestañas la conservan.
 
 Criterios de aceptación:
 1. Los 50 productos se leen sin errores con el lector del sitio (`src/content/schemas.ts`).
