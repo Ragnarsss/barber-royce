@@ -5,11 +5,12 @@ import { Footer } from "./Footer";
 import { SITE } from "@/config/constants";
 
 describe("Footer: marca (BR-084, RNF-DATOS-001)", () => {
-  it("el título y el copyright salen de SITE.name, no de un literal", () => {
+  it("el título, el copyright y el alt del logo salen de SITE.name, no de un literal", () => {
     renderWithProviders(<Footer />);
 
     expect(screen.getByRole("heading", { level: 3, name: SITE.name })).toBeInTheDocument();
-    expect(screen.getByText(new RegExp(`© 2026 ${SITE.name}\\.`))).toBeInTheDocument();
+    expect(screen.getByText(/Todos los derechos reservados/)).toHaveTextContent(SITE.name);
+    expect(screen.getByRole("img", { name: `Logo de ${SITE.name}` })).toBeInTheDocument();
   });
 });
 

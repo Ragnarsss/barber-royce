@@ -32,7 +32,7 @@ export const Footer = () => {
               <img
                 src={logo46w}
                 srcSet={`${logo46w} 1x, ${logo92w} 2x`}
-                alt="Logo de Barbería Royce"
+                alt={`Logo de ${SITE.name}`}
                 className={styles.logoIcon}
                 width="48"
                 height="48"
