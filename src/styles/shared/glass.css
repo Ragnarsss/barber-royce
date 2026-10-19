@@ -94,7 +94,7 @@
 
 /* Línea roja que se desvanece en los extremos, bajo los filtros y entre las zonas de una ficha. */
 .glass-divider {
-  height: 1px;
+  height: 2px; /* con 1 px, al caer entre dos píxeles de pantalla se mezclaba con el fondo y se veía gris */
   background: linear-gradient(
     to right,
     transparent 0%,
