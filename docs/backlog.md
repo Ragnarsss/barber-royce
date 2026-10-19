@@ -3239,6 +3239,37 @@ Criterios de aceptación:
 4. Capturas antes y después iguales salvo los títulos, en 320, 390, 769, 1025 y 1280 px.
 
 
+#### BR-085 — Navbar móvil: área táctil de 44 px y menú desplazable
+
+- Prioridad: P1 · Esfuerzo: XS · Depende de: BR-080
+- Estado: Propuesta
+- Historia de usuario: no aplica — corrección de accesibilidad y de usabilidad sin superficie nueva (hallazgos H2 y H3 del handoff móvil del 2026-10-18).
+- RF/RNF: `RNF-A11Y-002`
+
+**Origen (2026-10-18):** `docs/handoff-movil-2026-10-18.md` §3 (Navbar) y §4 (H2, H3), medido en Chrome.
+**Causa:** la hamburguesa mide 34 × 19 px y «Agendar Sesión» 35 px de alto (mínimo 44 px,
+WCAG 2.5.5); el menú móvil tiene `max-height: 500px` (`Navbar.module.css`, `.mobileMenu.open`)
+para 520 px de contenido, así que en apaisado el CTA queda inalcanzable; y con el menú cerrado
+sus enlaces siguen enfocables con el teclado.
+**Arreglo:** `padding` y `min-height` hasta 44 px sin agrandar el ícono; `max-height` con el
+alto de la pantalla y `overflow-y: auto`; `inert` mientras el menú está cerrado.
+
+Alcance:
+1. La hamburguesa y el botón de reserva de la barra miden al menos 44 × 44 px en móvil, sin
+   cambiar el tamaño del ícono ni la altura de la barra.
+2. El menú abierto cabe en la pantalla y se desplaza si el contenido no entra.
+3. Con el menú cerrado sus enlaces no reciben foco ni los lee un lector de pantalla.
+4. Fuera de alcance: la franja de 769 a 1024 px (H1) espera la decisión del usuario
+   (hamburguesa hasta 1024 px o barra compacta, y etiqueta corta de «Ubicación»); el velo del
+   menú, el CTA duplicado y «TEAM» (copy) son propuestas.
+
+Criterios de aceptación:
+1. Hamburguesa y botón de reserva de ≥ 44 × 44 px a 320 y 390 px (CP-A11Y-002).
+2. En apaisado (360 px de alto) se llega a «FAQ» y al CTA desplazando el menú.
+3. Con el menú cerrado, Tab no entra en sus enlaces.
+4. Capturas antes y después iguales salvo el área táctil, en 320, 390, 769 y 1280 px.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3351,6 +3382,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-067 | Productos: catálogo en panal con hover y ficha | K | P3 | M | Hecho | BR-060, BR-063, BR-009 |
 | BR-068 | Productos: carga progresiva (scroll infinito) | K | P3 | M | Hecho | BR-067 |
 | BR-084 | Footer: títulos invisibles, marca desde SITE y colores a tokens | K | P1 | XS | Propuesta | BR-080 |
+| BR-085 | Navbar móvil: área táctil de 44 px y menú desplazable | K | P1 | XS | Propuesta | BR-080 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

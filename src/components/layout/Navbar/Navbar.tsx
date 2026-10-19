@@ -121,6 +121,7 @@ export const Navbar = () => {
           }`}
         role="menu"
         aria-label="Menú de navegación móvil"
+        inert={!isMobileMenuOpen}
       >
         {navLinks.map((link) => (
           <NavLink

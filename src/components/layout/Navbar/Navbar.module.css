@@ -198,6 +198,10 @@
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   white-space: nowrap;
+  /* Área táctil de 44 px de alto (BR-085) */
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
 }
 
 .actions .ctaButton:hover {
@@ -214,6 +218,9 @@
   background: none;
   border: none;
   cursor: pointer;
+  /* Área táctil de 44 × 44 px (BR-085); el ícono mide 26 px y no cambia */
+  min-width: 2.75rem;
+  min-height: 2.75rem;
   padding: var(--spacing-2) var(--spacing-1);
 }
 
@@ -260,8 +267,10 @@
     padding var(--duration-slow) var(--ease-smooth);
 }
 
+/* Cabe en la pantalla bajo la barra (≈ 5 rem) y se desplaza si el contenido no entra, p. ej. en apaisado (BR-085) */
 .mobileMenu.open {
-  max-height: 500px;
+  max-height: calc(100dvh - 5rem);
+  overflow-y: auto;
   opacity: 1;
   padding: var(--spacing-6);
 }
