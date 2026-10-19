@@ -62,7 +62,7 @@ export const Navbar = () => {
               srcSet={`${logo46w} 1x, ${logo92w} 2x`}
               type="image/webp"
             />
-            <img src={logo46w} alt="Barber Royce" className={styles.logoImage} width="46" height="56" />
+            <img src={logo46w} alt={SITE.name} className={styles.logoImage} width="46" height="56" />
           </picture>
           {/* En móvil la marca va en texto, en dos líneas, en vez del logo (BR-061) */}
           <span className={styles.logoWordmark} aria-hidden="true" data-wordmark>
@@ -119,8 +119,6 @@ export const Navbar = () => {
         id="mobile-navigation"
         className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ""
           }`}
-        role="menu"
-        aria-label="Menú de navegación móvil"
         inert={!isMobileMenuOpen}
       >
         {navLinks.map((link) => (
