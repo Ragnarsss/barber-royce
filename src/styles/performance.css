@@ -21,10 +21,6 @@
   will-change: transform, opacity;
 }
 
-.isAnimating--filter {
-  will-change: transform, filter;
-}
-
 /* ═══════════════════════════════════════════════════════════════
    CSS CONTAINMENT
    Optimiza el rendering limitando el alcance de recalculations
@@ -36,14 +32,6 @@
  */
 .section-container {
   contain: layout style paint;
-}
-
-/**
- * Containment estricto para componentes complejos
- * Aísla completamente el rendering (requiere dimensiones explícitas)
- */
-.section-container--strict {
-  contain: strict;
 }
 
 /**
@@ -102,8 +90,7 @@
  */
 @media (prefers-reduced-motion: reduce) {
   .isAnimating,
-  .isAnimating--multi,
-  .isAnimating--filter {
+  .isAnimating--multi {
     will-change: auto;
     animation: none !important;
     transition: none !important;
@@ -151,20 +138,6 @@
    RESPONSIVE PERFORMANCE
    Optimizaciones específicas por device
 ════════════════════════════════════════════════════════════════ */
-
-/**
- * En mobile, reducir complejidad de animaciones
- */
-@media (max-width: 768px) {
-  .isAnimating--filter {
-    will-change: transform; /* Remover filter en mobile */
-    filter: none !important;
-  }
-
-  .section-container--strict {
-    contain: layout paint; /* Remover style containment en mobile */
-  }
-}
 
 /**
  * En dispositivos de baja performance, remover will-change

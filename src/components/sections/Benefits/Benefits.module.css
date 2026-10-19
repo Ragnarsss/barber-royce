@@ -27,14 +27,20 @@
     content-visibility: visible;
   }
 }
+/*
+ * Mobile-first (BR-081, ADR-009): la base es el móvil y desde 769 px y 1025 px se suman los valores de escritorio (al
+ * final del archivo). Móvil (BR-071, a pedido del usuario): la foto va de fondo de toda la sección, detrás del texto y
+ * las tarjetas, con un velo oscuro para que se lean y las dos cuñas rojas en las esquinas.
+ */
 .benefits {
-  min-height: 100vh;
-  padding: 8vh 0;
+  min-height: auto;
+  padding: 6vh 0;
   background-color: var(--color-brand-section-bg);
   position: relative;
   overflow: hidden;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
 
   /* Performance optimizations */
   contain: layout style paint;
@@ -42,22 +48,64 @@
   contain-intrinsic-size: 100vh;
 }
 
-/* Foto a la derecha, clara: en Figma se lee la chaqueta con el logo, sin velo rojo encima */
+/*
+ * En móvil la foto cubre toda la sección. Desde 769 px va a la derecha, clara: en Figma se lee la chaqueta con el logo,
+ * sin velo rojo encima.
+ */
 .imageBackground {
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 42%;
+  inset: 0;
+  width: 100%;
   height: 100%;
   z-index: 1;
   overflow: hidden;
+  /*
+   * Dos cuñas rojas (BR-071): una arriba a la izquierda y otra abajo a la derecha, en espejo. El tamaño de cada una
+   * sale de estas variables (porcentaje de la sección) para ajustarlo a ojo.
+   */
+  --wedge-top-height: 24%;
+  --wedge-bottom-width: 65%;
+  --wedge-bottom-height: 14%;
+}
+
+.imageBackground::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--wedge-top-height);
+  z-index: 1;
+  background: var(--color-brand-primary);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.imageBackground::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: var(--wedge-bottom-width);
+  height: var(--wedge-bottom-height);
+  z-index: 1;
+  background: var(--color-brand-primary);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 
 /* Capa que se acerca con el scroll (escala y desplazamiento con framer); la imagen va dentro */
 .photoMotion {
+  position: relative;
   display: block;
   width: 100%;
   height: 100%;
+}
+
+/* Velo de charcoal sobre la foto en móvil: el título y las tarjetas se leen encima (CP-A11Y-004) */
+.photoMotion::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--color-brand-section-bg) 72%, transparent);
 }
 
 .backgroundImage {
@@ -65,17 +113,16 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: center bottom; /* en móvil, que se lea el logo de la chaqueta */
 }
 
 /* Franja roja diagonal entre el contenido y la foto; tapa el borde izquierdo de la foto. Ancho ajustado por el
    usuario (~16 % de la sección; antes ~10 %). Es un 30 % más larga arriba y abajo que la sección: al deslizarse
    por su eje con el scroll nunca deja un hueco. El polígono mantiene los bordes visibles en el mismo lugar. */
 .band {
+  display: none; /* solo desde 769 px */
   position: absolute;
   top: -30%;
-  right: 22.2%;
-  width: 37.6%;
   height: 160%;
   z-index: 2;
   background: linear-gradient(
@@ -87,6 +134,7 @@
 }
 
 .container {
+  order: 1;
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
@@ -99,7 +147,7 @@
   display: flex;
   flex-direction: column;
   gap: 3rem;
-  max-width: 60%;
+  max-width: 100%;
 }
 
 .header {
@@ -124,7 +172,8 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-  gap: 1.5rem;
+  gap: 1.25rem;
+  --carousel-gutter: 2rem; /* el relleno lateral de .container: el carrusel llega hasta el borde (BR-070) */
 }
 
 /*
@@ -255,108 +304,6 @@
   font-weight: 700;
 }
 
-@media (max-width: 1024px) {
-  .content {
-    max-width: 70%;
-  }
-
-  .imageBackground {
-    width: 48%;
-  }
-
-  .band {
-    right: 26%;
-    width: 40%;
-  }
-}
-
-/*
- * Móvil: PRUEBA (BR-071, 2026-10-17, a pedido del usuario): la foto va de fondo de toda la sección, detrás del texto y
- * las tarjetas, con un velo oscuro para que se lean y las dos cuñas rojas en las esquinas. Antes iba debajo, en el
- * flujo, como puente hacia «Reseñas» (commit d7e20b3).
- */
-@media (max-width: 768px) {
-  .benefits {
-    min-height: auto;
-    padding: 6vh 0;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .container {
-    order: 1;
-  }
-
-  .content {
-    max-width: 100%;
-  }
-
-  .band {
-    display: none;
-  }
-
-  .imageBackground {
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Velo de charcoal sobre la foto: el título y las tarjetas se leen encima (CP-A11Y-004) */
-  .photoMotion {
-    position: relative;
-  }
-
-  .photoMotion::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: color-mix(in srgb, var(--color-brand-section-bg) 72%, transparent);
-  }
-
-  /*
-   * Dos cuñas rojas (BR-071): una arriba a la izquierda y otra abajo a la derecha, en espejo. El tamaño de cada una
-   * sale de estas variables (porcentaje de la sección) para ajustarlo a ojo.
-   */
-  .imageBackground {
-    --wedge-top-height: 24%;
-    --wedge-bottom-width: 65%;
-    --wedge-bottom-height: 14%;
-  }
-
-  .imageBackground::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: var(--wedge-top-height);
-    z-index: 1;
-    background: var(--color-brand-primary);
-    clip-path: polygon(0 0, 100% 0, 0 100%);
-  }
-
-  .imageBackground::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: var(--wedge-bottom-width);
-    height: var(--wedge-bottom-height);
-    z-index: 1;
-    background: var(--color-brand-primary);
-    clip-path: polygon(100% 0, 100% 100%, 0 100%);
-  }
-
-  .backgroundImage {
-    object-position: center bottom; /* que se lea el logo de la chaqueta */
-  }
-
-  .grid {
-    gap: 1.25rem;
-    --carousel-gutter: 2rem; /* el relleno lateral de .container: el carrusel llega hasta el borde (BR-070) */
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .card,
   .accent {
@@ -369,5 +316,68 @@
 
   .card:hover .cardIcon [data-stroke] {
     animation: none;
+  }
+}
+
+/*
+ * Escritorio (desde 769 px): la foto a la derecha con la franja roja diagonal entre el contenido y la foto, sin velo,
+ * sin cuñas y con las tarjetas en grilla. Hasta 1024 px la foto es más ancha y el contenido más angosto.
+ */
+@media (min-width: 769px) {
+  .benefits {
+    min-height: 100vh;
+    padding: 8vh 0;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .content {
+    max-width: 70%;
+  }
+
+  /* Una franja diagonal 30 % más larga que la sección y, delante de la foto, tapa su borde izquierdo */
+  .band {
+    display: block;
+    right: 26%;
+    width: 40%;
+  }
+
+  .imageBackground {
+    inset: 0 0 auto auto;
+    width: 48%;
+  }
+
+  .imageBackground::before,
+  .imageBackground::after,
+  .photoMotion::after {
+    content: none;
+  }
+
+  .photoMotion {
+    position: static;
+  }
+
+  .backgroundImage {
+    object-position: center;
+  }
+
+  .grid {
+    gap: 1.5rem;
+  }
+}
+
+/* Escritorio amplio (desde 1025 px): la foto más angosta y la franja roja en su lugar de siempre */
+@media (min-width: 1025px) {
+  .content {
+    max-width: 60%;
+  }
+
+  .band {
+    right: 22.2%;
+    width: 37.6%;
+  }
+
+  .imageBackground {
+    width: 42%;
   }
 }

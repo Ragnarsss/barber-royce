@@ -1,6 +1,10 @@
+/*
+ * Mobile-first (BR-081, ADR-009): la base es el móvil (un solo hexágono chico y una parrilla de dos columnas) y desde
+ * 769 px y 1025 px se suman los hexágonos y la parrilla de tres columnas de escritorio (al final del archivo).
+ */
 .socialProof {
   min-height: 100vh;
-  padding: clamp(4rem, 10vh, 6.25rem) 0;
+  padding: clamp(3rem, 8vh, 4rem) 0;
   background-color: var(--color-brand-section-bg);
   position: relative;
   overflow: hidden;
@@ -12,6 +16,19 @@
   contain: layout style paint;
   content-visibility: auto;
   contain-intrinsic-size: 100vh;
+}
+
+/* En móvil solo se ve el hexágono principal y el chico (hexagonFast1); los demás aparecen desde 769 px y 1025 px */
+.hexagonBg1,
+.hexagonBg2,
+.hexagonMiddle1,
+.hexagonMiddle2,
+.hexagonMiddle3,
+.hexagonFast2,
+.hexagonFast3,
+.hexagonFg1,
+.hexagonFg2 {
+  display: none;
 }
 
 /* ═════════════════════════════════════════════════════════════
@@ -104,8 +121,8 @@
   position: absolute;
   top: 25%;
   left: 15%;
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   background: color-mix(in srgb, var(--color-brand-primary) 35%, transparent);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   z-index: 2;
@@ -175,18 +192,6 @@
   z-index: 2;
 }
 
-@media (min-width: 1200px) {
-  .container {
-    padding: 0 6rem;
-  }
-}
-
-@media (min-width: 1600px) {
-  .container {
-    padding: 0 8rem;
-  }
-}
-
 .content {
   display: flex;
   flex-direction: column;
@@ -224,10 +229,11 @@
  * (object-fit: cover): cuando BR-051 traiga las fotos de Instagram, cualquier proporción calza.
  */
 .bentoGrid {
+  /* Móvil: dos columnas; la primera foto a todo el ancho y la alta junto a la última */
   display: grid;
-  grid-template-columns: 1.3fr 1.16fr 1fr;
-  grid-template-rows: repeat(12, minmax(0, 1fr));
-  height: clamp(22rem, 30vw, 28rem);
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 12rem 9rem 9rem 9rem;
+  height: auto;
   gap: clamp(0.75rem, 1.4vw, 1.25rem);
 }
 
@@ -260,101 +266,107 @@
   }
 }
 
-/* Columna 1: grande arriba, chica abajo */
+/* Móvil: la primera foto a todo el ancho; luego una columna de tres y la foto alta junto a ellas */
 .bentoA {
+  grid-column: 1 / 3;
+  grid-row: 1;
+}
+
+.bentoB {
   grid-column: 1;
-  grid-row: 1 / 8;
+  grid-row: 2;
 }
 
 .bentoC {
   grid-column: 1;
-  grid-row: 8 / 13;
-}
-
-/* Columna 2: chica arriba, grande abajo */
-.bentoB {
-  grid-column: 2;
-  grid-row: 1 / 6;
+  grid-row: 3;
 }
 
 .bentoD {
-  grid-column: 2;
-  grid-row: 6 / 13;
+  grid-column: 1;
+  grid-row: 4;
 }
 
-/* Columna 3: foto alta */
 .bentoTall {
-  grid-column: 3;
-  grid-row: 1 / 13;
-}
-
-@media (max-width: 1024px) {
-  .hexagonBg2,
-  .hexagonMiddle3,
-  .hexagonFast3,
-  .hexagonFg2 {
-    display: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .socialProof {
-    padding: clamp(3rem, 8vh, 4rem) 0;
-  }
-
-  /* Móvil: dos columnas; la primera foto a todo el ancho y la alta junto a la última */
-  .bentoGrid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 12rem 9rem 9rem 9rem;
-    height: auto;
-  }
-
-  .bentoA {
-    grid-column: 1 / 3;
-    grid-row: 1;
-  }
-
-  .bentoB {
-    grid-column: 1;
-    grid-row: 2;
-  }
-
-  .bentoC {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
-  .bentoD {
-    grid-column: 1;
-    grid-row: 4;
-  }
-
-  .bentoTall {
-    grid-column: 2;
-    grid-row: 2 / 5;
-  }
-
-  .hexagonBg1,
-  .hexagonBg2,
-  .hexagonMiddle1,
-  .hexagonMiddle2,
-  .hexagonMiddle3,
-  .hexagonFast2,
-  .hexagonFast3,
-  .hexagonFg1,
-  .hexagonFg2 {
-    display: none;
-  }
-
-  /* Mantener solo un hexágono pequeño para móviles */
-  .hexagonFast1 {
-    width: 100px;
-    height: 100px;
-  }
+  grid-column: 2;
+  grid-row: 2 / 5;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .bentoItem {
     transition: none;
+  }
+}
+
+/*
+ * Escritorio (desde 769 px): la parrilla bento de tres columnas del Figma y los hexágonos de las capas de fondo, media
+ * y rápida. Los otros cuatro (los de las esquinas de abajo y del medio) aparecen desde 1025 px.
+ */
+@media (min-width: 769px) {
+  .socialProof {
+    padding: clamp(4rem, 10vh, 6.25rem) 0;
+  }
+
+  .hexagonBg1,
+  .hexagonMiddle1,
+  .hexagonMiddle2,
+  .hexagonFast2,
+  .hexagonFg1 {
+    display: block;
+  }
+
+  .hexagonFast1 {
+    width: 150px;
+    height: 150px;
+  }
+
+  .bentoGrid {
+    grid-template-columns: 1.3fr 1.16fr 1fr;
+    grid-template-rows: repeat(12, minmax(0, 1fr));
+    height: clamp(22rem, 30vw, 28rem);
+  }
+
+  /* Columna 1: grande arriba, chica abajo */
+  .bentoA {
+    grid-column: 1;
+    grid-row: 1 / 8;
+  }
+
+  .bentoC {
+    grid-column: 1;
+    grid-row: 8 / 13;
+  }
+
+  /* Columna 2: chica arriba, grande abajo */
+  .bentoB {
+    grid-column: 2;
+    grid-row: 1 / 6;
+  }
+
+  .bentoD {
+    grid-column: 2;
+    grid-row: 6 / 13;
+  }
+
+  /* Columna 3: foto alta */
+  .bentoTall {
+    grid-column: 3;
+    grid-row: 1 / 13;
+  }
+}
+
+@media (min-width: 1025px) {
+  .hexagonBg2,
+  .hexagonMiddle3,
+  .hexagonFast3,
+  .hexagonFg2 {
+    display: block;
+  }
+}
+
+/* Antes el relleno ancho empezaba en 1200 px y crecía otra vez en 1600 px; esos cortes no están en el conjunto de ADR-009 */
+@media (min-width: 1280px) {
+  .container {
+    padding: 0 6rem;
   }
 }

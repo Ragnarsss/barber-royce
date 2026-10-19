@@ -9,6 +9,7 @@ import {
   TikTokIcon,
   WhatsAppIcon,
 } from "@/components/icons";
+import { SITE } from "@/config/constants";
 import { getFooterRoutes } from "@/config/routes";
 import { useSiteContent } from "@/content/useSiteContent";
 import { PrivacyPreferencesButton } from "@/analytics/PrivacyPreferencesButton";
@@ -27,11 +28,11 @@ export const Footer = () => {
           {/* Columna principal */}
           <div className={styles.column}>
             <div className={styles.brand}>
-              <h3 className={styles.title}>Barber Royce</h3>
+              <h3 className={styles.title}>{SITE.name}</h3>
               <img
                 src={logo46w}
                 srcSet={`${logo46w} 1x, ${logo92w} 2x`}
-                alt="Logo de Barbería Royce"
+                alt={`Logo de ${SITE.name}`}
                 className={styles.logoIcon}
                 width="48"
                 height="48"
@@ -123,7 +124,7 @@ export const Footer = () => {
         </div>
 
         <div className={styles.bottom}>
-          <p>&copy; 2026 Barber Royce. Todos los derechos reservados.</p>
+          <p>&copy; 2026 {SITE.name}. Todos los derechos reservados.</p>
           {import.meta.env.VITE_GA_MEASUREMENT_ID && <PrivacyPreferencesButton className={styles.privacyButton} />}
         </div>
       </div>

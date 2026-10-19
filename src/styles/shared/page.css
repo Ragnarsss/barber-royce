@@ -20,8 +20,9 @@
     );
 }
 
+/* Mobile-first (BR-080, ADR-009). Ningún archivo importa esta hoja hoy (código muerto, BR-025). */
 .content {
-  padding: 60px 0;
+  padding: 40px 0;
 }
 
 .container {
@@ -31,31 +32,30 @@
 }
 
 .section {
-  margin-bottom: 80px;
+  margin-bottom: 60px;
 }
 
 .sectionTitle {
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 700;
   color: #ffffff;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .content {
-    padding: 40px 0;
+    padding: 60px 0;
   }
 
   .section {
-    margin-bottom: 60px;
+    margin-bottom: 80px;
   }
 
   .sectionTitle {
-    font-size: 28px;
-    margin-bottom: 32px;
+    font-size: 36px;
+    margin-bottom: 40px;
   }
 }

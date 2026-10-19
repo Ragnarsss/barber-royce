@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { cleanup } from "@testing-library/react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { MEDIA } from "@/config/breakpoints";
 import { SITE } from "@/config/constants";
 import { LenisContext } from "@/contexts/lenisContextValue";
 import { renderWithProviders } from "@/test/renderWithProviders";
@@ -54,7 +56,8 @@ describe("CTA1 (BR-058, HU-EXP-004 CA-10)", () => {
     renderCta();
 
     expect(document.querySelector("[data-figure] picture img")).not.toBeNull();
-    expect(css).toMatch(/\n\.imageHexagon\s*\{[^}]*clip-path:\s*polygon\(/);
+    // Mobile-first (BR-081): la figura con su recorte es de escritorio (desde 769 px)
+    expect(css).toMatch(/@media \(min-width: 769px\)\s*\{[\s\S]*\n {2}\.imageHexagon\s*\{[^}]*clip-path:\s*polygon\(/);
   });
 
   it("CA-10: detrás de la foto hay rojo de marca sólido, no rojo translúcido sobre blanco", () => {
@@ -119,7 +122,8 @@ describe("CTA1 (BR-058, HU-EXP-004 CA-10)", () => {
 
 // BR-061 (HU-EXP-004 CA-13): vista móvil fiel al Figma «CTA 1 Mobile». Solo cambia ≤ 768 px; el escritorio queda igual.
 describe("CTA1 en móvil (BR-061, HU-EXP-004 CA-13)", () => {
-  const mobile = css.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+  // Mobile-first (BR-081, ADR-009): la base del archivo es el móvil y el escritorio se suma desde 769 px
+  const mobile = css;
   const rule = (selector: RegExp) => mobile.match(new RegExp(`\\n\\s*${selector.source}\\s*\\{([^}]*)\\}`))?.[1] ?? "";
 
   beforeAll(() => {
@@ -145,7 +149,7 @@ describe("CTA1 en móvil (BR-061, HU-EXP-004 CA-13)", () => {
   });
 
   it("CA-13: la negrita es solo de móvil; en escritorio la primera frase pesa como el resto", () => {
-    expect(css).toMatch(/\n\.lead\s*\{[^}]*font-weight:\s*inherit/);
+    expect(css).toMatch(/@media \(min-width: 769px\)\s*\{[\s\S]*\n {2}\.lead\s*\{[^}]*font-weight:\s*inherit/);
     expect(rule(/\.lead/)).toMatch(/font-weight:\s*700/);
   });
 
@@ -158,21 +162,39 @@ describe("CTA1 en móvil (BR-061, HU-EXP-004 CA-13)", () => {
     expect(css).toMatch(/\n\.cta\s*\{[^}]*background:\s*var\(--color-brand-section-bg\)/);
   });
 
-  it("CA-13: la foto va detrás del texto, a la derecha y sin recorte de figura ni parallax", () => {
+  it("CA-13: la foto va detrás del texto, a la derecha y sin recorte de figura", () => {
     const figure = rule(/\.imageHexagon/);
 
     expect(figure).toMatch(/inset:\s*0/);
     expect(figure).toMatch(/clip-path:\s*none/);
-    expect(figure).toMatch(/transform:\s*none\s*!important/);
     expect(rule(/\.ctaImage/)).toMatch(/right:\s*-\d+%/);
     // Sin `max-width: none` la regla global de imágenes la limita al 100 % y el rostro no se agranda.
     expect(rule(/\.ctaImage/)).toMatch(/max-width:\s*none/);
   });
 
+  it("CA-13: sin parallax en móvil la figura no recibe estilo de movimiento; en escritorio sí (BR-081)", () => {
+    renderCta();
+    expect(document.querySelector("[data-figure]")?.getAttribute("style") ?? "").not.toMatch(/transform/);
+    cleanup();
+
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: query === MEDIA.desktop,
+      addEventListener() {},
+      removeEventListener() {},
+    }));
+    try {
+      renderCta();
+      expect(document.querySelector("[data-figure]")?.getAttribute("style") ?? "").toMatch(/transform/);
+    } finally {
+      vi.stubGlobal("matchMedia", undefined);
+    }
+  });
+
   it("CA-13: en móvil la foto es la del Hero de escritorio, en el mismo <picture> y con los mismos archivos", () => {
     renderCta();
 
-    const source = document.querySelector("[data-figure] picture source[media='(max-width: 768px)']");
+    // Mobile-first: la fuente de escritorio lleva `media` y va primero; la de móvil no lleva `media`
+    const source = document.querySelector("[data-figure] picture source:not([media])");
     expect(source?.getAttribute("srcset")).toMatch(/hero_model_left_profile_842w\S*\.webp 842w/);
     expect(source?.getAttribute("srcset")).toMatch(/hero_model_left_profile_1684w\S*\.webp 1684w/);
   });

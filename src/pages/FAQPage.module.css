@@ -1,3 +1,4 @@
+/* Mobile-first (BR-082, ADR-009): la base es el móvil y desde 769 px se restauran los valores de escritorio (al final) */
 .page {
   min-height: 100vh;
   background-color: var(--color-brand-background);
@@ -64,7 +65,7 @@
 }
 
 .title {
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 800;
   margin: 0 0 16px 0;
   text-transform: uppercase;
@@ -78,7 +79,7 @@
 }
 
 .subtitle {
-  font-size: 20px;
+  font-size: 18px;
   margin: 0;
   color: rgba(255, 255, 255, 0.9);
   position: relative;
@@ -95,7 +96,7 @@
 }
 
 .categoryTitle {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--color-brand-primary);
   margin-bottom: 24px;
@@ -170,7 +171,7 @@
 }
 
 .questionText {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #ffffff;
   line-height: 1.4;
@@ -181,9 +182,9 @@
 }
 
 .faqAnswer {
-  padding: 0 24px 24px 72px;
+  padding: 0 24px 24px 24px;
   color: rgba(255, 255, 255, 0.8);
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.6;
 }
 
@@ -208,12 +209,12 @@
 }
 
 .contactContent {
-  padding: 48px;
+  padding: 32px 24px;
   text-align: center;
 }
 
 .contactTitle {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   color: #ffffff;
   margin-bottom: 16px;
@@ -222,7 +223,7 @@
 }
 
 .contactText {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.85);
   margin-bottom: 32px;
@@ -236,11 +237,14 @@
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 .contactButton {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 14px 32px;
   background: var(--color-brand-primary);
@@ -265,47 +269,46 @@
   transform: translateY(0);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .title {
-    font-size: 36px;
+    font-size: 48px;
   }
 
   .subtitle {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .categoryTitle {
-    font-size: 24px;
+    font-size: 28px;
   }
 
   .questionText {
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .faqAnswer {
-    padding-left: 24px;
-    font-size: 15px;
-  }
-
-  .contactContent {
-    padding: 32px 24px;
-  }
-
-  .contactTitle {
-    font-size: 24px;
-  }
-
-  .contactText {
+    padding-left: 72px;
     font-size: 16px;
   }
 
+  .contactContent {
+    padding: 48px;
+  }
+
+  .contactTitle {
+    font-size: 28px;
+  }
+
+  .contactText {
+    font-size: 18px;
+  }
+
   .contactButtons {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: normal;
   }
 
   .contactButton {
-    justify-content: center;
+    justify-content: normal;
   }
 }

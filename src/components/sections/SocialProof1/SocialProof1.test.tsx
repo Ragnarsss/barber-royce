@@ -262,7 +262,8 @@ describe("SocialProof1: lens flare (BR-076, HU-EXP-004 CA-27)", () => {
 
 // BR-078 (HU-EXP-004 CA-29): en móvil, la tarjeta con la forma de escritorio y el revelado con desenfoque.
 describe("SocialProof1 en móvil (BR-078, HU-EXP-004 CA-29)", () => {
-  const mobileCss = css.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+  // Mobile-first (BR-081, ADR-009): la tarjeta de móvil es la regla base; el escritorio la ajusta desde 769 px
+  const mobileCss = css;
   const card = mobileCss.match(/\.testimonialCard\s*\{([^}]*)\}/)?.[1] ?? "";
 
   /** Simula una pantalla angosta: la sección no se fija y el avance sale de cada elemento. */

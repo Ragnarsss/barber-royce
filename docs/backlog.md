@@ -546,10 +546,10 @@ Criterios de aceptación:
 
 #### BR-024 — Breakpoints unificados, mobile-first
 
-- Prioridad: P2 · Esfuerzo: S · Depende de: BR-021
+- Prioridad: P2 · Esfuerzo: S · Depende de: — (antes `BR-021`; ver el alcance ajustado)
 - Estado: Propuesta
 - Historia de usuario: HU-EXP-001 (CA-03)
-- RF/RNF: `RNF-COMP-001`
+- RF/RNF: `RNF-COMP-001`, `RNF-MANT-004`
 
 **Origen (2026-10-12):** media queries con 768, 968, 1024, 640, 1200 y
 1600 px, mezclando `max-width` y `min-width`.
@@ -561,6 +561,58 @@ Alcance:
 
 Criterios de aceptación:
 1. CP-COMP-001 pasa en 360, 768, 1280 y 1920 px.
+
+> **Alcance ajustado (2026-10-18), decisión del usuario:** migrar **todo**
+> el CSS a mobile-first y adoptarlo como patrón obligatorio, para que la deuda
+> no se enrede más. Se descartó la alternativa de limitarse a cerrar los
+> cortes y escribir mobile-first solo en el código nuevo. El usuario eligió:
+> el conjunto **640, 769, 1025 y 1280 px**, este ticket como base con un
+> ticket por grupo de archivos (`BR-080` a `BR-083`), y dejar el principio
+> escrito en `CLAUDE.md`, en un ADR nuevo y en las skills y el agente
+> `design-tokens-auditor`. **Deja de depender de `BR-021`:** los cortes se
+> escriben como literales en `@media` (las variables CSS no funcionan ahí) y
+> en `src/config/breakpoints.ts`, no dependen de unificar las fuentes de
+> tokens.
+>
+> Origen del ajuste: la auditoría responsive del handoff
+> (`docs/handoff-movil-2026-10-18.md`, H15 y H16). Cuenta 31 bloques
+> `max-width` de ancho en 32 archivos CSS, `min-width: 768px` que choca con
+> `max-width: 768px` justo a 768 px, y media queries repetidas como texto en
+> `Hero.tsx`, `CTA1.tsx`, `CardCarousel.tsx`, `Navbar.tsx` y
+> `usePinnedScene.ts`.
+>
+> Alcance nuevo (el de arriba queda reemplazado):
+> 1. **Conjunto cerrado:** base móvil sin `@media`; `(min-width: 640px)`,
+>    `(min-width: 769px)` (escritorio, el corte principal),
+>    `(min-width: 1025px)` y `(min-width: 1280px)`; y
+>    `(min-height: 720px)`, solo combinado con 769 para las escenas fijas.
+>    Documentado en `src/styles/tokens/breakpoints.css` (con las variables
+>    alineadas al conjunto) y con nombre en `src/config/breakpoints.ts`
+>    (`MEDIA`), que es lo que usa `useMediaQuery`.
+> 2. **Test** (`RNF-MANT-004`): recorre los `.css` de `src/` y falla si
+>    aparece un `max-width` de ancho en un `@media` o un corte fuera del
+>    conjunto. Mientras dure la migración, lleva una lista de archivos
+>    pendientes que solo puede achicarse: cada ticket de grupo saca los suyos,
+>    y un archivo nuevo o ya migrado que vuelva a `max-width` falla.
+> 3. **Reglas:** ADR-009 en `architecture.md`, regla dura en `CLAUDE.md`
+>    (regla 5), `engineering-guidelines.md`, skill `diseno-visual` y chequeo
+>    4 de `design-tokens-auditor`.
+> 4. Este ticket no migra secciones: eso lo hacen `BR-080` a `BR-083`. Cierra
+>    cuando los cuatro estén hechos y la lista de pendientes quede vacía.
+>
+> Criterios de aceptación nuevos:
+> 1. `src/config/breakpoints.ts` exporta las queries del conjunto y
+>    ningún archivo de `src/` escribe una media query de ancho como texto
+>    suelto (test).
+> 2. El test de cortes está en verde con la lista de pendientes, y falla si se
+>    agrega un `max-width` de ancho a un archivo que no está en ella (se
+>    prueba).
+> 3. ADR-009, la regla 5 de `CLAUDE.md`, `engineering-guidelines.md`,
+>    `diseno-visual` y `design-tokens-auditor` dicen lo mismo.
+> 4. Al cierre: lista de pendientes vacía y CP-COMP-001 en 320, 390, 640,
+>    768, 769, 1024, 1025, 1280 y 1920 px.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-024).
 
 
 #### BR-046 — Leer la hoja desde `.env` y en desarrollo
@@ -667,6 +719,120 @@ Criterios de aceptación:
    cambio de un teléfono en el footer.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-048).
+
+
+#### BR-080 — Mobile-first: navbar, footer y estilos globales
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-024
+- Estado: Propuesta
+- Historia de usuario: no aplica — refactor sin cambio visible (decisión del usuario, 2026-10-18).
+- RF/RNF: `RNF-MANT-004`, `RNF-COMP-001`
+
+**Origen (2026-10-18):** el usuario decidió migrar todo el CSS a mobile-first
+(`BR-024`). Este grupo: `Navbar.module.css`, `Footer.module.css`
+(`max-width: 968px`), `styles/global.css`, `styles/mixins.css` (7 bloques,
+con `767px` y `min-width: 768px`), `styles/performance.css` y
+`styles/shared/page.css`; y el `resize` con `innerWidth > 768` de
+`Navbar.tsx:23`, que pasa a `useMediaQuery(MEDIA…)`.
+
+Alcance:
+1. Base móvil sin `@media` y escritorio con los cortes del conjunto de
+   `BR-024`; los archivos del grupo salen de la lista de pendientes del test.
+2. **Sin cambio visual**, salvo donde un corte fuera del conjunto se mueve al
+   más cercano (968 → 1025 en el footer). Esa franja se documenta.
+3. Los arreglos de la navbar del handoff (H1, H2, H3) **no** entran aquí:
+   van en su propio ticket, sobre esta base.
+
+Criterios de aceptación:
+1. Capturas antes y después iguales en 320, 390, 768, 769, 1024, 1025,
+   1280 y 1920 px, en la home y en `/ubicacion`, con el menú móvil abierto y
+   cerrado. Las únicas diferencias son las de la franja documentada.
+2. El test de cortes (`RNF-MANT-004`) pasa sin estos archivos en la lista de
+   pendientes.
+3. CP-COMP-001: sin scroll horizontal entre 320 y 1920 px.
+
+
+#### BR-081 — Mobile-first: secciones de la home
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-024
+- Estado: Propuesta
+- Historia de usuario: no aplica — refactor sin cambio visible (decisión del usuario, 2026-10-18).
+- RF/RNF: `RNF-MANT-004`, `RNF-COMP-001`, `RNF-PERF-002`
+
+**Origen (2026-10-18):** migración a mobile-first (`BR-024`). Este grupo:
+los módulos de Hero (4 bloques), CTA1 (2), SocialProof1 (4), Benefits (3),
+Reviews (2), Features (2), SocialProof2 (4, con 1200 y 1600 px) y CTA2 (1);
+las queries de JS de `Hero.tsx:40` (se lee una vez en un `useState`, no
+reacciona al rotar), `CTA1.tsx:57` y `usePinnedScene.ts:13`, que pasan a
+`MEDIA`.
+
+Alcance:
+1. Base móvil y escritorio con `min-width: 769px` (y 1025 o 1280 donde hoy
+   hay 1024, 1200 o 1600). Los archivos salen de la lista de pendientes.
+2. **Sin cambio visual** en la home ni en las escenas fijas, salvo las franjas
+   de cortes que se mueven (1200 y 1600 de SocialProof2), documentadas.
+3. Los arreglos de escenas fijas en escritorio bajo (H4) y los huecos
+   verticales (H5) del handoff van en tickets propios.
+
+Criterios de aceptación:
+1. Capturas antes y después iguales en 320, 390, 768, 769, 1024, 1025,
+   1280 y 1920 px de cada sección, y en tres puntos del recorrido de cada
+   escena fija a 1440 px. Solo cambian las franjas documentadas.
+2. Los tests existentes de cada sección siguen en verde (los que leen el
+   bloque `max-width: 768px` se reescriben contra el bloque nuevo, con la
+   misma intención).
+3. CLS de la home sin cambios (Lighthouse móvil, alternado con `master`).
+
+
+#### BR-082 — Mobile-first: páginas internas
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-024
+- Estado: Propuesta
+- Historia de usuario: no aplica — refactor sin cambio visible (decisión del usuario, 2026-10-18).
+- RF/RNF: `RNF-MANT-004`, `RNF-COMP-001`
+
+**Origen (2026-10-18):** migración a mobile-first (`BR-024`). Este grupo:
+`AboutPage`, `FAQPage`, `LocationPage` (con `max-width: 968px`),
+`ServicesPage` y `PageHero`.
+
+Alcance:
+1. Base móvil y escritorio con los cortes del conjunto; 968 → 1025 en
+   `LocationPage`, documentado. Los archivos salen de la lista de pendientes.
+2. Sin cambio visual. El carrusel de Servicios (H8) y el desborde de
+   `/nosotros` (H7) van en tickets propios.
+
+Criterios de aceptación:
+1. Capturas antes y después iguales en 320, 390, 768, 769, 1024, 1025,
+   1280 y 1920 px de `/nosotros`, `/faq`, `/ubicacion` y `/servicios`.
+2. El test de cortes pasa sin estos archivos en la lista de pendientes.
+
+
+#### BR-083 — Mobile-first: componentes comunes
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-024
+- Estado: Propuesta
+- Historia de usuario: no aplica — refactor sin cambio visible (decisión del usuario, 2026-10-18).
+- RF/RNF: `RNF-MANT-004`, `RNF-COMP-001`
+
+**Origen (2026-10-18):** migración a mobile-first (`BR-024`). Este grupo:
+`CardCarousel` (CSS y su `matchMedia` propio en `CardCarousel.tsx:24,51`),
+`Honeycomb`, `HoneycombPage`, `ModalDialog`, `BarberProfileDialog` (los
+cuatro con `min-width: 768px`, que choca a 768 px) y `CatastrophicError`
+(`max-width: 640px`).
+
+Alcance:
+1. Base móvil y los cortes del conjunto; `min-width: 768px` → 769 (cambia
+   solo el ancho de 768 px exacto, documentado). `CardCarousel` usa
+   `useMediaQuery(MEDIA…)` en vez de su propio `matchMedia`.
+2. Sin cambio visual fuera de 768 px exacto.
+
+Criterios de aceptación:
+1. Capturas antes y después iguales en 320, 390, 769, 1024 y 1920 px de los
+   carruseles de la home, `/equipo` con la ficha abierta, `/productos` y la
+   pantalla de error. A 768 px se ve la versión móvil (antes, mezclada).
+2. El test de cortes pasa con la lista de pendientes vacía si este es el
+   último grupo.
+
 ---
 
 ### Épica E — Animación y scroll
@@ -3042,6 +3208,101 @@ Criterios de aceptación:
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-079).
 
 
+#### BR-084 — Footer: títulos invisibles, marca desde SITE y colores a tokens
+
+- Prioridad: P1 · Esfuerzo: XS · Depende de: BR-080
+- Estado: Propuesta
+- Historia de usuario: no aplica — corrección de contraste y de datos sin superficie nueva (hallazgo del handoff móvil del 2026-10-18).
+- RF/RNF: `RNF-A11Y-004`, `RNF-DATOS-001`
+
+**Origen (2026-10-18):** `docs/handoff-movil-2026-10-18.md` §3 (Footer).
+**Causa:** la regla global de `h1`–`h6` (`src/styles/global.css:25`) pinta los títulos con
+`--color-text-primary` (`rgb(23, 23, 23)`) y `Footer.module.css` no define color para
+`.title` ni `.columnTitle`: «Barber Royce», «Navegación», «Contacto» y «Síguenos» quedan
+casi invisibles sobre el fondo oscuro (WCAG 1.4.3). Además la marca está escrita a mano como
+«Barber Royce» (`Footer.tsx:30` y el copyright de `Footer.tsx:126`), cuando es «Royce
+Barbería» y sale de `SITE.name`; y `Footer.module.css` tiene colores hex y `rgba` (ADR-002).
+
+Alcance:
+1. Los títulos del footer usan un token de texto claro.
+2. La marca del título y del copyright sale de `SITE.name`. Esto cambia el texto visible
+   de «Barber Royce» a «Royce Barbería»: es la marca oficial, pero se avisa al usuario.
+3. Los colores hex y `rgba` de `Footer.module.css` pasan a tokens (con el mismo aspecto).
+4. Un test del footer compara el título y el copyright con `SITE.name`.
+5. Fuera de alcance (se anota): el `alt` «Barber Royce» del logo de `Navbar.tsx:65`, el
+   texto de la descripción del footer (copy del dueño) y las áreas táctiles de los enlaces.
+
+Criterios de aceptación:
+1. Los títulos del footer cumplen 4,5:1 contra su fondo en todas las rutas (CP-A11Y-004).
+2. El nombre del título y del copyright es `SITE.name` (CP-DATOS-001).
+3. Sin hex ni `rgba` literales en `Footer.module.css` (ADR-002).
+4. Capturas antes y después iguales salvo los títulos, en 320, 390, 769, 1025 y 1280 px.
+
+
+#### BR-085 — Navbar móvil: área táctil de 44 px y menú desplazable
+
+- Prioridad: P1 · Esfuerzo: XS · Depende de: BR-080
+- Estado: Propuesta
+- Historia de usuario: no aplica — corrección de accesibilidad y de usabilidad sin superficie nueva (hallazgos H2 y H3 del handoff móvil del 2026-10-18).
+- RF/RNF: `RNF-A11Y-002`
+
+**Origen (2026-10-18):** `docs/handoff-movil-2026-10-18.md` §3 (Navbar) y §4 (H2, H3), medido en Chrome.
+**Causa:** la hamburguesa mide 34 × 19 px y «Agendar Sesión» 35 px de alto (mínimo 44 px,
+WCAG 2.5.5); el menú móvil tiene `max-height: 500px` (`Navbar.module.css`, `.mobileMenu.open`)
+para 520 px de contenido, así que en apaisado el CTA queda inalcanzable; y con el menú cerrado
+sus enlaces siguen enfocables con el teclado.
+**Arreglo:** `padding` y `min-height` hasta 44 px sin agrandar el ícono; `max-height` con el
+alto de la pantalla y `overflow-y: auto`; `inert` mientras el menú está cerrado.
+
+Alcance:
+1. La hamburguesa y el botón de reserva de la barra miden al menos 44 × 44 px en móvil, sin
+   cambiar el tamaño del ícono ni la altura de la barra.
+2. El menú abierto cabe en la pantalla y se desplaza si el contenido no entra.
+3. Con el menú cerrado sus enlaces no reciben foco ni los lee un lector de pantalla.
+4. Fuera de alcance: la franja de 769 a 1024 px (H1) espera la decisión del usuario
+   (hamburguesa hasta 1024 px o barra compacta, y etiqueta corta de «Ubicación»); el velo del
+   menú, el CTA duplicado y «TEAM» (copy) son propuestas.
+
+Criterios de aceptación:
+1. Hamburguesa y botón de reserva de ≥ 44 × 44 px a 320 y 390 px (CP-A11Y-002).
+2. En apaisado (360 px de alto) se llega a «FAQ» y al CTA desplazando el menú.
+3. Con el menú cerrado, Tab no entra en sus enlaces.
+4. Capturas antes y después iguales salvo el área táctil, en 320, 390, 769 y 1280 px.
+
+
+#### BR-086 — Navbar: hamburguesa hasta 1024 px
+
+- Prioridad: P1 · Esfuerzo: XS · Depende de: BR-085
+- Estado: Propuesta
+- Historia de usuario: no aplica — corrección de maquetación sin superficie nueva (hallazgo H1 del handoff móvil del 2026-10-18).
+- RF/RNF: `RNF-COMP-001`
+
+**Origen (2026-10-18):** `docs/handoff-movil-2026-10-18.md` §4 (H1), medido en Chrome: entre 769 y
+unos 950 px la barra de escritorio no cabe (el logo queda con ancho 0, «Agendar Sesión» sale de la
+pantalla, «UBICACIÓN Y HORARIOS» ocupa tres líneas y la barra crece a unos 110 px, el layout reserva
+80); a 1024 px el logo se solapa con «NOSOTROS».
+
+> **Decisión del usuario (2026-10-19):** mantener la hamburguesa hasta 1024 px (opción A), no una
+> barra compacta. El corte de la barra completa pasa de 769 a 1025 px (`BREAKPOINTS.LG`, ADR-009).
+
+Alcance:
+1. La barra de escritorio (logo en imagen, enlaces y botón con borde) aparece desde 1025 px; de 769 a
+   1024 px se ve la de móvil (hamburguesa, marca en texto, botón blanco).
+2. `Navbar.tsx` cierra el menú al cruzar 1025 px (`MEDIA.lg`) y no 769.
+3. La etiqueta de `/ubicacion` pasa de «UBICACIÓN Y HORARIOS» a «SUCURSALES» (`routes.ts`), en la
+   navbar y en el footer, que comparten la etiqueta. Medido: a 1025 px el enlace largo ocupaba tres
+   líneas (67 px) y la barra crecía a 113 px.
+
+> **Decisión del usuario (2026-10-19):** la etiqueta corta es «Sucursales». El título de la página y
+> su SEO no cambian.
+
+Criterios de aceptación:
+1. A 769, 900 y 1024 px la barra no se desborda y mide lo mismo que en móvil.
+2. A 1025 y 1280 px la barra de escritorio cabe en una línea (88 px o menos), sin solapes.
+3. Con el menú abierto a 1024 px y cruzando a 1025 px, el menú se cierra.
+4. El test de cortes pasa (`src/styles/breakpoints.test.ts`).
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3094,7 +3355,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-021 | Fuente única de tokens | D | P2 | M | Propuesta | — |
 | BR-022 | Hex → tokens | D | P2 | M | Propuesta | BR-021 |
 | BR-023 | Retirar Tailwind y shadcn | D | P2 | L | Propuesta | BR-021 |
-| BR-024 | Breakpoints unificados | D | P2 | S | Propuesta | BR-021 |
+| BR-024 | Breakpoints unificados, mobile-first (base de la migración) | D | P2 | S | Propuesta | — |
 | BR-025 | Código muerto y dependencias | H | P2 | M | Propuesta | BR-014 |
 | BR-026 | Rutas desde `ROUTES` | H | P2 | S | Propuesta | BR-003, BR-019 |
 | BR-027 | Ordenar data, types e iconos | H | P2 | S | Propuesta | — |
@@ -3142,6 +3403,10 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-077 | Escenas fijas: scroll más pesado (la rueda más lenta en toda la página) | K | P3 | XS | Hecho | BR-074, BR-075 |
 | BR-078 | Respaldados por los mejores en móvil: tarjeta con la forma de escritorio y revelado con desenfoque | K | P3 | S | Hecho | BR-075 |
 | BR-079 | Hero y CTA1: zoom-in marcado de las fotos con el scroll | K | P3 | XS | Hecho | BR-061 |
+| BR-080 | Mobile-first: navbar, footer y estilos globales | D | P2 | S | Propuesta | BR-024 |
+| BR-081 | Mobile-first: secciones de la home | D | P2 | M | Propuesta | BR-024 |
+| BR-082 | Mobile-first: páginas internas | D | P2 | S | Propuesta | BR-024 |
+| BR-083 | Mobile-first: componentes comunes | D | P2 | S | Propuesta | BR-024 |
 | BR-062 | SocialProof1: corte láser cinematográfico y disparos por pistas | K | P3 | M | Hecho | BR-058 |
 | BR-063 | Equipo: ficha de cada barbero en un modal | K | P3 | M | Hecho | BR-060 |
 | BR-064 | Benefits: fiel al Figma con íconos que se dibujan | K | P3 | M | Hecho | BR-062 |
@@ -3149,6 +3414,9 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-066 | El respaldo del enlace de reserva apunta a un subdominio que no existe | B | P1 | XS | Hecho | — |
 | BR-067 | Productos: catálogo en panal con hover y ficha | K | P3 | M | Hecho | BR-060, BR-063, BR-009 |
 | BR-068 | Productos: carga progresiva (scroll infinito) | K | P3 | M | Hecho | BR-067 |
+| BR-084 | Footer: títulos invisibles, marca desde SITE y colores a tokens | K | P1 | XS | Propuesta | BR-080 |
+| BR-085 | Navbar móvil: área táctil de 44 px y menú desplazable | K | P1 | XS | Propuesta | BR-080 |
+| BR-086 | Navbar: hamburguesa hasta 1024 px | K | P1 | XS | Propuesta | BR-085 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

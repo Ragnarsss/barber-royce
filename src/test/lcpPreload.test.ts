@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
+import { MEDIA } from "@/config/breakpoints";
 
 const read = (relative: string) => readFileSync(fileURLToPath(new URL(relative, import.meta.url)), "utf8");
 const indexHtml = read("../../index.html");
@@ -12,12 +13,14 @@ const heroSource = read("../components/sections/Hero/Hero.tsx");
 describe("preload de la imagen del LCP (BR-011, CP-PERF-001)", () => {
   const attr = (html: string, name: string) => html.match(new RegExp(`${name}="([^"]+)"`))?.[1];
   const preloads = [...indexHtml.matchAll(/<link\s[^>]*rel="preload"[^>]*as="image"[^>]*>/gs)].map((m) => m[0]);
-  const mobilePreload = preloads.find((p) => attr(p, "media")?.includes("max-width")) ?? "";
-  const desktopPreload = preloads.find((p) => attr(p, "media")?.includes("min-width")) ?? "";
-  // Un <source> del <picture> por cada foto: el de móvil lleva `media`; el de escritorio, no.
+  // Mobile-first (BR-081, ADR-009): la foto de escritorio lleva `media` (desde 769 px) y la de móvil, que es la base, no;
+  // el preload de móvil es el complemento del de escritorio.
+  const mobilePreload = preloads.find((p) => attr(p, "media")?.startsWith("not all")) ?? "";
+  const desktopPreload = preloads.find((p) => attr(p, "media") && !attr(p, "media")?.startsWith("not all")) ?? "";
+  // Un <source> del <picture> por cada foto
   const heroSources = [...heroSource.matchAll(/<source\s[^>]*?\/>/gs)].map((m) => m[0]);
-  const mobileSource = heroSources.find((s) => s.includes("media=")) ?? "";
-  const desktopSource = heroSources.find((s) => !s.includes("media=")) ?? "";
+  const desktopSource = heroSources.find((s) => s.includes("media=")) ?? "";
+  const mobileSource = heroSources.find((s) => !s.includes("media=")) ?? "";
 
   /** Los archivos de un srcset como «nombre.webp 780w». */
   const filesOf = (srcset: string | undefined) =>
@@ -36,9 +39,11 @@ describe("preload de la imagen del LCP (BR-011, CP-PERF-001)", () => {
   });
 
   it("los dos `media` son excluyentes: solo se baja una de las fotos", () => {
-    expect(attr(mobilePreload, "media")).toBe("(max-width: 768px)");
-    expect(attr(desktopPreload, "media")).toBe("(min-width: 769px)");
-    expect(attr(mobileSource, "media")).toBe("(max-width: 768px)");
+    expect(attr(desktopPreload, "media")).toBe(MEDIA.desktop);
+    expect(attr(mobilePreload, "media")).toBe(`not all and ${MEDIA.desktop}`);
+    expect(desktopSource).toContain("media={MEDIA.desktop}");
+    // El <picture> toma la primera fuente que coincide: la de escritorio va antes que la de móvil
+    expect(heroSources.indexOf(desktopSource)).toBeLessThan(heroSources.indexOf(mobileSource));
   });
 
   it("precarga el mismo `sizes` que usa el <picture> del Hero", () => {

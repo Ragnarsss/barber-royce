@@ -6,8 +6,10 @@ import { describe, expect, it } from "vitest";
 // BR-065: la parrilla de SocialProof2 sigue las proporciones del Figma «Prueba social 2».
 const css = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "SocialProof2.module.css"), "utf8");
 const rule = (selector: string, scope = css) => scope.match(new RegExp(`\\n\\s*\\.${selector}\\s*\\{([^}]*)\\}`))?.[1] ?? "";
-const rows = (selector: string) => rule(selector).match(/grid-row:\s*(\d+)\s*\/\s*(\d+)/)?.slice(1).map(Number) ?? [];
-const desktop = css.split("@media (max-width: 1024px)")[0];
+const rows = (selector: string) => rule(selector, desktop).match(/grid-row:\s*(\d+)\s*\/\s*(\d+)/)?.slice(1).map(Number) ?? [];
+// Mobile-first (BR-081, ADR-009): la base del archivo es el móvil y la parrilla de tres columnas llega desde 769 px
+const mobile = css.split("@media (min-width: 769px)")[0];
+const desktop = css.split("@media (min-width: 769px)")[1] ?? "";
 
 describe("SocialProof2: bento del Figma (BR-065, HU-EXP-004 CA-17)", () => {
   it("CA-17: tres columnas de distinto ancho (no tres iguales)", () => {
@@ -31,7 +33,7 @@ describe("SocialProof2: bento del Figma (BR-065, HU-EXP-004 CA-17)", () => {
   });
 
   it("el contenedor ocupa el ancho: margin auto dentro de un flex en columna lo encogía a su contenido", () => {
-    expect(rule("container")).toMatch(/width:\s*100%/);
+    expect(rule("container", mobile)).toMatch(/width:\s*100%/);
   });
 
   it("cada recuadro recorta su foto (object-fit: cover) para recibir cualquier proporción de Instagram", () => {
@@ -44,8 +46,6 @@ describe("SocialProof2: bento del Figma (BR-065, HU-EXP-004 CA-17)", () => {
   });
 
   it("en móvil, dos columnas con la foto alta junto a las demás", () => {
-    const mobile = css.split("@media (max-width: 768px)")[1] ?? "";
-
     expect(rule("bentoGrid", mobile)).toMatch(/grid-template-columns:\s*1fr 1fr/);
     expect(rule("bentoTall", mobile)).toMatch(/grid-row:\s*2 \/ 5/);
   });

@@ -202,7 +202,9 @@ describe("Benefits: tarjetas de vidrio (BR-069, HU-EXP-004 CA-20)", () => {
 
 // BR-071 (HU-EXP-004 CA-22): la foto puente de móvil lleva dos cuñas rojas, en espejo.
 describe("Benefits: foto puente con dos cuñas (BR-071, HU-EXP-004 CA-22)", () => {
-  const mobile = css.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+  // Mobile-first (BR-081, ADR-009): las cuñas son de la base y el escritorio (desde 769 px) las quita
+  const mobile = css;
+  const desktop = css.match(/@media \(min-width: 769px\)\s*\{([\s\S]*?)\n\}/g)?.at(-1) ?? "";
   const rule = (selector: RegExp) => mobile.match(new RegExp(`\\n\\s*${selector.source}\\s*\\{([^}]*)\\}`))?.[1] ?? "";
 
   it("CA-22: una cuña arriba a la izquierda (::before) y otra abajo a la derecha (::after)", () => {
@@ -225,6 +227,12 @@ describe("Benefits: foto puente con dos cuñas (BR-071, HU-EXP-004 CA-22)", () =
   it("las dos cuñas son del rojo de la marca, de un token", () => {
     expect(rule(/\.imageBackground::before/)).toMatch(/background:\s*var\(--color-brand-primary\)/);
     expect(rule(/\.imageBackground::after/)).toMatch(/background:\s*var\(--color-brand-primary\)/);
+  });
+
+  it("desde 769 px no hay cuñas ni velo, y vuelve la franja roja diagonal", () => {
+    expect(desktop).toMatch(/\.imageBackground::before,\s*\.imageBackground::after,\s*\.photoMotion::after\s*\{\s*content:\s*none/);
+    expect(rule(/\.band/)).toMatch(/display:\s*none/);
+    expect(desktop).toMatch(/\.band\s*\{[^}]*display:\s*block/);
   });
 });
 

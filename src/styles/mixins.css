@@ -17,14 +17,14 @@
   max-width: var(--container-xl);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
   .container {
     padding-left: var(--container-padding-tablet);
     padding-right: var(--container-padding-tablet);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1025px) {
   .container {
     padding-left: var(--container-padding-desktop);
     padding-right: var(--container-padding-desktop);
@@ -37,14 +37,14 @@
   padding-bottom: var(--spacing-section-mobile);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
   .section {
     padding-top: var(--spacing-section-tablet);
     padding-bottom: var(--spacing-section-tablet);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1025px) {
   .section {
     padding-top: var(--spacing-section-desktop);
     padding-bottom: var(--spacing-section-desktop);
@@ -145,27 +145,9 @@
   gap: var(--spacing-component-gap-md);
 }
 
-/* Hide utilities */
+/* Hide utilities (las variantes por ancho se quitaron en BR-080: no tenían uso) */
 .hidden {
   display: none;
-}
-
-@media (max-width: 767px) {
-  .hidden-mobile {
-    display: none;
-  }
-}
-
-@media (min-width: 768px) {
-  .hidden-tablet {
-    display: none;
-  }
-}
-
-@media (min-width: 1024px) {
-  .hidden-desktop {
-    display: none;
-  }
 }
 
 /* Overlay pattern */

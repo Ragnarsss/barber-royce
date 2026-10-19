@@ -1770,3 +1770,85 @@ Tres PR integraron el lote a `master`: #33 (BR-061, BR-069 a BR-077), #34 (tarje
 **Pendientes que no bloquean el cierre:**
 - Las 5 reseñas son de ejemplo (`reviewsData.ts`); las reemplaza `BR-052`.
 - El handoff de hallazgos de la vista móvil y la auditoría responsive quedan en `docs/handoff-movil-2026-10-18.md`, como insumo para tickets nuevos.
+
+<a id="br-024"></a>
+
+## BR-024 — Breakpoints unificados, mobile-first (base de la migración)
+
+**Notas de construcción (2026-10-18):**
+- Decisión del usuario: migrar **todo** el CSS a mobile-first y adoptarlo como patrón. Se descartó la alternativa de cerrar los cortes y escribir mobile-first solo en lo nuevo. Conjunto elegido: 640, 769, 1025 y 1280 px, más `min-height: 720px` para las escenas fijas. Queda en `ADR-009`, en la regla 5 de `CLAUDE.md`, en `engineering-guidelines.md` §13, en la skill `diseno-visual` y en el chequeo 4 de `design-tokens-auditor`.
+- `src/config/breakpoints.ts`: `BREAKPOINTS` y `MEDIA` (las queries con nombre para `useMediaQuery`). `src/styles/tokens/breakpoints.css` documenta el conjunto, y sus variables se alinean a él (nadie las usaba).
+- `src/styles/breakpoints.test.ts` (`RNF-MANT-004`) recorre los `.css`, `.ts` y `.tsx` de `src/`. Falla con un `max-width` o `max-height` en un `@media`, con un corte fuera del conjunto, con la sintaxis de rango, con una media query de ancho escrita como texto en TypeScript o con `innerWidth` comparado a mano. La **lista de pendientes** tiene los 30 archivos que hoy incumplen, agrupados por ticket (`BR-080` a `BR-083`). Un archivo nuevo que incumpla falla, y uno de la lista que ya cumpla también, así que la lista solo se achica.
+- Fuera de la regla: las listas `sizes` de las imágenes (una condición seguida del ancho de la foto). Eligen qué archivo descargar, no aplican estilos, y su forma habitual es con `max-width`; el test lo reconoce por el ancho que sigue a la condición (`Benefits.tsx`, `SocialProof1.tsx`, `CTA1.tsx`).
+- Sin cambio visible: este ticket no migra ningún archivo.
+
+**Verificación:** test primero con los casos del detector. La lista de pendientes se ajustó con el propio test: los dos `sizes` aparecieron como falsos positivos y `Navbar.tsx` como pendiente sin detectar (`innerWidth > 768`), y se corrigieron los dos detectores.
+
+<a id="br-080"></a>
+
+## BR-080 — Mobile-first: navbar, footer y estilos globales
+
+**Notas de construcción (2026-10-18):**
+- **Navbar:** la base es la barra móvil de `BR-061` y el bloque `min-width: 769px` devuelve la de escritorio. Lo que solo se ve en móvil y en escritorio queda oculto (la hamburguesa, la marca en texto) no se restaura. El brillo del botón al pasar el cursor pasa a `--nav-cta-glow`, para no repetir sus `rgba` en los dos bloques. `Navbar.tsx` cierra el menú escuchando `matchMedia(MEDIA.desktop)` en vez de `resize` con `innerWidth > 768`: solo actúa al cruzar el corte.
+- **Footer:** una columna en la base, dos desde 769 px y cuatro desde 1025 px. **Único cambio visible del ticket:** entre 969 y 1024 px el footer pasa de cuatro columnas a dos, porque el corte 968 no está en el conjunto de `ADR-009`.
+- **`global.css`:** `h1` a `h3` parten en su tamaño móvil y crecen un paso desde 769 px.
+- **Código muerto encontrado (para `BR-025`):** `styles/shared/page.css` no lo importa nadie (se migró igual, porque cuesta poco); `.container` y `.section` de `mixins.css` no tienen uso (se movieron a 769 y 1025). Se **quitaron** las tres `.hidden-*` de `mixins.css` y `.isAnimating--filter` y `.section-container--strict` de `performance.css`: no tienen uso y no admiten una traducción exacta a mobile-first. La primera versión de las de `performance.css` habría pisado el `will-change: auto` de movimiento reducido y, con `revert-layer`, el `filter` propio del elemento.
+- **Error encontrado en las capturas:** el logo de escritorio quedó como `display: inline` y la barra creció 4 px (87 → 91). `reset.css` deja toda imagen en `block`; el bloque de escritorio ahora restaura `block`.
+
+**Verificación:**
+- 67 capturas antes y después (home, `/ubicacion`, `/servicios` y la 404, a 320, 390, 768, 769, 1024, 1025, 1280 y 1920 px, arriba y al final, más el menú móvil abierto), con movimiento reducido, en el build local.
+- Se repitió la captura «antes» para medir el ruido: el mapa de `/ubicacion` y el reescalado del logo encogido varían entre corridas sin cambios.
+- **Resultado:** idénticas byte a byte en todo el móvil y a 769 px, menú incluido. Las diferencias restantes son el footer entre 969 y 1024 px (previsto) y ruido: el mapa en la misma franja que varía sola, y el logo a 1024 px en `/ubicacion`. Para el logo se construyó la navbar vieja aparte: las cajas de la barra coinciden al centésimo de píxel a 769, 900 y 1024 px, y el mismo build viejo dio dos recortes distintos en dos rondas, el segundo igual al nuevo.
+- Lint, tipos, build y la suite completa en verde. `liveContent.e2e.test.ts` falló una vez al arrancar dentro de la suite completa y pasó sola con sus 5 tests.
+- **Pendiente:** el preview de Vercel.
+
+<a id="br-081"></a>
+
+## BR-081 — Mobile-first: secciones de la home
+
+**Notas de construcción (2026-10-18):**
+- Hero, CTA1, SocialProof1, Benefits, Reviews, Features, SocialProof2 y CTA2 pasan a mobile-first: la base de cada módulo es el móvil y `min-width: 769px` (y 1025 px donde antes había 1024) restaura el escritorio. Cada valor de escritorio se restauró explícitamente, también los de pseudoelementos que solo existían en móvil (`content: none`) y las propiedades que el móvil pisaba (`display`, `inset`, `object-fit`).
+- **`!important` sobre estilos de framer:** tres casos (`transform: none !important` en Features y CTA1; `height: 100% !important` en la foto del Hero) no pueden vivir en la base, porque un `!important` no se deshace desde un bloque de escritorio. Pasaron a JS, como ya hacía el Hero con su parallax: `AnimatedGridSection` (prop nueva `parallaxOnMobile`, que solo Features apaga: Reviews conserva su parallax en móvil), `CTA1.tsx` (la figura recibe el estilo solo en escritorio) y `Hero.tsx` (el alto de la foto según el ancho). El CSS del Hero ya no tiene ningún `!important`.
+- **`<picture>`:** en Hero y CTA1 la fuente de escritorio lleva `media={MEDIA.desktop}` y va primero (gana la primera que coincide); la de móvil es la base. La precarga del LCP en `index.html` pasa de `(max-width: 768px)` a `not all and (min-width: 769px)`, el complemento exacto de la de escritorio, que además cierra el hueco entre 768 y 769 px. Se verificó en `lcpPreload.test.ts`; `breakpoints.test.ts` vigila ahora también el `media` de `index.html`.
+- `Hero.tsx` leía el ancho una sola vez dentro de un `useState` y no reaccionaba al rotar un tablet; ahora usa `useMediaQuery(MEDIA.desktop)`. `usePinnedScene` y `CTA1` usan `MEDIA` en vez de la query escrita a mano.
+- **Cambio visible documentado:** el relleno lateral de SocialProof2 crecía a 1200 y a 1600 px, cortes fuera del conjunto; ahora crece a 1280 px. Las capturas no mostraron diferencia (a 1920 px el contenedor ya está limitado por su `max-width`).
+- Se quitaron las reglas muertas `.imageWrapper` y el bloque vacío `@media (min-width: 768px)` del Hero.
+
+**Verificación:**
+- 106 capturas antes y después (página completa con movimiento reducido a 320, 390, 640, 641, 768, 769, 1024, 1025, 1280 y 1920 px; y 4 puntos del recorrido de cada sección, con movimiento, a 900, 1100 y 1440 px, para las escenas fijas), más una segunda corrida «antes» para medir el ruido.
+- **Resultado:** idénticas byte a byte, salvo las dos páginas móviles completas, que difieren en el codificado pero sin un solo píxel sobre el umbral de comparación, y el ruido que ya tenían CTA2 y SocialProof2 a 1440 px.
+- Lint, tipos, build y 851 tests en verde.
+- **Pendiente:** el preview de Vercel y que el usuario vea el movimiento (escenas fijas y zoom).
+
+<a id="br-082"></a>
+
+## BR-082 — Mobile-first: páginas internas
+
+**Notas de construcción (2026-10-18):**
+- `PageHero`, `AboutPage`, `FAQPage`, `ServicesPage` y `LocationPage` pasan a mobile-first: base móvil y `min-width: 769px` (y 1025 px en `LocationPage`) con los valores de escritorio. Cada regla que el bloque móvil pisaba se restauró en el bloque de escritorio, incluidos los valores que eran el comportamiento por omisión (`align-items: normal`, `justify-content: normal`, `white-space: normal`).
+- **Cambio visible previsto:** en `/ubicacion`, entre 969 y 1024 px la ficha de la sucursal pasa de dos columnas a una, porque el corte 968 no está en el conjunto de `ADR-009` (a 1025 px vuelven las dos columnas).
+- Código muerto quitado: `ServicesPage` tenía reglas móviles de `.hero`, `.title` y `.subtitle` sin su contraparte base (el hero es `PageHero`).
+
+**Verificación:**
+- 36 capturas de página completa antes y después (`/nosotros`, `/faq`, `/ubicacion` y `/servicios` a 320, 390, 640, 768, 769, 1024, 1025, 1280 y 1920 px) y una segunda corrida «antes» para medir el ruido.
+- **Resultado:** idénticas, salvo `/ubicacion` entre 969 y 1024 px (previsto) y el recuadro del mapa de Google (tercero; cambia entre cargas): fuera del mapa, 0 píxeles de diferencia a 1280 px, y tres capturas nuevas seguidas coincidieron entre sí.
+- Lint, tipos, build y 851 tests en verde. **Pendiente:** el preview de Vercel.
+
+<a id="br-083"></a>
+
+## BR-083 — Mobile-first: componentes comunes
+
+**Notas de construcción (2026-10-18):**
+- `Honeycomb`, `HoneycombPage`, `ModalDialog` y `BarberProfileDialog` ya eran `min-width`, pero en 768 px, que chocaba con el `max-width: 768px` del resto (a 768 px se mezclaban los dos): pasan a 769 px. `CatastrophicError` pasa su corte de 640 a mobile-first (base móvil y `min-width: 640px` con el ícono de 80 px escrito explícito, porque el CSS lo pisaba con 60 px y el SVG no admite deshacerlo con `revert`).
+- **`CardCarousel`:** sus reglas de móvil pisaban el `display` de la grilla de cada sección, y eso no se puede deshacer desde un bloque de escritorio. El componente ya sabía en JS si era móvil; ahora pone la clase `.snap` solo en móvil y las reglas de la fila cuelgan de ella. El estado `isMobile` pasa de un `useState` con su propio `matchMedia` y su efecto a `useMediaQuery(MEDIA.desktop)` negado; sin `matchMedia` (jsdom) no se asume móvil, como antes.
+- **Cambio visible previsto:** a 768 px exactos, la ficha del equipo y de los productos, y el panal, muestran la versión móvil completa (antes mezclaban el diseño de escritorio con el ancho de un móvil).
+- Con esto, `src/styles/breakpoints.test.ts` ya no necesita su lista de pendientes: queda vacía y se quitó, y el test falla con cualquier `max-width` o corte fuera del conjunto en todo `src/`.
+
+**Verificación:**
+- 38 capturas por corrida (home, `/equipo` y `/productos` de página completa a 320, 390, 640, 641, 768, 769, 1024, 1025, 1280 y 1920 px, y la ficha abierta de cada uno a 390, 768, 769 y 1280 px) contra el build del commit anterior (BR-082), servido aparte. La línea base no tuvo ruido entre dos corridas.
+- **Resultado:** idénticas byte a byte, salvo las cuatro de 768 px (previsto): `equipo-768`, `productos-768` y sus dos fichas.
+- Lint, tipos, build y 851 tests en verde. **No cubierto con captura:** la pantalla de error (`CatastrophicError`), que solo aparece ante un fallo. **Pendiente:** el preview de Vercel.
+
+## Cierre de la migración mobile-first (2026-10-18)
+
+`BR-024` (base) y `BR-080` a `BR-083` quedaron implementados y verificados en local; no se integraron todavía. Con ellos, todo el CSS de `src/` es mobile-first, el único cambio visible está acotado (footer y `/ubicacion` entre 969 y 1024 px; la ficha y el panal a 768 px exactos) y el test lo hace cumplir. Las fichas siguen en `Propuesta` hasta que el preview de Vercel las verifique.

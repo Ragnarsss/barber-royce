@@ -34,17 +34,18 @@ h6 {
   color: var(--color-text-primary);
 }
 
+/* Mobile-first (BR-080, ADR-009): h1 a h3 crecen un paso desde 769 px */
 h1 {
-  font-size: var(--font-size-5xl);
+  font-size: var(--font-size-4xl);
   letter-spacing: var(--letter-spacing-tight);
 }
 
 h2 {
-  font-size: var(--font-size-4xl);
+  font-size: var(--font-size-3xl);
 }
 
 h3 {
-  font-size: var(--font-size-3xl);
+  font-size: var(--font-size-2xl);
 }
 
 h4 {
@@ -59,18 +60,17 @@ h6 {
   font-size: var(--font-size-lg);
 }
 
-/* Responsive typography */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   h1 {
-    font-size: var(--font-size-4xl);
+    font-size: var(--font-size-5xl);
   }
 
   h2 {
-    font-size: var(--font-size-3xl);
+    font-size: var(--font-size-4xl);
   }
 
   h3 {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-3xl);
   }
 }
 

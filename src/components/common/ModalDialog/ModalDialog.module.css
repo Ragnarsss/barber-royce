@@ -113,7 +113,7 @@
   overflow-y: auto;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
   .split {
     grid-template-rows: none;
     grid-template-columns: 33% minmax(0, 1fr);

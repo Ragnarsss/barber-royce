@@ -79,8 +79,10 @@ descripción de cada una.
   (`styles/tokens/`, `styles/variables.css`, `src/index.css` de shadcn,
   `COLORS` en `config/constants.ts`) y unos 120 colores hex escritos a mano
   en los módulos (`BR-021`, `BR-022`).
-- **Gap:** los breakpoints no son coherentes (768, 968, 1024, 640, 1200,
-  1600; mezcla de `max-width` y `min-width`) (`BR-024`).
+- **Mobile-first** con un conjunto cerrado de cortes (640, 769, 1025 y 1280
+  px; `ADR-009`). Todo el CSS de `src/` ya está migrado (`BR-080` a
+  `BR-083`) y `src/styles/breakpoints.test.ts` falla con cualquier
+  `max-width` o corte fuera del conjunto.
 
 ## 5. Animación y scroll
 
@@ -340,6 +342,45 @@ No hay gestor de estado global (ADR-004).
 > - **Por confirmar:** si el texto de privacidad debe mencionar que el
 >   navegador consulta a Google al cargar el sitio.
 
+### ADR-009 — CSS mobile-first con un conjunto cerrado de cortes
+
+> **Estado: decidido por el usuario el 2026-10-18** (`BR-024`).
+
+- **Contexto:** el sitio se escribió desde escritorio. Hay 31 bloques
+  `max-width` de ancho en 32 archivos CSS, con cortes en 640, 767, 768, 968,
+  1024, 1200 y 1600 px, y `min-width: 768px` choca con `max-width: 768px`
+  justo a 768 px. En TypeScript, las media queries se repiten como texto en
+  cinco archivos y una no reacciona al rotar la pantalla. Lo encontró la
+  auditoría responsive del 2026-10-18 (`docs/handoff-movil-2026-10-18.md`).
+- **Decisión:**
+  1. **Mobile-first:** la base de cada módulo es el móvil, sin `@media`, y
+     cada corte suma estilos con `min-width`. Nunca `max-width` de ancho.
+  2. **Conjunto cerrado:** `640`, `769` (escritorio, el corte principal),
+     `1025` y `1280` px de ancho, y `720` px de alto, este último solo junto a
+     769 para las escenas fijas.
+  3. En CSS, los cortes se escriben como literal (las variables no
+     funcionan dentro de `@media`). En TypeScript, salen de `MEDIA`
+     (`src/config/breakpoints.ts`) y se leen con `useMediaQuery`.
+  4. `src/styles/breakpoints.test.ts` lo hace cumplir (`RNF-MANT-004`).
+     Durante la migración (`BR-080` a `BR-083`) llevó una lista de archivos
+     pendientes que solo podía achicarse; ya quedó vacía y se quitó.
+  5. Lo que solo existe en móvil y no se puede deshacer desde un bloque de
+     escritorio (un `!important` sobre un estilo de framer, o reglas que
+     pisan las de otra sección) no va en una media query: lo decide el
+     componente con `useMediaQuery(MEDIA.…)` y una clase o un estilo que
+     solo existen en móvil (`CardCarousel`, `AnimatedGridSection`, `CTA1`,
+     `Hero`).
+  6. Fuera de la regla: las listas `sizes` de las imágenes, que eligen qué
+     archivo descargar, y las media queries de preferencias (`hover`,
+     `prefers-reduced-motion`, `print`).
+- **Por qué:** el usuario no quiere que la deuda se enrede más. La mayoría de
+  las visitas de una barbería llegan desde el celular, y una sola regla con
+  su test evita que vuelvan los cortes sueltos.
+- **Alternativa descartada (2026-10-18):** cerrar el conjunto de cortes
+  sin reescribir lo existente, y escribir mobile-first solo en el código
+  nuevo. Era más barata, pero dejaba los dos estilos mezclados por tiempo
+  indefinido.
+
 ## 10. Deuda conocida y diferida
 
 | Tema | Estado | Ticket |
@@ -352,6 +393,7 @@ No hay gestor de estado global (ADR-004).
 | Monitoreo de errores | Diferida | backlog §4 |
 | Analítica (Vercel Analytics y GA4) | Planificada, por confirmar (`ADR-007`) | `BR-036`..`BR-038`, `BR-044` |
 | Contenido editable desde una hoja | Planificada, por confirmar (`ADR-008`) | `BR-039`..`BR-043` |
+| CSS escrito desde escritorio (`max-width`) | En migración a mobile-first (`ADR-009`) | `BR-024`, `BR-080`..`BR-083` |
 
 ## 11. Dónde ir para…
 
@@ -364,6 +406,7 @@ No hay gestor de estado global (ADR-004).
 | Cambiar título o descripción de una página | `ROUTES` en `src/config/routes.ts` |
 | Agregar un servicio, barbero, producto o pregunta | `src/data/` |
 | Cambiar un color, espaciado o radio | `src/styles/tokens/` |
+| Adaptar un componente a otro ancho de pantalla | Base móvil y `@media (min-width: …)` con los cortes de `ADR-009`; en TypeScript, `useMediaQuery(MEDIA.…)` de `src/config/breakpoints.ts` |
 | Ajustar una animación de entrada o un parallax | `src/config/animations.config.ts` |
 | Cambiar cabeceras, redirecciones o caché | `vercel.json` |
 | Proponer trabajo nuevo | skill `nuevo-ticket` o `analisis-requerimientos` |

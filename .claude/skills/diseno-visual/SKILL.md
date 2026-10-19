@@ -55,6 +55,12 @@ sección a la vez** y con el usuario eligiendo la dirección.
 
 - **Estilos:** CSS Modules + tokens de `src/styles/tokens/`. Ningún hex nuevo
   en un módulo ni clases de Tailwind (ADR-002). Si falta un token, se crea.
+- **Mobile-first (ADR-009):** el diseño y el CSS empiezan por el móvil
+  (390 px). La base del módulo es el móvil y el escritorio se suma con
+  `@media (min-width: 769px)`, o con 640, 1025 o 1280 px. Nunca `max-width`
+  de ancho. En TypeScript, `useMediaQuery(MEDIA.…)` de
+  `src/config/breakpoints.ts`. Las capturas del paso 1 y del paso 7 incluyen
+  320 px y 769 px, los dos bordes del corte principal.
 - **Scroll y cursor:** todo lo que dependa de ellos es un `MotionValue`
   (`useScroll`, `useTransform`, `useSpring`). Nunca `setState` por evento de
   scroll ni por `pointermove`. Nadie lee `window.lenis`.

@@ -1,3 +1,4 @@
+/* Mobile-first (BR-082, ADR-009): la base es el móvil y desde 769 px y 1025 px se restauran los valores de escritorio (al final) */
 .page {
   min-height: 100vh;
   background-color: var(--color-brand-background);
@@ -62,9 +63,10 @@
 
 .tabsList {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
-  justify-content: center;
+  width: 100%;
+  justify-content: flex-start;
   align-items: center;
   margin: 0 auto 0;
   background: transparent;
@@ -74,12 +76,13 @@
 }
 
 .tabTrigger {
-  padding: 10px 24px;
+  padding: 8px 16px;
   border: 2px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.7);
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 12px;
+  white-space: nowrap;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -140,12 +143,12 @@
 /* Location content layout */
 .locationContent {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
-  gap: 2.5rem;
+  grid-template-columns: 1fr;
+  gap: 2rem;
   align-items: start;
   background: rgba(255, 255, 255, 0.03);
-  padding: 2.5rem;
-  border-radius: 1.5rem;
+  padding: 2rem 1.5rem;
+  border-radius: 1.25rem;
   box-shadow:
     0 20px 60px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -173,13 +176,13 @@
 .info {
   display: flex;
   flex-direction: column;
-  gap: 1.75rem;
+  gap: 1.25rem;
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: 0.875rem;
+  gap: 0.625rem;
 }
 
 .iconHeader {
@@ -223,7 +226,7 @@
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.8);
   margin: 0;
-  padding-left: 2.25rem;
+  padding-left: 0;
   font-weight: 400;
 }
 
@@ -232,7 +235,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding-left: 2.25rem;
+  padding-left: 0;
 }
 
 .scheduleRow {
@@ -288,7 +291,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding-left: 2.25rem;
+  padding-left: 0;
 }
 
 .contactLink {
@@ -344,7 +347,7 @@
   border-radius: 1.25rem;
   overflow: hidden;
   height: 100%;
-  min-height: 31.25rem;
+  min-height: 22rem;
 }
 
 .mapWrapper {
@@ -400,62 +403,58 @@
     inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-@media (max-width: 968px) {
+/*
+ * Tablet y escritorio (desde 769 px): las pestañas con su tamaño y centradas, y el mapa más alto. La ficha sigue en una
+ * columna hasta 1024 px; desde 1025 px, texto y mapa lado a lado.
+ */
+@media (min-width: 769px) {
+  .tabsList {
+    width: auto;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .tabTrigger {
+    padding: 10px 24px;
+    font-size: 14px;
+    white-space: normal;
+  }
+
   .locationContent {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    padding: 2rem 1.5rem;
+    border-radius: 1.5rem;
   }
 
   .info {
     gap: 1.5rem;
   }
 
+  .section {
+    gap: 0.875rem;
+  }
+
   .mapContainer {
     min-height: 25rem;
   }
-
-  .text,
-  .schedule,
-  .contactInfo {
-    padding-left: 0;
-  }
 }
 
-@media (max-width: 768px) {
-  .tabsList {
-    width: 100%;
-    gap: 8px;
-    justify-content: flex-start;
-  }
-
-  .tabTrigger {
-    padding: 8px 16px;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-
+@media (min-width: 1025px) {
   .locationContent {
-    padding: 2rem 1.5rem;
-    gap: 2rem;
-    border-radius: 1.25rem;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 2.5rem;
+    padding: 2.5rem;
   }
 
   .info {
-    gap: 1.25rem;
-  }
-
-  .section {
-    gap: 0.625rem;
+    gap: 1.75rem;
   }
 
   .text,
   .schedule,
   .contactInfo {
-    padding-left: 0;
+    padding-left: 2.25rem;
   }
 
   .mapContainer {
-    min-height: 22rem;
+    min-height: 31.25rem;
   }
 }

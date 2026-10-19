@@ -22,7 +22,8 @@ const observers: Array<{ callback: ObserverCallback; targets: Element[]; options
 
 const mockViewport = (mobile: boolean) => {
   vi.stubGlobal("matchMedia", (query: string) => ({
-    matches: mobile && query === "(max-width: 768px)",
+    // Mobile-first (BR-083): la pantalla es de escritorio cuando cumple `(min-width: 769px)`; móvil, cuando no
+    matches: !mobile && query === "(min-width: 769px)",
     addEventListener: () => {},
     removeEventListener: () => {},
   }));
@@ -170,16 +171,39 @@ describe("CardCarousel (BR-070, HU-EXP-004 CA-21)", () => {
 });
 
 describe("CardCarousel: estilos (BR-070)", () => {
-  const mobile = css.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+  // Mobile-first (BR-083, ADR-009): la fila con snap es de la clase `.snap`, que el componente pone solo en móvil
+  const mobile = css;
 
   it("en escritorio, sin desktopVisible, el envoltorio no existe (display: contents)", () => {
     expect(css).toMatch(/\n\.carousel\s*\{[^}]*display:\s*contents/);
   });
 
   it("en móvil la grilla pasa a ser una fila con snap obligatorio y sin barra de desplazamiento", () => {
-    expect(mobile).toMatch(/\.carousel > :first-child\s*\{[^}]*overflow-x:\s*auto/);
-    expect(mobile).toMatch(/\.carousel > :first-child\s*\{[^}]*scroll-snap-type:\s*x mandatory/);
-    expect(mobile).toMatch(/\.carousel > :first-child\s*\{[^}]*scrollbar-width:\s*none/);
+    expect(mobile).toMatch(/\.snap > :first-child\s*\{[^}]*overflow-x:\s*auto/);
+    expect(mobile).toMatch(/\.snap > :first-child\s*\{[^}]*scroll-snap-type:\s*x mandatory/);
+    expect(mobile).toMatch(/\.snap > :first-child\s*\{[^}]*scrollbar-width:\s*none/);
+  });
+
+  it("la clase .snap solo se pone en móvil: en escritorio la grilla de la sección no se toca", () => {
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      },
+    );
+    mockViewport(true);
+    const { container, unmount } = renderCarousel();
+    expect(container.firstElementChild?.className).toMatch(/snap/);
+    unmount();
+
+    mockViewport(false);
+    const desktop = renderCarousel();
+    expect(desktop.container.firstElementChild?.className).not.toMatch(/snap/);
   });
 
   it("cada tarjeta es un paso del snap y deja asomar la siguiente", () => {

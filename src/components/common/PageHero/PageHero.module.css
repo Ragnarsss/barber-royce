@@ -1,7 +1,8 @@
+/* Mobile-first (BR-082, ADR-009): la base es el móvil y desde 769 px se restauran los valores de escritorio (al final) */
 .hero {
   background: var(--color-brand-section-bg);
   color: var(--color-brand-white);
-  padding: 80px 0 40px;
+  padding: 60px 0 30px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -51,7 +52,7 @@
 }
 
 .title {
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 800;
   margin: 0 0 16px 0;
   text-transform: uppercase;
@@ -63,22 +64,21 @@
 }
 
 .subtitle {
-  font-size: 20px;
+  font-size: 18px;
   margin: 0;
   color: rgba(255, 255, 255, 0.9);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .hero {
-    padding: 60px 0 30px;
+    padding: 80px 0 40px;
   }
 
   .title {
-    font-size: 36px;
+    font-size: 48px;
   }
 
   .subtitle {
-    font-size: 18px;
+    font-size: 20px;
   }
 }

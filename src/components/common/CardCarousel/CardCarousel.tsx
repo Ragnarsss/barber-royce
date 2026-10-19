@@ -2,9 +2,8 @@ import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 
 import { useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import styles from "./CardCarousel.module.css";
-
-/** Mismo punto de corte que el resto del sitio para «móvil». */
-const MOBILE_QUERY = "(max-width: 768px)";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { MEDIA } from "@/config/breakpoints";
 
 /** Fracción de una tarjeta que debe verse para darla por visible. */
 const ACTIVE_RATIO = 0.6;
@@ -21,8 +20,6 @@ interface CardCarouselProps {
   desktopVisible?: number;
 }
 
-const matchesMobile = () => typeof window !== "undefined" && window.matchMedia?.(MOBILE_QUERY).matches === true;
-
 /**
  * Carrusel con snap (BR-070, HU-EXP-004 CA-21; escritorio, BR-073, CA-24). Envuelve la grilla de tarjetas de una
  * sección: el CSS (`CardCarousel.module.css`) la convierte en una fila desplazable; este componente le agrega lo que el
@@ -36,7 +33,9 @@ const matchesMobile = () => typeof window !== "undefined" && window.matchMedia?.
 export function CardCarousel({ label, children, desktopVisible }: CardCarouselProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion() ?? false;
-  const [isMobile, setIsMobile] = useState(matchesMobile);
+  // Móvil = no escritorio. Sin `matchMedia` (jsdom, servidor) no se asume móvil: la fila con snap solo existe con pantalla
+  const isDesktop = useMediaQuery(MEDIA.desktop);
+  const isMobile = typeof window !== "undefined" && typeof window.matchMedia === "function" && !isDesktop;
   const [count, setCount] = useState(0);
   const [active, setActive] = useState(0);
 
@@ -46,14 +45,6 @@ export function CardCarousel({ label, children, desktopVisible }: CardCarouselPr
   const visible = isMobile ? 1 : (desktopVisible ?? 1);
   // Posiciones a las que puede llegar la fila: con 5 tarjetas y 3 visibles, 3
   const stops = Math.max(1, count - visible + 1);
-
-  useEffect(() => {
-    const query = window.matchMedia?.(MOBILE_QUERY);
-    if (!query) return;
-    const update = () => setIsMobile(query.matches);
-    query.addEventListener("change", update);
-    return () => query.removeEventListener("change", update);
-  }, []);
 
   useEffect(() => {
     const track = wrapperRef.current?.firstElementChild as HTMLElement | null;
@@ -147,7 +138,7 @@ export function CardCarousel({ label, children, desktopVisible }: CardCarouselPr
   return (
     <div
       ref={wrapperRef}
-      className={`${styles.carousel} ${desktopMode ? styles.desktop : ""}`}
+      className={`${styles.carousel} ${isMobile ? styles.snap : ""} ${desktopMode ? styles.desktop : ""}`}
       style={desktopMode ? ({ "--carousel-visible": desktopVisible } as CSSProperties) : undefined}
     >
       {children}

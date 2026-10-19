@@ -161,7 +161,7 @@
   background: var(--color-brand-white);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 769px) {
   .honeycomb {
     /* Más grande (hasta 17,5 rem), pero nunca más ancho que la pantalla: con un equipo grande se achica. */
     --hex-width: min(

@@ -1,5 +1,5 @@
 import { motion, useReducedMotion, useTransform } from "framer-motion";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import styles from "./Hero.module.css";
 import { HERO_BENEFITS_VIEW_DATA } from "@/data/heroData.tsx";
 import heroImage842w from "@/assets/optimized/hero_model_left_profile_842w.webp";
@@ -18,6 +18,8 @@ import { useNeonLoaderDone } from "@/loader/neonLoader";
 import { SPOTLIGHT_SIZE, usePointerSpotlight } from "./spotlight";
 import { BenefitCard } from "./BenefitCard";
 import { HERO_ZOOM, HERO_ZOOM_ORIGIN } from "./heroZoom";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { MEDIA } from "@/config/breakpoints";
 
 export function Hero() {
   const siteText = useSiteText();
@@ -37,7 +39,7 @@ export function Hero() {
   });
   const spotlight = usePointerSpotlight(sectionRef);
   // Profundidad de las tarjetas al hacer scroll (BR-056): en móvil quedan bajo el pliegue y se superpondrían al texto.
-  const [isWide] = useState(() => typeof window !== "undefined" && window.matchMedia?.("(min-width: 769px)").matches === true);
+  const isWide = useMediaQuery(MEDIA.desktop);
   const hasCardDepth = isWide && !reducedMotion;
   const layers = {
     background: useBackgroundLayer(scrollYProgress),
@@ -117,27 +119,29 @@ export function Hero() {
 
       {/* Imagen del modelo - <picture> tag para SEO con parallax y responsive images */}
       <motion.picture className={styles.heroImageSEO} style={heroImageStyle}>
-        {/* Móvil: foto a pantalla completa como fondo (BR-061). El mismo <picture> elige el archivo, no se baja otro. */}
+        {/* Escritorio (desde 769 px): la foto a media pantalla. Va primero: gana la primera fuente que coincide */}
         <source
-          media="(max-width: 768px)"
-          srcSet={`${heroMobile780w} 780w, ${heroMobile1170w} 1170w`}
-          sizes="100vw"
-          type="image/webp"
-        />
-        <source
+          media={MEDIA.desktop}
           srcSet={`${heroImage842w} 842w, ${heroImage1060w} 1060w, ${heroImage1684w} 1684w`}
           sizes="(max-width: 1400px) 50vw, 842px"
           type="image/webp"
         />
+        {/* Móvil: foto a pantalla completa como fondo (BR-061). El mismo <picture> elige el archivo, no se baja otro. */}
+        <source
+          srcSet={`${heroMobile780w} 780w, ${heroMobile1170w} 1170w`}
+          sizes="100vw"
+          type="image/webp"
+        />
         <motion.img
-          src={heroImage842w}
+          src={heroMobile780w}
           alt={`Barbero profesional mostrando corte moderno premium en ${SITE.name}`}
           loading="eager"
           fetchPriority="high"
           width="842"
           height="925"
           onLoad={handleImageLoad}
-          style={{ width: "100%", height: "auto" }}
+          // En móvil llena la portada; en escritorio toma su proporción y llena el ancho de su caja
+          style={{ width: "100%", height: isWide ? "auto" : "100%" }}
         />
       </motion.picture>
 

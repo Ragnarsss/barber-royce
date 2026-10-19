@@ -1,3 +1,4 @@
+/* Mobile-first (BR-082, ADR-009): la base es el móvil y desde 769 px se restauran los valores de escritorio (al final) */
 .page {
   min-height: 100vh;
   background-color: var(--color-brand-background);
@@ -64,7 +65,7 @@
 }
 
 .title {
-  font-size: 48px;
+  font-size: 36px;
   font-weight: 800;
   margin: 0 0 16px 0;
   text-transform: uppercase;
@@ -78,7 +79,7 @@
 }
 
 .subtitle {
-  font-size: 20px;
+  font-size: 18px;
   margin: 0;
   color: rgba(255, 255, 255, 0.9);
   position: relative;
@@ -95,7 +96,7 @@
 }
 
 .sectionTitle {
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 700;
   color: #ffffff;
   text-align: center;
@@ -111,7 +112,7 @@
 }
 
 .paragraph {
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.8;
   color: rgba(255, 255, 255, 0.85);
   margin-bottom: 24px;
@@ -121,7 +122,7 @@
 /* Misión y Visión */
 .missionVisionGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: 1fr;
   gap: 32px;
   margin-bottom: 80px;
 }
@@ -194,7 +195,7 @@
 /* Valores */
 .valuesGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: 1fr;
   gap: 24px;
 }
 
@@ -242,7 +243,7 @@
 /* Por qué elegirnos */
 .whyUsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: 1fr;
   gap: 32px;
 }
 
@@ -284,27 +285,32 @@
   color: rgba(255, 255, 255, 0.75);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .title {
-    font-size: 36px;
+    font-size: 48px;
   }
 
   .subtitle {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   .sectionTitle {
-    font-size: 28px;
+    font-size: 36px;
   }
 
   .paragraph {
-    font-size: 16px;
+    font-size: 18px;
   }
 
-  .missionVisionGrid,
-  .valuesGrid,
+  .missionVisionGrid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .valuesGrid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
   .whyUsGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 }

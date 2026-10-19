@@ -17,6 +17,7 @@ import { trackReserve } from "@/analytics/track";
 import { useSiteContent, useSiteText } from "@/content/useSiteContent";
 import { useMagnetic } from "./magnetic";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { MEDIA } from "@/config/breakpoints";
 import { CTA_ZOOM, CTA_ZOOM_ORIGIN, CTA_ZOOM_WINDOW } from "./ctaZoom";
 
 /** Hexágono regular de puntas laterales (232 × 200), como las barras de luz del techo de la barbería (BR-058). */
@@ -54,7 +55,7 @@ export function CTA1() {
     fast: useFastLayer(scrollYProgress),
   };
   // Zoom-in de la foto mientras la sección cruza la pantalla (BR-079); sin zoom con reducir movimiento
-  const isWide = useMediaQuery("(min-width: 769px)");
+  const isWide = useMediaQuery(MEDIA.desktop);
   const zoom = useTransform(scrollYProgress, CTA_ZOOM_WINDOW, [1, isWide ? CTA_ZOOM.DESKTOP : CTA_ZOOM.MOBILE]);
   const imageStyle = reducedMotion ? undefined : { scale: zoom, transformOrigin: isWide ? CTA_ZOOM_ORIGIN.DESKTOP : CTA_ZOOM_ORIGIN.MOBILE };
 
@@ -98,8 +99,8 @@ export function CTA1() {
         <path d={HEXAGON} transform="translate(340 0)" />
       </motion.svg>
 
-      {/* Figura blanca con la foto adentro: el recorte la contiene y se mueven juntas (BR-058) */}
-      <motion.div className={`${styles.imageHexagon} ${animating}`} style={{ y: layers.slow.y }} data-figure>
+      {/* Figura blanca con la foto adentro: el recorte la contiene y se mueven juntas (BR-058). Sin parallax en móvil: ahí es solo el recuadro de la foto */}
+      <motion.div className={`${styles.imageHexagon} ${animating}`} style={isWide ? { y: layers.slow.y } : undefined} data-figure>
         <motion.div
           className={`${styles.imageHexagonForeground} ${animating}`}
           style={{ y: layers.fast.y, x: layers.fast.x }}
@@ -111,19 +112,20 @@ export function CTA1() {
           variants={fadeInRight}
           style={imageStyle}
         >
+          {/* Escritorio (desde 769 px): la foto propia de esta sección. Va primero: gana la primera fuente que coincide */}
+          <source
+            media={MEDIA.desktop}
+            srcSet={`${cta700w} 700w, ${cta1400w} 1400w`}
+            sizes="700px"
+            type="image/webp"
+          />
           {/* Móvil: la foto del Hero de escritorio, que muestra mejor al modelo (BR-061); son los mismos archivos del Hero */}
           <source
-            media="(max-width: 768px)"
             srcSet={`${profile842w} 842w, ${profile1060w} 1060w, ${profile1684w} 1684w`}
             sizes="140vw"
             type="image/webp"
           />
-          <source
-            srcSet={`${cta700w} 700w, ${cta1400w} 1400w`}
-            sizes="(max-width: 768px) 100vw, 700px"
-            type="image/webp"
-          />
-          <img src={cta700w} alt={`Modelo con corte premium de ${SITE.name}`} loading="lazy" width="700" height="667" />
+          <img src={profile842w} alt={`Modelo con corte premium de ${SITE.name}`} loading="lazy" width="700" height="667" />
         </motion.picture>
       </motion.div>
 

@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { cleanup } from "@testing-library/react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { LenisContext } from "@/contexts/lenisContextValue";
 import { SITE } from "@/config/constants";
@@ -187,10 +188,12 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
   // BR-061 (2026-10-17, decisión del usuario con el Figma «Resumen Mobile»): en móvil la foto a pantalla completa
   // reemplaza al triángulo de BR-055 como fondo. Sigue sin ser un color plano.
   it("CA-08 / CA-13: en móvil el fondo es la foto a pantalla completa, no un fondo plano", () => {
-    const mobile = heroCss.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
-    const hidden = mobile.match(/([^{}]*)\{\s*display:\s*none;?\s*\}/)?.[1] ?? "";
+    // Mobile-first (BR-081, ADR-009): la base del archivo es el móvil; los triángulos aparecen desde 769 px
+    const mobile = heroCss;
+    const hidden = heroCss.match(/([^{}]*\.leftTriangle[^{}]*)\{\s*display:\s*none;?\s*\}/)?.[1] ?? "";
 
     expect(hidden).toMatch(/\.leftTriangle\s*(,|$)/m);
+    expect(heroCss).toMatch(/@media \(min-width: 769px\)\s*\{\s*\.leftTriangle,[^{]*\{\s*display:\s*block/);
     expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*inset:\s*0/);
     expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*width:\s*100%/);
     expect(mobile).toMatch(/\.heroImageSEO img\s*\{[^}]*object-fit:\s*cover/);
@@ -199,7 +202,7 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
   });
 
   it("CA-13: en móvil la foto cubre toda la portada, con el velo por CSS y una línea blanca bajo el título", () => {
-    const mobile = heroCss.match(/@media \(max-width: 768px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? "";
+    const mobile = heroCss;
 
     expect(mobile).toMatch(/\.heroImageSEO\s*\{[^}]*inset:\s*0/);
     // Desde BR-079 el transform de la foto ya no se anula: el zoom lo pone framer en línea
@@ -250,9 +253,28 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
   it("CA-13: el Hero ofrece una foto distinta para móvil en el mismo <picture>", () => {
     renderHero();
 
-    const source = document.querySelector("picture source[media='(max-width: 768px)']");
+    // Mobile-first: la fuente de escritorio lleva `media` y va primero; la de móvil no lleva `media`
+    const sources = [...document.querySelectorAll("picture source")];
+    expect(sources[0].getAttribute("media")).toBe("(min-width: 769px)");
+    expect(sources[0].getAttribute("srcset")).toMatch(/hero_model_left_profile_\d+w\.webp 842w/);
+    const source = document.querySelector("picture source:not([media])");
     expect(source).not.toBeNull();
     expect(source?.getAttribute("srcset")).toMatch(/hero_mobile_\d+w\.webp 780w/);
+  });
+
+  it("la foto llena la portada en móvil (alto 100 %) y toma su proporción en escritorio, sin `!important` en el CSS", () => {
+    renderHero();
+    expect(document.querySelector("picture img")?.getAttribute("style") ?? "").toMatch(/height:\s*100%/);
+    cleanup();
+
+    vi.stubGlobal("matchMedia", (query: string) => ({ matches: query === "(min-width: 769px)", media: query, addEventListener() {}, removeEventListener() {} }));
+    try {
+      renderHero();
+      expect(document.querySelector("picture img")?.getAttribute("style") ?? "").toMatch(/height:\s*auto/);
+    } finally {
+      vi.stubGlobal("matchMedia", undefined);
+    }
+    expect(heroCss).not.toMatch(/!important/);
   });
 
   it("ADR-002: los triángulos, el grano y el haz no traen colores escritos a mano", () => {

@@ -1,7 +1,12 @@
+/* Mobile-first (BR-080, ADR-009): una columna en móvil, dos desde 769 px y cuatro desde 1025 px */
 .footer {
-  background: linear-gradient(180deg, #0a0a0a 0%, #1a1a1a 100%);
-  color: var(--color-white, #ffffff);
-  padding: 80px 0 24px;
+  --footer-fg: var(--color-brand-white);
+  --footer-fg-muted: color-mix(in srgb, var(--footer-fg) 70%, transparent);
+  --footer-fg-subtle: color-mix(in srgb, var(--footer-fg) 50%, transparent);
+  --footer-line: color-mix(in srgb, var(--footer-fg) 10%, transparent);
+  background: linear-gradient(180deg, var(--color-primary-800) 0%, var(--color-primary-500) 100%);
+  color: var(--footer-fg);
+  padding: 60px 0 24px;
   position: relative;
 }
 
@@ -15,7 +20,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
+    var(--footer-line) 50%,
     transparent 100%
   );
 }
@@ -28,9 +33,9 @@
 
 .grid {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1.5fr;
-  gap: 60px;
-  margin-bottom: 60px;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
 }
 
 .column {
@@ -42,7 +47,8 @@
 /* Brand section */
 .brand {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
   margin-bottom: 8px;
 }
@@ -51,14 +57,15 @@
   font-size: 28px;
   font-weight: 700;
   margin: 0;
+  color: var(--footer-fg);
   letter-spacing: -0.5px;
 }
 
 .logoIcon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
-  color: #1a1a1a;
+  background: linear-gradient(135deg, var(--color-brand-white) 0%, var(--color-primary-200) 100%);
+  color: var(--color-primary-500);
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -69,7 +76,7 @@
 }
 
 .description {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--footer-fg-muted);
   line-height: 1.6;
   font-size: 15px;
   margin: 0;
@@ -79,6 +86,7 @@
   font-size: 16px;
   font-weight: 700;
   margin: 0;
+  color: var(--footer-fg);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -94,7 +102,7 @@
 }
 
 .links a {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--footer-fg-muted);
   text-decoration: none;
   transition: all 0.3s ease;
   font-size: 15px;
@@ -102,7 +110,7 @@
 }
 
 .links a:hover {
-  color: var(--color-white, #ffffff);
+  color: var(--footer-fg);
   transform: translateX(4px);
 }
 
@@ -120,18 +128,18 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--footer-fg-muted);
   font-size: 15px;
 }
 
 .contactItem a {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--footer-fg-muted);
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .contactItem a:hover {
-  color: var(--color-white, #ffffff);
+  color: var(--footer-fg);
 }
 
 .contactIcon {
@@ -150,19 +158,19 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: color-mix(in srgb, var(--footer-fg) 5%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-white, #ffffff);
+  color: var(--footer-fg);
   text-decoration: none;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--footer-line);
 }
 
 .socialLink:hover {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: rgba(255, 255, 255, 0.3);
+  background: color-mix(in srgb, var(--footer-fg) 15%, transparent);
+  border-color: color-mix(in srgb, var(--footer-fg) 30%, transparent);
   transform: translateY(-4px);
 }
 
@@ -173,44 +181,44 @@
 
 .socialText {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--footer-fg-subtle);
   margin: 0;
 }
 
 /* Bottom */
 .bottom {
   padding-top: 32px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid var(--footer-line);
   text-align: center;
 }
 
 .bottom p {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--footer-fg-subtle);
   font-size: 14px;
   margin: 0;
 }
 
-@media (max-width: 968px) {
+@media (min-width: 769px) {
+  .footer {
+    padding: 80px 0 24px;
+  }
+
   .grid {
     grid-template-columns: 1fr 1fr;
-    gap: 40px;
-  }
-}
-
-@media (max-width: 768px) {
-  .footer {
-    padding: 60px 0 24px;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    margin-bottom: 40px;
+    margin-bottom: 60px;
   }
 
   .brand {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+/* Cuatro columnas desde 1025 px (antes desde 969 px: el corte se movió al conjunto de ADR-009) */
+@media (min-width: 1025px) {
+  .grid {
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 60px;
   }
 }
 

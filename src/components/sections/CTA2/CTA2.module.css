@@ -1,6 +1,7 @@
+/* Mobile-first (BR-081, ADR-009): la base es el móvil y desde 769 px se restauran los valores de escritorio (al final) */
 .cta {
-  padding: 10vh 0;
-  min-height: 100vh;
+  padding: 8vh 0;
+  min-height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -67,7 +68,7 @@
 }
 
 .title {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
   font-weight: 700;
   line-height: 1.2;
   color: #d52323;
@@ -75,7 +76,7 @@
 }
 
 .subtitle {
-  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  font-size: clamp(0.85rem, 1.2vw, 0.95rem);
   line-height: 1.6;
   color: rgba(0, 0, 0, 0.95);
   margin: 0;
@@ -84,7 +85,9 @@
 
 .ctaButtons {
   display: flex;
-  gap: 16px;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
   margin-top: 8px;
   flex-wrap: wrap;
   justify-content: center;
@@ -94,14 +97,14 @@
   background-color: #d52323;
   color: #ffffff;
   font-weight: 600;
-  padding: 1.2rem 4rem;
+  width: 100%;
+  padding: 1rem 2rem;
   font-size: 1rem;
   border-radius: 8px;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   transition: all 0.3s ease;
-  min-width: 220px;
   justify-content: center;
 }
 
@@ -121,7 +124,8 @@
   color: #d52323;
   border: 2px solid #d52323;
   font-weight: 600;
-  padding: 14px 30px;
+  width: 100%;
+  padding: 1rem 2rem;
   font-size: 16px;
   border-radius: 8px;
   display: inline-flex;
@@ -167,30 +171,34 @@
   box-shadow: 0 4px 12px rgba(213, 35, 35, 0.2);
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .cta {
-    padding: 8vh 0;
-    min-height: 90vh;
+    padding: 10vh 0;
+    min-height: 100vh;
   }
 
   .title {
-    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    font-size: clamp(2rem, 4vw, 3rem);
   }
 
   .subtitle {
-    font-size: clamp(0.85rem, 1.2vw, 0.95rem);
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
   }
 
   .ctaButtons {
-    flex-direction: column;
-    width: 100%;
-    gap: 12px;
+    flex-direction: row;
+    width: auto;
+    gap: 16px;
   }
 
-  .ctaButton,
+  .ctaButton {
+    width: auto;
+    padding: 1.2rem 4rem;
+    min-width: 220px;
+  }
+
   .ctaButtonGhost {
-    width: 100%;
-    padding: 1rem 2rem;
-    min-width: unset;
+    width: auto;
+    padding: 14px 30px;
   }
 }

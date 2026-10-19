@@ -20,6 +20,7 @@ export function Features() {
       subtitle={siteText("features.subtitulo")}
       items={FEATURES_VIEW_DATA}
       carouselLabel="Innovación y calidad"
+      parallaxOnMobile={false}
       renderItem={(feature) => (
         // Tarjeta de vidrio con esquinas cortadas, como las del Hero (BR-072)
         <article className={styles.card}>

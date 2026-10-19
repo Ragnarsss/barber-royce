@@ -17,13 +17,21 @@
   padding: var(--spacing-3) 0;
 }
 
+/*
+ * Mobile-first (BR-080, ADR-009). En móvil (BR-061, HU-EXP-004 CA-13): la hamburguesa roja a la izquierda, la marca
+ * en dos líneas ("ROYCE" en blanco sobre "BARBERÍA" en rojo) y, a la derecha, el botón de reserva chico, blanco con
+ * texto rojo. Desde 1025 px (BR-086), el logo en imagen, los enlaces y el botón con borde rojo.
+ */
+/* Alto mínimo del contenido en móvil: la barra mide lo mismo que en escritorio y el layout reserva 80 px (Layout.module.css) */
 .container {
   max-width: var(--container-xl);
+  min-height: 3.125rem;
   margin: 0 auto;
-  padding: 0 var(--spacing-6);
+  padding: 0 var(--spacing-4);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--spacing-3);
 }
 
 .logo {
@@ -31,9 +39,12 @@
   align-items: center;
   gap: 0;
   text-decoration: none;
+  order: 1;
+  margin-right: auto;
 }
 
 .logoImage {
+  display: none;
   height: 50px;
   width: auto;
   transition: var(--transition-transform);
@@ -74,11 +85,28 @@
 
 /* La marca en texto solo se ve en móvil (BR-061); en escritorio sigue el logo en imagen. */
 .logoWordmark {
-  display: none;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xl);
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.logoName {
+  color: var(--color-brand-white);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.logoPrefix {
+  color: var(--color-brand-primary);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .navLinks {
-  display: flex;
+  display: none;
   gap: var(--spacing-8);
   align-items: center;
 }
@@ -99,6 +127,11 @@
   --nav-glow-halo: color-mix(in srgb, var(--color-brand-white) 60%, transparent);
   --nav-glow-red: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);
   --nav-glow: 0 0 3px var(--nav-glow-core), 0 0 10px var(--nav-glow-halo), 0 0 22px var(--nav-glow-red), 0 0 34px var(--nav-glow-red);
+  /* Glow del botón de reserva con --color-brand-primary (#d52323) a distintas opacidades */
+  --nav-cta-glow:
+    0 0 20px rgba(213, 35, 35, 0.8),
+    0 0 40px rgba(213, 35, 35, 0.5),
+    0 4px 12px rgba(213, 35, 35, 0.4);
 }
 
 .navLink {
@@ -133,6 +166,7 @@
   display: flex;
   gap: var(--spacing-4);
   align-items: center;
+  order: 2;
 }
 
 .ctaButton {
@@ -150,27 +184,50 @@
   background-color: var(--color-brand-primary);
   color: var(--color-brand-white);
   transform: translateY(-2px);
-  /* Glow efecto con --color-brand-primary (#d52323) a distintas opacidades */
-  box-shadow:
-    0 0 20px rgba(213, 35, 35, 0.8),
-    0 0 40px rgba(213, 35, 35, 0.5),
-    0 4px 12px rgba(213, 35, 35, 0.4);
+  box-shadow: var(--nav-cta-glow);
   border-color: var(--color-brand-primary-hover);
+}
+
+/* El botón de reserva de la barra, en móvil: chico, blanco y con texto rojo */
+.actions .ctaButton {
+  background-color: var(--color-brand-white);
+  color: var(--color-brand-primary);
+  border: 0;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-2) var(--spacing-3);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  white-space: nowrap;
+  /* Área táctil de 44 px de alto (BR-085) */
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.actions .ctaButton:hover {
+  background-color: var(--color-brand-white);
+  color: var(--color-brand-primary-hover);
+  transform: none;
+  box-shadow: none;
 }
 
 /* Mobile Menu */
 .mobileMenuButton {
-  display: none;
+  display: block;
+  order: 0;
   background: none;
   border: none;
   cursor: pointer;
-  padding: var(--spacing-2);
+  /* Área táctil de 44 × 44 px (BR-085); el ícono mide 26 px y no cambia */
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: var(--spacing-2) var(--spacing-1);
 }
 
 .hamburger {
   display: block;
-  width: 24px;
-  height: 2px;
+  width: 26px;
+  height: 3px;
   background-color: var(--color-brand-primary);
   position: relative;
 }
@@ -179,18 +236,19 @@
 .hamburger::after {
   content: "";
   position: absolute;
-  width: 24px;
-  height: 2px;
+  left: 0;
+  width: 26px;
+  height: 3px;
   background-color: var(--color-brand-primary);
   transition: var(--transition-all);
 }
 
 .hamburger::before {
-  top: -8px;
+  top: -9px;
 }
 
 .hamburger::after {
-  top: 8px;
+  top: 9px;
 }
 
 .mobileMenu {
@@ -209,8 +267,10 @@
     padding var(--duration-slow) var(--ease-smooth);
 }
 
+/* Cabe en la pantalla bajo la barra (≈ 5 rem) y se desplaza si el contenido no entra, p. ej. en apaisado (BR-085) */
 .mobileMenu.open {
-  max-height: 500px;
+  max-height: calc(100dvh - 5rem);
+  overflow-y: auto;
   opacity: 1;
   padding: var(--spacing-6);
 }
@@ -240,103 +300,65 @@
   }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  /*
-   * Móvil (BR-061, HU-EXP-004 CA-13): la hamburguesa roja a la izquierda, la marca en dos líneas ("ROYCE" en
-   * blanco sobre "BARBERÍA" en rojo) y, a la derecha, el botón de reserva chico, blanco con texto rojo.
-   */
-  /* Alto mínimo del contenido: la barra mide lo mismo que antes y el layout sigue reservando 80 px (Layout.module.css) */
+/* Escritorio, desde 1025 px (BR-086): el logo en imagen, los enlaces y el botón de reserva con borde rojo.
+   De 769 a 1024 px la barra completa no cabe, así que se mantiene la de móvil. */
+@media (min-width: 1025px) {
   .container {
-    min-height: 3.125rem;
-    padding: 0 var(--spacing-4);
-    gap: var(--spacing-3);
-  }
-
-  .navLinks {
-    display: none;
-  }
-
-  .mobileMenuButton {
-    display: block;
-    order: 0;
-    padding: var(--spacing-2) var(--spacing-1);
-  }
-
-  .hamburger,
-  .hamburger::before,
-  .hamburger::after {
-    width: 26px;
-    height: 3px;
-  }
-
-  .hamburger::before,
-  .hamburger::after {
-    left: 0;
-  }
-
-  .hamburger::before {
-    top: -9px;
-  }
-
-  .hamburger::after {
-    top: 9px;
+    min-height: auto;
+    padding: 0 var(--spacing-6);
+    gap: normal;
   }
 
   .logo {
-    order: 1;
-    margin-right: auto;
+    order: 0;
+    margin-right: 0;
   }
 
+  /* block, como lo deja reset.css para toda imagen: inline sumaría el espacio bajo la línea de texto */
   .logoImage {
-    display: none;
+    display: block;
   }
 
   .logoWordmark {
+    display: none;
+  }
+
+  /* Huecos de 16 px entre 1025 y 1279 px: con 32 px los enlaces ocupan 773 px y el botón se parte en dos líneas */
+  .navLinks {
     display: flex;
-    flex-direction: column;
-    font-family: var(--font-family-heading);
-    font-size: var(--font-size-xl);
-    line-height: 1.05;
-    text-transform: uppercase;
-  }
-
-  .logoName {
-    color: var(--color-brand-white);
-    font-weight: var(--font-weight-bold);
-    letter-spacing: var(--letter-spacing-wide);
-  }
-
-  .logoPrefix {
-    color: var(--color-brand-primary);
-    font-weight: var(--font-weight-regular);
-    letter-spacing: var(--letter-spacing-wide);
+    gap: var(--spacing-4);
   }
 
   .actions {
-    display: flex;
-    order: 2;
+    order: 0;
   }
 
   .actions .ctaButton {
-    background-color: var(--color-brand-white);
-    color: var(--color-brand-primary);
-    border: 0;
-    border-radius: var(--radius-md);
-    padding: var(--spacing-2) var(--spacing-3);
-    font-size: var(--font-size-xs);
-    font-weight: var(--font-weight-bold);
+    background-color: transparent;
+    color: var(--color-brand-white);
+    border: 2px solid var(--color-brand-primary);
+    padding: var(--spacing-3) var(--spacing-8);
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
     white-space: nowrap;
   }
 
   .actions .ctaButton:hover {
-    background-color: var(--color-brand-white);
-    color: var(--color-brand-primary-hover);
-    transform: none;
-    box-shadow: none;
+    background-color: var(--color-brand-primary);
+    color: var(--color-brand-white);
+    transform: translateY(-2px);
+    box-shadow: var(--nav-cta-glow);
+    border-color: var(--color-brand-primary-hover);
   }
 
-  .mobileMenu {
-    display: flex;
+  .mobileMenuButton {
+    display: none;
+  }
+}
+
+/* Con espacio de sobra, los huecos amplios de siempre entre los enlaces */
+@media (min-width: 1280px) {
+  .navLinks {
+    gap: var(--spacing-8);
   }
 }

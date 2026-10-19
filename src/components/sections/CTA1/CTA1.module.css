@@ -2,6 +2,10 @@
  * CTA1 (BR-058). Los hexágonos vienen de las barras de luz hexagonales del techo de la barbería: se conservan sus
  * formas y la superposición de capas. Todo color sale de los tokens; el will-change lo pone la clase global
  * .isAnimating solo mientras hay scroll.
+ *
+ * Mobile-first (BR-081, ADR-009): la base es el móvil (BR-061, HU-EXP-004 CA-13): fondo charcoal sin hexágonos, la foto
+ * de perfil recortada a la derecha y detrás del texto, que va alineado a la izquierda. Desde 769 px (al final del
+ * archivo) vuelve el escritorio de BR-058: el texto sobre un hexágono rojo y la foto en una figura blanca.
  */
 .cta {
   --cta-light: color-mix(in srgb, var(--color-brand-white) 88%, var(--color-brand-primary-hover));
@@ -9,35 +13,48 @@
   --cta-glow-red: color-mix(in srgb, var(--color-brand-primary) 70%, transparent);
   --cta-cut: 10px;
 
-  height: 100vh;
-  min-height: 500px;
+  height: auto;
+  min-height: calc(100vh - 80px);
+  min-height: calc(100svh - 80px);
   padding: 0;
   background: var(--color-brand-section-bg);
   position: relative;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
   align-items: stretch;
 }
 
-/* ───── Contenedor principal: 2 columnas ───── */
+/* Los hexágonos y las barras de luz solo existen desde 769 px */
+.textHexagonBackground,
+.imageHexagonBackground,
+.textHexagon,
+.textHexagonForeground,
+.imageHexagonForeground,
+.lightBars {
+  display: none;
+}
+
+/* ───── Contenedor principal: 1 columna en móvil, 2 en escritorio ───── */
 .container {
+  order: 1;
   max-width: 1400px;
   margin: 0 auto;
   padding: 0;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   width: 100%;
   position: relative;
   z-index: 2;
 }
 
-/* ───── Columna izquierda: hexágono rojo con texto ───── */
+/* ───── Columna izquierda: el texto (en escritorio, sobre el hexágono rojo) ───── */
 .content {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 60px 40px;
+  padding: 3.5rem 1.5rem 3rem;
   z-index: 2;
 }
 
@@ -46,45 +63,64 @@
   z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 420px;
-  padding-left: 40px;
+  gap: 1.75rem;
+  max-width: 100%;
+  padding-left: 0;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .title {
   white-space: pre-line; /* los saltos de línea del texto editable de la hoja se respetan (BR-042) */
-  font-size: clamp(32px, 4vw, 48px);
-  font-weight: 800;
-  line-height: 1.1;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.15;
   color: var(--color-brand-white);
   margin: 0;
 }
 
+/* Línea blanca gruesa bajo el título, como en el Figma (solo en móvil) */
+.title::after {
+  content: "";
+  display: block;
+  height: 0.375rem;
+  margin-top: 1.75rem;
+  border-radius: var(--radius-full);
+  background: var(--color-brand-white);
+}
+
 .subtitle {
-  font-size: 14px;
-  line-height: 1.7;
-  color: color-mix(in srgb, var(--color-brand-white) 90%, transparent);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  color: var(--color-brand-white);
   margin: 0;
   font-weight: 400;
-  font-style: italic;
+  font-style: normal;
 }
 
 /* Primera frase del subtítulo: solo se destaca en móvil (BR-061); en escritorio se lee igual que el resto */
 .lead {
-  font-weight: inherit;
+  font-weight: 700;
 }
 
+/* Los dos botones miden lo mismo (el del texto más largo), alineados a la izquierda */
 .ctaButtons {
   display: flex;
-  gap: 16px;
-  margin-top: 16px;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: stretch;
+  align-self: flex-start;
 }
 
 /* Envoltorio del botón principal: se mueve con el cursor y dibuja el foco que el chaflán recortaría */
 .magnet {
-  display: inline-flex;
+  display: flex;
+}
+
+.magnet .ctaButton {
+  flex: 1;
 }
 
 .magnet:has(:focus-visible) {
@@ -92,19 +128,20 @@
   outline-offset: 4px;
 }
 
-/* Botón principal: blanco con el chaflán de las tarjetas del hero (BR-056) */
+/* Botón principal: blanco redondeado, como el del Figma (desde 769 px, con el chaflán de las tarjetas del hero, BR-056) */
 .ctaButton {
   gap: 8px;
   background: var(--color-brand-white);
   color: var(--color-brand-background);
   font-weight: 700;
-  padding: 15px 40px;
-  min-width: 230px;
-  font-size: 16px;
+  padding: 0.875rem 1.5rem;
+  min-width: 0;
+  font-size: 1.125rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  clip-path: polygon(var(--cta-cut) 0, 100% 0, 100% calc(100% - var(--cta-cut)), calc(100% - var(--cta-cut)) 100%, 0 100%, 0 var(--cta-cut));
+  clip-path: none;
+  border-radius: var(--radius-md);
   transition: color 0.3s ease;
 }
 
@@ -122,9 +159,9 @@
   color: var(--color-brand-white);
   border: 2px solid color-mix(in srgb, var(--color-brand-white) 90%, transparent);
   font-weight: 600;
-  padding: 13px 32px;
-  font-size: 16px;
-  min-width: 200px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -185,16 +222,33 @@
   z-index: 1;
 }
 
-/* Figura blanca: contiene la foto y el hexágono rojo de atrás; su recorte los contiene a ambos (BR-058) */
+/*
+ * En móvil la figura deja de ser una figura: es solo el recuadro que ancla la foto abajo, sin parallax (el de framer lo
+ * pone `CTA1.tsx` solo en escritorio). Desde 769 px es la figura blanca que contiene la foto y el hexágono rojo de
+ * atrás; su recorte los contiene a ambos (BR-058).
+ */
 .imageHexagon {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  background: var(--color-brand-white);
-  clip-path: polygon(30% 0, 100% 0, 100% 100%, 30% 100%, 0 50%);
-  width: 50vw;
-  height: 100vh;
+  inset: 0;
+  background: none;
+  clip-path: none;
+  width: 100%;
+  height: 100%;
   z-index: 1;
+  pointer-events: none;
+}
+
+/* Velo de charcoal de izquierda a derecha en móvil: el texto se lee sobre la foto (CP-A11Y-004) */
+.imageHexagon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-brand-section-bg) 92%, transparent) 0%,
+    color-mix(in srgb, var(--color-brand-section-bg) 55%, transparent) 55%,
+    transparent 100%
+  );
 }
 
 /* Hexágono rojo detrás de la foto: antes era rojo al 30 % sobre blanco (se leía rosado) */
@@ -209,11 +263,16 @@
   pointer-events: none;
 }
 
+/*
+ * En móvil, el rostro grande de perfil ocupa el fondo desde el título hasta abajo y se corta por el borde derecho, como
+ * en el Figma. Va por el ancho (no por el alto de la sección) para que el tamaño no dependa del largo del texto.
+ */
 .ctaImage {
   position: absolute;
-  right: -6%;
+  right: -94%;
   bottom: 0;
-  width: 112%;
+  width: 140%;
+  max-width: none; /* sin esto, la regla global de imágenes la limita al 100 % del contenedor */
 }
 
 /* Por el ancho: llena la figura, anclada abajo; lo que sobra a los lados lo recorta la figura */
@@ -261,24 +320,15 @@
   stroke-linejoin: round;
 }
 
-/* ───── Responsive ───── */
-@media (max-width: 1024px) {
-  .textContent {
-    padding-left: 20px;
-  }
-}
-
-@media (max-width: 768px) {
-  /*
-   * Móvil (BR-061, HU-EXP-004 CA-13): fondo charcoal sin hexágonos, la foto de perfil recortada a la derecha y
-   * detrás del texto, que va alineado a la izquierda. Antes (BR-058) el texto iba sobre un hexágono rojo y la
-   * foto, en una figura blanca bajo el texto.
-   */
+/*
+ * Escritorio (desde 769 px, BR-058): dos columnas, el texto sobre el hexágono rojo, las barras de luz y la foto en una
+ * figura blanca que la recorta. Hasta 1024 px el texto tiene menos relleno a la izquierda.
+ */
+@media (min-width: 769px) {
   .cta {
-    height: auto;
-    min-height: calc(100vh - 80px);
-    min-height: calc(100svh - 80px);
-    flex-direction: column;
+    height: 100vh;
+    min-height: 500px;
+    flex-direction: row;
   }
 
   .textHexagonBackground,
@@ -287,117 +337,100 @@
   .textHexagonForeground,
   .imageHexagonForeground,
   .lightBars {
-    display: none;
+    display: block;
   }
 
   .container {
-    order: 1;
-    grid-template-columns: 1fr;
-  }
-
-  /* La figura deja de ser una figura: es solo el recuadro que ancla la foto abajo, sin parallax (el inline de framer se pisa) */
-  .imageHexagon {
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    background: none;
-    clip-path: none;
-    transform: none !important;
-    pointer-events: none;
-  }
-
-  /* Velo de charcoal de izquierda a derecha: el texto se lee sobre la foto (CP-A11Y-004) */
-  .imageHexagon::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--color-brand-section-bg) 92%, transparent) 0%,
-      color-mix(in srgb, var(--color-brand-section-bg) 55%, transparent) 55%,
-      transparent 100%
-    );
-  }
-
-  /*
-   * El rostro grande, de perfil, ocupa el fondo desde el título hasta abajo y se corta por el borde derecho, como en
-   * el Figma. Va por el ancho (no por el alto de la sección) para que el tamaño no dependa del largo del texto.
-   */
-  .ctaImage {
-    right: -94%;
-    width: 140%;
-    max-width: none; /* sin esto, la regla global de imágenes la limita al 100 % del contenedor */
+    grid-template-columns: 1fr 1fr;
   }
 
   .content {
-    padding: 3.5rem 1.5rem 3rem;
-    justify-content: flex-start;
+    padding: 60px 40px;
   }
 
   .textContent {
-    padding-left: 0;
-    align-items: flex-start;
-    text-align: left;
-    max-width: 100%;
-    gap: 1.75rem;
+    gap: 16px;
+    max-width: 420px;
+    padding-left: 20px;
+    align-items: normal;
+    text-align: inherit;
   }
 
   .title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    line-height: 1.15;
+    font-size: clamp(32px, 4vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
   }
 
-  /* Línea blanca gruesa bajo el título, como en el Figma */
   .title::after {
-    content: "";
-    display: block;
-    height: 0.375rem;
-    margin-top: 1.75rem;
-    border-radius: var(--radius-full);
-    background: var(--color-brand-white);
+    content: none;
   }
 
   .subtitle {
-    font-size: 1.0625rem;
-    line-height: 1.55;
-    font-style: normal;
-    color: var(--color-brand-white);
+    font-size: 14px;
+    line-height: 1.7;
+    color: color-mix(in srgb, var(--color-brand-white) 90%, transparent);
+    font-style: italic;
   }
 
   .lead {
-    font-weight: 700;
+    font-weight: inherit;
   }
 
-  /* Los dos botones miden lo mismo (el del texto más largo), alineados a la izquierda */
   .ctaButtons {
-    flex-direction: column;
-    align-items: stretch;
-    align-self: flex-start;
-    gap: 0.75rem;
-    margin-top: 0.5rem;
+    flex-direction: row;
+    gap: 16px;
+    margin-top: 16px;
+    align-items: center;
+    align-self: auto;
   }
 
   .magnet {
-    display: flex;
+    display: inline-flex;
   }
 
   .magnet .ctaButton {
-    flex: 1;
+    flex: 0 1 auto;
   }
 
-  /* Botón blanco redondeado, como el del Figma (en escritorio sigue con el chaflán de BR-056) */
+  /* Botón blanco con el chaflán de las tarjetas del hero (BR-056) */
   .ctaButton {
-    min-width: 0;
-    padding: 0.875rem 1.5rem;
-    font-size: 1.125rem;
-    clip-path: none;
-    border-radius: var(--radius-md);
+    padding: 15px 40px;
+    min-width: 230px;
+    font-size: 16px;
+    clip-path: polygon(var(--cta-cut) 0, 100% 0, 100% calc(100% - var(--cta-cut)), calc(100% - var(--cta-cut)) 100%, 0 100%, 0 var(--cta-cut));
+    border-radius: 0;
   }
 
   .ctaButtonGhost {
-    min-width: 0;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
+    padding: 13px 32px;
+    font-size: 16px;
+    min-width: 200px;
+  }
+
+  .imageHexagon {
+    inset: auto 0 0 auto;
+    background: var(--color-brand-white);
+    clip-path: polygon(30% 0, 100% 0, 100% 100%, 30% 100%, 0 50%);
+    width: 50vw;
+    height: 100vh;
+    pointer-events: auto;
+  }
+
+  .imageHexagon::after {
+    content: none;
+  }
+
+  .ctaImage {
+    right: -6%;
+    width: 112%;
+    max-width: 100%;
+  }
+}
+
+/* Escritorio amplio (desde 1025 px): el texto con su relleno completo a la izquierda */
+@media (min-width: 1025px) {
+  .textContent {
+    padding-left: 40px;
   }
 }
