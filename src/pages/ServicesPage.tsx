@@ -43,7 +43,9 @@ export const ServicesPage = () => {
             {SERVICE_CATEGORIES.map((category) => (
               <motion.button
                 key={category}
-                className={`${styles.filterButton} ${selectedCategory === category ? styles.filterButtonActive : ''}`}
+                type="button"
+                className={`glass-chip ${styles.filterButton}`}
+                aria-pressed={selectedCategory === category}
                 onClick={() => setSelectedCategory(category)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -53,7 +55,7 @@ export const ServicesPage = () => {
               </motion.button>
             ))}
           </div>
-          <div className={styles.filterSeparator} />
+          <div className={`glass-divider ${styles.filterSeparator}`} />
         </div>
 
         {/* Wrapper con fade gradient */}

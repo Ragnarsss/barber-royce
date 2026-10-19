@@ -40,7 +40,7 @@ export function ProductsPage() {
             <SearchIcon className={styles.searchIcon} />
             <input
               type="text"
-              className={styles.searchInput}
+              className={`glass-field ${styles.searchInput}`}
               placeholder="Buscar productos..."
               aria-label="Buscar productos"
               value={query}
@@ -53,7 +53,7 @@ export function ProductsPage() {
               <button
                 key={option}
                 type="button"
-                className={styles.category}
+                className={`glass-chip ${styles.category}`}
                 aria-pressed={category === option}
                 onClick={() => setCategory(option)}
               >
@@ -67,7 +67,7 @@ export function ProductsPage() {
           {filtered.length === 0 ? (
             <div className={styles.empty} role="status">
               <p>No se encontraron productos que coincidan con tu búsqueda.</p>
-              <button type="button" className={styles.clear} onClick={clearFilters}>
+              <button type="button" className={`glass-chip ${styles.clear}`} onClick={clearFilters}>
                 Limpiar filtros
               </button>
             </div>

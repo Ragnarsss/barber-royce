@@ -3303,6 +3303,45 @@ Criterios de aceptación:
 4. El test de cortes pasa (`src/styles/breakpoints.test.ts`).
 
 
+#### BR-087 — Filtros, búsqueda y fichas con un mismo lenguaje: chaflán, vidrio y brillo
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-067, BR-063
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-31)
+- RF/RNF: `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-PERF-003`
+
+**Origen (2026-10-19):** el usuario pidió fusionar dos estilos que hoy conviven: los filtros de vidrio con
+brillo rojo y línea divisoria de Servicios y Ubicación (esquinas redondeadas, `ServicesPage.module.css`,
+`LocationPage.module.css`) y el chaflán de Productos y de las fichas (`ProductsPage.module.css`,
+`ModalDialog.module.css`), que es plano. Quiere que el buscador de Productos y las fichas del barbero y
+del producto también tengan el vidrio y el brillo.
+
+> **Decisión del usuario (2026-10-19):** dirección 2 de la propuesta de `diseno-visual`: un solo estilo
+> común, sin tocar los hexágonos del panal.
+
+Alcance:
+1. Estilo común en `src/styles/shared/glass.css` (clases `glass-chip`, `glass-field` y `glass-divider`),
+   con tokens y `color-mix`, sin hex ni `rgba`: chaflán (`clip-path`), vidrio, brillo interior rojo en el
+   activo (`aria-pressed` o `data-state="active"`), foco con anillo interior (el `clip-path` recorta un
+   `outline`) y divisoria que se desvanece.
+2. Servicios, Ubicación y Productos usan ese estilo en los filtros, las pestañas y el buscador; sus
+   módulos conservan solo la maquetación.
+3. `ModalDialog` gana un marco exterior con `drop-shadow` (borde que sigue el chaflán y halo rojo) y la
+   ficha pasa a un negro algo translúcido; las fichas del barbero y del producto separan su encabezado
+   con la divisoria. Sin `backdrop-filter` dentro del marco (un ancestro con `filter` lo anula): el fondo
+   ya está desenfocado.
+4. Fuera de alcance: los hexágonos del panal, la lógica de filtrado y el texto visible.
+
+Criterios de aceptación:
+1. Filtros y buscador de las tres páginas con el mismo chaflán, vidrio y brillo; el activo se distingue
+   también sin color (HU-EXP-004 CA-31).
+2. Texto de los filtros con contraste ≥ 4,5:1 sobre su fondo (CP-A11Y-004) y foco visible con teclado.
+3. Con reducir movimiento no hay transiciones (CP-A11Y-003).
+4. Capturas antes y después en 320, 390, 769 y 1280 px de `/servicios`, `/ubicacion`, `/productos` y de
+   las dos fichas abiertas; TBT y LCP móviles no empeoran frente a `master` (CP-PERF-003).
+5. El test de cortes y los tests de las tres páginas y de las fichas pasan.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3417,6 +3456,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-084 | Footer: títulos invisibles, marca desde SITE y colores a tokens | K | P1 | XS | Propuesta | BR-080 |
 | BR-085 | Navbar móvil: área táctil de 44 px y menú desplazable | K | P1 | XS | Propuesta | BR-080 |
 | BR-086 | Navbar: hamburguesa hasta 1024 px | K | P1 | XS | Propuesta | BR-085 |
+| BR-087 | Filtros, búsqueda y fichas con un mismo lenguaje: chaflán, vidrio y brillo | K | P3 | S | Propuesta | BR-067, BR-063 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
