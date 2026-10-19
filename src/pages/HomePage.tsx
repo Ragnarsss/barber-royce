@@ -1,3 +1,4 @@
+import { BackToTop } from "@/components/common/BackToTop/BackToTop";
 import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
 import { ROUTES } from "@/config/routes";
 import { Benefits } from "../components/sections/Benefits/Benefits";
@@ -21,6 +22,7 @@ export function HomePage() {
       <Features />
       <SocialProof2 />
       <CTA2 />
+      <BackToTop />
     </>
   );
 }

@@ -82,23 +82,28 @@ export const ModalDialog = ({ onClose, titleId, descriptionId, split, className,
         transition={transition}
         data-testid="dialog-backdrop"
       />
+      {/* El marco lleva el borde y el halo (`drop-shadow`): el `clip-path` del diálogo recortaría una sombra propia */}
       <motion.div
-        ref={dialogRef}
-        className={[styles.dialog, split && styles.split, className].filter(Boolean).join(" ")}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        aria-describedby={descriptionId}
-        onKeyDown={handleKeyDown}
+        className={styles.frame}
         initial={reducedMotion ? false : ENTER}
         animate={SHOWN}
         exit={reducedMotion ? undefined : ENTER}
         transition={transition}
       >
-        {children}
-        <button ref={closeRef} type="button" className={styles.close} onClick={onClose} aria-label="Cerrar ficha">
-          <X aria-hidden="true" />
-        </button>
+        <div
+          ref={dialogRef}
+          className={[styles.dialog, split && styles.split, className].filter(Boolean).join(" ")}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          aria-describedby={descriptionId}
+          onKeyDown={handleKeyDown}
+        >
+          {children}
+          <button ref={closeRef} type="button" className={styles.close} onClick={onClose} aria-label="Cerrar ficha">
+            <X aria-hidden="true" />
+          </button>
+        </div>
       </motion.div>
     </>,
     document.body,

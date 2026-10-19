@@ -1,5 +1,6 @@
 import { useDeferredValue, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { BackToTop } from "@/components/common/BackToTop/BackToTop";
 import { HoneycombPage } from "@/components/common/HoneycombPage/HoneycombPage";
 import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
 import { SearchIcon } from "@/components/icons";
@@ -34,13 +35,13 @@ export function ProductsPage() {
   return (
     <>
       <SEOHelmet route={ROUTES.products} />
-      <HoneycombPage title="Productos premium" subtitle="Las mejores marcas para tu cuidado diario" band>
+      <HoneycombPage title="Productos premium" subtitle="Las mejores marcas para tu cuidado diario">
         <div className={styles.filters}>
           <div className={styles.search}>
             <SearchIcon className={styles.searchIcon} />
             <input
               type="text"
-              className={styles.searchInput}
+              className={`glass-field ${styles.searchInput}`}
               placeholder="Buscar productos..."
               aria-label="Buscar productos"
               value={query}
@@ -53,7 +54,7 @@ export function ProductsPage() {
               <button
                 key={option}
                 type="button"
-                className={styles.category}
+                className={`glass-chip ${styles.category}`}
                 aria-pressed={category === option}
                 onClick={() => setCategory(option)}
               >
@@ -61,13 +62,15 @@ export function ProductsPage() {
               </button>
             ))}
           </div>
+
+          <div className={`glass-divider ${styles.divider}`} aria-hidden="true" />
         </div>
 
         <div className={styles.results} data-pending={isPending || undefined}>
           {filtered.length === 0 ? (
             <div className={styles.empty} role="status">
               <p>No se encontraron productos que coincidan con tu búsqueda.</p>
-              <button type="button" className={styles.clear} onClick={clearFilters}>
+              <button type="button" className={`glass-chip ${styles.clear}`} onClick={clearFilters}>
                 Limpiar filtros
               </button>
             </div>
@@ -76,6 +79,8 @@ export function ProductsPage() {
           )}
         </div>
       </HoneycombPage>
+
+      <BackToTop />
 
       <AnimatePresence>
         {selected && <ProductDialog key={selected.id} product={selected} onClose={() => setSelected(null)} />}

@@ -39,6 +39,7 @@ export const BarberProfileDialog = ({ member, onClose }: BarberProfileDialogProp
           {member.name}
         </h2>
         {member.quote && <p className={styles.quote}>«{member.quote}»</p>}
+        <div className="glass-divider" aria-hidden="true" />
 
         {(years || member.specialties.length > 0) && (
           <div className={styles.facts}>

@@ -1,8 +1,12 @@
 /**
- * Componente PageHero reutilizable
+ * Cabecera de página reutilizable (BR-088): el título en Anton blanco sobre las diagonales del hero, acotadas a la
+ * cabecera. Debajo, el contenido sigue sobre un fondo liso (un triángulo rojo detrás de texto restaría contraste).
+ * Es la cabecera de Nosotros, Servicios, Ubicación, Preguntas frecuentes y Privacidad; Equipo y Productos usan
+ * `HoneycombPage`, que tiene el mismo título y las diagonales a pantalla completa.
  */
 
 import { motion } from "framer-motion";
+import { PageBackdrop } from "@/components/common/PageBackdrop/PageBackdrop";
 import styles from "./PageHero.module.css";
 
 interface PageHeroProps {
@@ -19,6 +23,7 @@ export const PageHero = ({
   if (!animated) {
     return (
       <div className={styles.hero}>
+        <PageBackdrop className={styles.backdrop} />
         <div className={styles.container}>
           <h1 className={styles.title}>{title}</h1>
           <p className={styles.subtitle}>{subtitle}</p>
@@ -29,6 +34,7 @@ export const PageHero = ({
 
   return (
     <div className={styles.hero}>
+      <PageBackdrop className={styles.backdrop} />
       <div className={styles.container}>
         <motion.h1
           className={styles.title}

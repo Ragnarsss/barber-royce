@@ -38,52 +38,15 @@
   align-items: center;
 }
 
+/* El aspecto (chaflán, vidrio y brillo) lo pone `glass-chip` (src/styles/shared/glass.css, BR-087); aquí, la medida */
 .filterButton {
-  padding: 8px 14px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
-  font-size: 11px;
-  white-space: nowrap;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-}
-
-.filterButton:hover {
-  background: rgba(213, 35, 35, 0.15);
-  border-color: rgba(213, 35, 35, 0.4);
-  color: var(--color-brand-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(213, 35, 35, 0.2);
-}
-
-.filterButtonActive {
-  background: rgba(213, 35, 35, 0.2);
-  border-color: var(--color-brand-primary);
-  color: var(--color-brand-primary);
-  box-shadow: 0 4px 12px rgba(213, 35, 35, 0.3);
-}
-
-.filterButtonActive:hover {
-  background: rgba(213, 35, 35, 0.25);
+  min-height: 2.75rem;
+  padding: 0 var(--spacing-4);
+  font-size: var(--font-size-xs);
 }
 
 .filterSeparator {
   margin-top: 20px;
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(213, 35, 35, 0.3) 20%,
-    rgba(213, 35, 35, 0.5) 50%,
-    rgba(213, 35, 35, 0.3) 80%,
-    transparent 100%
-  );
 }
 
 .content {

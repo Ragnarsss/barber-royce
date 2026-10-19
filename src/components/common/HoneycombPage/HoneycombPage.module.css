@@ -1,100 +1,18 @@
 /*
- * Página con un panal (BR-060, BR-067): fondo charcoal con un triángulo oscuro arriba a la izquierda y uno rojo abajo a la
- * derecha, como las diagonales del hero (Figma). El rojo lleva el mismo degradado y filo de luz de 1 px que el
- * hero (BR-055); el filo es un segundo fondo cuyo 50 % cae justo en la diagonal del `clip-path`.
+ * Página con un panal (BR-060, BR-067, BR-088): la cabecera es `PageHero` y el contenido va sobre un fondo liso. Mobile-first
+ * (ADR-009): la base es el móvil y desde 769 px crecen el espacio entre bloques y el de abajo.
  */
 .page {
-  --edge-light: color-mix(in srgb, var(--color-brand-white) 45%, transparent);
-  --red-light: color-mix(in srgb, var(--color-brand-primary) 82%, var(--color-brand-white));
-  --red-deep: color-mix(in srgb, var(--color-brand-primary) 62%, var(--color-brand-background));
-
-  position: relative;
   min-height: 100vh;
-  overflow: hidden;
-  background: var(--color-brand-section-bg);
-}
-
-.backdrop {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.shadeTriangle,
-.redTriangle {
-  position: absolute;
-}
-
-.shadeTriangle {
-  top: 0;
-  left: 0;
-  width: 55%;
-  height: 70%;
   background: var(--color-brand-background);
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-}
-
-.redTriangle {
-  right: 0;
-  bottom: 0;
-  width: 60%;
-  height: 85%;
-  background:
-    linear-gradient(
-      to top left,
-      transparent calc(50% - 0.5px),
-      var(--edge-light) 50%,
-      transparent calc(50% + 1.5px)
-    ),
-    linear-gradient(150deg, var(--red-light) 0%, var(--color-brand-primary) 40%, var(--red-deep) 100%);
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
-}
-
-/*
- * Variante en banda: las diagonales miden una pantalla (no un porcentaje de la página) y debajo el fondo es liso. Si el
- * alto dependiera del contenido, un cambio de fuente o la carga de más productos movería el triángulo rojo entero.
- */
-.band {
-  background: var(--color-brand-background);
-}
-
-.band .backdrop {
-  bottom: auto;
-  height: 100vh;
-  height: 100svh;
-  background: var(--color-brand-section-bg);
 }
 
 .content {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-8);
-  padding: calc(var(--spacing-24) + var(--spacing-4)) var(--spacing-4) var(--spacing-section-mobile);
-}
-
-.header {
-  text-align: center;
-}
-
-.title {
-  margin: 0;
-  font-family: var(--font-family-display);
-  font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
-  font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-tight);
-  letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
-  color: var(--color-brand-white);
-}
-
-.subtitle {
-  margin: var(--spacing-2) 0 0;
-  font-size: var(--font-size-sm);
-  letter-spacing: var(--letter-spacing-wider);
-  text-transform: uppercase;
-  color: var(--color-brand-white);
+  padding: var(--spacing-8) var(--spacing-4) var(--spacing-section-mobile);
 }
 
 @media (min-width: 769px) {

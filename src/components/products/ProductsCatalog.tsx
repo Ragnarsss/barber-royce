@@ -26,11 +26,14 @@ const announce = (loaded: number, shown: number, total: number) =>
 export const ProductsCatalog = ({ products, onSelect }: ProductsCatalogProps) => {
   const [visible, setVisible] = useState(PRODUCTS_PER_BATCH);
   const [announcement, setAnnouncement] = useState("");
+  // Desde qué producto llegó el último lote: esos hexágonos se encienden en ola (BR-089). El primer lote no.
+  const [igniteFrom, setIgniteFrom] = useState<number>();
   const sentinelRef = useRef<HTMLDivElement>(null);
   const hasMore = visible < products.length;
 
   const loadMore = useCallback(() => {
     const next = Math.min(visible + PRODUCTS_PER_BATCH, products.length);
+    setIgniteFrom(visible);
     setVisible(next);
     setAnnouncement(announce(next - visible, next, products.length));
   }, [visible, products.length]);
@@ -51,7 +54,24 @@ export const ProductsCatalog = ({ products, onSelect }: ProductsCatalogProps) =>
 
   return (
     <>
-      <ProductsHoneycomb products={products.slice(0, visible)} placeholders={hasMore ? PLACEHOLDER_COUNT : 0} onSelect={onSelect} />
+      <ProductsHoneycomb
+        products={products.slice(0, visible)}
+        placeholders={hasMore ? PLACEHOLDER_COUNT : 0}
+        onSelect={onSelect}
+        igniteFrom={igniteFrom}
+      />
+
+      {/* Cuántos se ven y cuántos hay: solo si la lista no cabe en un lote. Para lectores de pantalla, el aviso aria-live. */}
+      {products.length > PRODUCTS_PER_BATCH && (
+        <div className={styles.progress} aria-hidden="true">
+          <p className={styles.progressText}>
+            {hasMore ? `Ves ${visible} de ${products.length}` : `Viste los ${products.length} productos`}
+          </p>
+          <span className={styles.progressTrack}>
+            <span className={styles.progressFill} style={{ transform: `scaleX(${visible / products.length})` }} />
+          </span>
+        </div>
+      )}
 
       {hasMore && (
         <>

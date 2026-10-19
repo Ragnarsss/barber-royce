@@ -1,0 +1,113 @@
+/*
+ * Lenguaje común de filtros, buscador y divisoria (BR-087, HU-EXP-004 CA-31): chaflán, vidrio y brillo rojo en lo
+ * activo. Lo usan Servicios, Ubicación y Productos con las clases `glass-chip`, `glass-field` y `glass-divider`;
+ * cada página conserva solo su maquetación. Sin hex ni `rgba`: todo sale de tokens con `color-mix`.
+ *
+ * El chaflán es un `clip-path`, que recorta cualquier sombra exterior y cualquier `outline`: el borde y el brillo van
+ * hacia adentro (`inset`) y el foco se marca con un anillo interior. El activo se reconoce con `aria-pressed="true"` o
+ * con `data-state="active"` (pestañas de Radix).
+ */
+.glass-chip,
+.glass-field {
+  --glass-cut: var(--spacing-3);
+  --glass-edge: color-mix(in srgb, var(--color-brand-white) 22%, transparent);
+  --glass-fill: color-mix(in srgb, var(--color-brand-white) 6%, transparent);
+  --glass-red-edge: color-mix(in srgb, var(--color-brand-primary) 85%, transparent);
+  --glass-red-fill: color-mix(in srgb, var(--color-brand-primary) 24%, transparent);
+  --glass-red-glow: color-mix(in srgb, var(--color-brand-primary) 55%, transparent);
+
+  border: 0;
+  background: var(--glass-fill);
+  box-shadow: inset 0 0 0 1px var(--glass-edge);
+  backdrop-filter: blur(10px);
+  color: color-mix(in srgb, var(--color-brand-white) 88%, transparent);
+  font: inherit;
+  clip-path: polygon(
+    var(--glass-cut) 0,
+    100% 0,
+    100% calc(100% - var(--glass-cut)),
+    calc(100% - var(--glass-cut)) 100%,
+    0 100%,
+    0 var(--glass-cut)
+  );
+}
+
+.glass-chip {
+  cursor: pointer;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--transition-base),
+    box-shadow var(--transition-base),
+    color var(--transition-base);
+}
+
+.glass-chip:hover {
+  background: color-mix(in srgb, var(--color-brand-primary) 14%, transparent);
+  box-shadow:
+    inset 0 0 0 1px var(--glass-red-edge),
+    inset 0 0 10px color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
+  color: var(--color-brand-white);
+}
+
+.glass-chip[aria-pressed="true"],
+.glass-chip[data-state="active"] {
+  background: var(--glass-red-fill);
+  box-shadow:
+    inset 0 0 0 1px var(--color-brand-primary),
+    inset 0 0 16px var(--glass-red-glow);
+  color: var(--color-brand-white);
+}
+
+.glass-chip:focus-visible,
+.glass-field:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--color-brand-white);
+}
+
+.glass-field {
+  min-height: var(--spacing-12);
+  font-size: var(--font-size-sm);
+  color: var(--color-brand-white);
+  background: color-mix(in srgb, var(--color-primary-900) 55%, transparent);
+  transition: box-shadow var(--transition-base);
+}
+
+.glass-field::placeholder {
+  color: color-mix(in srgb, var(--color-brand-white) 75%, transparent);
+}
+
+.glass-field:hover,
+.glass-field:focus {
+  box-shadow:
+    inset 0 0 0 1px var(--glass-red-edge),
+    inset 0 0 14px color-mix(in srgb, var(--color-brand-primary) 28%, transparent);
+}
+
+.glass-field:focus-visible {
+  box-shadow:
+    inset 0 0 0 2px var(--color-brand-white),
+    inset 0 0 14px color-mix(in srgb, var(--color-brand-primary) 28%, transparent);
+}
+
+/* Línea roja que se desvanece en los extremos, bajo los filtros y entre las zonas de una ficha. */
+.glass-divider {
+  height: 2px; /* con 1 px, al caer entre dos píxeles de pantalla se mezclaba con el fondo y se veía gris */
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    color-mix(in srgb, var(--color-brand-primary) 45%, transparent) 20%,
+    color-mix(in srgb, var(--color-brand-primary) 85%, transparent) 50%,
+    color-mix(in srgb, var(--color-brand-primary) 45%, transparent) 80%,
+    transparent 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-chip,
+  .glass-field {
+    transition: none;
+  }
+}

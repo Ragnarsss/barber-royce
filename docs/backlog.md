@@ -3303,6 +3303,170 @@ Criterios de aceptación:
 4. El test de cortes pasa (`src/styles/breakpoints.test.ts`).
 
 
+#### BR-087 — Filtros, búsqueda y fichas con un mismo lenguaje: chaflán, vidrio y brillo
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-067, BR-063
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-31)
+- RF/RNF: `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-PERF-003`
+
+**Origen (2026-10-19):** el usuario pidió fusionar dos estilos que hoy conviven: los filtros de vidrio con
+brillo rojo y línea divisoria de Servicios y Ubicación (esquinas redondeadas, `ServicesPage.module.css`,
+`LocationPage.module.css`) y el chaflán de Productos y de las fichas (`ProductsPage.module.css`,
+`ModalDialog.module.css`), que es plano. Quiere que el buscador de Productos y las fichas del barbero y
+del producto también tengan el vidrio y el brillo.
+
+> **Decisión del usuario (2026-10-19):** dirección 2 de la propuesta de `diseno-visual`: un solo estilo
+> común, sin tocar los hexágonos del panal.
+
+Alcance:
+1. Estilo común en `src/styles/shared/glass.css` (clases `glass-chip`, `glass-field` y `glass-divider`),
+   con tokens y `color-mix`, sin hex ni `rgba`: chaflán (`clip-path`), vidrio, brillo interior rojo en el
+   activo (`aria-pressed` o `data-state="active"`), foco con anillo interior (el `clip-path` recorta un
+   `outline`) y divisoria que se desvanece.
+2. Servicios, Ubicación y Productos usan ese estilo en los filtros, las pestañas y el buscador; sus
+   módulos conservan solo la maquetación.
+3. `ModalDialog` gana un marco exterior con `drop-shadow` (borde que sigue el chaflán y halo rojo) y la
+   ficha pasa a un negro algo translúcido; las fichas del barbero y del producto separan su encabezado
+   con la divisoria. Sin `backdrop-filter` dentro del marco (un ancestro con `filter` lo anula): el fondo
+   ya está desenfocado.
+4. Fuera de alcance: los hexágonos del panal, la lógica de filtrado y el texto visible.
+
+Criterios de aceptación:
+1. Filtros y buscador de las tres páginas con el mismo chaflán, vidrio y brillo; el activo se distingue
+   también sin color (HU-EXP-004 CA-31).
+2. Texto de los filtros con contraste ≥ 4,5:1 sobre su fondo (CP-A11Y-004) y foco visible con teclado.
+3. Con reducir movimiento no hay transiciones (CP-A11Y-003).
+4. Capturas antes y después en 320, 390, 769 y 1280 px de `/servicios`, `/ubicacion`, `/productos` y de
+   las dos fichas abiertas; TBT y LCP móviles no empeoran frente a `master` (CP-PERF-003).
+5. El test de cortes y los tests de las tres páginas y de las fichas pasan.
+
+
+#### BR-088 — Cabecera de página unificada: título en Anton y diagonales compactas
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-087
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-32)
+- RF/RNF: `RNF-A11Y-004`, `RNF-PERF-003`
+
+**Origen (2026-10-19):** el sitio tiene dos cabeceras para el mismo elemento. Equipo y Productos usan el
+título en Anton sobre las diagonales roja y charcoal (`HoneycombPage`, decisión del 2026-10-14); Nosotros,
+Servicios, Ubicación, Preguntas frecuentes y Privacidad siguen con la franja `PageHero` (título rosa con
+degradado, 60 + 30 px de relleno, dos reflejos rojos). En móvil la franja ocupa cerca de un cuarto de la
+pantalla antes del contenido.
+
+> **Decisión del usuario (2026-10-19):** dirección 2: unificar al estilo de Productos y Equipo. Pidió además
+> decidir si Servicios, Preguntas frecuentes, Ubicación, Nosotros y Privacidad llevan fondo. Criterio
+> adoptado: todas llevan fondo, pero **compacto** (las diagonales cubren solo la cabecera y debajo el fondo
+> es liso): un triángulo rojo de pantalla completa pondría texto y tarjetas translúcidas sobre rojo
+> (contraste), y con alto fijo no hay CLS.
+
+> **Alcance ajustado (2026-10-19, decisión del usuario, tras ver la cabecera compacta):** la misma
+> cabecera con las figuras y el fondo liso debajo para **las siete páginas**, también Equipo y Productos.
+> Estas dos pierden las diagonales a pantalla completa (decisión del 2026-10-14, que esta reemplaza).
+> `HoneycombPage` pasa a usar `PageHero`, la variante `band` y su alto de pantalla desaparecen, y el
+> buscador y los filtros de Productos llevan la divisoria de `glass-divider` (BR-087).
+
+Alcance:
+1. `PageBackdrop` (componente nuevo): los dos triángulos y el filo de luz que estaban dentro de
+   `HoneycombPage`.
+2. `PageHero` se rehace con `PageBackdrop` acotado a la cabecera, el título en Anton blanco y el subtítulo
+   como el de `HoneycombPage`; mismo contrato (`title`, `subtitle`, `animated`) y un solo `<h1>`. Menos
+   alto en móvil.
+3. `HoneycombPage` usa esa cabecera y un fondo liso; sin `band`.
+4. Productos: divisoria bajo el buscador y los filtros.
+5. Sin cambios en el texto visible, los `<h1>` ni la lógica de las páginas.
+
+Criterios de aceptación:
+1. Las siete páginas muestran la cabecera nueva (capturas antes y después en 390 y 1280 px, también de
+   las fichas de Equipo y Productos) (HU-EXP-004 CA-32).
+2. En móvil la cabecera mide menos que la anterior y el contenido empieza antes.
+3. El texto de la cabecera cumple 4,5:1 sobre las diagonales y `contrast.e2e.test.ts` pasa en todas las
+   rutas (CP-A11Y-004).
+4. Cada página tiene un solo `<h1>`; con reducir movimiento no hay entrada animada (CP-A11Y-003).
+5. CLS móvil no empeora frente a `master` (CP-PERF-003).
+
+
+#### BR-089 — Productos: encendido en ola, parallax interior, contador y botón de volver arriba
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-068, BR-088
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-33)
+- RF/RNF: `RNF-A11Y-003`, `RNF-A11Y-005`, `RNF-PERF-003`
+
+**Origen (2026-10-19):** el usuario quiere aprovechar el scroll infinito de Productos (`BR-068`) para micro
+interacciones y deleite, con parallax u otra idea creativa, y echa en falta un botón de volver arriba.
+Hoy los hexágonos nuevos entran con un `scaleIn` genérico (`Honeycomb.tsx`), no hay indicación de cuántos
+productos se llevan ni de cuándo termina la lista, y solo existe `ScrollToTop`, que reinicia el scroll al
+cambiar de ruta.
+
+> **Decisión del usuario (2026-10-19):** dirección 2 de la propuesta de `diseno-visual`. Por defecto (no se
+> eligió): el botón es una pieza reutilizable y se monta solo en Productos.
+>
+> **Alcance ajustado (2026-10-19, decisión del usuario):** el botón también va en la portada; en las demás
+> páginas no le interesa.
+
+Alcance:
+1. **Encendido en ola:** los hexágonos de cada lote nuevo (no los de la carga inicial) encienden su marco
+   en blanco con un halo rojo una sola vez, escalonados, y vuelven al reposo. CSS, sin `setState` por scroll.
+2. **Parallax interior:** en escritorio, la foto de cada hexágono se desplaza ±6 % dentro de su forma según
+   su posición en pantalla (`useScroll` con `target` y `useTransform`); el hexágono no se mueve. Opt-in para
+   que Equipo no cambie.
+3. **Contador y final:** «Ves 12 de 24» con una barra de progreso fina bajo el panal y una marca al llegar
+   al final de la lista. El aviso para lectores de pantalla (`aria-live`) no se duplica.
+4. **Botón de volver arriba** (`BackToTop`, `src/components/common/`): hexágono de 3,5 rem con un anillo
+   que se llena con el avance de la página; aparece pasada una pantalla; sube con Lenis (o `scrollTo` sin
+   Lenis); devuelve el foco al contenido principal. Se monta en Productos.
+5. Con reducir movimiento: sin ola, sin parallax y el botón sube de golpe.
+6. Fuera de alcance: montar el botón en otras páginas; cambiar el tamaño del lote.
+
+Criterios de aceptación:
+1. Al llegar un lote, sus hexágonos se encienden en ola y quedan en reposo; los primeros no se animan
+   (HU-EXP-004 CA-33).
+2. Ningún destello supera 3 por segundo en un área grande y el halo no es una pulsación repetida
+   (CP-A11Y-005).
+3. Con reducir movimiento no hay ola ni parallax (CP-A11Y-003).
+4. El botón mide ≥ 44 px, se alcanza con teclado, tiene nombre accesible y no tapa el aviso de privacidad.
+5. TBT, CLS y LCP móviles de `/productos` no empeoran frente a la línea base, mediana de 3 (CP-PERF-003).
+6. `contrast.e2e.test.ts`, lint, tipos y tests en verde.
+7. **A confirmar por el usuario en el navegador:** la ola, el parallax y el anillo solo se ven en movimiento.
+
+
+#### BR-090 — Productos de prueba: 50 filas con fotos de stock que cargan
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: —
+- Estado: Propuesta
+- Historia de usuario: no aplica — contenido de prueba para el catálogo (el contenido real lo pone el dueño en la hoja).
+- RF/RNF: `RF-INFO-002`
+
+**Origen (2026-10-19):** 4 de las 6 fotos de producto del respaldo daban 404 en Unsplash (`BR-008`) y la hoja
+de prueba repetía «Kit Completo» (precios 76 a 100) sin foto para probar el scroll infinito (`BR-068`).
+El usuario pidió 50 productos, todos con imagen.
+
+> **Decisión del usuario (2026-10-19):** usar fotos de stock de Unsplash de forma **temporal**, hasta tener las
+> fotos propias de `BR-008`, que sigue bloqueada. Esto no cierra `BR-008`: sigue habiendo peticiones a
+> `images.unsplash.com`.
+
+Alcance:
+1. `docs/contenido/productos.csv`: 50 filas (15 Styling, 15 Barba, 10 Cuidado, 10 Kits) con ids únicos y 17
+   fotos distintas, cada una comprobada con respuesta 200 y vista una por una.
+2. `src/content/snapshot/products.ts` (respaldo): las fotos de los 6 productos originales pasan a las nuevas
+   (las filas 1 a 6 del CSV). El respaldo sigue con 6 productos: no lleva datos de prueba.
+3. `src/test/contentWiring.test.tsx`: la plantilla de productos ya no tiene que ser idéntica al respaldo
+   (BR-048). Debe empezar con exactamente las filas del respaldo y puede sumar más, y las 50 filas pasan el esquema.
+4. Para la hoja: importar `productos.csv` en la pestaña `productos` (ver `docs/contenido-hoja.md`). El `gid` no
+   cambia, así que las variables `CONTENT_SHEET_ID` y `CONTENT_SHEET_GIDS` tampoco.
+
+> **Decisión del usuario (2026-10-19):** la regla de `BR-048` que exigía que cada plantilla fuera idéntica al
+> respaldo le parece absurda para productos; se relaja solo ahí. Las demás pestañas la conservan.
+
+Criterios de aceptación:
+1. Los 50 productos se leen sin errores con el lector del sitio (`src/content/schemas.ts`).
+2. Ninguno de los 50 hexágonos de `/productos` queda sin foto.
+3. Las fotos muestran marcas reales (Bombay Shaving Company, L'Oréal, Kiehl's, Nivea…): es contenido de prueba y
+   se reemplaza por fotos propias antes de publicar el catálogo real.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3417,6 +3581,10 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-084 | Footer: títulos invisibles, marca desde SITE y colores a tokens | K | P1 | XS | Propuesta | BR-080 |
 | BR-085 | Navbar móvil: área táctil de 44 px y menú desplazable | K | P1 | XS | Propuesta | BR-080 |
 | BR-086 | Navbar: hamburguesa hasta 1024 px | K | P1 | XS | Propuesta | BR-085 |
+| BR-087 | Filtros, búsqueda y fichas con un mismo lenguaje: chaflán, vidrio y brillo | K | P3 | S | Propuesta | BR-067, BR-063 |
+| BR-088 | Cabecera de página unificada: título en Anton y diagonales compactas | K | P3 | S | Propuesta | BR-087 |
+| BR-089 | Productos: encendido en ola, parallax interior, contador y botón de volver arriba | K | P3 | M | Propuesta | BR-068, BR-088 |
+| BR-090 | Productos de prueba: 50 filas con fotos de stock que cargan | K | P3 | XS | Propuesta | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

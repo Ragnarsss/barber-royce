@@ -24,6 +24,7 @@ export const ProductDialog = ({ product, onClose }: ProductDialogProps) => {
         <h2 id={titleId} className={styles.name}>
           {product.name}
         </h2>
+        <div className="glass-divider" aria-hidden="true" />
         {product.description && (
           <p id={descriptionId} className={styles.description}>
             {product.description}
