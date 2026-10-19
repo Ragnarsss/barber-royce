@@ -18,9 +18,10 @@ export const Navbar = () => {
   const location = useLocation();
   const lenis = useLenisInstance();
 
-  // Cerrar menú móvil automáticamente cuando la ventana cruza a escritorio (solo al cruzar el corte, no en cada resize)
+  // Cerrar menú móvil automáticamente cuando la ventana cruza a escritorio (solo al cruzar el corte, no en cada resize).
+  // La barra completa empieza en 1025 px: de 769 a 1024 px no cabe y se mantiene la hamburguesa (BR-086).
   useEffect(() => {
-    const desktop = window.matchMedia?.(MEDIA.desktop);
+    const desktop = window.matchMedia?.(MEDIA.lg);
     const handleChange = (event: MediaQueryListEvent) => {
       if (event.matches) {
         setIsMobileMenuOpen(false);

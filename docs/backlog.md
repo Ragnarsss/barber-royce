@@ -3270,6 +3270,39 @@ Criterios de aceptación:
 4. Capturas antes y después iguales salvo el área táctil, en 320, 390, 769 y 1280 px.
 
 
+#### BR-086 — Navbar: hamburguesa hasta 1024 px
+
+- Prioridad: P1 · Esfuerzo: XS · Depende de: BR-085
+- Estado: Propuesta
+- Historia de usuario: no aplica — corrección de maquetación sin superficie nueva (hallazgo H1 del handoff móvil del 2026-10-18).
+- RF/RNF: `RNF-COMP-001`
+
+**Origen (2026-10-18):** `docs/handoff-movil-2026-10-18.md` §4 (H1), medido en Chrome: entre 769 y
+unos 950 px la barra de escritorio no cabe (el logo queda con ancho 0, «Agendar Sesión» sale de la
+pantalla, «UBICACIÓN Y HORARIOS» ocupa tres líneas y la barra crece a unos 110 px, el layout reserva
+80); a 1024 px el logo se solapa con «NOSOTROS».
+
+> **Decisión del usuario (2026-10-19):** mantener la hamburguesa hasta 1024 px (opción A), no una
+> barra compacta. El corte de la barra completa pasa de 769 a 1025 px (`BREAKPOINTS.LG`, ADR-009).
+
+Alcance:
+1. La barra de escritorio (logo en imagen, enlaces y botón con borde) aparece desde 1025 px; de 769 a
+   1024 px se ve la de móvil (hamburguesa, marca en texto, botón blanco).
+2. `Navbar.tsx` cierra el menú al cruzar 1025 px (`MEDIA.lg`) y no 769.
+3. La etiqueta de `/ubicacion` pasa de «UBICACIÓN Y HORARIOS» a «SUCURSALES» (`routes.ts`), en la
+   navbar y en el footer, que comparten la etiqueta. Medido: a 1025 px el enlace largo ocupaba tres
+   líneas (67 px) y la barra crecía a 113 px.
+
+> **Decisión del usuario (2026-10-19):** la etiqueta corta es «Sucursales». El título de la página y
+> su SEO no cambian.
+
+Criterios de aceptación:
+1. A 769, 900 y 1024 px la barra no se desborda y mide lo mismo que en móvil.
+2. A 1025 y 1280 px la barra de escritorio cabe en una línea (88 px o menos), sin solapes.
+3. Con el menú abierto a 1024 px y cruzando a 1025 px, el menú se cierra.
+4. El test de cortes pasa (`src/styles/breakpoints.test.ts`).
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3383,6 +3416,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-068 | Productos: carga progresiva (scroll infinito) | K | P3 | M | Hecho | BR-067 |
 | BR-084 | Footer: títulos invisibles, marca desde SITE y colores a tokens | K | P1 | XS | Propuesta | BR-080 |
 | BR-085 | Navbar móvil: área táctil de 44 px y menú desplazable | K | P1 | XS | Propuesta | BR-080 |
+| BR-086 | Navbar: hamburguesa hasta 1024 px | K | P1 | XS | Propuesta | BR-085 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
