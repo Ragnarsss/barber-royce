@@ -1,84 +1,52 @@
-/* Mobile-first (BR-082, ADR-009): la base es el móvil y desde 769 px se restauran los valores de escritorio (al final) */
+/*
+ * Mobile-first (BR-082, ADR-009): la base es el móvil y desde 769 px se restauran los valores de escritorio (al final).
+ * Cabecera unificada (BR-088): el título de `HoneycombPage` (Anton blanco) sobre sus diagonales, acotadas a esta franja.
+ * Con triángulos más chicos que a pantalla completa, para que el rojo no quede detrás del texto.
+ */
 .hero {
-  background: var(--color-brand-section-bg);
-  color: var(--color-brand-white);
-  padding: 60px 0 30px;
-  text-align: center;
   position: relative;
   overflow: hidden;
+  background: var(--color-brand-section-bg);
+  color: var(--color-brand-white);
+  padding: var(--spacing-10) 0 var(--spacing-8);
+  text-align: center;
 }
 
-/* Shapes decorativas */
-.hero::before {
-  content: "";
-  position: absolute;
-  top: -20%;
-  right: -10%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(
-    circle,
-    rgba(213, 35, 35, 0.15) 0%,
-    transparent 70%
-  );
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.hero::after {
-  content: "";
-  position: absolute;
-  bottom: -15%;
-  left: -10%;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(
-    circle,
-    rgba(213, 35, 35, 0.12) 0%,
-    transparent 70%
-  );
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
+.hero .backdrop {
+  --shade-width: 45%;
+  --shade-height: 100%;
+  --red-width: 32%;
+  --red-height: 100%;
 }
 
 .container {
+  position: relative;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
-  position: relative;
-  z-index: 1;
+  padding: 0 var(--spacing-6);
 }
 
 .title {
-  font-size: 36px;
-  font-weight: 800;
-  margin: 0 0 16px 0;
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
   text-transform: uppercase;
-  letter-spacing: 1px;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-brand-white);
 }
 
 .subtitle {
-  font-size: 18px;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
+  margin: var(--spacing-2) 0 0;
+  font-size: var(--font-size-sm);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
 }
 
 @media (min-width: 769px) {
   .hero {
-    padding: 80px 0 40px;
-  }
-
-  .title {
-    font-size: 48px;
-  }
-
-  .subtitle {
-    font-size: 20px;
+    padding: var(--spacing-16) 0 var(--spacing-12);
   }
 }

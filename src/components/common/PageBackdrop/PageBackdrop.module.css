@@ -1,0 +1,49 @@
+/*
+ * Diagonales del hero (BR-055, BR-060, BR-088): fondo charcoal con un triángulo oscuro arriba a la izquierda y uno rojo
+ * abajo a la derecha. El rojo lleva el mismo degradado y filo de luz de 1 px que el hero; el filo es un segundo fondo
+ * cuyo 50 % cae justo en la diagonal del `clip-path`. El tamaño de los triángulos se cambia con las variables
+ * `--shade-*` y `--red-*` desde la clase de quien lo usa.
+ */
+.backdrop {
+  --edge-light: color-mix(in srgb, var(--color-brand-white) 45%, transparent);
+  --red-light: color-mix(in srgb, var(--color-brand-primary) 82%, var(--color-brand-white));
+  --red-deep: color-mix(in srgb, var(--color-brand-primary) 62%, var(--color-brand-background));
+  --shade-width: 55%;
+  --shade-height: 70%;
+  --red-width: 60%;
+  --red-height: 85%;
+
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.shadeTriangle,
+.redTriangle {
+  position: absolute;
+}
+
+.shadeTriangle {
+  top: 0;
+  left: 0;
+  width: var(--shade-width);
+  height: var(--shade-height);
+  background: var(--color-brand-background);
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.redTriangle {
+  right: 0;
+  bottom: 0;
+  width: var(--red-width);
+  height: var(--red-height);
+  background:
+    linear-gradient(
+      to top left,
+      transparent calc(50% - 0.5px),
+      var(--edge-light) 50%,
+      transparent calc(50% + 1.5px)
+    ),
+    linear-gradient(150deg, var(--red-light) 0%, var(--color-brand-primary) 40%, var(--red-deep) 100%);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}

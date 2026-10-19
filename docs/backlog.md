@@ -3342,6 +3342,43 @@ Criterios de aceptación:
 5. El test de cortes y los tests de las tres páginas y de las fichas pasan.
 
 
+#### BR-088 — Cabecera de página unificada: título en Anton y diagonales compactas
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-087
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-32)
+- RF/RNF: `RNF-A11Y-004`, `RNF-PERF-003`
+
+**Origen (2026-10-19):** el sitio tiene dos cabeceras para el mismo elemento. Equipo y Productos usan el
+título en Anton sobre las diagonales roja y charcoal (`HoneycombPage`, decisión del 2026-10-14); Nosotros,
+Servicios, Ubicación, Preguntas frecuentes y Privacidad siguen con la franja `PageHero` (título rosa con
+degradado, 60 + 30 px de relleno, dos reflejos rojos). En móvil la franja ocupa cerca de un cuarto de la
+pantalla antes del contenido.
+
+> **Decisión del usuario (2026-10-19):** dirección 2: unificar al estilo de Productos y Equipo. Pidió además
+> decidir si Servicios, Preguntas frecuentes, Ubicación, Nosotros y Privacidad llevan fondo. Criterio
+> adoptado: todas llevan fondo, pero **compacto** (las diagonales cubren solo la cabecera y debajo el fondo
+> es liso): un triángulo rojo de pantalla completa pondría texto y tarjetas translúcidas sobre rojo
+> (contraste), y con alto fijo no hay CLS.
+
+Alcance:
+1. `PageBackdrop` (componente nuevo): los dos triángulos y el filo de luz que hoy están dentro de
+   `HoneycombPage`. `HoneycombPage` lo usa sin cambiar su aspecto.
+2. `PageHero` se rehace con `PageBackdrop` acotado a la cabecera, el título en Anton blanco y el subtítulo
+   como el de `HoneycombPage`; mismo contrato (`title`, `subtitle`, `animated`) y un solo `<h1>`. Menos
+   alto en móvil.
+3. Sin cambios en el texto visible, los `<h1>` ni la lógica de las páginas.
+
+Criterios de aceptación:
+1. Las cinco páginas muestran la cabecera nueva y Equipo y Productos no cambian (capturas antes y después
+   en 390 y 1280 px) (HU-EXP-004 CA-32).
+2. En móvil la cabecera mide menos que la anterior y el contenido empieza antes.
+3. El texto de la cabecera cumple 4,5:1 sobre las diagonales y `contrast.e2e.test.ts` pasa en todas las
+   rutas (CP-A11Y-004).
+4. Cada página tiene un solo `<h1>`; con reducir movimiento no hay entrada animada (CP-A11Y-003).
+5. CLS móvil no empeora frente a `master` (CP-PERF-003).
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3457,6 +3494,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-085 | Navbar móvil: área táctil de 44 px y menú desplazable | K | P1 | XS | Propuesta | BR-080 |
 | BR-086 | Navbar: hamburguesa hasta 1024 px | K | P1 | XS | Propuesta | BR-085 |
 | BR-087 | Filtros, búsqueda y fichas con un mismo lenguaje: chaflán, vidrio y brillo | K | P3 | S | Propuesta | BR-067, BR-063 |
+| BR-088 | Cabecera de página unificada: título en Anton y diagonales compactas | K | P3 | S | Propuesta | BR-087 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

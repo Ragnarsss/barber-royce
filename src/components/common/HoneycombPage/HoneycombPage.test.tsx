@@ -37,7 +37,7 @@ describe("HoneycombPage (BR-060, BR-067)", () => {
   });
 
   it("la banda mide una pantalla y no un porcentaje de la página (así el fondo no se mueve al crecer el contenido: CLS)", () => {
-    const block = css.slice(css.indexOf(".band .backdrop"));
+    const block = css.slice(css.indexOf(".band .bandBackdrop"));
     expect(block).toMatch(/height:\s*100vh/);
     expect(block).toMatch(/height:\s*100svh/);
     expect(block).toMatch(/bottom:\s*auto/);

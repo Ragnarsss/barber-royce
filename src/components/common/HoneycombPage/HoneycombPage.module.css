@@ -1,53 +1,11 @@
 /*
- * Página con un panal (BR-060, BR-067): fondo charcoal con un triángulo oscuro arriba a la izquierda y uno rojo abajo a la
- * derecha, como las diagonales del hero (Figma). El rojo lleva el mismo degradado y filo de luz de 1 px que el
- * hero (BR-055); el filo es un segundo fondo cuyo 50 % cae justo en la diagonal del `clip-path`.
+ * Página con un panal (BR-060, BR-067): el fondo son las diagonales del hero (`PageBackdrop`, BR-088) sobre charcoal.
  */
 .page {
-  --edge-light: color-mix(in srgb, var(--color-brand-white) 45%, transparent);
-  --red-light: color-mix(in srgb, var(--color-brand-primary) 82%, var(--color-brand-white));
-  --red-deep: color-mix(in srgb, var(--color-brand-primary) 62%, var(--color-brand-background));
-
   position: relative;
   min-height: 100vh;
   overflow: hidden;
   background: var(--color-brand-section-bg);
-}
-
-.backdrop {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.shadeTriangle,
-.redTriangle {
-  position: absolute;
-}
-
-.shadeTriangle {
-  top: 0;
-  left: 0;
-  width: 55%;
-  height: 70%;
-  background: var(--color-brand-background);
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-}
-
-.redTriangle {
-  right: 0;
-  bottom: 0;
-  width: 60%;
-  height: 85%;
-  background:
-    linear-gradient(
-      to top left,
-      transparent calc(50% - 0.5px),
-      var(--edge-light) 50%,
-      transparent calc(50% + 1.5px)
-    ),
-    linear-gradient(150deg, var(--red-light) 0%, var(--color-brand-primary) 40%, var(--red-deep) 100%);
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
 }
 
 /*
@@ -58,7 +16,7 @@
   background: var(--color-brand-background);
 }
 
-.band .backdrop {
+.band .bandBackdrop {
   bottom: auto;
   height: 100vh;
   height: 100svh;

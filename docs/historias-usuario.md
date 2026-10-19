@@ -723,6 +723,10 @@ y confiar en que el servicio está a la altura.
   filtros, la búsqueda y la divisoria, Then todos comparten un mismo lenguaje (chaflán, vidrio, brillo
   rojo en el activo y línea que se desvanece), y las fichas del barbero y del producto lo repiten en
   su marco; con foco de teclado el estado se ve y con reducir movimiento no hay transiciones.
+- CA-32 (2026-10-19, `BR-088`): Given entro a Nosotros, Servicios, Ubicación, Preguntas frecuentes o
+  Privacidad, When veo la cabecera de la página, Then el título está en Anton blanco con las diagonales
+  de Equipo y Productos, ocupa poca altura en móvil y el contenido de debajo conserva un fondo liso con
+  contraste suficiente; el `<h1>` sigue siendo uno solo por página.
 
 ---
 

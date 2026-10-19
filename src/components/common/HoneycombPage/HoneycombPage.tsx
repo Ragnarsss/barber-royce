@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { PageBackdrop } from "@/components/common/PageBackdrop/PageBackdrop";
 import styles from "./HoneycombPage.module.css";
 
 interface HoneycombPageProps {
@@ -18,10 +19,7 @@ interface HoneycombPageProps {
  */
 export const HoneycombPage = ({ title, subtitle, band, children }: HoneycombPageProps) => (
   <div className={band ? `${styles.page} ${styles.band}` : styles.page}>
-    <div className={styles.backdrop} aria-hidden="true">
-      <span className={styles.shadeTriangle} />
-      <span className={styles.redTriangle} />
-    </div>
+    <PageBackdrop className={band ? styles.bandBackdrop : undefined} />
 
     <div className={styles.content}>
       <header className={styles.header}>
