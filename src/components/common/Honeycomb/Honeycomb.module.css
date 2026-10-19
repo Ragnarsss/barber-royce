@@ -97,8 +97,9 @@
 }
 
 /*
- * Parallax interior (BR-089): la foto va en una capa más alta que el hexágono (116 %), que sube y baja con el scroll
- * dentro de la forma recortada. El hexágono no se mueve; el zoom del hover sigue siendo el de la imagen.
+ * Parallax interior (BR-089): la foto va en una capa más alta que el hexágono, que sube y baja con el scroll dentro de
+ * la forma recortada. Cuánto sube y cuánto sobresale lo fija `PARALLAX_RANGE` en Honeycomb.tsx (`top` y `bottom` van
+ * en línea, calculados de ahí). El hexágono no se mueve; el zoom del hover sigue siendo el de la imagen.
  */
 .parallaxFrame {
   position: absolute;
@@ -108,7 +109,8 @@
 
 .parallaxLayer {
   position: absolute;
-  inset: -8% 0;
+  left: 0;
+  right: 0;
   display: block;
   will-change: transform;
 }

@@ -3409,7 +3409,8 @@ cambiar de ruta.
 Alcance:
 1. **Encendido en ola:** los hexágonos de cada lote nuevo (no los de la carga inicial) encienden su marco
    en blanco con un halo rojo una sola vez, escalonados, y vuelven al reposo. CSS, sin `setState` por scroll.
-2. **Parallax interior:** en escritorio, la foto de cada hexágono se desplaza ±6 % dentro de su forma según
+2. **Parallax interior:** en escritorio, la foto de cada hexágono se desplaza ±14 % (era ±6 %, casi imperceptible
+   según el usuario, 2026-10-19; se ajusta con `PARALLAX_RANGE` en `Honeycomb.tsx`) dentro de su forma según
    su posición en pantalla (`useScroll` con `target` y `useTransform`); el hexágono no se mueve. Opt-in para
    que Equipo no cambie.
 3. **Contador y final:** «Ves 12 de 24» con una barra de progreso fina bajo el panal y una marca al llegar

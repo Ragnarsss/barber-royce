@@ -98,12 +98,26 @@ export const Honeycomb = ({ items, desktop, mobile }: HoneycombProps) => {
   );
 };
 
-/** La foto sube y baja ±6 % de su alto dentro del hexágono mientras este cruza la pantalla; el hexágono no se mueve. */
-const PARALLAX_SHIFT = ["-6%", "6%"];
+/**
+ * Intensidad del parallax: cuánto sube y baja la foto dentro de su hexágono mientras este cruza la pantalla, como
+ * fracción del alto de la capa (0,14 = ±14 %). Es el único número que hay que tocar: el exceso de la capa se calcula
+ * solo. Más alto se nota más, pero la capa crece y la foto se ve más recortada (0,06 era casi imperceptible; sobre
+ * 0,2 la foto se recorta demasiado). El hexágono no se mueve.
+ */
+const PARALLAX_RANGE = 0.14;
 
 /**
- * Capa de la foto con parallax (BR-089). Es más alta que el hexágono (116 %) para que, al desplazarse, nunca deje ver
- * el borde. Solo anima `transform`, ligada a un `MotionValue`: ni `setState` ni layout por scroll.
+ * Cuánto sobresale la capa por arriba y por abajo, como fracción del alto del hexágono. Si la capa se desplaza ±R de su
+ * propio alto, necesita R / (1 − 2R) de exceso por lado para no dejar ver el borde; el 1 % extra es margen.
+ */
+const PARALLAX_OVERSCAN = PARALLAX_RANGE / (1 - 2 * PARALLAX_RANGE) + 0.01;
+
+const PARALLAX_SHIFT = [`-${PARALLAX_RANGE * 100}%`, `${PARALLAX_RANGE * 100}%`];
+const PARALLAX_EDGE = `-${(PARALLAX_OVERSCAN * 100).toFixed(1)}%`;
+
+/**
+ * Capa de la foto con parallax (BR-089). Es más alta que el hexágono (`PARALLAX_OVERSCAN`) para que, al desplazarse,
+ * nunca deje ver el borde. Solo anima `transform`, ligada a un `MotionValue`: ni `setState` ni layout por scroll.
  */
 const ParallaxLayer = ({ children }: { children: ReactNode }) => {
   const ref = useRef<HTMLSpanElement>(null);
@@ -112,7 +126,7 @@ const ParallaxLayer = ({ children }: { children: ReactNode }) => {
 
   return (
     <span ref={ref} className={styles.parallaxFrame}>
-      <motion.span className={styles.parallaxLayer} style={{ y }}>
+      <motion.span className={styles.parallaxLayer} style={{ y, top: PARALLAX_EDGE, bottom: PARALLAX_EDGE }}>
         {children}
       </motion.span>
     </span>
