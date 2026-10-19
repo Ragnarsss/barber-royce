@@ -5,6 +5,8 @@
 }
 
 .main {
+  /* `tabIndex={-1}` deja que el botón de volver arriba (BR-089) le pase el foco; no es un control: sin anillo */
+  outline: none;
   flex: 1;
   padding-top: 80px; /* Height of navbar */
 }

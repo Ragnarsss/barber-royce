@@ -13,12 +13,12 @@
   backdrop-filter: blur(4px);
 }
 
-.dialog {
-  --chamfer: var(--spacing-6);
-  --surface: var(--color-primary-900);
-  --chip-border: color-mix(in srgb, var(--color-brand-white) 45%, transparent);
-  --muted: color-mix(in srgb, var(--color-brand-white) 85%, var(--surface));
-
+/*
+ * Marco (BR-087): fija la ficha en pantalla y le da el borde claro que sigue el chaflán y un halo rojo con
+ * `drop-shadow`, que dibuja la silueta ya recortada. Un ancestro con `filter` anula el `backdrop-filter` de sus hijos,
+ * así que la ficha no lo usa: el fondo de detrás ya está desenfocado (`.backdrop`) y se transparenta un poco.
+ */
+.frame {
   position: fixed;
   inset: 0;
   z-index: var(--z-index-modal);
@@ -26,6 +26,18 @@
   height: fit-content;
   max-height: calc(100dvh - 2 * var(--spacing-4));
   margin: auto;
+  filter: drop-shadow(0 0 1px color-mix(in srgb, var(--color-brand-white) 70%, transparent))
+    drop-shadow(0 0 18px color-mix(in srgb, var(--color-brand-primary) 40%, transparent));
+}
+
+.dialog {
+  --chamfer: var(--spacing-6);
+  --surface: color-mix(in srgb, var(--color-primary-900) 93%, transparent);
+  --chip-border: color-mix(in srgb, var(--color-brand-white) 45%, transparent);
+  --muted: color-mix(in srgb, var(--color-brand-white) 85%, var(--color-primary-900));
+
+  position: relative;
+  max-height: calc(100dvh - 2 * var(--spacing-4));
   overflow: hidden;
   background: var(--surface);
   color: var(--color-brand-white);

@@ -719,6 +719,19 @@ y confiar en que el servicio está a la altura.
 - CA-30 (2026-10-18, `BR-079`): Given bajo desde la portada, When la foto del Hero
   sale de la pantalla (y la de CTA1 al cruzar la sección), Then se acercan con un zoom claro, en escritorio y en móvil,
   sin dejar huecos; con reducir movimiento no hay zoom.
+- CA-31 (2026-10-19, `BR-087`): Given entro a Servicios, Ubicación o Productos, When veo los
+  filtros, la búsqueda y la divisoria, Then todos comparten un mismo lenguaje (chaflán, vidrio, brillo
+  rojo en el activo y línea que se desvanece), y las fichas del barbero y del producto lo repiten en
+  su marco; con foco de teclado el estado se ve y con reducir movimiento no hay transiciones.
+- CA-32 (2026-10-19, `BR-088`): Given entro a Nosotros, Servicios, Ubicación, Preguntas frecuentes o
+  Privacidad, When veo la cabecera de la página, Then el título está en Anton blanco con las diagonales
+  de Equipo y Productos, ocupa poca altura en móvil y el contenido de debajo conserva un fondo liso con
+  contraste suficiente; el `<h1>` sigue siendo uno solo por página.
+- CA-33 (2026-10-19, `BR-089`): Given bajo por el catálogo de Productos, When llega un lote nuevo, Then
+  los hexágonos se encienden en ola (marco blanco con un halo rojo, una sola vez), la foto de cada uno se
+  desplaza un poco dentro de su hexágono con el scroll (solo en escritorio), veo cuántos productos llevo
+  («Ves 12 de 24») y, pasada una pantalla, un botón hexagonal con un anillo de progreso me devuelve arriba;
+  con reducir movimiento no hay ola ni parallax y el botón sube de golpe.
 
 ---
 

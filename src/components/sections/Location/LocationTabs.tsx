@@ -33,13 +33,13 @@ export const LocationTabs = ({ locations }: LocationTabsProps) => {
     >
       <TabsList className={styles.tabsList}>
         {tabItems.map(({ value, location }) => (
-          <TabsTrigger key={value} value={value} className={styles.tabTrigger}>
+          <TabsTrigger key={value} value={value} className={`glass-chip ${styles.tabTrigger}`}>
             {location.name.toUpperCase()}
           </TabsTrigger>
         ))}
       </TabsList>
 
-      <div className={styles.tabsSeparator}></div>
+      <div className={`glass-divider ${styles.tabsSeparator}`}></div>
 
       {tabItems.map(({ value, location }) => (
         <TabsContent key={value} value={value} className={styles.tabContent}>

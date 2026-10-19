@@ -8,6 +8,7 @@
 @import "./tokens/index.css";
 @import "./reset.css";
 @import "./mixins.css";
+@import "./shared/glass.css"; /* Filtros, buscador y divisoria (BR-087) */
 @import "./performance.css"; /* Performance optimizations */
 
 /* Configuración base del body */

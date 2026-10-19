@@ -75,54 +75,17 @@
   box-shadow: none;
 }
 
+/* El aspecto (chaflán, vidrio y brillo) lo pone `glass-chip` (src/styles/shared/glass.css, BR-087); aquí, la medida */
 .tabTrigger {
-  padding: 8px 16px;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.7);
-  border-radius: 8px;
-  font-size: 12px;
-  white-space: nowrap;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-}
-
-.tabTrigger:hover {
-  background: rgba(213, 35, 35, 0.15);
-  border-color: rgba(213, 35, 35, 0.4);
-  color: var(--color-brand-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(213, 35, 35, 0.2);
-}
-
-.tabTrigger[data-state="active"] {
-  background: rgba(213, 35, 35, 0.2);
-  border-color: var(--color-brand-primary);
-  color: var(--color-brand-primary);
-  box-shadow: 0 4px 12px rgba(213, 35, 35, 0.3);
-}
-
-.tabTrigger[data-state="active"]:hover {
-  background: rgba(213, 35, 35, 0.25);
+  min-height: 2.75rem;
+  padding: 0 var(--spacing-4);
+  font-size: var(--font-size-xs);
 }
 
 .tabsSeparator {
   width: 100%;
   margin-top: 20px;
   margin-bottom: clamp(2rem, 5vh, 3.125rem);
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    rgba(213, 35, 35, 0.3) 20%,
-    rgba(213, 35, 35, 0.5) 50%,
-    rgba(213, 35, 35, 0.3) 80%,
-    transparent 100%
-  );
 }
 
 .tabContent {
@@ -415,8 +378,8 @@
   }
 
   .tabTrigger {
-    padding: 10px 24px;
-    font-size: 14px;
+    padding: 0 var(--spacing-6);
+    font-size: var(--font-size-sm);
     white-space: normal;
   }
 

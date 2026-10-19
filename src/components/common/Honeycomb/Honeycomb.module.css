@@ -96,6 +96,46 @@
   transition: transform var(--transition-slow);
 }
 
+/*
+ * Parallax interior (BR-089): la foto va en una capa más alta que el hexágono (116 %), que sube y baja con el scroll
+ * dentro de la forma recortada. El hexágono no se mueve; el zoom del hover sigue siendo el de la imagen.
+ */
+.parallaxFrame {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.parallaxLayer {
+  position: absolute;
+  inset: -8% 0;
+  display: block;
+  will-change: transform;
+}
+
+/*
+ * Encendido de un lote nuevo (BR-089): el marco se ilumina una sola vez con el halo del hover y vuelve al reposo. Cada
+ * hexágono espera su `--ignite-delay`, así la luz recorre el lote en ola. Un solo pulso de 1,1 s por hexágono, lejos
+ * del límite de 3 destellos por segundo (RNF-A11Y-005); con reducir movimiento no se aplica.
+ */
+@keyframes ignite {
+  0% {
+    filter: var(--rest-shadow);
+  }
+
+  35% {
+    filter: var(--glow);
+  }
+
+  100% {
+    filter: var(--rest-shadow);
+  }
+}
+
+.cell[data-ignite] .hex {
+  animation: ignite 1100ms var(--ease-out) var(--ignite-delay, 0ms) both;
+}
+
 /* Nombre y cargo: aparecen al pasar el cursor o enfocar, sobre una sombra que sube desde abajo. */
 .caption {
   position: absolute;
@@ -187,6 +227,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .cell[data-ignite] .hex {
+    animation: none;
+  }
+
   .hex,
   .frame,
   .caption,
