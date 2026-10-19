@@ -1852,3 +1852,52 @@ Tres PR integraron el lote a `master`: #33 (BR-061, BR-069 a BR-077), #34 (tarje
 ## Cierre de la migración mobile-first (2026-10-18)
 
 `BR-024` (base) y `BR-080` a `BR-083` quedaron implementados y verificados en local; no se integraron todavía. Con ellos, todo el CSS de `src/` es mobile-first, el único cambio visible está acotado (footer y `/ubicacion` entre 969 y 1024 px; la ficha y el panal a 768 px exactos) y el test lo hace cumplir. Las fichas siguen en `Propuesta` hasta que el preview de Vercel las verifique.
+
+<a id="br-084"></a>
+
+## BR-084 — Footer: títulos invisibles, marca desde SITE y colores a tokens
+
+**Notas de construcción (2026-10-19):**
+- **Causa:** la regla global de `h1`–`h6` (`global.css`) pintaba los títulos con `--color-text-primary` (`rgb(23, 23, 23)`) y el módulo del footer no definía color para `.title` ni `.columnTitle`. Ahora usan `--footer-fg`, una variable local que parte de `--color-brand-white`.
+- Los `rgba` y hex de `Footer.module.css` pasan a tokens (`--color-primary-*`) y a `color-mix` sobre `--footer-fg`, con las mismas opacidades (70, 50, 10, 5, 15 y 30 %). El aspecto no cambia.
+- **Cambio visible, confirmado por el usuario (2026-10-19):** el título y el copyright pasan de «Barber Royce» a «Royce Barbería» (`SITE.name`). El `alt` del logo del footer sale también de `SITE.name`.
+- El auditor de calidad señaló que el test fijaba el año del copyright y que interpolaba el nombre en una regex sin escapar; ahora comprueba `SITE.name` con `toHaveTextContent` y no el año.
+
+**Verificación:**
+- Medido en Chrome contra el build a 320, 390, 769, 1025 y 1280 px: los cuatro títulos en `rgb(255, 255, 255)` y sin desborde horizontal. El texto atenuado al 50 % da unos 5,2:1 sobre `#1a1a1a`.
+- Auditorías de accesibilidad, tokens, calidad y datos del negocio sin hallazgos altos.
+- **No se hicieron capturas antes y después:** la pantalla de carga de neón tapaba el footer en la captura. **Pendiente:** el preview de Vercel (está tras login, no se pudo medir desde aquí).
+- **Candidatos a ticket (no incluidos):** `prefers-reduced-motion` del footer, jerarquía h3/h4 sin h2, áreas táctiles de sus enlaces, «se abre en pestaña nueva» en los enlaces externos y literales de marca en `routes.ts`, el `alt` de CTA2 e `index.html`.
+
+<a id="br-085"></a>
+
+## BR-085 — Navbar móvil: área táctil de 44 px y menú desplazable
+
+**Notas de construcción (2026-10-19):**
+- La hamburguesa y el botón de reserva de la barra móvil tienen `min-width`/`min-height` de 2.75rem; el ícono de 26 px y la altura de la barra no cambian.
+- El menú abierto usa `max-height: calc(100dvh - 5rem)` con `overflow-y: auto` (antes `500px` fijo, que recortaba el CTA en apaisado). El `5rem` es provisional hasta que exista el token `--navbar-height` (H6 del handoff).
+- El menú móvil lleva `inert` mientras está cerrado: sus enlaces dejan de ser enfocables. Se quitó `role="menu"` y su `aria-label`: los hijos no eran `menuitem` y un lector de pantalla lo leía como un menú vacío (auditores de accesibilidad y de calidad).
+- El `alt` del logo de la navbar sale de `SITE.name` (era «Barber Royce»).
+- `Navbar.test.tsx` es nuevo: el menú es inerte cerrado, deja de serlo al abrir y vuelve a serlo al cerrar, no declara `role="menu"` y el `alt` del logo es `SITE.name`. jsdom no implementa `inert`, así que el efecto sobre el foco se midió en Chrome.
+
+**Verificación:**
+- Medido en Chrome: hamburguesa de 44 × 44 y botón de reserva de 44 px de alto a 320 y 390 px; menú cerrado inerte; a 320 × 568 el menú se desplaza (520 px de contenido); en apaisado (740 × 360) se llega a «Agendar Sesión» (borde inferior en 322 de 360 px).
+- Lint, tipos, build y 856 tests en verde. **Pendiente:** el preview de Vercel.
+- **Candidatos a ticket (no incluidos):** cerrar con Escape y devolver el foco al botón, `rgba` sueltos en `Navbar.module.css` (ADR-002), contraste del rojo `#d52323` sobre negro (unos 4,1:1), `prefers-reduced-motion` incompleto y el velo del menú.
+
+<a id="br-086"></a>
+
+## BR-086 — Navbar: hamburguesa hasta 1024 px
+
+**Notas de construcción (2026-10-19):**
+- **Decisión del usuario (2026-10-19):** mantener la hamburguesa hasta 1024 px. El corte de la barra completa pasa de 769 a 1025 px (`MEDIA.lg`, en `Navbar.module.css` y en el cierre del menú de `Navbar.tsx`).
+- **Decisión del usuario (2026-10-19):** la etiqueta de `/ubicacion` pasa de «UBICACIÓN Y HORARIOS» a «SUCURSALES» en `routes.ts`. La comparten la navbar y el footer; el título de la página y su SEO no cambian. A 1025 px el enlace largo ocupaba tres líneas (67 px).
+- **No previsto en la ficha:** con solo el corte y la etiqueta, a 1025 px la barra seguía en 113 px y el logo quedaba aplastado, porque el botón «Agendar Sesión» se partía en dos líneas. Los huecos entre enlaces pasan a 16 px entre 1025 y 1279 px y vuelven a 32 px desde 1280 px, y el botón lleva `white-space: nowrap`.
+
+**Verificación:**
+- Medido en Chrome: barra de 84 px con hamburguesa a 769, 900 y 1024 px; barra completa de 88 px, con logo, enlaces y botón sin solapes y sin desborde, a 1025, 1100, 1279, 1280 y 1920 px.
+- Lint, tipos, build y 856 tests en verde; CI del PR #38 y deploy de Vercel en verde. **Pendiente:** el preview de Vercel (tras login, no medible desde aquí) y producción.
+
+## Cierre de BR-084 a BR-086 (2026-10-19)
+
+Los tres tickets se integran junto con `BR-024` y `BR-080` a `BR-083` en un solo PR (#38, fusión normal, que cubre también el #37). Las fichas siguen en `Propuesta` hasta verificar el resultado en producción (regla 3).
