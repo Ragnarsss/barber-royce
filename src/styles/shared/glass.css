@@ -98,9 +98,9 @@
   background: linear-gradient(
     to right,
     transparent 0%,
-    color-mix(in srgb, var(--color-brand-primary) 30%, transparent) 20%,
-    color-mix(in srgb, var(--color-brand-primary) 50%, transparent) 50%,
-    color-mix(in srgb, var(--color-brand-primary) 30%, transparent) 80%,
+    color-mix(in srgb, var(--color-brand-primary) 45%, transparent) 20%,
+    color-mix(in srgb, var(--color-brand-primary) 85%, transparent) 50%,
+    color-mix(in srgb, var(--color-brand-primary) 45%, transparent) 80%,
     transparent 100%
   );
 }

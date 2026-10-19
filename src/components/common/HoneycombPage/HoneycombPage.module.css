@@ -1,58 +1,18 @@
 /*
- * Página con un panal (BR-060, BR-067): el fondo son las diagonales del hero (`PageBackdrop`, BR-088) sobre charcoal.
+ * Página con un panal (BR-060, BR-067, BR-088): la cabecera es `PageHero` y el contenido va sobre un fondo liso. Mobile-first
+ * (ADR-009): la base es el móvil y desde 769 px crecen el espacio entre bloques y el de abajo.
  */
 .page {
-  position: relative;
   min-height: 100vh;
-  overflow: hidden;
-  background: var(--color-brand-section-bg);
-}
-
-/*
- * Variante en banda: las diagonales miden una pantalla (no un porcentaje de la página) y debajo el fondo es liso. Si el
- * alto dependiera del contenido, un cambio de fuente o la carga de más productos movería el triángulo rojo entero.
- */
-.band {
   background: var(--color-brand-background);
 }
 
-.band .bandBackdrop {
-  bottom: auto;
-  height: 100vh;
-  height: 100svh;
-  background: var(--color-brand-section-bg);
-}
-
 .content {
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-8);
-  padding: calc(var(--spacing-24) + var(--spacing-4)) var(--spacing-4) var(--spacing-section-mobile);
-}
-
-.header {
-  text-align: center;
-}
-
-.title {
-  margin: 0;
-  font-family: var(--font-family-display);
-  font-size: clamp(var(--font-size-3xl), 5vw, var(--font-size-5xl));
-  font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-tight);
-  letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
-  color: var(--color-brand-white);
-}
-
-.subtitle {
-  margin: var(--spacing-2) 0 0;
-  font-size: var(--font-size-sm);
-  letter-spacing: var(--letter-spacing-wider);
-  text-transform: uppercase;
-  color: var(--color-brand-white);
+  padding: var(--spacing-8) var(--spacing-4) var(--spacing-section-mobile);
 }
 
 @media (min-width: 769px) {

@@ -3361,17 +3361,25 @@ pantalla antes del contenido.
 > es liso): un triángulo rojo de pantalla completa pondría texto y tarjetas translúcidas sobre rojo
 > (contraste), y con alto fijo no hay CLS.
 
+> **Alcance ajustado (2026-10-19, decisión del usuario, tras ver la cabecera compacta):** la misma
+> cabecera con las figuras y el fondo liso debajo para **las siete páginas**, también Equipo y Productos.
+> Estas dos pierden las diagonales a pantalla completa (decisión del 2026-10-14, que esta reemplaza).
+> `HoneycombPage` pasa a usar `PageHero`, la variante `band` y su alto de pantalla desaparecen, y el
+> buscador y los filtros de Productos llevan la divisoria de `glass-divider` (BR-087).
+
 Alcance:
-1. `PageBackdrop` (componente nuevo): los dos triángulos y el filo de luz que hoy están dentro de
-   `HoneycombPage`. `HoneycombPage` lo usa sin cambiar su aspecto.
+1. `PageBackdrop` (componente nuevo): los dos triángulos y el filo de luz que estaban dentro de
+   `HoneycombPage`.
 2. `PageHero` se rehace con `PageBackdrop` acotado a la cabecera, el título en Anton blanco y el subtítulo
    como el de `HoneycombPage`; mismo contrato (`title`, `subtitle`, `animated`) y un solo `<h1>`. Menos
    alto en móvil.
-3. Sin cambios en el texto visible, los `<h1>` ni la lógica de las páginas.
+3. `HoneycombPage` usa esa cabecera y un fondo liso; sin `band`.
+4. Productos: divisoria bajo el buscador y los filtros.
+5. Sin cambios en el texto visible, los `<h1>` ni la lógica de las páginas.
 
 Criterios de aceptación:
-1. Las cinco páginas muestran la cabecera nueva y Equipo y Productos no cambian (capturas antes y después
-   en 390 y 1280 px) (HU-EXP-004 CA-32).
+1. Las siete páginas muestran la cabecera nueva (capturas antes y después en 390 y 1280 px, también de
+   las fichas de Equipo y Productos) (HU-EXP-004 CA-32).
 2. En móvil la cabecera mide menos que la anterior y el contenido empieza antes.
 3. El texto de la cabecera cumple 4,5:1 sobre las diagonales y `contrast.e2e.test.ts` pasa en todas las
    rutas (CP-A11Y-004).

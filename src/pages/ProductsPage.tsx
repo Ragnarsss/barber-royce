@@ -34,7 +34,7 @@ export function ProductsPage() {
   return (
     <>
       <SEOHelmet route={ROUTES.products} />
-      <HoneycombPage title="Productos premium" subtitle="Las mejores marcas para tu cuidado diario" band>
+      <HoneycombPage title="Productos premium" subtitle="Las mejores marcas para tu cuidado diario">
         <div className={styles.filters}>
           <div className={styles.search}>
             <SearchIcon className={styles.searchIcon} />
@@ -61,6 +61,8 @@ export function ProductsPage() {
               </button>
             ))}
           </div>
+
+          <div className={`glass-divider ${styles.divider}`} aria-hidden="true" />
         </div>
 
         <div className={styles.results} data-pending={isPending || undefined}>

@@ -48,6 +48,13 @@
   font-size: var(--font-size-xs);
 }
 
+/* La línea la pone `glass-divider` (BR-087); aquí, que ocupe el ancho de los filtros */
+.divider {
+  width: 100%;
+  max-width: 75rem;
+  margin-top: var(--spacing-2);
+}
+
 .results {
   width: 100%;
   transition: opacity var(--transition-base);
