@@ -1,0 +1,95 @@
+/*
+ * Botón de volver arriba (BR-089): hexágono de 3,5 rem fijo abajo a la derecha. El `clip-path` recorta cualquier sombra
+ * propia, así que el halo del hover va en el contenedor (`.dock`) con `drop-shadow`, como el panal; el foco se ve en el
+ * anillo (el `outline` también lo recortaría). Mobile-first (ADR-009): una sola medida, sin cortes.
+ */
+.dock {
+  --hex-clip: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  --glow-core: color-mix(in srgb, var(--color-brand-white) 85%, transparent);
+  --glow-red: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);
+
+  position: fixed;
+  right: var(--spacing-4);
+  bottom: var(--spacing-4);
+  z-index: var(--z-index-sticky);
+  width: 3.5rem;
+  height: calc(3.5rem * 1.1547);
+  filter: drop-shadow(0 var(--spacing-2) var(--spacing-4) color-mix(in srgb, var(--color-primary-900) 55%, transparent));
+  opacity: 0;
+  transform: translateY(var(--spacing-4));
+  pointer-events: none;
+  transition:
+    opacity var(--transition-base),
+    transform var(--transition-base),
+    filter var(--transition-base);
+}
+
+.dock[data-visible] {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.dock[data-visible]:hover,
+.dock[data-visible]:focus-within {
+  filter: drop-shadow(0 0 3px var(--glow-core)) drop-shadow(0 0 10px var(--glow-core))
+    drop-shadow(0 0 24px var(--glow-red));
+}
+
+.button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+  background: color-mix(in srgb, var(--color-primary-900) 86%, transparent);
+  color: var(--color-brand-white);
+  clip-path: var(--hex-clip);
+}
+
+.button:focus-visible {
+  outline: none;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.track,
+.progress {
+  fill: none;
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+
+.track {
+  stroke: color-mix(in srgb, var(--color-brand-white) 22%, transparent);
+}
+
+.progress {
+  stroke: var(--color-brand-primary);
+}
+
+.button:focus-visible .track {
+  stroke: var(--color-brand-white);
+}
+
+.arrow {
+  position: relative;
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock {
+    transition: none;
+    transform: none;
+  }
+}

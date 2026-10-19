@@ -8,6 +8,44 @@
   pointer-events: none;
 }
 
+/*
+ * Contador y barra de avance (BR-089): «Ves 12 de 24» y una línea roja que se llena por lotes. La barra crece con
+ * `transform` (no con el ancho) y solo cambia cuando llega un lote, nunca por cada evento de scroll.
+ */
+.progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-6);
+}
+
+.progressText {
+  margin: 0;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-brand-white) 80%, transparent);
+}
+
+.progressTrack {
+  display: block;
+  width: min(14rem, 60%);
+  height: 2px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--color-brand-white) 14%, transparent);
+}
+
+.progressFill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--color-brand-primary);
+  transform-origin: left;
+  transition: transform var(--duration-slower) var(--ease-out);
+}
+
 .more {
   --cut: var(--spacing-3);
 
@@ -48,7 +86,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .more {
+  .more,
+  .progressFill {
     transition: none;
   }
 }

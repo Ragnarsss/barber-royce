@@ -1,5 +1,6 @@
 import { useDeferredValue, useState } from "react";
 import { AnimatePresence } from "framer-motion";
+import { BackToTop } from "@/components/common/BackToTop/BackToTop";
 import { HoneycombPage } from "@/components/common/HoneycombPage/HoneycombPage";
 import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
 import { SearchIcon } from "@/components/icons";
@@ -78,6 +79,8 @@ export function ProductsPage() {
           )}
         </div>
       </HoneycombPage>
+
+      <BackToTop />
 
       <AnimatePresence>
         {selected && <ProductDialog key={selected.id} product={selected} onClose={() => setSelected(null)} />}

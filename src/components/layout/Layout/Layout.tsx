@@ -26,7 +26,7 @@ export const Layout = () => {
       )}
       <ScrollProgressBar />
       <Navbar />
-      <main id="main-content" role="main" className={styles.main}>
+      <main id="main-content" role="main" tabIndex={-1} className={styles.main}>
         <RouteErrorBoundary>
           <Outlet />
         </RouteErrorBoundary>

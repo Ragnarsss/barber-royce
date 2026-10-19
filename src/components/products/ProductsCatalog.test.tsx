@@ -110,6 +110,55 @@ describe("ProductsCatalog: carga progresiva (BR-068)", () => {
     expect(screen.queryByRole("button", { name: "Ver más productos" })).not.toBeInTheDocument();
   });
 
+  // BR-089 (HU-EXP-004 CA-33): contador de avance y encendido en ola de cada lote nuevo.
+  it("con más de un lote muestra «Ves 12 de 30» y «Viste los 30 productos» al llegar al final, solo en el texto visual", () => {
+    const { container } = renderCatalog(30);
+    const progress = () => container.querySelector("[aria-hidden='true'] p");
+
+    expect(progress()?.textContent).toBe(`Ves ${PRODUCTS_PER_BATCH} de 30`);
+    reachSentinel();
+    expect(progress()?.textContent).toBe(`Ves ${PRODUCTS_PER_BATCH * 2} de 30`);
+    reachSentinel();
+    expect(progress()?.textContent).toBe("Viste los 30 productos");
+    // El lector de pantalla oye el aviso aria-live, no este texto repetido.
+    expect(progress()?.closest("[aria-hidden='true']")).not.toBeNull();
+  });
+
+  it("con un lote o menos no hay contador", () => {
+    const { container } = renderCatalog(PRODUCTS_PER_BATCH);
+
+    expect(container.textContent).not.toMatch(/Ves \d+ de/);
+  });
+
+  it("el primer lote no se enciende; el que llega después sí, y los anteriores se quedan en reposo", () => {
+    const { container } = renderCatalog(30);
+    const igniting = () => container.querySelectorAll("li[data-ignite]");
+
+    expect(igniting()).toHaveLength(0);
+
+    reachSentinel();
+    expect(igniting()).toHaveLength(PRODUCTS_PER_BATCH);
+    const first = container.querySelector("li[data-ignite]") as HTMLElement;
+    expect(first.getAttribute("aria-hidden")).toBeNull();
+    expect(within(first).getByRole("button").getAttribute("aria-label")).toBe(`Producto ${PRODUCTS_PER_BATCH + 1}, $${(PRODUCTS_PER_BATCH + 1) * 1000}`);
+  });
+
+  it("la ola avanza en diagonal: el retraso crece por columna y por fila, y el primer hexágono sale antes que el resto", () => {
+    const { container } = renderCatalog(30);
+    reachSentinel();
+
+    const delays = [...container.querySelectorAll<HTMLElement>("li[data-ignite]")].map((cell) =>
+      Number.parseInt(cell.style.getPropertyValue("--ignite-delay"), 10),
+    );
+
+    expect(delays).toHaveLength(PRODUCTS_PER_BATCH);
+    expect(delays[0]).toBeLessThan(delays[1]);
+    expect(delays[1]).toBeLessThan(delays[2]);
+    // Primer hexágono de la segunda fila: tan lejos de la esquina como el segundo de la primera.
+    expect(delays[3]).toBe(delays[1]);
+    expect(Math.min(...delays)).toBe(delays[0]);
+  });
+
   it("si el centinela todavía no está a la vista no se carga nada (el desplazamiento solo cambia el estado al cruzarlo)", () => {
     renderCatalog(30);
 

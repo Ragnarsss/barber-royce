@@ -727,6 +727,11 @@ y confiar en que el servicio está a la altura.
   Privacidad, When veo la cabecera de la página, Then el título está en Anton blanco con las diagonales
   de Equipo y Productos, ocupa poca altura en móvil y el contenido de debajo conserva un fondo liso con
   contraste suficiente; el `<h1>` sigue siendo uno solo por página.
+- CA-33 (2026-10-19, `BR-089`): Given bajo por el catálogo de Productos, When llega un lote nuevo, Then
+  los hexágonos se encienden en ola (marco blanco con un halo rojo, una sola vez), la foto de cada uno se
+  desplaza un poco dentro de su hexágono con el scroll (solo en escritorio), veo cuántos productos llevo
+  («Ves 12 de 24») y, pasada una pantalla, un botón hexagonal con un anillo de progreso me devuelve arriba;
+  con reducir movimiento no hay ola ni parallax y el botón sube de golpe.
 
 ---
 

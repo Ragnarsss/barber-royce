@@ -3387,6 +3387,48 @@ Criterios de aceptación:
 5. CLS móvil no empeora frente a `master` (CP-PERF-003).
 
 
+#### BR-089 — Productos: encendido en ola, parallax interior, contador y botón de volver arriba
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-068, BR-088
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-33)
+- RF/RNF: `RNF-A11Y-003`, `RNF-A11Y-005`, `RNF-PERF-003`
+
+**Origen (2026-10-19):** el usuario quiere aprovechar el scroll infinito de Productos (`BR-068`) para micro
+interacciones y deleite, con parallax u otra idea creativa, y echa en falta un botón de volver arriba.
+Hoy los hexágonos nuevos entran con un `scaleIn` genérico (`Honeycomb.tsx`), no hay indicación de cuántos
+productos se llevan ni de cuándo termina la lista, y solo existe `ScrollToTop`, que reinicia el scroll al
+cambiar de ruta.
+
+> **Decisión del usuario (2026-10-19):** dirección 2 de la propuesta de `diseno-visual`. Por defecto (no se
+> eligió): el botón es una pieza reutilizable y se monta solo en Productos.
+
+Alcance:
+1. **Encendido en ola:** los hexágonos de cada lote nuevo (no los de la carga inicial) encienden su marco
+   en blanco con un halo rojo una sola vez, escalonados, y vuelven al reposo. CSS, sin `setState` por scroll.
+2. **Parallax interior:** en escritorio, la foto de cada hexágono se desplaza ±6 % dentro de su forma según
+   su posición en pantalla (`useScroll` con `target` y `useTransform`); el hexágono no se mueve. Opt-in para
+   que Equipo no cambie.
+3. **Contador y final:** «Ves 12 de 24» con una barra de progreso fina bajo el panal y una marca al llegar
+   al final de la lista. El aviso para lectores de pantalla (`aria-live`) no se duplica.
+4. **Botón de volver arriba** (`BackToTop`, `src/components/common/`): hexágono de 3,5 rem con un anillo
+   que se llena con el avance de la página; aparece pasada una pantalla; sube con Lenis (o `scrollTo` sin
+   Lenis); devuelve el foco al contenido principal. Se monta en Productos.
+5. Con reducir movimiento: sin ola, sin parallax y el botón sube de golpe.
+6. Fuera de alcance: montar el botón en otras páginas; cambiar el tamaño del lote.
+
+Criterios de aceptación:
+1. Al llegar un lote, sus hexágonos se encienden en ola y quedan en reposo; los primeros no se animan
+   (HU-EXP-004 CA-33).
+2. Ningún destello supera 3 por segundo en un área grande y el halo no es una pulsación repetida
+   (CP-A11Y-005).
+3. Con reducir movimiento no hay ola ni parallax (CP-A11Y-003).
+4. El botón mide ≥ 44 px, se alcanza con teclado, tiene nombre accesible y no tapa el aviso de privacidad.
+5. TBT, CLS y LCP móviles de `/productos` no empeoran frente a la línea base, mediana de 3 (CP-PERF-003).
+6. `contrast.e2e.test.ts`, lint, tipos y tests en verde.
+7. **A confirmar por el usuario en el navegador:** la ola, el parallax y el anillo solo se ven en movimiento.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3503,6 +3545,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-086 | Navbar: hamburguesa hasta 1024 px | K | P1 | XS | Propuesta | BR-085 |
 | BR-087 | Filtros, búsqueda y fichas con un mismo lenguaje: chaflán, vidrio y brillo | K | P3 | S | Propuesta | BR-067, BR-063 |
 | BR-088 | Cabecera de página unificada: título en Anton y diagonales compactas | K | P3 | S | Propuesta | BR-087 |
+| BR-089 | Productos: encendido en ola, parallax interior, contador y botón de volver arriba | K | P3 | M | Propuesta | BR-068, BR-088 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
