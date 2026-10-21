@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform, type MotionStyle } from "framer-motion";
 import styles from "./SocialProof1.module.css";
 import socialProof560w from "@/assets/optimized/social_proof_560w.webp";
 import socialProof1120w from "@/assets/optimized/social_proof_1120w.webp";
@@ -17,6 +17,16 @@ import { usePinnedScene } from "@/hooks/usePinnedScene";
 import { ramp } from "@/utils/scrollReveal";
 import { LensFlare } from "./LensFlare";
 import { CUT, FLARE, REVEAL } from "./sceneTimeline";
+import { SP1_HEXAGON_SHAPE, SP1_HEXAGONS, type Sp1HexagonLayer, type Sp1HexagonName } from "./sp1Hexagons";
+import { FixedShape } from "@/components/common/FixedShape/FixedShape";
+
+/** Clase con el aspecto de cada capa de hexágonos (relleno, borde y brillo). */
+const HEXAGON_LAYER_CLASS: Record<Sp1HexagonLayer, string> = {
+  background: "hexBackground",
+  middle: "hexMiddle",
+  foreground: "hexForeground",
+  small: "hexSmall",
+};
 
 const PHOTO_SRCSET = `${socialProof560w} 560w, ${socialProof1120w} 1120w, ${socialProof1680w} 1680w`;
 const PHOTO_SIZES = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px";
@@ -83,9 +93,17 @@ export function SocialProof1() {
     ["0%", "8%"],
   );
 
-  // Derivados de MotionValue: cambian sin re-renderizar (BR-015)
-  const hexMiddle2Style = { opacity: useTransform(direction, (value) => (value === 1 ? 0.6 : 0.5)) };
-  const hexFg1Style = { scale: useTransform(speed, (value) => (value > SCROLL_SPEED_FAST ? 1.1 : 1)) };
+  // Movimiento de cada capa de hexágonos y lo propio de dos de ellos. Derivados de MotionValue: sin re-renderizar (BR-015)
+  const hexagonLayerStyle: Record<Sp1HexagonLayer, MotionStyle> = {
+    background: { y: layers.background.y, scale: layers.background.scale },
+    middle: { y: layers.middle.y, rotate: layers.middle.rotate },
+    foreground: { y: layers.foreground.y },
+    small: { y: layers.fast.y, x: layers.fast.x },
+  };
+  const hexagonOwnStyle: Partial<Record<Sp1HexagonName, MotionStyle>> = {
+    hexagonMiddle2: { opacity: useTransform(direction, (value) => (value === 1 ? 0.6 : 0.5)) },
+    hexagonForeground1: { scale: useTransform(speed, (value) => (value > SCROLL_SPEED_FAST ? 1.1 : 1)) },
+  };
 
   return (
     <div ref={pinRef} className={`${styles.pin} ${scrub ? styles.pinned : ""}`}>
@@ -94,81 +112,40 @@ export function SocialProof1() {
         className={styles.socialProof}
         ref={sectionRef}
       >
-        {/* ═══════════════════════════════════════════════
-            CAPA DE FONDO - Hexágonos grandes
-        ═══════════════════════════════════════════════ */}
-        <motion.div
-          className={styles.hexagonBackground1}
-          style={{ y: layers.background.y, scale: layers.background.scale }}
-        />
-        <motion.div
-          className={styles.hexagonBackground2}
-          style={{ y: layers.background.y, scale: layers.background.scale }}
-        />
-        <motion.div
-          className={styles.hexagonBackground3}
-          style={{ y: layers.background.y, scale: layers.background.scale }}
-        />
-        <motion.div
-          className={styles.hexagonBackground4}
-          style={{ y: layers.background.y, scale: layers.background.scale }}
-        />
+        {/* Degradados de los hexágonos (BR-092): un SVG sin tamaño que los demás usan por id */}
+        <svg className={styles.hexDefs} aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="sp1-hex-background" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" className={styles.stopBackgroundFrom} />
+              <stop offset="1" className={styles.stopBackgroundTo} />
+            </linearGradient>
+            <linearGradient id="sp1-hex-middle" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" className={styles.stopMiddleFrom} />
+              <stop offset="1" className={styles.stopMiddleTo} />
+            </linearGradient>
+            <linearGradient id="sp1-hex-foreground" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" className={styles.stopForegroundFrom} />
+              <stop offset="1" className={styles.stopForegroundTo} />
+            </linearGradient>
+          </defs>
+        </svg>
 
-        {/* ═══════════════════════════════════════════════
-            CAPA MEDIA - Hexágonos medianos con rotación
-        ═══════════════════════════════════════════════ */}
-        <motion.div
-          className={styles.hexagonMiddle1}
-          style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
-        />
-        <motion.div
-          className={styles.hexagonMiddle2}
-          style={{
-            y: layers.middle.y,
-            rotate: layers.middle.rotate,
-            ...hexMiddle2Style,
-          }}
-        />
-        <motion.div
-          className={styles.hexagonMiddle3}
-          style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
-        />
-        <motion.div
-          className={styles.hexagonMiddle4}
-          style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
-        />
-
-        {/* ═══════════════════════════════════════════════
-            CAPA FRONTAL - Hexágonos destacados
-        ═══════════════════════════════════════════════ */}
-        <motion.div
-          className={styles.hexagonForeground1}
-          style={{ y: layers.foreground.y, ...hexFg1Style }}
-        />
-        <motion.div
-          className={styles.hexagonForeground2}
-          style={{ y: layers.foreground.y }}
-        />
-
-        {/* ═══════════════════════════════════════════════
-            CAPA RÁPIDA - Hexágonos pequeños dinámicos
-        ═══════════════════════════════════════════════ */}
-        <motion.div
-          className={styles.hexagonSmall1}
-          style={{ y: layers.fast.y, x: layers.fast.x }}
-        />
-        <motion.div
-          className={styles.hexagonSmall2}
-          style={{ y: layers.fast.y, x: layers.fast.x }}
-        />
-        <motion.div
-          className={styles.hexagonSmall3}
-          style={{ y: layers.fast.y, x: layers.fast.x }}
-        />
-        <motion.div
-          className={styles.hexagonSmall4}
-          style={{ y: layers.fast.y, x: layers.fast.x }}
-        />
+        {/* Hexágonos de fondo en cuatro capas de parallax (fondo, media, frente y rápida), uno por elemento: el
+            movimiento de cada uno es relativo a su propio tamaño y a su propio centro (BR-092) */}
+        {(Object.entries(SP1_HEXAGONS) as Array<[Sp1HexagonName, (typeof SP1_HEXAGONS)[Sp1HexagonName]]>).map(([name, hexagon]) => (
+          <motion.div
+            key={name}
+            className={`${styles[name]} ${styles[HEXAGON_LAYER_CLASS[hexagon.layer]]}`}
+            style={{ ...hexagonLayerStyle[hexagon.layer], ...hexagonOwnStyle[name], "--hex-rotate": `${hexagon.rotate}deg` } as MotionStyle}
+            data-shape
+          >
+            <FixedShape shape={SP1_HEXAGON_SHAPE}>
+              {(hexagon.layer === "middle" || hexagon.layer === "foreground") && (
+                <polygon className={styles.glow} points={SP1_HEXAGON_SHAPE.points} />
+              )}
+            </FixedShape>
+          </motion.div>
+        ))}
 
         <div className={styles.container} ref={ref}>
           <motion.div

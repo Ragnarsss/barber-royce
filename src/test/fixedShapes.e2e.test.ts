@@ -67,7 +67,9 @@ describe.skipIf(!chromePath)("figuras de fondo con geometría fija (BR-091, HU-E
     await new Promise((resolve) => setTimeout(resolve, 1800));
 
     const result = await page.evaluate(() => {
-      const ratioErrors = [...document.querySelectorAll<HTMLElement>("[data-shape]")].map((shape) => {
+      // Solo las figuras que se ven en esta ventana: las ocultas (display: none) miden 0 × 0
+      const visible = [...document.querySelectorAll<HTMLElement>("[data-shape]")].filter((shape) => shape.offsetWidth > 0 && shape.offsetHeight > 0);
+      const ratioErrors = visible.map((shape) => {
         const box = shape.querySelector("svg")!.viewBox.baseVal;
         return Math.abs(shape.offsetWidth / shape.offsetHeight / (box.width / box.height) - 1);
       });

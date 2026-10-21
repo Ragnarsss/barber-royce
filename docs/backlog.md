@@ -3557,7 +3557,7 @@ Criterios de aceptación:
 #### BR-092 — SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-091
-- Estado: Propuesta
+- Estado: En curso
 - Historia de usuario: HU-EXP-004 (CA-35)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
 
@@ -3601,8 +3601,18 @@ Criterios de aceptación:
    (HU-EXP-004 CA-35).
 2. Ningún hexágono de SP1 ni de SP2 lleva `backdrop-filter`, `box-shadow` recortado por `clip-path` ni
    `transition: transform` junto con un `transform` de framer (lo comprueba un test sobre los CSS Modules).
-3. La cantidad de elementos animados por scroll en SP1 y SP2 baja frente a hoy (25), sin perder las capas de
-   parallax.
+3. El costo de pintado y de composición al recorrer SP1 y SP2 (trace con la CPU frenada 4×, mediana de 3) no sube
+   frente a la línea base.
+
+> **Alcance ajustado (2026-10-21, decisión del usuario):** se mantiene un elemento por hexágono, sin agrupar por
+> capa. El parallax desplaza cada hexágono un porcentaje de su propio alto, y la escala y el giro son sobre su propio
+> centro: un grupo del tamaño de la sección cambiaría el movimiento. El antiguo criterio 3 (bajar de 25 elementos
+> animados) pasa a ser el costo medido. Línea base (2026-10-21, trace al recorrer cada sección, mediana de 3):
+> - SP2 en móvil @3: Paint 49 ms, Raster 73 ms, estilos 320 ms, composición 440 ms.
+> - SP1 a 1440: Paint 82 ms, Raster 10 ms, estilos 268 ms, composición 290 ms.
+> - SP2 a 1440: Paint 102 ms, Raster 92 ms, estilos 334 ms, composición 509 ms.
+>
+> El hexágono de 1000 px de SP2 no tiene capa propia en móvil: se repinta con la página al moverse.
 4. Con reducir movimiento no hay parallax (CP-A11Y-003).
 5. TBT, CLS y LCP móviles de `/` no empeoran frente a la línea base, mediana de 3 (CP-PERF-003). Se anota el
    costo del hexágono grande de SP2 antes y después.
@@ -3777,7 +3787,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-089 | Productos: encendido en ola, parallax interior, contador y botón de volver arriba | K | P3 | M | Propuesta | BR-068, BR-088 |
 | BR-090 | Productos de prueba: 50 filas con fotos de stock que cargan | K | P3 | XS | Propuesta | — |
 | BR-091 | Hero y CTA1: figuras de fondo en SVG con geometría fija | K | P3 | M | En curso | BR-055, BR-058 |
-| BR-092 | SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales | K | P3 | M | Propuesta | BR-091 |
+| BR-092 | SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales | K | P3 | M | En curso | BR-091 |
 | BR-093 | Hero y CTA1: fotos centradas en el rostro y alto de sección acotado | K | P3 | S | En curso | BR-091 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
