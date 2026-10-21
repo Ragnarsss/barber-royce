@@ -3468,6 +3468,145 @@ Criterios de aceptación:
    se reemplaza por fotos propias antes de publicar el catálogo real.
 
 
+#### BR-091 — Hero y CTA1: figuras de fondo en SVG con geometría fija
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-055, BR-058
+- Estado: En curso
+- Historia de usuario: HU-EXP-004 (CA-34)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
+
+**Origen (2026-10-21):** en la auditoría de SVG de la landing (2026-10-19) y en las capturas del usuario a
+1024×1117 y 1440×1289, las figuras de fondo del Hero y de CTA1 cambian de forma según la proporción de la
+pantalla. La causa es que son `clip-path: polygon()` con porcentajes sobre cajas en `vw` × `vh`: cada punto se
+estira por separado en cada eje. Así se deforman:
+- Los 6 triángulos del Hero (`Hero.module.css`, `.leftTriangle*` y `.rightTriangle*`).
+- Los hexágonos irregulares de CTA1 (`.textHexagon*`, de 40vw × 80vh).
+- El pentágono translúcido (`.imageHexagonBackground`).
+- La figura blanca que recorta la foto (`.imageHexagon`, de 50vw × 100vh).
+
+Al usuario le gusta que los hexágonos sean irregulares, pero la irregularidad tiene que ser la diseñada, no la
+que deja cada pantalla.
+
+Medición en un build local (2026-10-21): la relación ancho/alto de las figuras de CTA1 cambia con la ventana.
+- `.textHexagon` mide 0,89 a 1920×1080, 1366×768 y 1280×720; 0,80 a 1440×900; 0,56 a 1440×1289; y 0,46 a
+  1024×1117 y 772×839, el doble de alto que lo diseñado.
+- Las demás figuras siguen el mismo patrón. `.imageHexagonForeground` hereda la deformación por ir en % de
+  `.imageHexagon`.
+- Las barras de luz no se deforman: ya son un SVG dimensionado solo por el ancho.
+
+Hay dos efectos secundarios:
+- Con la figura más alta que ancha, la foto (`.ctaImage`, anclada abajo) queda con mucho blanco encima.
+- El hexágono rojo mide 40vw y `.textContent` hasta 420 px más su relleno, así que bajo ~1100 px de ancho el
+  texto se sale del hexágono.
+
+> **Decisión del usuario (2026-10-21):** la forma de referencia es la que se ve a **1920×1080** (relación 0,89
+> en CTA1). Prioridad P3.
+
+**Causa:** los porcentajes de `polygon()` se resuelven contra el ancho para la x y contra el alto para la y. Si
+la caja va en `vw` × `vh`, el ángulo de cada lado depende de la proporción de la ventana. El filo de luz de la
+diagonal del Hero tiene el mismo problema: es un degradado `to bottom right` que solo cae en la diagonal mientras
+la caja conserve su proporción.
+
+Alcance:
+1. Cada figura decorativa de estas dos secciones se dibuja como `<svg>` en línea, con un `viewBox` y puntos fijos.
+   La sección recorta lo que sobra, así que la figura nunca se estira: los ángulos y la irregularidad de los
+   hexágonos son iguales en cualquier proporción.
+2. Una figura de referencia por forma: los puntos actuales tal como se ven a 1920×1080. Cada figura se dimensiona
+   con una sola medida (ancho) y una relación fija (`viewBox` con `preserveAspectRatio`, alto automático), nunca
+   con `vw` y `vh` por separado. Si hace falta, se limita para que no se pase en ventanas bajas, por ejemplo con
+   `min(vw, vh * k)`.
+3. El texto de CTA1 queda dentro del hexágono rojo en todo el rango de escritorio: el bloque escala con la misma
+   unidad que la figura, o la figura se dimensiona a partir del bloque.
+4. Se conservan las capas de parallax del Hero (fondo, media y rápida) y las de CTA1 (lenta, media y rápida). Las
+   figuras que comparten capa van en un mismo `<svg>` animado con `MotionValue`; no se anima nada dentro del SVG
+   en cada fotograma.
+5. El filo de luz de la diagonal del Hero pasa a ser un trazo real (`<line>` o `<path>` con
+   `vector-effect: non-scaling-stroke`), nítido a cualquier tamaño.
+6. La figura blanca de CTA1 que recorta la foto mantiene un ángulo fijo en su punta. Puede seguir siendo un
+   `clip-path` si todos sus puntos se expresan en una sola unidad, por ejemplo en `vh`. Se conservan el zoom de
+   la foto (`BR-079`), su entrada con `fadeInRight` y las barras de luz tal como están.
+7. Colores con tokens (`fill` y `stroke` desde CSS, sin literales en el SVG) y `aria-hidden="true"` en cada SVG
+   decorativo (skill `svg-workflow`).
+8. Móvil sin cambios: estas figuras siguen existiendo solo desde 769 px.
+9. Fuera de alcance:
+   - Los hexágonos de SocialProof1 y SocialProof2.
+   - Los defectos de rotación y de efectos que el `clip-path` recorta en SocialProof1 (vistos en la misma
+     auditoría).
+   - Animaciones nuevas (trazos que se dibujan, cambios de forma). Se deciden después con `diseno-visual`.
+
+Criterios de aceptación:
+1. A 1920×1080, 1440×900, 1440×1289, 1366×768, 1280×720, 1024×1117, 1024×768, 900×1100 y 772×839, cada figura
+   conserva su relación ancho/alto (medida con `getBoundingClientRect` sin rotación, con una tolerancia de ±2 %) y
+   sus ángulos; solo cambia cuánto recorta el borde de la sección (HU-EXP-004 CA-34).
+2. En esas medidas, el texto de CTA1 no se sale del hexágono rojo y la foto no queda con una franja blanca encima
+   mayor que la de 1920×1080.
+3. El filo de luz del Hero sigue la diagonal del triángulo en esas medidas y se ve de 1 px nítido.
+4. El parallax del Hero y de CTA1 se ve igual que antes al bajar, y con reducir movimiento no hay parallax
+   (CP-A11Y-003).
+5. Ninguna figura del Hero ni de CTA1 queda con un `clip-path` de porcentajes sobre una caja en `vw` × `vh` (lo
+   comprueba un test sobre los CSS Modules).
+6. TBT, CLS y LCP móviles y de escritorio de `/` no empeoran frente a la línea base medida antes del cambio,
+   mediana de 3 (CP-PERF-003).
+7. Lint, tipos, tests, `breakpoints.test.ts` y `contrast.e2e.test.ts` en verde.
+8. **A confirmar por el usuario en el navegador:** la irregularidad de los hexágonos es la que eligió.
+
+
+#### BR-092 — SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-091
+- Estado: Propuesta
+- Historia de usuario: HU-EXP-004 (CA-35)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
+
+**Origen (2026-10-21):** auditoría de SVG de la landing (2026-10-19). SocialProof1 tiene 14 hexágonos y
+SocialProof2 tiene 11, cada uno en su propio `motion.div` con `clip-path`. Varios no se ven como fueron
+diseñados.
+
+> **Decisión del usuario (2026-10-21):** resolver primero los hallazgos importantes (`BR-091` y este ticket) y
+> después repetir la auditoría. Los colores literales de Reviews y los íconos duplicados de lucide se deciden
+> tras esa nueva auditoría.
+
+**Causa:**
+1. **Se pierde la rotación.** En `SocialProof1.module.css`, `.hexagonBackground*`, `.hexagonForeground*` y
+   `.hexagonSmall*` se rotan con `transform: rotate(…)`. Framer escribe el `transform` en línea (`y`, `scale`, `x`)
+   y lo pisa (`SocialProof1.tsx:100-170`). En SocialProof2 no pasa porque se usa la propiedad `rotate:`.
+2. **Efectos que se pagan y no se ven.** El `clip-path` recorta todo el `box-shadow` (el brillo de
+   `.hexagonMiddle*` y `.hexagonForeground*`) y el `border` de los cuatro lados diagonales. Además, los 4
+   `.hexagonBackground*` llevan `backdrop-filter: blur(2px)` sobre un fondo casi liso.
+3. **Una transición que pelea con framer.** `transition: transform 0.1s` en `.hexagonForeground*` (SP1) y en
+   `.hexagonFast1` (SP2): framer actualiza el `transform` en cada fotograma y la transición lo persigue con
+   retraso.
+4. **Un hexágono muy grande en móvil.** `.hexagon` de SocialProof2 mide 1000 × 1000 px y también se ve en
+   móvil. Hay que medir su costo (capas y memoria en DevTools) antes de decidir.
+
+**Arreglo:**
+1. Hexágonos como `<svg>` en línea con `viewBox` fijo:
+   - Un `<svg>` por capa de parallax cuando todos sus hexágonos comparten movimiento.
+   - Un elemento aparte para los que tienen animación propia (opacidad según la dirección, escala según la
+     velocidad, desplazamiento en x según la dirección).
+   - Rotación de cada hexágono en el `transform` de su `<polygon>` (fija, no animada).
+2. El borde y el brillo son un `stroke` real en los seis lados (el brillo como un segundo trazo ancho y
+   translúcido, sin `filter` animado). Sin `backdrop-filter`.
+3. Se quita la `transition: transform` de los elementos que mueve framer.
+4. El hexágono grande de SP2: se mide antes y después y, si pesa, se dibuja solo la parte visible o se reduce en
+   móvil.
+5. Colores con tokens, `aria-hidden="true"` y la misma visibilidad por cortes que hoy (ADR-009).
+6. Fuera de alcance: las animaciones nuevas (se deciden con `diseno-visual`), Reviews y los íconos.
+
+Criterios de aceptación:
+1. Cada hexágono de SocialProof1 muestra la rotación de su diseño y un borde continuo en sus seis lados
+   (HU-EXP-004 CA-35).
+2. Ningún hexágono de SP1 ni de SP2 lleva `backdrop-filter`, `box-shadow` recortado por `clip-path` ni
+   `transition: transform` junto con un `transform` de framer (lo comprueba un test sobre los CSS Modules).
+3. La cantidad de elementos animados por scroll en SP1 y SP2 baja frente a hoy (25), sin perder las capas de
+   parallax.
+4. Con reducir movimiento no hay parallax (CP-A11Y-003).
+5. TBT, CLS y LCP móviles de `/` no empeoran frente a la línea base, mediana de 3 (CP-PERF-003). Se anota el
+   costo del hexágono grande de SP2 antes y después.
+6. Lint, tipos, tests y `breakpoints.test.ts` en verde.
+7. **A confirmar por el usuario en el navegador:** el aspecto de los hexágonos con borde y brillo.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3586,6 +3725,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-088 | Cabecera de página unificada: título en Anton y diagonales compactas | K | P3 | S | Propuesta | BR-087 |
 | BR-089 | Productos: encendido en ola, parallax interior, contador y botón de volver arriba | K | P3 | M | Propuesta | BR-068, BR-088 |
 | BR-090 | Productos de prueba: 50 filas con fotos de stock que cargan | K | P3 | XS | Propuesta | — |
+| BR-091 | Hero y CTA1: figuras de fondo en SVG con geometría fija | K | P3 | M | En curso | BR-055, BR-058 |
+| BR-092 | SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales | K | P3 | M | Propuesta | BR-091 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
