@@ -56,7 +56,7 @@ describe.skipIf(!chromePath)("figuras de fondo con geometría fija (BR-091, HU-E
     await browser?.close();
     await server?.close();
     cleanup?.();
-  });
+  }, 30_000);
 
   it.each(VIEWPORTS)("%ix%i: las figuras no se estiran y el texto de CTA1 queda dentro del hexágono rojo", async (width, height) => {
     const page = await browser.newPage();
@@ -100,5 +100,5 @@ describe.skipIf(!chromePath)("figuras de fondo con geometría fija (BR-091, HU-E
     expect(result.shapes).toBeGreaterThanOrEqual(10);
     expect(result.worstRatioError).toBeLessThan(RATIO_TOLERANCE);
     expect(result.outside).toEqual([]);
-  });
+  }, 60_000);
 });

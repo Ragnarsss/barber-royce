@@ -32,10 +32,10 @@ describe("BR-091: figuras de CTA1 con geometría fija", () => {
     }
   });
 
-  it("criterio 5: los paneles que llenan el alto llevan la punta en vh, no en porcentajes del ancho", () => {
+  it("criterio 5: los paneles que llenan el alto miden su punta sobre el alto de la sección, no en porcentajes del ancho", () => {
     const figure = desktop.match(/\n {2}\.imageHexagon\s*\{([^}]*)\}/)?.[1] ?? "";
-    expect(figure).toMatch(/clip-path:\s*polygon\(26\.67vh 0,/);
-    expect(rule("imageHexagonBackground")).toMatch(/clip-path:\s*polygon\(24\.44vh 0,/);
+    expect(figure).toMatch(/clip-path:\s*polygon\(calc\(var\(--cta-height\) \* 0\.2667\) 0,/);
+    expect(rule("imageHexagonBackground")).toMatch(/clip-path:\s*polygon\(calc\(var\(--cta-height\) \* 0\.2444\) 0,/);
   });
 
   it("criterio 2: los hexágonos del texto se anclan al bloque de texto con las mismas medidas que lo ubican", () => {

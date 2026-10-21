@@ -178,8 +178,8 @@ export function Hero() {
           width="842"
           height="925"
           onLoad={handleImageLoad}
-          // En móvil llena la portada; en escritorio toma su proporción y llena el ancho de su caja
-          style={{ width: "100%", height: isWide ? "auto" : "100%" }}
+          // Llena su caja en todo tamaño: el encuadre (object-fit y punto de enfoque) lo pone el CSS (BR-093)
+          style={{ width: "100%", height: "100%" }}
         />
       </motion.picture>
 

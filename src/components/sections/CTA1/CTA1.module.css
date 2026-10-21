@@ -214,17 +214,17 @@
 }
 
 /*
- * Panel translúcido detrás de la figura blanca: como ella, llena el alto de la sección. Su punta va en vh (24,44vh son
- * los 264 px de 1920 × 1080), así que el ángulo no cambia con el ancho de la ventana.
+ * Panel translúcido detrás de la figura blanca: como ella, llena el alto de la sección (un 5 % más). Su punta se mide
+ * sobre ese alto (0,2444 son los 264 px de 1080 en 1920 × 1080), así que el ángulo no cambia con la ventana.
  */
 .imageHexagonBackground {
   position: absolute;
   right: -3%;
   bottom: -5%;
   background: color-mix(in srgb, var(--color-brand-white) 15%, transparent);
-  clip-path: polygon(24.44vh 0, 100% 0, 100% 100%, 24.44vh 100%, 0 55%);
+  clip-path: polygon(calc(var(--cta-height) * 0.2444) 0, 100% 0, 100% 100%, calc(var(--cta-height) * 0.2444) 100%, 0 55%);
   width: 55vw;
-  height: 105vh;
+  height: 105%;
   z-index: 0;
 }
 
@@ -364,9 +364,19 @@
     --cta-text-x: calc(max(0px, (100% - var(--cta-max-width)) / 2) + var(--cta-gutter) + var(--cta-text-w) / 2);
     --cta-hex-scale: 1.83;
     --cta-hex-w: calc(var(--cta-text-w) * var(--cta-hex-scale));
+    /*
+     * Alto acotado (BR-093): llena la ventana, pero en ventanas más altas que 4:3 deja de crecer (tope de 75vw); nunca
+     * menos de 500 px. Es un mínimo: si el texto necesita más, la sección crece.
+     */
+    --cta-height: clamp(500px, 100svh, 75vw);
+    /*
+     * Punto de enfoque de la foto (ajustable a ojo). El rostro está en el lado izquierdo de la foto, así que se alinea a
+     * la izquierda: es lo más al centro de la figura que lo deja el recorte, sin que la punta le tape la nariz.
+     */
+    --cta-photo-focus: 0% 45%;
 
-    height: 100vh;
-    min-height: 500px;
+    height: auto;
+    min-height: var(--cta-height);
     flex-direction: row;
   }
 
@@ -448,12 +458,15 @@
   }
 
   .imageHexagon {
-    inset: auto 0 0 auto;
+    inset: 0 0 0 auto;
     background: var(--color-brand-white);
-    /* La punta va en vh (26,67vh son los 288 px de 1920 × 1080): su ángulo no cambia con el ancho de la ventana (BR-091) */
-    clip-path: polygon(26.67vh 0, 100% 0, 100% 100%, 26.67vh 100%, 0 50%);
+    /*
+     * La punta se mide sobre el alto de la sección (BR-091, BR-093): 0,2667 son los 288 px de 1080 en 1920 × 1080, así
+     * que su ángulo no cambia con la ventana.
+     */
+    clip-path: polygon(calc(var(--cta-height) * 0.2667) 0, 100% 0, 100% 100%, calc(var(--cta-height) * 0.2667) 100%, 0 50%);
     width: 50vw;
-    height: 100vh;
+    height: 100%;
     pointer-events: auto;
   }
 
@@ -461,10 +474,18 @@
     content: none;
   }
 
+  /* La foto llena la figura en cualquier proporción (BR-093): se recortan los bordes, nunca el rostro */
   .ctaImage {
-    right: -6%;
-    width: 112%;
-    max-width: 100%;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+  }
+
+  .ctaImage img {
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--cta-photo-focus);
   }
 }
 

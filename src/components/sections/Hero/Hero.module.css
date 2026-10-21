@@ -508,24 +508,30 @@
     display: block;
   }
 
+  /*
+   * Alto acotado (BR-093): llena la ventana, pero en ventanas más altas que 4:3 deja de crecer (tope de 75vw) y conserva
+   * la composición. Es un mínimo, no un alto fijo: si el texto necesita más en una ventana chica, la portada crece.
+   */
   .hero {
-    height: 100vh;
-    min-height: 100vh;
+    --hero-height: min(100svh, 75vw);
+    /* Punto de enfoque de la foto: el rostro queda lo más al centro que permite el recorte (ajustable a ojo) */
+    --hero-photo-focus: 20% 40%;
+
+    height: auto;
+    min-height: var(--hero-height);
     align-items: center;
   }
 
   .heroImageSEO {
-    inset: auto 0 0 auto;
+    inset: 0 0 0 auto;
     width: 50%;
     height: 100%;
-    object-fit: contain;
-    object-position: right bottom;
   }
 
-  /* Sin el ajuste de la foto móvil: la imagen toma su proporción y llena el ancho de su caja */
+  /* La foto llena la mitad derecha en cualquier proporción (BR-093): se recortan los bordes, nunca el rostro */
   .heroImageSEO img {
-    object-fit: fill;
-    object-position: 50% 50%;
+    object-fit: cover;
+    object-position: var(--hero-photo-focus);
   }
 
   .heroImageSEO::after,

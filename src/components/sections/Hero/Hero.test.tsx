@@ -262,7 +262,7 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
     expect(source?.getAttribute("srcset")).toMatch(/hero_mobile_\d+w\.webp 780w/);
   });
 
-  it("la foto llena la portada en móvil (alto 100 %) y toma su proporción en escritorio, sin `!important` en el CSS", () => {
+  it("BR-093: la foto llena su caja en móvil y en escritorio; en escritorio con `cover` y un punto de enfoque, sin `!important`", () => {
     renderHero();
     expect(document.querySelector("picture img")?.getAttribute("style") ?? "").toMatch(/height:\s*100%/);
     cleanup();
@@ -270,11 +270,19 @@ describe("Hero: fondos con profundidad (BR-055, HU-EXP-004 CA-08)", () => {
     vi.stubGlobal("matchMedia", (query: string) => ({ matches: query === "(min-width: 769px)", media: query, addEventListener() {}, removeEventListener() {} }));
     try {
       renderHero();
-      expect(document.querySelector("picture img")?.getAttribute("style") ?? "").toMatch(/height:\s*auto/);
+      expect(document.querySelector("picture img")?.getAttribute("style") ?? "").toMatch(/height:\s*100%/);
     } finally {
       vi.stubGlobal("matchMedia", undefined);
     }
+    const desktop = heroCss.slice(heroCss.indexOf("@media (min-width: 769px)"));
+    expect(desktop).toMatch(/\.heroImageSEO img\s*\{[^}]*object-fit:\s*cover;[^}]*object-position:\s*var\(--hero-photo-focus\)/);
     expect(heroCss).not.toMatch(/!important/);
+  });
+
+  it("BR-093: en escritorio la portada mide al menos el alto de la ventana, con tope de 75vw, y nunca corta su contenido", () => {
+    const desktop = heroCss.slice(heroCss.indexOf("@media (min-width: 769px)"));
+    expect(desktop).toMatch(/--hero-height:\s*min\(100svh, 75vw\)/);
+    expect(desktop).toMatch(/\.hero\s*\{[^}]*height:\s*auto;[^}]*min-height:\s*var\(--hero-height\)/);
   });
 
   it("ADR-002: los triángulos, el grano y el haz no traen colores escritos a mano", () => {
