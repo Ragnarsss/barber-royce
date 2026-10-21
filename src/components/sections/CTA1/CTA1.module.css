@@ -12,6 +12,7 @@
   --cta-glow: color-mix(in srgb, var(--color-brand-white) 70%, transparent);
   --cta-glow-red: color-mix(in srgb, var(--color-brand-primary) 70%, transparent);
   --cta-cut: 10px;
+  --cta-max-width: 1400px;
 
   height: auto;
   min-height: calc(100vh - 80px);
@@ -38,7 +39,7 @@
 /* ───── Contenedor principal: 1 columna en móvil, 2 en escritorio ───── */
 .container {
   order: 1;
-  max-width: 1400px;
+  max-width: var(--cta-max-width);
   margin: 0 auto;
   padding: 0;
   display: grid;
@@ -185,25 +186,43 @@
 
 /* ===== CAPAS DE HEXÁGONOS PARALLAX ===== */
 
-/* Capa de fondo - hexágonos semi-transparentes más grandes */
+/*
+ * Geometría fija (BR-091): los tres hexágonos del texto son SVG (`ctaShapes.ts`) con la forma que tenían a 1920 × 1080;
+ * solo se fija su ancho y el alto sale de su proporción. Antes eran `clip-path` en porcentajes sobre cajas en vw × vh y se
+ * estiraban con la ventana (el doble de altos en 1024 × 1117).
+ *
+ * Se anclan al bloque de texto, no al borde de la sección: el grupo se centra en él (`--cta-text-x` y el 50 % de alto,
+ * que es donde queda el texto) y el rojo mide `--cta-hex-scale` veces su ancho, lo justo para contenerlo rotado (a
+ * 1920 px son los 768 px del diseño). El `translate` vertical descuenta lo que cada capa de parallax ya baja con la
+ * sección en reposo (la mitad de su recorrido: 12,5 % la media, 5 % la lenta, 22,5 % la rápida), y las distancias
+ * entre los tres son las de 1920 px en proporción al ancho del rojo. Las variables se definen desde 769 px (abajo).
+ */
+
+/* Capa de fondo - hexágono semitransparente más grande */
 .textHexagonBackground {
   position: absolute;
-  top: -5%;
-  left: -3%;
-  background: color-mix(in srgb, var(--color-brand-primary) 25%, transparent);
-  clip-path: polygon(45% 0%, 85% 15%, 95% 65%, 65% 100%, 15% 85%, 5% 35%);
-  width: 45vw;
-  height: 90vh;
+  top: 50%;
+  left: calc(var(--cta-text-x) - var(--cta-hex-w) * 0.0125);
+  width: calc(var(--cta-hex-w) * 1.125);
+  translate: -50% -61.11%;
   rotate: 20deg;
   z-index: 0;
 }
 
+.textHexagonBackground polygon {
+  fill: color-mix(in srgb, var(--color-brand-primary) 25%, transparent);
+}
+
+/*
+ * Panel translúcido detrás de la figura blanca: como ella, llena el alto de la sección. Su punta va en vh (24,44vh son
+ * los 264 px de 1920 × 1080), así que el ángulo no cambia con el ancho de la ventana.
+ */
 .imageHexagonBackground {
   position: absolute;
   right: -3%;
   bottom: -5%;
   background: color-mix(in srgb, var(--color-brand-white) 15%, transparent);
-  clip-path: polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 55%);
+  clip-path: polygon(24.44vh 0, 100% 0, 100% 100%, 24.44vh 100%, 0 55%);
   width: 55vw;
   height: 105vh;
   z-index: 0;
@@ -212,14 +231,16 @@
 /* Capa principal - hexágono rojo del texto */
 .textHexagon {
   position: absolute;
-  top: 0;
-  left: 0;
-  background: var(--color-brand-primary);
-  clip-path: polygon(50% 0%, 90% 20%, 100% 70%, 70% 100%, 20% 80%, 10% 30%);
-  width: 40vw;
-  height: 80vh;
+  top: 50%;
+  left: var(--cta-text-x);
+  width: var(--cta-hex-w);
+  translate: -50% -62.5%;
   rotate: 15deg;
   z-index: 1;
+}
+
+.textHexagon polygon {
+  fill: var(--color-brand-primary);
 }
 
 /*
@@ -251,16 +272,20 @@
   );
 }
 
-/* Hexágono rojo detrás de la foto: antes era rojo al 30 % sobre blanco (se leía rosado) */
+/*
+ * Hexágono rojo detrás de la foto: antes era rojo al 30 % sobre blanco (se leía rosado). Desde BR-091 es un SVG de
+ * geometría fija al 62 % del ancho de la figura; el alto sale de su proporción, como la foto, que también va por ancho.
+ */
 .imageHexagonForeground {
   position: absolute;
   right: 10%;
   bottom: 10%;
-  background: var(--color-brand-primary);
-  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
   width: 62%;
-  height: 62%;
   pointer-events: none;
+}
+
+.imageHexagonForeground polygon {
+  fill: var(--color-brand-primary);
 }
 
 /*
@@ -285,15 +310,17 @@
 /* Capa frontal - hexágono decorativo con opacidad */
 .textHexagonForeground {
   position: absolute;
-  top: 15%;
-  left: 8%;
-  background: color-mix(in srgb, var(--color-accent-600) 50%, transparent);
-  clip-path: polygon(45% 5%, 85% 20%, 90% 65%, 60% 95%, 20% 75%, 15% 35%);
-  width: 30vw;
-  height: 60vh;
+  top: 50%;
+  left: calc(var(--cta-text-x) + var(--cta-hex-w) * 0.075);
+  width: calc(var(--cta-hex-w) * 0.75);
+  translate: -50% -58.33%;
   rotate: 10deg;
   z-index: 1;
   pointer-events: none;
+}
+
+.textHexagonForeground polygon {
+  fill: color-mix(in srgb, var(--color-accent-600) 50%, transparent);
 }
 
 /*
@@ -326,6 +353,18 @@
  */
 @media (min-width: 769px) {
   .cta {
+    /*
+     * Dónde queda el bloque de texto, para anclarle los hexágonos (BR-091): el contenedor centrado, su margen y el ancho
+     * del texto, que se encoge con la columna. Las mismas variables fijan esas medidas en `.container`, `.content` y
+     * `.textContent`, así que no se desalinean.
+     */
+    --cta-gutter: 40px;
+    --cta-text-max: 420px;
+    --cta-text-w: min(var(--cta-text-max), 50% - 2 * var(--cta-gutter));
+    --cta-text-x: calc(max(0px, (100% - var(--cta-max-width)) / 2) + var(--cta-gutter) + var(--cta-text-w) / 2);
+    --cta-hex-scale: 1.83;
+    --cta-hex-w: calc(var(--cta-text-w) * var(--cta-hex-scale));
+
     height: 100vh;
     min-height: 500px;
     flex-direction: row;
@@ -345,12 +384,12 @@
   }
 
   .content {
-    padding: 60px 40px;
+    padding: 60px var(--cta-gutter);
   }
 
   .textContent {
     gap: 16px;
-    max-width: 420px;
+    max-width: var(--cta-text-max);
     padding-left: 20px;
     align-items: normal;
     text-align: inherit;
@@ -411,7 +450,8 @@
   .imageHexagon {
     inset: auto 0 0 auto;
     background: var(--color-brand-white);
-    clip-path: polygon(30% 0, 100% 0, 100% 100%, 30% 100%, 0 50%);
+    /* La punta va en vh (26,67vh son los 288 px de 1920 × 1080): su ángulo no cambia con el ancho de la ventana (BR-091) */
+    clip-path: polygon(26.67vh 0, 100% 0, 100% 100%, 26.67vh 100%, 0 50%);
     width: 50vw;
     height: 100vh;
     pointer-events: auto;

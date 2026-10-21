@@ -17,6 +17,8 @@ import { useSiteText } from "@/content/useSiteContent";
 import { useNeonLoaderDone } from "@/loader/neonLoader";
 import { SPOTLIGHT_SIZE, usePointerSpotlight } from "./spotlight";
 import { BenefitCard } from "./BenefitCard";
+import { HERO_DIAGONAL, HERO_SHAPES } from "./heroShapes";
+import { FixedShape } from "@/components/common/FixedShape/FixedShape";
 import { HERO_ZOOM, HERO_ZOOM_ORIGIN } from "./heroZoom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MEDIA } from "@/config/breakpoints";
@@ -77,34 +79,70 @@ export function Hero() {
       variants={staggerContainer}
     >
       {/* Capa de fondo - triángulos con opacidad reducida */}
+      {/* Cada triángulo es un SVG de geometría fija (BR-091) dentro de la capa que lleva su parallax */}
       <motion.div
         className={`${styles.leftTriangleBackground} ${isScrolling ? 'isAnimating' : ''}`}
         style={isReady ? { y: layers.background.y, scale: layers.background.scale } : {}}
-      ></motion.div>
+        data-shape
+      >
+        <FixedShape shape={HERO_SHAPES.leftTriangleBackground} />
+      </motion.div>
       <motion.div
         className={`${styles.rightTriangleBackground} ${isScrolling ? 'isAnimating' : ''}`}
         style={isReady ? { y: layers.background.y, scale: layers.background.scale } : {}}
-      ></motion.div>
+        data-shape
+      >
+        <FixedShape shape={HERO_SHAPES.rightTriangleBackground} />
+      </motion.div>
 
-      {/* Capa principal - triángulos principales */}
+      {/* Capa principal - triángulos principales, con degradado y un filo de luz en la diagonal (BR-055) */}
       <motion.div
         className={`${styles.leftTriangle} ${isScrolling ? 'isAnimating' : ''}`}
         style={isReady ? { y: layers.middle.y, rotate: layers.middle.rotate } : {}}
-      ></motion.div>
+        data-shape
+      >
+        <FixedShape shape={HERO_SHAPES.leftTriangle}>
+          <defs>
+            <linearGradient id="hero-red-left" x1="0.25" y1="0.07" x2="0.75" y2="0.93">
+              <stop offset="0" className={styles.stopRedLight} />
+              <stop offset="0.4" className={styles.stopRed} />
+              <stop offset="1" className={styles.stopRedDeep} />
+            </linearGradient>
+          </defs>
+          <line className={styles.edge} {...HERO_DIAGONAL} vectorEffect="non-scaling-stroke" />
+        </FixedShape>
+      </motion.div>
       <motion.div
         className={`${styles.rightTriangle} ${isScrolling ? 'isAnimating' : ''}`}
         style={isReady ? { y: layers.middle.y, rotate: layers.middle.rotate } : {}}
-      ></motion.div>
+        data-shape
+      >
+        <FixedShape shape={HERO_SHAPES.rightTriangle}>
+          <defs>
+            <linearGradient id="hero-red-right" x1="0.25" y1="0.07" x2="0.75" y2="0.93">
+              <stop offset="0" className={styles.stopRed} />
+              <stop offset="1" className={styles.stopRedDeep} />
+            </linearGradient>
+          </defs>
+          <line className={styles.edge} {...HERO_DIAGONAL} vectorEffect="non-scaling-stroke" />
+        </FixedShape>
+      </motion.div>
 
       {/* Capa frontal - pequeños triángulos decorativos */}
       <motion.div
         className={`${styles.leftTriangleForeground} ${isScrolling ? 'isAnimating' : ''}`}
         style={isReady ? { y: layers.fast.y, x: layers.fast.x } : {}}
-      ></motion.div>
+        data-shape
+      >
+        <FixedShape shape={HERO_SHAPES.leftTriangleForeground} />
+      </motion.div>
       <motion.div
         className={`${styles.rightTriangleForeground} ${isScrolling ? 'isAnimating' : ''}`}
         style={isReady ? { y: layers.fast.y, x: layers.fast.x } : {}}
-      ></motion.div>
+        data-shape
+      >
+        <FixedShape shape={HERO_SHAPES.rightTriangleForeground} />
+      </motion.div>
 
       {/* Grano y haz de luz que sigue al cursor (BR-055): bajo la foto y el texto */}
       <div className={styles.grain} aria-hidden="true" />

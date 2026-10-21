@@ -61,9 +61,10 @@ describe("CTA1 (BR-058, HU-EXP-004 CA-10)", () => {
   });
 
   it("CA-10: detrás de la foto hay rojo de marca sólido, no rojo translúcido sobre blanco", () => {
-    const rule = css.match(/\n\.imageHexagonForeground\s*\{([^}]*)\}/)?.[1] ?? "";
+    // Desde BR-091 es un SVG: el rojo va en el `fill` de su polígono
+    const rule = css.match(/\n\.imageHexagonForeground polygon\s*\{([^}]*)\}/)?.[1] ?? "";
 
-    expect(rule).toMatch(/background:\s*var\(--color-brand-primary\);/);
+    expect(rule).toMatch(/fill:\s*var\(--color-brand-primary\);/);
   });
 
   it("las barras de luz son decorativas y, con reducir movimiento, aparecen encendidas sin parpadeo", () => {

@@ -1,0 +1,7 @@
+/* Figura de fondo con geometría fija (BR-091): el ancho lo pone su contenedor; el alto, la proporción del viewBox. */
+.shape {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible; /* el filo de luz se dibuja centrado en el borde y sale medio trazo */
+}
