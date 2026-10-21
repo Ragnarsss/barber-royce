@@ -3538,8 +3538,11 @@ Criterios de aceptación:
 1. A 1920×1080, 1440×900, 1440×1289, 1366×768, 1280×720, 1024×1117, 1024×768, 900×1100 y 772×839, cada figura
    conserva su relación ancho/alto (medida con `getBoundingClientRect` sin rotación, con una tolerancia de ±2 %) y
    sus ángulos; solo cambia cuánto recorta el borde de la sección (HU-EXP-004 CA-34).
-2. En esas medidas, el texto de CTA1 no se sale del hexágono rojo y la foto no queda con una franja blanca encima
-   mayor que la de 1920×1080.
+2. En esas medidas, el texto de CTA1 no se sale del hexágono rojo (lo mide `fixedShapes.e2e.test.ts`).
+
+> **Alcance ajustado (2026-10-21, decisión del usuario):** sale del ticket la franja blanca sobre la foto de CTA1 en
+> ventanas altas. No la causa la forma: la figura llena el alto y la foto se dimensiona por el ancho. El encuadre de
+> la foto queda para la nueva auditoría o para `diseno-visual`.
 3. El filo de luz del Hero sigue la diagonal del triángulo en esas medidas y se ve de 1 px nítido.
 4. El parallax del Hero y de CTA1 se ve igual que antes al bajar, y con reducir movimiento no hay parallax
    (CP-A11Y-003).
