@@ -739,6 +739,9 @@ y confiar en que el servicio está a la altura.
 - CA-35 (2026-10-21, `BR-092`): Given llego a «Respaldados por los mejores» o a la galería, When veo los
   hexágonos del fondo moverse con el scroll, Then cada uno conserva la rotación de su diseño y un borde
   continuo en sus seis lados, y el scroll no se siente más pesado que antes.
+- CA-36 (2026-10-21, `BR-093`): Given abro la portada en escritorio en una ventana de cualquier proporción, When
+  veo la foto del Hero y la de CTA1, Then cada una llena su zona sin franjas vacías, con el rostro completo y
+  cerca del centro, y las secciones no se estiran en ventanas más altas que 4:3.
 
 ---
 

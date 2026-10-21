@@ -3610,6 +3610,54 @@ Criterios de aceptación:
 7. **A confirmar por el usuario en el navegador:** el aspecto de los hexágonos con borde y brillo.
 
 
+#### BR-093 — Hero y CTA1: fotos centradas en el rostro y alto de sección acotado
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-091
+- Estado: En curso
+- Historia de usuario: HU-EXP-004 (CA-36)
+- RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`
+
+**Origen (2026-10-21):** al revisar `BR-091`, el usuario pide que las fotos del Hero y de CTA1 queden centradas en
+todas las resoluciones. En escritorio, las dos secciones miden `height: 100vh`, pero sus fotos se dimensionan por el
+ancho (`width: 50%` o `112%`, alto automático). Por eso:
+- La foto del Hero queda pegada arriba con charcoal debajo en ventanas altas (1440×1289) y se le corta el cuello en
+  ventanas bajas (1280×720).
+- La de CTA1 queda pegada abajo, con una franja blanca encima en ventanas altas (la que se sacó de `BR-091`), y el
+  borde derecho le corta la nuca.
+
+> **Decisión del usuario (2026-10-21):**
+> - «Centrada» significa que cada foto llena su zona (la mitad derecha del Hero, la figura blanca de CTA1) con el
+>   rostro al centro: sin franjas vacías y recortando solo los bordes, nunca la cara.
+> - Solo escritorio (desde 769 px): no se tocan el encuadre del Hero móvil (ajustado a mano el 2026-10-17) ni el
+>   corte de CTA1 móvil del Figma.
+> - Ticket propio.
+> - Se acota también el alto de las dos secciones en escritorio.
+
+**Causa:** el alto de la sección sale del alto de la ventana y el de la foto, del ancho. Cuando cambia la proporción
+de la ventana, ya no se corresponden.
+
+Alcance:
+1. En escritorio, cada foto llena su zona con `object-fit: cover` y un punto de enfoque en el rostro
+   (`object-position`), definido como constante junto a la del zoom (`heroZoom.ts`, `ctaZoom.ts`).
+2. En escritorio, el Hero y CTA1 miden `min(100svh, 75vw)`:
+   - En ventanas de 16:9, 16:10 y 4:3 llenan la pantalla, como hoy.
+   - En ventanas más altas que 4:3 dejan de crecer y conservan la composición.
+   - El tope (75vw, proporción 4:3) se ajusta a ojo con una variable.
+3. Se conservan el zoom con el scroll (`BR-079`), el parallax, la entrada de la foto, el recorte de la figura blanca
+   y las figuras de `BR-091`.
+4. Móvil sin cambios.
+
+Criterios de aceptación:
+1. A 1920×1080, 1440×900, 1440×1289, 1366×768, 1280×720, 1024×1117, 1024×768, 900×1100 y 772×839, cada foto llena su
+   zona sin franjas vacías y el rostro queda completo y cerca del centro de la zona (HU-EXP-004 CA-36).
+2. En ventanas de 16:9, 16:10 y 4:3 las secciones siguen midiendo el alto de la ventana; en las más altas miden 75vw.
+3. Con reducir movimiento no hay zoom ni parallax (CP-A11Y-003).
+4. LCP, CLS y TBT móviles y de escritorio de `/` no empeoran frente a la línea base de `BR-091`, mediana de 3
+   (CP-PERF-003). La foto del Hero sigue siendo el LCP con `fetchpriority="high"`.
+5. Lint, tipos, tests y `breakpoints.test.ts` en verde.
+6. **A confirmar por el usuario en el navegador:** el encuadre del rostro en cada foto.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3730,6 +3778,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-090 | Productos de prueba: 50 filas con fotos de stock que cargan | K | P3 | XS | Propuesta | — |
 | BR-091 | Hero y CTA1: figuras de fondo en SVG con geometría fija | K | P3 | M | En curso | BR-055, BR-058 |
 | BR-092 | SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales | K | P3 | M | Propuesta | BR-091 |
+| BR-093 | Hero y CTA1: fotos centradas en el rostro y alto de sección acotado | K | P3 | S | En curso | BR-091 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
