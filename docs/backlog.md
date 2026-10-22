@@ -3853,7 +3853,7 @@ Criterios de aceptación:
 #### BR-097 — CTA1: los hexágonos se ensamblan con el scroll
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-096
-- Estado: Propuesta
+- Estado: En curso
 - Historia de usuario: HU-EXP-004 (CA-39)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
 
@@ -4008,7 +4008,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-094 | Benefits: cuñas rojas con ángulo fijo | K | P3 | XS | Hecho | BR-071 |
 | BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | Hecho | — |
 | BR-096 | Filos que se encienden: el borde de cada figura se dibuja | K | P3 | M | En curso | BR-091, BR-092 |
-| BR-097 | CTA1: los hexágonos se ensamblan con el scroll | K | P3 | M | Propuesta | BR-096 |
+| BR-097 | CTA1: los hexágonos se ensamblan con el scroll | K | P3 | M | En curso | BR-096 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

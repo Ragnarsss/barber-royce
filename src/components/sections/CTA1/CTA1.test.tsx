@@ -278,3 +278,68 @@ describe("CTA1: zoom-in de la foto con el scroll (BR-079, HU-EXP-004 CA-30)", ()
     expect(picture.getAttribute("style") ?? "").not.toMatch(/scale/);
   });
 });
+
+describe("CTA1: ensamble de los hexágonos (BR-097, HU-EXP-004 CA-39)", () => {
+  const desktop = () =>
+    vi.stubGlobal("matchMedia", (query: string) => ({
+      matches: query === MEDIA.desktop,
+      addEventListener() {},
+      removeEventListener() {},
+    }));
+
+  beforeEach(() => {
+    state.reducedMotion = false;
+  });
+
+  it("CA-39: en escritorio cada uno de los tres hexágonos del texto lleva su contenedor de ensamble, dentro de la capa de parallax", () => {
+    desktop();
+    try {
+      renderCta();
+      const pieces = document.querySelectorAll("[data-shape] > [data-assemble]");
+      expect(pieces).toHaveLength(3);
+      for (const piece of pieces) {
+        expect(piece.querySelector("svg polygon")).not.toBeNull();
+        expect(piece.getAttribute("style") ?? "").toMatch(/transform/);
+      }
+      // El de las barras de luz también se asienta
+      expect(document.querySelector("[data-light-bars]")?.getAttribute("style") ?? "").toMatch(/transform/);
+    } finally {
+      vi.stubGlobal("matchMedia", undefined);
+    }
+  });
+
+  it("CA-39: el parallax de capa y el ensamble no se pisan: son dos elementos con transform distinto", () => {
+    desktop();
+    try {
+      renderCta();
+      const layer = document.querySelector("[data-shape]:has(> [data-assemble])")!;
+      expect(layer.getAttribute("style") ?? "").toMatch(/transform/);
+      expect(layer.querySelector(":scope > [data-assemble]")).not.toBeNull();
+    } finally {
+      vi.stubGlobal("matchMedia", undefined);
+    }
+  });
+
+  it("CP-A11Y-003: con reducir movimiento los hexágonos quedan en su sitio, sin contenedor de ensamble ni barras que bajen", () => {
+    state.reducedMotion = true;
+    desktop();
+    try {
+      renderCta();
+      expect(document.querySelectorAll("[data-assemble]")).toHaveLength(0);
+      expect(document.querySelector("[data-light-bars]")?.getAttribute("style") ?? "").not.toMatch(/transform/);
+    } finally {
+      vi.stubGlobal("matchMedia", undefined);
+    }
+  });
+
+  it("móvil: no hay ensamble (las figuras no existen bajo 769 px, y no se suman nodos animados)", () => {
+    renderCta();
+    expect(document.querySelectorAll("[data-assemble]")).toHaveLength(0);
+  });
+
+  it("CA-39: solo transform, con MotionValue ligado al avance de la sección (nunca setState por scroll)", () => {
+    expect(source).toMatch(/useTransform\(scrollYProgress, CTA_ASSEMBLE\.WINDOW/);
+    expect(source).not.toMatch(/useState/);
+    expect(css).not.toMatch(/\.assemble\s*\{[^}]*(top|left|width|height):/);
+  });
+});
