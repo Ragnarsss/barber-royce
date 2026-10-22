@@ -13,6 +13,8 @@ export const CUT: {
   FLASH: number[];
   UNDERLINE: number[];
   UNDERLINE_FREE: number[];
+  EDGE: number[];
+  EDGE_FREE: number[];
   COVER_TRAVEL: string;
   COVER_TRAVEL_BACK: string;
 } = {
@@ -26,6 +28,10 @@ export const CUT: {
   UNDERLINE: [0, 0.1],
   /** El mismo subrayado sin la sección fija (móvil), sobre el avance de la sección al cruzar la pantalla, como en BR-062. */
   UNDERLINE_FREE: [0.06, 0.26],
+  /** Borde de los hexágonos de fondo que se dibuja (BR-096): empieza con el primer corte y termina con el de la tarjeta. */
+  EDGE: [0.04, 0.34],
+  /** El mismo borde sin la sección fija, sobre el avance de la sección al cruzar la pantalla. */
+  EDGE_FREE: [0.1, 0.4],
   /** Cuánto se corre el panel (de su propio ancho) para dejar ver todo, contando su inclinación. */
   COVER_TRAVEL: "125%",
   /** El mismo recorrido hacia el lado contrario, para la tarjeta. */

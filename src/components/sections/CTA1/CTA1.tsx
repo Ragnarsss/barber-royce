@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useReducedMotion, useTransform } from "framer-motion";
+import { motion, useReducedMotion, useTransform, type Variants } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
 import styles from "./CTA1.module.css";
 import cta700w from "@/assets/optimized/cta1_model_700w.webp";
@@ -10,7 +10,7 @@ import profile1684w from "@/assets/optimized/hero_model_left_profile_1684w.webp"
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useMiddleLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
-import { fadeInLeft, fadeInRight, lightBarIgnite } from "@/config/animations.config";
+import { edgeDraw, fadeInLeft, fadeInRight, lightBarIgnite } from "@/config/animations.config";
 import { SITE } from "@/config/constants";
 import { Link } from "react-router-dom";
 import { trackReserve } from "@/analytics/track";
@@ -24,6 +24,12 @@ import { FixedShape } from "@/components/common/FixedShape/FixedShape";
 
 /** Hexágono regular de puntas laterales (232 × 200), como las barras de luz del techo de la barbería (BR-058). */
 const HEXAGON = "M60 3H172L228 100L172 197H60L4 100Z";
+
+/**
+ * El contorno de cada hexágono del texto se dibuja una vez al entrar la sección, con su propio desfase (BR-096): primero
+ * el de atrás, después el rojo y por último el pequeño. Constantes de módulo: no son objetos nuevos en cada render.
+ */
+const EDGE = { background: edgeDraw(0.1), text: edgeDraw(0.3), foreground: edgeDraw(0.5) };
 
 /**
  * Separa la primera frase del subtítulo (hasta el primer «?», «!» o «.») del resto, para ponerla en negrita en móvil
@@ -41,6 +47,8 @@ export function CTA1() {
   const subtitleParts = splitLead(subtitle);
   const reducedMotion = useReducedMotion() ?? false;
   const { ref, controls } = useScrollAnimation();
+  // El borde que se dibuja de cada hexágono, con el mismo disparador que la foto; con «reducir movimiento», ninguno
+  const edgeProps = (variants: Variants) => (reducedMotion ? undefined : { initial: "hidden", animate: controls, variants });
   const magnetRef = useRef<HTMLSpanElement>(null);
   const magnet = useMagnetic(magnetRef);
 
@@ -69,7 +77,7 @@ export function CTA1() {
         style={{ y: layers.slow.y, x: layers.slow.x }}
         data-shape
       >
-        <FixedShape shape={CTA_SHAPES.textHexagonBackground} />
+        <FixedShape shape={CTA_SHAPES.textHexagonBackground} edge={edgeProps(EDGE.background)} />
       </motion.div>
       <motion.div
         className={`${styles.imageHexagonBackground} ${animating}`}
@@ -82,7 +90,7 @@ export function CTA1() {
         style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
         data-shape="text"
       >
-        <FixedShape shape={CTA_SHAPES.textHexagon} />
+        <FixedShape shape={CTA_SHAPES.textHexagon} edge={edgeProps(EDGE.text)} />
       </motion.div>
 
       {/* Capa frontal - hexágono decorativo */}
@@ -91,7 +99,7 @@ export function CTA1() {
         style={{ y: layers.fast.y, x: layers.fast.x }}
         data-shape
       >
-        <FixedShape shape={CTA_SHAPES.textHexagonForeground} />
+        <FixedShape shape={CTA_SHAPES.textHexagonForeground} edge={edgeProps(EDGE.foreground)} />
       </motion.div>
 
       {/* Barras de luz hexagonales del techo de la barbería, arriba y cortadas por el borde: se encienden una vez (BR-058) */}

@@ -15,40 +15,47 @@
   contain-intrinsic-size: 100vh;
 }
 
-/* Elementos decorativos geométricos */
-.reviews::before {
-  content: "";
+/*
+ * Elementos decorativos geométricos (BR-096): un octágono y un hexágono que antes eran `::before` y `::after` con
+ * `clip-path` y casi no se veían. Ahora son SVG (`reviewsShapes.ts`) con un trazo que se dibuja una vez al entrar la
+ * sección, en escritorio; en móvil y con «reducir movimiento» aparecen ya dibujados. El grosor va en unidades del viewBox
+ * (de 100): ~1,5 px a 500 y 600 px.
+ */
+.shapeTop,
+.shapeBottom {
   position: absolute;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.shapeTop {
   top: -100px;
   left: -50px;
   width: 500px;
-  height: 500px;
-  background: color-mix(in srgb, var(--color-brand-primary) 6%, transparent);
-  clip-path: polygon(
-    30% 0%,
-    70% 0%,
-    100% 30%,
-    100% 70%,
-    70% 100%,
-    30% 100%,
-    0% 70%,
-    0% 30%
-  );
   rotate: 15deg;
-  z-index: 0;
 }
 
-.reviews::after {
-  content: "";
-  position: absolute;
+.shapeBottom {
   bottom: -150px;
   right: -100px;
   width: 600px;
-  height: 600px;
-  background: color-mix(in srgb, var(--color-brand-primary) 8%, transparent);
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   rotate: -30deg;
-  z-index: 0;
+}
+
+.shapeTop polygon,
+.shapeBottom polygon {
+  stroke-width: 0.3;
+  stroke-linejoin: round;
+}
+
+.shapeTop polygon {
+  fill: color-mix(in srgb, var(--color-brand-primary) 6%, transparent);
+  stroke: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
+}
+
+.shapeBottom polygon {
+  fill: color-mix(in srgb, var(--color-brand-primary) 8%, transparent);
+  stroke: color-mix(in srgb, var(--color-brand-primary) 35%, transparent);
 }
 
 /* Con `margin: 0 auto` el contenedor se ajusta a su contenido y, con el carrusel, se estiraba más allá de la pantalla */

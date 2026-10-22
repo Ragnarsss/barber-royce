@@ -62,6 +62,10 @@ export function SocialProof1() {
   const photoFlareOpacity = useTransform(pinProgress, FLARE.PHOTO, [0, 1, 0]);
   const cardFlareOpacity = useTransform(pinProgress, FLARE.CARD, [0, 1, 0]);
   const underline = useTransform(motionProgress, scrub ? CUT.UNDERLINE : CUT.UNDERLINE_FREE, [0, 1]);
+  // Borde de los 14 hexágonos de fondo que se dibuja con el recorrido del láser (BR-096): un solo MotionValue compartido.
+  // Con «reducir movimiento» no hay trazo animado: los bordes aparecen dibujados.
+  const hexagonEdge = useTransform(motionProgress, scrub ? CUT.EDGE : CUT.EDGE_FREE, [0, 1]);
+  const hexagonEdgeProps = reducedMotion ? undefined : { style: { pathLength: hexagonEdge } };
 
   // Revelado después del láser (BR-075): cada cosa se ve borrosa hasta su tramo y se enfoca con el scroll, una tras otra
   const titleFocus = useTransform(pinProgress, (value) => ramp(REVEAL.TITLE[0], REVEAL.TITLE[1])(value));
@@ -139,7 +143,7 @@ export function SocialProof1() {
             style={{ ...hexagonLayerStyle[hexagon.layer], ...hexagonOwnStyle[name], "--hex-rotate": `${hexagon.rotate}deg` } as MotionStyle}
             data-shape
           >
-            <FixedShape shape={SP1_HEXAGON_SHAPE}>
+            <FixedShape shape={SP1_HEXAGON_SHAPE} edge={hexagonEdgeProps}>
               {(hexagon.layer === "middle" || hexagon.layer === "foreground") && (
                 <polygon className={styles.glow} points={SP1_HEXAGON_SHAPE.points} />
               )}

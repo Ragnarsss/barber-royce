@@ -209,8 +209,15 @@
   z-index: 0;
 }
 
+/*
+ * Contornos que se dibujan (BR-096): cada hexágono lleva un trazo fino que avanza al entrar la sección y queda. El grosor
+ * va en unidades del viewBox (las cajas miden de 576 a 864 de ancho): con non-scaling-stroke el trazo no se puede dibujar.
+ */
 .textHexagonBackground polygon {
   fill: color-mix(in srgb, var(--color-brand-primary) 25%, transparent);
+  stroke: color-mix(in srgb, var(--color-brand-primary-hover) 55%, transparent);
+  stroke-width: 3;
+  stroke-linejoin: round;
 }
 
 /*
@@ -241,6 +248,9 @@
 
 .textHexagon polygon {
   fill: var(--color-brand-primary);
+  stroke: color-mix(in srgb, var(--color-brand-white) 70%, transparent);
+  stroke-width: 3;
+  stroke-linejoin: round;
 }
 
 /*
@@ -321,6 +331,9 @@
 
 .textHexagonForeground polygon {
   fill: color-mix(in srgb, var(--color-accent-600) 50%, transparent);
+  stroke: color-mix(in srgb, var(--color-brand-white) 30%, transparent);
+  stroke-width: 3;
+  stroke-linejoin: round;
 }
 
 /*

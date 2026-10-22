@@ -11,7 +11,7 @@ import heroMobile1170w from "@/assets/optimized/hero_mobile_1170w.webp";
 import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
-import { staggerContainer, fadeInUp, letterRise, letterStagger } from "@/config/animations.config";
+import { staggerContainer, fadeInUp, letterRise, letterStagger, edgeDraw } from "@/config/animations.config";
 import { SITE } from "@/config/constants";
 import { useSiteText } from "@/content/useSiteContent";
 import { useNeonLoaderDone } from "@/loader/neonLoader";
@@ -22,6 +22,9 @@ import { FixedShape } from "@/components/common/FixedShape/FixedShape";
 import { HERO_ZOOM, HERO_ZOOM_ORIGIN } from "./heroZoom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MEDIA } from "@/config/breakpoints";
+
+/** Cómo se dibuja el filo de luz de las diagonales: una constante, para que no sea un objeto nuevo en cada render. */
+const HERO_EDGE_DRAW = edgeDraw(0.35);
 
 export function Hero() {
   const siteText = useSiteText();
@@ -64,6 +67,10 @@ export function Hero() {
           scale: zoom,
           transformOrigin: isWide ? HERO_ZOOM_ORIGIN.DESKTOP : HERO_ZOOM_ORIGIN.MOBILE,
         };
+
+  // El filo de luz de las diagonales se dibuja una vez cuando la portada se activa, después del neón (BR-096). Con
+  // «reducir movimiento» no hay variantes: el filo aparece dibujado.
+  const edgeVariants = reducedMotion ? undefined : HERO_EDGE_DRAW;
 
   const handleImageLoad = useCallback(() => {
     refreshLenis();
@@ -109,7 +116,7 @@ export function Hero() {
               <stop offset="1" className={styles.stopRedDeep} />
             </linearGradient>
           </defs>
-          <line className={styles.edge} {...HERO_DIAGONAL} vectorEffect="non-scaling-stroke" />
+          <motion.line className={styles.edge} {...HERO_DIAGONAL} variants={edgeVariants} />
         </FixedShape>
       </motion.div>
       <motion.div
@@ -124,7 +131,7 @@ export function Hero() {
               <stop offset="1" className={styles.stopRedDeep} />
             </linearGradient>
           </defs>
-          <line className={styles.edge} {...HERO_DIAGONAL} vectorEffect="non-scaling-stroke" />
+          <motion.line className={styles.edge} {...HERO_DIAGONAL} variants={edgeVariants} />
         </FixedShape>
       </motion.div>
 
