@@ -732,6 +732,16 @@ y confiar en que el servicio está a la altura.
   desplaza un poco dentro de su hexágono con el scroll (solo en escritorio), veo cuántos productos llevo
   («Ves 12 de 24») y, pasada una pantalla, un botón hexagonal con un anillo de progreso me devuelve arriba;
   con reducir movimiento no hay ola ni parallax y el botón sube de golpe.
+- CA-34 (2026-10-21, `BR-091`): Given abro la portada en pantallas de distinta proporción (por ejemplo
+  1024×1117 y 1920×1080), When veo los triángulos del Hero y los hexágonos irregulares de CTA1, Then cada
+  figura conserva su forma y sus ángulos (solo cambia cuánto recorta el borde) y el filo de luz de la
+  diagonal del Hero se ve nítido.
+- CA-35 (2026-10-21, `BR-092`): Given llego a «Respaldados por los mejores» o a la galería, When veo los
+  hexágonos del fondo moverse con el scroll, Then cada uno conserva la rotación de su diseño y un borde
+  continuo en sus seis lados, y el scroll no se siente más pesado que antes.
+- CA-36 (2026-10-21, `BR-093`): Given abro la portada en escritorio en una ventana de cualquier proporción, When
+  veo la foto del Hero y la de CTA1, Then cada una llena su zona sin franjas vacías, con el rostro completo y
+  cerca del centro, y las secciones no se estiran en ventanas más altas que 4:3.
 
 ---
 

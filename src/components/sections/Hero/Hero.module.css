@@ -334,10 +334,12 @@
 }
 
 /*
- * Profundidad del fondo (BR-055): los triángulos llevan un degradado con la luz arriba a la izquierda y un filo de
- * luz de 1 px en su diagonal. El filo es un segundo fondo del mismo triángulo: con `to bottom right`, la línea del
- * 50 % del degradado pasa justo por las esquinas superior derecha e inferior izquierda, que es la diagonal que corta
- * el `clip-path`. Así el filo se mueve con el parallax sin un elemento extra.
+ * Profundidad del fondo (BR-055): los triángulos principales llevan un degradado con la luz arriba a la izquierda y un
+ * filo de luz en su diagonal.
+ *
+ * Geometría fija (BR-091): cada triángulo es un SVG (`heroShapes.ts`) con la forma que tenía a 1920 × 1080. Solo se fija
+ * su ancho; el alto sale de la proporción del viewBox, así el ángulo de la diagonal no cambia con la ventana y el borde
+ * de la sección recorta lo que sobra. El filo es una línea con `non-scaling-stroke`: nítida a cualquier tamaño.
  */
 .hero {
   --hero-edge-light: color-mix(
@@ -362,72 +364,68 @@
   position: absolute;
   top: -10%;
   left: 0;
-  background: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
-  clip-path: polygon(0 0, 95% 5%, 5% 95%);
   width: 50vw;
-  height: 110vh;
   z-index: 0;
+}
+
+.leftTriangleBackground polygon {
+  fill: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
 }
 
 .rightTriangleBackground {
   position: absolute;
   right: 0;
   bottom: -10%;
-  background: color-mix(in srgb, var(--color-brand-primary) 35%, transparent);
-  clip-path: polygon(95% 5%, 100% 100%, 5% 95%);
   width: 50vw;
-  height: 110vh;
   z-index: 0;
 }
 
-/* Capa principal - triángulos principales */
+.rightTriangleBackground polygon {
+  fill: color-mix(in srgb, var(--color-brand-primary) 35%, transparent);
+}
+
+/* Capa principal - triángulos principales (will-change dinámico con la clase .isAnimating de performance.css) */
 .leftTriangle {
   position: absolute;
   top: 0;
   left: 0;
-  right: 50%;
-  bottom: 0;
-  background:
-    linear-gradient(
-      to bottom right,
-      transparent calc(50% - 1.5px),
-      var(--hero-edge-light) 50%,
-      transparent calc(50% + 0.5px)
-    ),
-    linear-gradient(
-      150deg,
-      var(--hero-red-light) 0%,
-      var(--color-brand-primary) 40%,
-      var(--hero-red-deep) 100%
-    );
-  clip-path: polygon(0 0, 100% 0, 0 100%);
   width: 50vw;
-  height: 100vh;
   z-index: 1;
 }
 
-/* dynamic will-change via .isAnimating class from performance.css */
+.leftTriangle polygon {
+  fill: url(#hero-red-left);
+}
 
 .rightTriangle {
   position: absolute;
   right: 0;
   bottom: 0;
-  background:
-    linear-gradient(
-      to bottom right,
-      transparent calc(50% - 0.5px),
-      var(--hero-edge-light) 50%,
-      transparent calc(50% + 1.5px)
-    ),
-    linear-gradient(
-      150deg,
-      var(--color-brand-primary) 0%,
-      var(--hero-red-deep) 100%
-    );
-  clip-path: polygon(100% 0, 100% 100%, 0 100%);
   width: 50vw;
-  height: 100vh;
   z-index: 1;
+}
+
+.rightTriangle polygon {
+  fill: url(#hero-red-right);
+}
+
+/* Paradas del degradado de los triángulos principales: luz arriba a la izquierda */
+.stopRedLight {
+  stop-color: var(--hero-red-light);
+}
+
+.stopRed {
+  stop-color: var(--color-brand-primary);
+}
+
+.stopRedDeep {
+  stop-color: var(--hero-red-deep);
+}
+
+/* Filo de luz en la diagonal: 1,5 px a cualquier tamaño, centrado en el borde del triángulo */
+.edge {
+  stroke: var(--hero-edge-light);
+  stroke-width: 1.5;
 }
 
 /* Capa frontal - pequeños triángulos decorativos con opacidad */
@@ -435,32 +433,28 @@
   position: absolute;
   top: 10%;
   left: 0;
-  background: color-mix(in srgb, var(--color-accent-600) 60%, transparent);
-  clip-path: polygon(0 0, 100% 10%, 10% 100%);
   width: 35vw;
-  height: 70vh;
   max-width: 650px;
   z-index: 1;
   pointer-events: none;
 }
 
-/* dynamic will-change via .isAnimating class from performance.css */
+.leftTriangleForeground polygon {
+  fill: color-mix(in srgb, var(--color-accent-600) 60%, transparent);
+}
 
 .rightTriangleForeground {
   position: absolute;
   right: 0;
   bottom: 10%;
-  background: color-mix(
-    in srgb,
-    var(--color-brand-primary-hover) 40%,
-    transparent
-  );
-  clip-path: polygon(90% 0, 100% 100%, 0 90%);
   width: 40vw;
-  height: 65vh;
   max-width: 700px;
   z-index: 1;
   pointer-events: none;
+}
+
+.rightTriangleForeground polygon {
+  fill: color-mix(in srgb, var(--color-brand-primary-hover) 40%, transparent);
 }
 
 /* Grano fino sobre todo el fondo (BR-055): ruido de SVG en escala de grises, sin colores escritos. Es estático. */
@@ -514,24 +508,30 @@
     display: block;
   }
 
+  /*
+   * Alto acotado (BR-093): llena la ventana, pero en ventanas más altas que 4:3 deja de crecer (tope de 75vw) y conserva
+   * la composición. Es un mínimo, no un alto fijo: si el texto necesita más en una ventana chica, la portada crece.
+   */
   .hero {
-    height: 100vh;
-    min-height: 100vh;
+    --hero-height: min(100svh, 75vw);
+    /* Punto de enfoque de la foto: el rostro queda lo más al centro que permite el recorte (ajustable a ojo) */
+    --hero-photo-focus: 20% 40%;
+
+    height: auto;
+    min-height: var(--hero-height);
     align-items: center;
   }
 
   .heroImageSEO {
-    inset: auto 0 0 auto;
+    inset: 0 0 0 auto;
     width: 50%;
     height: 100%;
-    object-fit: contain;
-    object-position: right bottom;
   }
 
-  /* Sin el ajuste de la foto móvil: la imagen toma su proporción y llena el ancho de su caja */
+  /* La foto llena la mitad derecha en cualquier proporción (BR-093): se recortan los bordes, nunca el rostro */
   .heroImageSEO img {
-    object-fit: fill;
-    object-position: 50% 50%;
+    object-fit: cover;
+    object-position: var(--hero-photo-focus);
   }
 
   .heroImageSEO::after,

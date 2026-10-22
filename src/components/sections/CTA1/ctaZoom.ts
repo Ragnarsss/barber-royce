@@ -11,8 +11,11 @@ export const CTA_ZOOM = {
 /** Tramo del avance de la sección (0 al asomar por abajo, 1 al salir por arriba) en el que ocurre el zoom. */
 export const CTA_ZOOM_WINDOW: number[] = [0.1, 0.85];
 
-/** Punto de la foto desde donde se acerca (`transform-origin`): el rostro del modelo. */
+/**
+ * Punto de la foto desde donde se acerca (`transform-origin`): el rostro del modelo. En escritorio, desde BR-093 la foto
+ * llena la figura alineada a la izquierda, y el rostro queda hacia el 40 % de su ancho.
+ */
 export const CTA_ZOOM_ORIGIN = {
-  DESKTOP: "35% 45%",
+  DESKTOP: "40% 50%",
   MOBILE: "42% 45%",
 };

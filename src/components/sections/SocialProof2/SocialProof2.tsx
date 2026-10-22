@@ -7,6 +7,14 @@ import { useScrollDirection, useScrollSpeed } from "@/hooks/useScrollMotion";
 import { SCROLL_SPEED_FASTER } from "@/utils/scrollMotion";
 import { useSiteText } from "@/content/useSiteContent";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
+import { FixedShape } from "@/components/common/FixedShape/FixedShape";
+import { fixedShape } from "@/components/common/FixedShape/shapeGeometry";
+
+/**
+ * Hexágono de puntas arriba y abajo de los fondos (BR-092): el mismo `clip-path` de antes, ahora un SVG sobre una caja
+ * cuadrada. El color va en el `fill` del CSS de cada hexágono.
+ */
+const SP2_HEXAGON_SHAPE = fixedShape(100, 100, [[50, 0], [100, 25], [100, 75], [50, 100], [0, 75], [0, 25]]);
 
 export function SocialProof2() {
   const siteText = useSiteText();
@@ -43,17 +51,26 @@ export function SocialProof2() {
       <motion.div
         className={styles.hexagonBg1}
         style={{ y: layers.background.y, scale: layers.background.scale }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
       <motion.div
         className={styles.hexagonBg2}
         style={{ y: layers.background.y, scale: layers.background.scale }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
 
       {/* Capa media - hexágonos medianos con rotación */}
       <motion.div
         className={styles.hexagonMiddle1}
         style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
       <motion.div
         className={styles.hexagonMiddle2}
         style={{
@@ -61,11 +78,17 @@ export function SocialProof2() {
           rotate: layers.middle.rotate,
           ...hexMiddle2Style,
         }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
       <motion.div
         className={styles.hexagonMiddle3}
         style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
 
       {/* Capa rápida - hexágonos pequeños con movimiento dinámico */}
       <motion.div
@@ -75,21 +98,30 @@ export function SocialProof2() {
           x: layers.fast.x,
           ...hexFast1Style,
         }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
       <motion.div
         className={styles.hexagonFast2}
         style={{
           y: layers.fast.y,
           x: layers.fast.x,
         }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
       <motion.div
         className={styles.hexagonFast3}
         style={{
           y: layers.fast.y,
           x: layers.fast.x,
         }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
 
       {/* Capa frontal - elementos decorativos pequeños */}
       <motion.div
@@ -98,7 +130,10 @@ export function SocialProof2() {
           y: layers.foreground.y,
           scale: layers.foreground.scale,
         }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
       <motion.div
         className={styles.hexagonFg2}
         style={{
@@ -106,7 +141,10 @@ export function SocialProof2() {
           scale: layers.foreground.scale,
           ...hexFg2Style,
         }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
 
       {/* Hexágono principal decorativo */}
       <motion.div
@@ -115,7 +153,10 @@ export function SocialProof2() {
           y: layers.slow.y,
           rotate: layers.middle.rotate,
         }}
-      />
+        data-shape
+      >
+        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+      </motion.div>
 
       {/* ═══════════════════════════════════════════════
           CONTENIDO PRINCIPAL

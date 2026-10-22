@@ -295,6 +295,14 @@
    HEXÁGONOS DECORATIVOS PARALLAX
 ═════════════════════════════════════════════════════════════ */
 
+/*
+ * Desde BR-092 cada hexágono es un SVG (`sp1Hexagons.ts`). Antes era un `clip-path`, que recortaba su borde en cuatro de
+ * sus seis lados y todo su brillo (`box-shadow`), y pagaba un `backdrop-filter` que casi no se notaba. Ahora el borde es
+ * el trazo del polígono y el brillo, un segundo trazo ancho y translúcido; los dos con `non-scaling-stroke`. La rotación
+ * de diseño llega en `--hex-rotate` y va en la propiedad `rotate`, que framer no pisa. Las capas definen el aspecto; cada
+ * hexágono, su posición, tamaño y opacidad.
+ */
+
 /* La decoración de hexágonos solo se ve desde 1025 px: en móvil y en tablet se oculta */
 .hexagonBackground1,
 .hexagonBackground2,
@@ -313,208 +321,212 @@
   display: none;
 }
 
-/* Hexágonos de fondo (sutiles con gradiente) */
-.hexagonBackground1,
-.hexagonBackground2,
-.hexagonBackground3,
-.hexagonBackground4 {
+/* Degradados de relleno: los usan los polígonos por id (las definiciones van en un SVG sin tamaño en la sección) */
+.hexDefs {
   position: absolute;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--color-brand-primary) 12%, transparent) 0%,
-    color-mix(in srgb, var(--color-brand-primary-hover) 8%, transparent) 100%
-  );
-  backdrop-filter: blur(2px);
-  border: 1px solid color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
+  width: 0;
+  height: 0;
+}
+
+.stopBackgroundFrom {
+  stop-color: color-mix(in srgb, var(--color-brand-primary) 12%, transparent);
+}
+
+.stopBackgroundTo {
+  stop-color: color-mix(in srgb, var(--color-brand-primary-hover) 8%, transparent);
+}
+
+.stopMiddleFrom {
+  stop-color: color-mix(in srgb, var(--color-brand-primary-hover) 15%, transparent);
+}
+
+.stopMiddleTo {
+  stop-color: color-mix(in srgb, var(--color-brand-primary) 10%, transparent);
+}
+
+.stopForegroundFrom {
+  stop-color: color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
+}
+
+.stopForegroundTo {
+  stop-color: color-mix(in srgb, var(--color-brand-primary-hover) 15%, transparent);
+}
+
+/* Lo común a todas las capas */
+.hexBackground,
+.hexMiddle,
+.hexForeground,
+.hexSmall {
+  position: absolute;
+  rotate: var(--hex-rotate);
   pointer-events: none;
+}
+
+.hexBackground polygon,
+.hexMiddle polygon,
+.hexForeground polygon,
+.hexSmall polygon {
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+}
+
+/* Brillo: un trazo ancho y translúcido sobre el borde, sin filtro */
+.glow {
+  fill: none;
+}
+
+/* Hexágonos de fondo (sutiles con gradiente) */
+.hexBackground {
   z-index: 0;
+}
+
+.hexBackground polygon {
+  fill: url(#sp1-hex-background);
+  stroke: color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
+  stroke-width: 1;
 }
 
 .hexagonBackground1 {
   width: 320px;
-  height: 320px;
   top: 8%;
   right: 5%;
   opacity: 0.5;
-  transform: rotate(12deg);
 }
 
 .hexagonBackground2 {
   width: 260px;
-  height: 260px;
   bottom: 12%;
   left: 3%;
   opacity: 0.45;
-  transform: rotate(-8deg);
 }
 
 .hexagonBackground3 {
   width: 280px;
-  height: 280px;
   top: 50%;
   left: 8%;
   opacity: 0.4;
-  transform: rotate(35deg);
 }
 
 .hexagonBackground4 {
   width: 240px;
-  height: 240px;
   bottom: 20%;
   right: 12%;
   opacity: 0.38;
-  transform: rotate(-25deg);
 }
 
-/* Hexágonos de capa media (más visibles con glow) */
-.hexagonMiddle1,
-.hexagonMiddle2,
-.hexagonMiddle3,
-.hexagonMiddle4 {
-  position: absolute;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--color-brand-primary-hover) 15%, transparent) 0%,
-    color-mix(in srgb, var(--color-brand-primary) 10%, transparent) 100%
-  );
-  border: 1.5px solid color-mix(in srgb, var(--color-brand-primary-hover) 25%, transparent);
-  box-shadow: 0 0 30px color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
-  pointer-events: none;
-  transition: opacity 0.3s ease-out;
+/* Hexágonos de capa media (más visibles, con brillo) */
+.hexMiddle {
   z-index: 0;
+}
+
+.hexMiddle polygon {
+  fill: url(#sp1-hex-middle);
+  stroke: color-mix(in srgb, var(--color-brand-primary-hover) 25%, transparent);
+  stroke-width: 1.5;
+}
+
+.hexMiddle .glow {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
+  stroke-width: 10;
 }
 
 .hexagonMiddle1 {
   width: 200px;
-  height: 200px;
   top: 42%;
   right: 20%;
   opacity: 0.6;
-  transform: rotate(20deg);
 }
 
 .hexagonMiddle2 {
   width: 170px;
-  height: 170px;
   top: 8%;
   left: 12%;
   opacity: 0.55;
-  transform: rotate(-15deg);
 }
 
 .hexagonMiddle3 {
   width: 180px;
-  height: 180px;
   bottom: 25%;
   right: 8%;
   opacity: 0.58;
-  transform: rotate(40deg);
 }
 
 .hexagonMiddle4 {
   width: 160px;
-  height: 160px;
   top: 55%;
   left: 5%;
   opacity: 0.52;
-  transform: rotate(-35deg);
 }
 
-/* Hexágono de frente (destacado con glow fuerte) */
-.hexagonForeground1,
-.hexagonForeground2 {
-  position: absolute;
-  width: 140px;
-  height: 140px;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--color-brand-primary) 20%, transparent) 0%,
-    color-mix(in srgb, var(--color-brand-primary-hover) 15%, transparent) 100%
-  );
-  border: 2px solid color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
-  box-shadow:
-    0 0 40px color-mix(in srgb, var(--color-brand-primary) 30%, transparent),
-    inset 0 0 20px color-mix(in srgb, var(--color-brand-white) 5%, transparent);
-  pointer-events: none;
-  transition: transform 0.1s ease-out;
+/* Hexágonos de frente (destacados, con el brillo más fuerte) */
+.hexForeground {
   z-index: 2;
 }
 
+.hexForeground polygon {
+  fill: url(#sp1-hex-foreground);
+  stroke: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
+  stroke-width: 2;
+}
+
+.hexForeground .glow {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
+  stroke-width: 14;
+}
+
 .hexagonForeground1 {
+  width: 140px;
   top: 62%;
   right: 10%;
   opacity: 0.7;
-  transform: rotate(30deg);
 }
 
 .hexagonForeground2 {
   width: 120px;
-  height: 120px;
   top: 18%;
   right: 35%;
   opacity: 0.65;
-  transform: rotate(-40deg);
 }
 
 /* Hexágonos pequeños adicionales (detalles sutiles) */
-.hexagonSmall1,
-.hexagonSmall2,
-.hexagonSmall3,
-.hexagonSmall4 {
-  position: absolute;
-  width: 80px;
-  height: 80px;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  background: color-mix(in srgb, var(--color-brand-primary) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--color-brand-primary) 15%, transparent);
-  pointer-events: none;
+.hexSmall {
   z-index: 1;
 }
 
+.hexSmall polygon {
+  fill: color-mix(in srgb, var(--color-brand-primary) 8%, transparent);
+  stroke: color-mix(in srgb, var(--color-brand-primary) 15%, transparent);
+  stroke-width: 1;
+}
+
 .hexagonSmall1 {
+  width: 80px;
   top: 28%;
   right: 35%;
   opacity: 0.4;
-  transform: rotate(45deg);
 }
 
 .hexagonSmall2 {
+  width: 80px;
   bottom: 35%;
   left: 18%;
   opacity: 0.35;
-  transform: rotate(-30deg);
 }
 
 .hexagonSmall3 {
   width: 70px;
-  height: 70px;
   top: 75%;
   right: 25%;
   opacity: 0.42;
-  transform: rotate(60deg);
 }
 
 .hexagonSmall4 {
   width: 65px;
-  height: 65px;
   top: 12%;
   left: 40%;
   opacity: 0.38;
-  transform: rotate(-50deg);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hexagonMiddle1,
-  .hexagonMiddle2,
-  .hexagonMiddle3,
-  .hexagonMiddle4,
-  .hexagonForeground1,
-  .hexagonForeground2 {
-    transition: none;
-  }
 }
 
 /*

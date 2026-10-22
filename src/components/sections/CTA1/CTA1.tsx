@@ -19,6 +19,8 @@ import { useMagnetic } from "./magnetic";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MEDIA } from "@/config/breakpoints";
 import { CTA_ZOOM, CTA_ZOOM_ORIGIN, CTA_ZOOM_WINDOW } from "./ctaZoom";
+import { CTA_SHAPES } from "./ctaShapes";
+import { FixedShape } from "@/components/common/FixedShape/FixedShape";
 
 /** Hexágono regular de puntas laterales (232 × 200), como las barras de luz del techo de la barbería (BR-058). */
 const HEXAGON = "M60 3H172L228 100L172 197H60L4 100Z";
@@ -61,11 +63,14 @@ export function CTA1() {
 
   return (
     <section id="cta-1" className={styles.cta} ref={sectionRef}>
-      {/* Capa de fondo - hexágonos con opacidad reducida */}
+      {/* Capa de fondo - hexágonos con opacidad reducida. Los del texto son SVG de geometría fija (BR-091) */}
       <motion.div
         className={`${styles.textHexagonBackground} ${animating}`}
         style={{ y: layers.slow.y, x: layers.slow.x }}
-      ></motion.div>
+        data-shape
+      >
+        <FixedShape shape={CTA_SHAPES.textHexagonBackground} />
+      </motion.div>
       <motion.div
         className={`${styles.imageHexagonBackground} ${animating}`}
         style={{ y: layers.slow.y, x: layers.slow.x }}
@@ -75,13 +80,19 @@ export function CTA1() {
       <motion.div
         className={`${styles.textHexagon} ${animating}`}
         style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
-      ></motion.div>
+        data-shape="text"
+      >
+        <FixedShape shape={CTA_SHAPES.textHexagon} />
+      </motion.div>
 
       {/* Capa frontal - hexágono decorativo */}
       <motion.div
         className={`${styles.textHexagonForeground} ${animating}`}
         style={{ y: layers.fast.y, x: layers.fast.x }}
-      ></motion.div>
+        data-shape
+      >
+        <FixedShape shape={CTA_SHAPES.textHexagonForeground} />
+      </motion.div>
 
       {/* Barras de luz hexagonales del techo de la barbería, arriba y cortadas por el borde: se encienden una vez (BR-058) */}
       <motion.svg
@@ -104,7 +115,10 @@ export function CTA1() {
         <motion.div
           className={`${styles.imageHexagonForeground} ${animating}`}
           style={{ y: layers.fast.y, x: layers.fast.x }}
-        ></motion.div>
+          data-shape
+        >
+          <FixedShape shape={CTA_SHAPES.imageHexagonForeground} />
+        </motion.div>
         <motion.picture
           className={`${styles.ctaImage} ${animating}`}
           initial="hidden"

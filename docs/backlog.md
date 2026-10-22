@@ -3409,7 +3409,8 @@ cambiar de ruta.
 Alcance:
 1. **Encendido en ola:** los hexágonos de cada lote nuevo (no los de la carga inicial) encienden su marco
    en blanco con un halo rojo una sola vez, escalonados, y vuelven al reposo. CSS, sin `setState` por scroll.
-2. **Parallax interior:** en escritorio, la foto de cada hexágono se desplaza ±6 % dentro de su forma según
+2. **Parallax interior:** en escritorio, la foto de cada hexágono se desplaza ±14 % (era ±6 %, casi imperceptible
+   según el usuario, 2026-10-19; se ajusta con `PARALLAX_RANGE` en `Honeycomb.tsx`) dentro de su forma según
    su posición en pantalla (`useScroll` con `target` y `useTransform`); el hexágono no se mueve. Opt-in para
    que Equipo no cambie.
 3. **Contador y final:** «Ves 12 de 24» con una barra de progreso fina bajo el panal y una marca al llegar
@@ -3465,6 +3466,217 @@ Criterios de aceptación:
 2. Ninguno de los 50 hexágonos de `/productos` queda sin foto.
 3. Las fotos muestran marcas reales (Bombay Shaving Company, L'Oréal, Kiehl's, Nivea…): es contenido de prueba y
    se reemplaza por fotos propias antes de publicar el catálogo real.
+
+
+#### BR-091 — Hero y CTA1: figuras de fondo en SVG con geometría fija
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-055, BR-058
+- Estado: En curso
+- Historia de usuario: HU-EXP-004 (CA-34)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
+
+**Origen (2026-10-21):** en la auditoría de SVG de la landing (2026-10-19) y en las capturas del usuario a
+1024×1117 y 1440×1289, las figuras de fondo del Hero y de CTA1 cambian de forma según la proporción de la
+pantalla. La causa es que son `clip-path: polygon()` con porcentajes sobre cajas en `vw` × `vh`: cada punto se
+estira por separado en cada eje. Así se deforman:
+- Los 6 triángulos del Hero (`Hero.module.css`, `.leftTriangle*` y `.rightTriangle*`).
+- Los hexágonos irregulares de CTA1 (`.textHexagon*`, de 40vw × 80vh).
+- El pentágono translúcido (`.imageHexagonBackground`).
+- La figura blanca que recorta la foto (`.imageHexagon`, de 50vw × 100vh).
+
+Al usuario le gusta que los hexágonos sean irregulares, pero la irregularidad tiene que ser la diseñada, no la
+que deja cada pantalla.
+
+Medición en un build local (2026-10-21): la relación ancho/alto de las figuras de CTA1 cambia con la ventana.
+- `.textHexagon` mide 0,89 a 1920×1080, 1366×768 y 1280×720; 0,80 a 1440×900; 0,56 a 1440×1289; y 0,46 a
+  1024×1117 y 772×839, el doble de alto que lo diseñado.
+- Las demás figuras siguen el mismo patrón. `.imageHexagonForeground` hereda la deformación por ir en % de
+  `.imageHexagon`.
+- Las barras de luz no se deforman: ya son un SVG dimensionado solo por el ancho.
+
+Hay dos efectos secundarios:
+- Con la figura más alta que ancha, la foto (`.ctaImage`, anclada abajo) queda con mucho blanco encima.
+- El hexágono rojo mide 40vw y `.textContent` hasta 420 px más su relleno, así que bajo ~1100 px de ancho el
+  texto se sale del hexágono.
+
+> **Decisión del usuario (2026-10-21):** la forma de referencia es la que se ve a **1920×1080** (relación 0,89
+> en CTA1). Prioridad P3.
+
+**Causa:** los porcentajes de `polygon()` se resuelven contra el ancho para la x y contra el alto para la y. Si
+la caja va en `vw` × `vh`, el ángulo de cada lado depende de la proporción de la ventana. El filo de luz de la
+diagonal del Hero tiene el mismo problema: es un degradado `to bottom right` que solo cae en la diagonal mientras
+la caja conserve su proporción.
+
+Alcance:
+1. Cada figura decorativa de estas dos secciones se dibuja como `<svg>` en línea, con un `viewBox` y puntos fijos.
+   La sección recorta lo que sobra, así que la figura nunca se estira: los ángulos y la irregularidad de los
+   hexágonos son iguales en cualquier proporción.
+2. Una figura de referencia por forma: los puntos actuales tal como se ven a 1920×1080. Cada figura se dimensiona
+   con una sola medida (ancho) y una relación fija (`viewBox` con `preserveAspectRatio`, alto automático), nunca
+   con `vw` y `vh` por separado. Si hace falta, se limita para que no se pase en ventanas bajas, por ejemplo con
+   `min(vw, vh * k)`.
+3. El texto de CTA1 queda dentro del hexágono rojo en todo el rango de escritorio: el bloque escala con la misma
+   unidad que la figura, o la figura se dimensiona a partir del bloque.
+4. Se conservan las capas de parallax del Hero (fondo, media y rápida) y las de CTA1 (lenta, media y rápida). Las
+   figuras que comparten capa van en un mismo `<svg>` animado con `MotionValue`; no se anima nada dentro del SVG
+   en cada fotograma.
+5. El filo de luz de la diagonal del Hero pasa a ser un trazo real (`<line>` o `<path>` con
+   `vector-effect: non-scaling-stroke`), nítido a cualquier tamaño.
+6. La figura blanca de CTA1 que recorta la foto mantiene un ángulo fijo en su punta. Puede seguir siendo un
+   `clip-path` si todos sus puntos se expresan en una sola unidad, por ejemplo en `vh`. Se conservan el zoom de
+   la foto (`BR-079`), su entrada con `fadeInRight` y las barras de luz tal como están.
+7. Colores con tokens (`fill` y `stroke` desde CSS, sin literales en el SVG) y `aria-hidden="true"` en cada SVG
+   decorativo (skill `svg-workflow`).
+8. Móvil sin cambios: estas figuras siguen existiendo solo desde 769 px.
+9. Fuera de alcance:
+   - Los hexágonos de SocialProof1 y SocialProof2.
+   - Los defectos de rotación y de efectos que el `clip-path` recorta en SocialProof1 (vistos en la misma
+     auditoría).
+   - Animaciones nuevas (trazos que se dibujan, cambios de forma). Se deciden después con `diseno-visual`.
+
+Criterios de aceptación:
+1. A 1920×1080, 1440×900, 1440×1289, 1366×768, 1280×720, 1024×1117, 1024×768, 900×1100 y 772×839, cada figura
+   conserva su relación ancho/alto (medida con `getBoundingClientRect` sin rotación, con una tolerancia de ±2 %) y
+   sus ángulos; solo cambia cuánto recorta el borde de la sección (HU-EXP-004 CA-34).
+2. En esas medidas, el texto de CTA1 no se sale del hexágono rojo (lo mide `fixedShapes.e2e.test.ts`).
+
+> **Alcance ajustado (2026-10-21, decisión del usuario):** sale del ticket la franja blanca sobre la foto de CTA1 en
+> ventanas altas. No la causa la forma: la figura llena el alto y la foto se dimensiona por el ancho. El encuadre de
+> la foto queda para la nueva auditoría o para `diseno-visual`.
+3. El filo de luz del Hero sigue la diagonal del triángulo en esas medidas y se ve de 1 px nítido.
+4. El parallax del Hero y de CTA1 se ve igual que antes al bajar, y con reducir movimiento no hay parallax
+   (CP-A11Y-003).
+5. Ninguna figura del Hero ni de CTA1 queda con un `clip-path` de porcentajes sobre una caja en `vw` × `vh` (lo
+   comprueba un test sobre los CSS Modules).
+6. TBT, CLS y LCP móviles y de escritorio de `/` no empeoran frente a la línea base medida antes del cambio,
+   mediana de 3 (CP-PERF-003).
+7. Lint, tipos, tests, `breakpoints.test.ts` y `contrast.e2e.test.ts` en verde.
+8. **A confirmar por el usuario en el navegador:** la irregularidad de los hexágonos es la que eligió.
+
+
+#### BR-092 — SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-091
+- Estado: En curso
+- Historia de usuario: HU-EXP-004 (CA-35)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
+
+**Origen (2026-10-21):** auditoría de SVG de la landing (2026-10-19). SocialProof1 tiene 14 hexágonos y
+SocialProof2 tiene 11, cada uno en su propio `motion.div` con `clip-path`. Varios no se ven como fueron
+diseñados.
+
+> **Decisión del usuario (2026-10-21):** resolver primero los hallazgos importantes (`BR-091` y este ticket) y
+> después repetir la auditoría. Los colores literales de Reviews y los íconos duplicados de lucide se deciden
+> tras esa nueva auditoría.
+
+**Causa:**
+1. **Se pierde la rotación.** En `SocialProof1.module.css`, `.hexagonBackground*`, `.hexagonForeground*` y
+   `.hexagonSmall*` se rotan con `transform: rotate(…)`. Framer escribe el `transform` en línea (`y`, `scale`, `x`)
+   y lo pisa (`SocialProof1.tsx:100-170`). En SocialProof2 no pasa porque se usa la propiedad `rotate:`.
+2. **Efectos que se pagan y no se ven.** El `clip-path` recorta todo el `box-shadow` (el brillo de
+   `.hexagonMiddle*` y `.hexagonForeground*`) y el `border` de los cuatro lados diagonales. Además, los 4
+   `.hexagonBackground*` llevan `backdrop-filter: blur(2px)` sobre un fondo casi liso.
+3. **Una transición que pelea con framer.** `transition: transform 0.1s` en `.hexagonForeground*` (SP1) y en
+   `.hexagonFast1` (SP2): framer actualiza el `transform` en cada fotograma y la transición lo persigue con
+   retraso.
+4. **Un hexágono muy grande en móvil.** `.hexagon` de SocialProof2 mide 1000 × 1000 px y también se ve en
+   móvil. Hay que medir su costo (capas y memoria en DevTools) antes de decidir.
+
+**Arreglo:**
+1. Hexágonos como `<svg>` en línea con `viewBox` fijo:
+   - Un `<svg>` por capa de parallax cuando todos sus hexágonos comparten movimiento.
+   - Un elemento aparte para los que tienen animación propia (opacidad según la dirección, escala según la
+     velocidad, desplazamiento en x según la dirección).
+   - Rotación de cada hexágono en el `transform` de su `<polygon>` (fija, no animada).
+2. El borde y el brillo son un `stroke` real en los seis lados (el brillo como un segundo trazo ancho y
+   translúcido, sin `filter` animado). Sin `backdrop-filter`.
+3. Se quita la `transition: transform` de los elementos que mueve framer.
+4. El hexágono grande de SP2: se mide antes y después y, si pesa, se dibuja solo la parte visible o se reduce en
+   móvil.
+5. Colores con tokens, `aria-hidden="true"` y la misma visibilidad por cortes que hoy (ADR-009).
+6. Fuera de alcance: las animaciones nuevas (se deciden con `diseno-visual`), Reviews y los íconos.
+
+Criterios de aceptación:
+1. Cada hexágono de SocialProof1 muestra la rotación de su diseño y un borde continuo en sus seis lados
+   (HU-EXP-004 CA-35).
+2. Ningún hexágono de SP1 ni de SP2 lleva `backdrop-filter`, `box-shadow` recortado por `clip-path` ni
+   `transition: transform` junto con un `transform` de framer (lo comprueba un test sobre los CSS Modules).
+3. El costo de pintado y de composición al recorrer SP1 y SP2 (trace con la CPU frenada 4×, mediana de 3) no sube
+   frente a la línea base.
+
+> **Alcance ajustado (2026-10-21, decisión del usuario):** se mantiene un elemento por hexágono, sin agrupar por
+> capa. El parallax desplaza cada hexágono un porcentaje de su propio alto, y la escala y el giro son sobre su propio
+> centro: un grupo del tamaño de la sección cambiaría el movimiento. El antiguo criterio 3 (bajar de 25 elementos
+> animados) pasa a ser el costo medido. Línea base (2026-10-21, trace al recorrer cada sección, mediana de 3):
+> - SP2 en móvil @3: Paint 49 ms, Raster 73 ms, estilos 320 ms, composición 440 ms.
+> - SP1 a 1440: Paint 82 ms, Raster 10 ms, estilos 268 ms, composición 290 ms.
+> - SP2 a 1440: Paint 102 ms, Raster 92 ms, estilos 334 ms, composición 509 ms.
+>
+> El hexágono de 1000 px de SP2 no tiene capa propia en móvil: se repinta con la página al moverse.
+>
+> **Decisión del usuario (2026-10-21):** el brillo de los hexágonos medios y de frente de SP1 (un segundo trazo ancho
+> y translúcido, sin difuminar) queda como está.
+>
+> **Medición tras el cambio (2026-10-21):** builds alternados, mediana de 3, ms. El total baja en las tres
+> secciones, sobre todo por el recálculo de estilos, pero la composición sube en dos de ellas:
+> - SP2 en móvil: total 942 → 905; composición 455 → 508.
+> - SP1 a 1440: total 696 → 678; composición 311 → 393.
+> - SP2 a 1440: total 1436 → 1049; composición 676 → 573.
+>
+> El criterio 3 se resuelve al cerrar el ticket.
+4. Con reducir movimiento no hay parallax (CP-A11Y-003).
+5. TBT, CLS y LCP móviles de `/` no empeoran frente a la línea base, mediana de 3 (CP-PERF-003). Se anota el
+   costo del hexágono grande de SP2 antes y después.
+6. Lint, tipos, tests y `breakpoints.test.ts` en verde.
+7. **A confirmar por el usuario en el navegador:** el aspecto de los hexágonos con borde y brillo.
+
+
+#### BR-093 — Hero y CTA1: fotos centradas en el rostro y alto de sección acotado
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-091
+- Estado: En curso
+- Historia de usuario: HU-EXP-004 (CA-36)
+- RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`
+
+**Origen (2026-10-21):** al revisar `BR-091`, el usuario pide que las fotos del Hero y de CTA1 queden centradas en
+todas las resoluciones. En escritorio, las dos secciones miden `height: 100vh`, pero sus fotos se dimensionan por el
+ancho (`width: 50%` o `112%`, alto automático). Por eso:
+- La foto del Hero queda pegada arriba con charcoal debajo en ventanas altas (1440×1289) y se le corta el cuello en
+  ventanas bajas (1280×720).
+- La de CTA1 queda pegada abajo, con una franja blanca encima en ventanas altas (la que se sacó de `BR-091`), y el
+  borde derecho le corta la nuca.
+
+> **Decisión del usuario (2026-10-21):**
+> - «Centrada» significa que cada foto llena su zona (la mitad derecha del Hero, la figura blanca de CTA1) con el
+>   rostro al centro: sin franjas vacías y recortando solo los bordes, nunca la cara.
+> - Solo escritorio (desde 769 px): no se tocan el encuadre del Hero móvil (ajustado a mano el 2026-10-17) ni el
+>   corte de CTA1 móvil del Figma.
+> - Ticket propio.
+> - Se acota también el alto de las dos secciones en escritorio.
+
+**Causa:** el alto de la sección sale del alto de la ventana y el de la foto, del ancho. Cuando cambia la proporción
+de la ventana, ya no se corresponden.
+
+Alcance:
+1. En escritorio, cada foto llena su zona con `object-fit: cover` y un punto de enfoque en el rostro
+   (`object-position`), definido como constante junto a la del zoom (`heroZoom.ts`, `ctaZoom.ts`).
+2. En escritorio, el Hero y CTA1 miden `min(100svh, 75vw)`:
+   - En ventanas de 16:9, 16:10 y 4:3 llenan la pantalla, como hoy.
+   - En ventanas más altas que 4:3 dejan de crecer y conservan la composición.
+   - El tope (75vw, proporción 4:3) se ajusta a ojo con una variable.
+3. Se conservan el zoom con el scroll (`BR-079`), el parallax, la entrada de la foto, el recorte de la figura blanca
+   y las figuras de `BR-091`.
+4. Móvil sin cambios.
+
+Criterios de aceptación:
+1. A 1920×1080, 1440×900, 1440×1289, 1366×768, 1280×720, 1024×1117, 1024×768, 900×1100 y 772×839, cada foto llena su
+   zona sin franjas vacías y el rostro queda completo y cerca del centro de la zona (HU-EXP-004 CA-36).
+2. En ventanas de 16:9, 16:10 y 4:3 las secciones siguen midiendo el alto de la ventana; en las más altas miden 75vw.
+3. Con reducir movimiento no hay zoom ni parallax (CP-A11Y-003).
+4. LCP, CLS y TBT móviles y de escritorio de `/` no empeoran frente a la línea base de `BR-091`, mediana de 3
+   (CP-PERF-003). La foto del Hero sigue siendo el LCP con `fetchpriority="high"`.
+5. Lint, tipos, tests y `breakpoints.test.ts` en verde.
+6. **A confirmar por el usuario en el navegador:** el encuadre del rostro en cada foto.
 
 
 ---
@@ -3585,6 +3797,9 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-088 | Cabecera de página unificada: título en Anton y diagonales compactas | K | P3 | S | Propuesta | BR-087 |
 | BR-089 | Productos: encendido en ola, parallax interior, contador y botón de volver arriba | K | P3 | M | Propuesta | BR-068, BR-088 |
 | BR-090 | Productos de prueba: 50 filas con fotos de stock que cargan | K | P3 | XS | Propuesta | — |
+| BR-091 | Hero y CTA1: figuras de fondo en SVG con geometría fija | K | P3 | M | En curso | BR-055, BR-058 |
+| BR-092 | SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales | K | P3 | M | En curso | BR-091 |
+| BR-093 | Hero y CTA1: fotos centradas en el rostro y alto de sección acotado | K | P3 | S | En curso | BR-091 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
