@@ -502,7 +502,7 @@ Criterios de aceptación:
 #### BR-022 — Reemplazar colores hex escritos a mano por tokens
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-021
-- Estado: Propuesta
+- Estado: En curso (tramo de la landing)
 - Historia de usuario: no aplica — deuda técnica sin cambio visible.
 - RF/RNF: `RNF-MANT-003`
 
@@ -514,9 +514,23 @@ Alcance:
 1. Cada hex pasa a `var(--token)`.
 2. Estilos inline de color pasan a CSS Modules.
 
+> **Alcance ajustado (2026-10-22, decisión del usuario):** por ahora solo la landing. Salió de la segunda auditoría
+> de SVG. Son 34 colores escritos a mano:
+> - CTA2: 20.
+> - Reviews: 5.
+> - Hero: 1.
+> - Navbar: 8 (se ve en la portada, aunque es compartida).
+>
+> Pasan a los tokens de `src/styles/tokens/`, y las transparencias a `color-mix()`. El `#332a2b` de CTA2 pasa a
+> `--color-brand-section-bg` (`#332b2b`, una unidad de diferencia en el verde). `BR-021` (fuente única de tokens)
+> sigue pendiente: este tramo no lo necesita, porque usa los tokens ya fijados por ADR-002. El resto del sitio
+> queda para después.
+
 Criterios de aceptación:
 1. El agente `design-tokens-auditor` no reporta hex fuera de
    `styles/tokens/`.
+2. (Tramo de la landing) Ningún CSS Module de Hero, Reviews, CTA2 ni Navbar tiene hex ni `rgb()`/`rgba()` (lo
+   comprueba un test), y la portada se ve igual que antes.
 
 #### BR-023 — Retirar Tailwind, shadcn y sus componentes `ui/*`
 
@@ -1246,7 +1260,7 @@ Criterios de aceptación:
 #### BR-027 — Ordenar `data/`, `types/` e iconos
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (tramo de íconos)
 - Historia de usuario: no aplica — deuda técnica.
 - RF/RNF: `RNF-MANT-003`
 
@@ -1261,9 +1275,21 @@ Alcance:
 2. `Location/` con su propio CSS Module.
 3. SVG inline → `lucide-react` o `components/icons`.
 
+> **Alcance ajustado (2026-10-22, decisión del usuario):** suma lo encontrado en la segunda auditoría de SVG de la
+> landing. 7 de los 12 íconos de `src/components/icons/index.tsx` repiten íconos de `lucide-react` (Phone, Email,
+> MapPin, Clock, Search, ShoppingCart y ExternalLink) y pasan a lucide. Quedan solo los de marca (WhatsApp,
+> Instagram, Facebook, Twitter y TikTok), que lucide no trae. El SVG en línea de `CTA2.tsx` es el `MessageCircle`
+> de lucide. Se hace después de `BR-094`.
+>
+> **Resultado (2026-10-22):** ShoppingCart, ExternalLink y Twitter no los usaba nadie y se eliminaron. El ícono de
+> WhatsApp que ya existía (Footer, Ubicación y CTA2) era el globo de chat genérico, no el logo.
+> **Decisión del usuario (2026-10-22):** ponerle el logo real de WhatsApp (Simple Icons, CC0), con relleno.
+
 Criterios de aceptación:
 1. Ningún import con extensión explícita `.tsx` en `src/`; ningún
    componente importa el CSS Module de otro.
+2. `src/components/icons` exporta solo íconos de marca, y ningún componente dibuja en línea un ícono que trae
+   lucide.
 
 #### BR-028 — Prettier, `.editorconfig` y alias `@/` obligatorio
 
@@ -1345,6 +1371,46 @@ Alcance:
 
 Criterios de aceptación:
 1. Un PR que baja la accesibilidad de 0,95 queda en rojo.
+
+#### BR-095 — Los e2e de Chrome real no corren en paralelo
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: —
+- Estado: En curso
+- Historia de usuario: no aplica — calidad de la suite de tests.
+- RF/RNF: `RNF-MANT-002`
+
+**Origen (2026-10-22):** desde `BR-091` hay dos e2e que compilan el sitio y abren Chrome real
+(`contrast.e2e.test.ts` y `fixedShapes.e2e.test.ts`), y Vitest los corre en paralelo con el resto de la suite. En
+local, el `afterAll` de `contrast.e2e.test.ts` se colgó en 2 de 4 corridas completas: el archivo figura como
+fallido aunque sus 892 pruebas pasan. Darle 30 s no lo resolvió. Solos, juntos o con la suite sin
+`fixedShapes.e2e.test.ts`, pasan siempre. El CI no lo muestra.
+
+> **Decisión del usuario (2026-10-22):** ticket aparte, después de la parte de la landing de `BR-022`.
+
+**Línea base (2026-10-22):** de las 7 corridas completas de esa sesión que no fallaron por un bug real, 4 marcaron un
+archivo e2e como fallido por un `afterAll` que superó su plazo (10 s por defecto; 30 s en una de ellas) y 3 pasaron.
+
+**Causa (corregida durante el ticket):** la primera hipótesis, que era el paralelismo con las pruebas de unidades, no
+alcanzó. Con solo el proyecto e2e, un archivo a la vez, dos archivos se colgaron en la primera corrida y en las 7
+siguientes (6 con los tiempos del cierre a la vista) pasaron, con el cierre de Chrome en ~170 ms. El cuelgue
+aparece cuando la máquina está ocupada (otro build, otro Chrome, otras sesiones): cerrar Chrome y el servidor pasa
+de los 10 s por defecto. Es lentitud, no un bloqueo.
+
+Alcance:
+1. Los `*.e2e.test.ts` van en un proyecto propio de Vitest (entorno `node`), un archivo a la vez, con plazos
+   holgados de prueba y de cierre (60 s y 120 s). El resto de la suite sigue igual.
+2. Si los e2e pueden compartir una sola compilación del sitio y un solo Chrome, se evalúa como mejora (no se hizo).
+
+Criterios de aceptación:
+1. Cinco corridas seguidas de `npm run test:run` en local terminan en verde, sin archivos fallidos.
+2. `npm run test:coverage` y el CI siguen funcionando igual.
+
+**Verificación (2026-10-22, local):**
+- Cinco corridas seguidas de `npm run test:run`: 85 archivos y 898 pruebas en verde cada vez, sin archivos fallidos
+  (antes, 4 de 7 se colgaban). Duración de 64 a 166 s.
+- `npm run test:coverage`: 898 pruebas en verde y cobertura de 86,9 % en sentencias, 91,0 % en ramas, 87,9 % en
+  funciones y 86,9 % en líneas, sobre los umbrales (73 / 83 / 77 / 73).
+- Pendiente: que el CI de GitHub corra igual con los dos proyectos (se ve al abrir el PR).
 
 ### Épica I — Medición y privacidad
 
@@ -3679,6 +3745,53 @@ Criterios de aceptación:
 6. **A confirmar por el usuario en el navegador:** el encuadre del rostro en cada foto.
 
 
+#### BR-094 — Benefits: cuñas rojas con ángulo fijo
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: BR-071
+- Estado: En curso
+- Historia de usuario: HU-EXP-004 (CA-37)
+- RF/RNF: `RNF-PERF-003`
+
+**Origen (2026-10-21):** segunda auditoría de SVG de la landing, sobre `master` y después de `BR-091` a `BR-093`.
+Las dos cuñas rojas de Benefits (`BR-071`, `Benefits.module.css`, `.imageBackground::before` y `::after`) solo
+existen en móvil (desde 769 px no hay cuñas), y se deforman con el ancho de la ventana. Medido con la caja real del
+fondo:
+
+| Ventana | Cuña superior | Cuña inferior |
+|---|---|---|
+| 320×640 | 28,3° | 25,8° |
+| 360×780, 390×844 y 430×932 | 30,2° | 27,6° |
+| 600×960 | 23,3° | 21,1° |
+| 768×1024 | 19,7° | 17,8° |
+
+> **Corrección (2026-10-22):** la primera versión de esta ficha medía también ventanas de escritorio (13,5° a 28,6°),
+> donde las cuñas no se pintan. Esas filas no correspondían y se quitaron.
+
+La franja diagonal (`.band`, solo en escritorio) también cambia, de 0,9° a 2,4° respecto de la vertical, pero no
+se nota.
+
+**Causa:** el mismo problema de `BR-091`. Las cuñas son `clip-path` sobre una caja de `100% × 24%` y `65% × 14%`
+de la sección, y el ancho y el alto de esa caja cambian por separado.
+
+> **Decisión del usuario (2026-10-22):** el ángulo de referencia es el del móvil, donde se diseñaron y ajustaron
+> a ojo (`BR-071`): ~30° la superior y ~28° la inferior. P3.
+
+**Arreglo:** cada cuña fija su proporción con `aspect-ratio` y se dimensiona solo por el ancho. Así el ángulo queda
+fijo y el borde de la sección recorta lo que sobra. No hace falta SVG: es un triángulo plano, sin trazo ni degradado.
+
+Alcance:
+1. La cuña superior y la inferior con el ángulo de referencia en todo el rango móvil (hasta 768 px).
+2. Se conservan el color, la posición en las esquinas y las variables para ajustarlas a ojo.
+3. La franja diagonal no cambia.
+
+Criterios de aceptación:
+1. En las ventanas de la tabla, el ángulo de cada cuña no varía más de 1° (HU-EXP-004 CA-37); se mide con la caja real.
+2. Ningún `clip-path` de Benefits queda en porcentajes sobre una caja sin proporción fija, salvo la franja (lo
+   comprueba un test sobre el CSS Module).
+3. Lint, tipos, tests y `breakpoints.test.ts` en verde.
+4. **A confirmar por el usuario en el navegador:** el ángulo de las cuñas.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3729,12 +3842,12 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-019 | Error boundaries | C | P1 | S | Hecho | — |
 | BR-020 | Recuperación de chunks | C | P1 | S | Hecho | BR-019 |
 | BR-021 | Fuente única de tokens | D | P2 | M | Propuesta | — |
-| BR-022 | Hex → tokens | D | P2 | M | Propuesta | BR-021 |
+| BR-022 | Hex → tokens | D | P2 | M | En curso (landing) | BR-021 |
 | BR-023 | Retirar Tailwind y shadcn | D | P2 | L | Propuesta | BR-021 |
 | BR-024 | Breakpoints unificados, mobile-first (base de la migración) | D | P2 | S | Propuesta | — |
 | BR-025 | Código muerto y dependencias | H | P2 | M | Propuesta | BR-014 |
 | BR-026 | Rutas desde `ROUTES` | H | P2 | S | Propuesta | BR-003, BR-019 |
-| BR-027 | Ordenar data, types e iconos | H | P2 | S | Propuesta | — |
+| BR-027 | Ordenar data, types e iconos | H | P2 | S | En curso (íconos) | — |
 | BR-028 | Prettier y alias | H | P2 | S | Propuesta | BR-004 |
 | BR-029 | CI en GitHub Actions | H | P1 | S | Hecho | BR-004, BR-030 |
 | BR-030 | Vitest y primeros tests | H | P1 | M | Hecho | — |
@@ -3800,6 +3913,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-091 | Hero y CTA1: figuras de fondo en SVG con geometría fija | K | P3 | M | En curso | BR-055, BR-058 |
 | BR-092 | SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales | K | P3 | M | En curso | BR-091 |
 | BR-093 | Hero y CTA1: fotos centradas en el rostro y alto de sección acotado | K | P3 | S | En curso | BR-091 |
+| BR-094 | Benefits: cuñas rojas con ángulo fijo | K | P3 | XS | En curso | BR-071 |
+| BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | En curso | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

@@ -50,13 +50,13 @@ describe.skipIf(!chromePath)("figuras de fondo con geometría fija (BR-091, HU-E
     server = await preview({ configFile: false, logLevel: "silent", build: { outDir: built.outDir }, preview: { port: 0, host: "127.0.0.1" } });
     baseUrl = server.resolvedUrls?.local[0]?.replace(/\/$/, "") ?? "";
     browser = await puppeteer.launch({ executablePath: chromePath, headless: true, args: ["--no-sandbox"] });
-  }, 120_000);
+  });
 
   afterAll(async () => {
     await browser?.close();
     await server?.close();
     cleanup?.();
-  }, 30_000);
+  });
 
   it.each(VIEWPORTS)("%ix%i: las figuras no se estiran y el texto de CTA1 queda dentro del hexágono rojo", async (width, height) => {
     const page = await browser.newPage();
@@ -102,5 +102,5 @@ describe.skipIf(!chromePath)("figuras de fondo con geometría fija (BR-091, HU-E
     expect(result.shapes).toBeGreaterThanOrEqual(10);
     expect(result.worstRatioError).toBeLessThan(RATIO_TOLERANCE);
     expect(result.outside).toEqual([]);
-  }, 60_000);
+  });
 });

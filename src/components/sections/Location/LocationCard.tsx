@@ -3,13 +3,8 @@ import { Card } from "@/components/ui/card";
 import { fadeInScale, fadeInUpShort } from "@/config/animations.config";
 import { trackPhone, trackWhatsApp } from "@/analytics/track";
 import type { Location } from "@/types/location.types";
-import {
-  ClockIcon,
-  EmailIcon,
-  MapPinIcon,
-  PhoneIcon,
-  WhatsAppIcon,
-} from "@/components/icons";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
+import { WhatsAppIcon } from "@/components/icons";
 import styles from "@/pages/LocationPage.module.css";
 
 /**
@@ -36,7 +31,7 @@ export const LocationCard = ({ location }: LocationCardProps) => (
         animate="visible"
       >
         <div className={styles.iconHeader}>
-          <MapPinIcon className={styles.icon} />
+          <MapPin className={styles.icon} />
           <h2 className={styles.sectionTitle}>Dirección</h2>
         </div>
         <p className={styles.text}>
@@ -54,7 +49,7 @@ export const LocationCard = ({ location }: LocationCardProps) => (
         transition={{ delay: 0.1 }}
       >
         <div className={styles.iconHeader}>
-          <ClockIcon className={styles.icon} />
+          <Clock className={styles.icon} />
           <h2 className={styles.sectionTitle}>Horarios</h2>
         </div>
         <div className={styles.schedule}>
@@ -75,16 +70,16 @@ export const LocationCard = ({ location }: LocationCardProps) => (
         transition={{ delay: 0.2 }}
       >
         <div className={styles.iconHeader}>
-          <PhoneIcon className={styles.icon} />
+          <Phone className={styles.icon} />
           <h2 className={styles.sectionTitle}>Contacto</h2>
         </div>
         <div className={styles.contactInfo}>
           <a href={`tel:${location.phone}`} className={styles.contactLink} onClick={trackPhone("ubicacion")}>
-            <PhoneIcon className={styles.smallIcon} />
+            <Phone className={styles.smallIcon} />
             {location.phone}
           </a>
           <a href={`mailto:${location.email}`} className={styles.contactLink}>
-            <EmailIcon className={styles.smallIcon} />
+            <Mail className={styles.smallIcon} />
             {location.email}
           </a>
           <a

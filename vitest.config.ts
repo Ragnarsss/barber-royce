@@ -18,10 +18,6 @@ export default defineConfig({
     },
   },
   test: {
-    environment: "jsdom",
-    setupFiles: ["./src/test/setup.ts"],
-    include: ["src/**/*.test.{ts,tsx}"],
-    css: { modules: { classNameStrategy: "non-scoped" } },
     coverage: {
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],
@@ -31,5 +27,36 @@ export default defineConfig({
       // al cerrar un ticket que agregue tests, se ajusta al nuevo valor.
       thresholds: { statements: 73, branches: 83, functions: 77, lines: 73 },
     },
+    // Dos proyectos (BR-095): las unidades en jsdom y los e2e que abren Chrome real en Node. Cada e2e compila el sitio y
+    // lanza su propio Chrome; corridos a la vez y con el resto de la suite, el cierre de Chrome se colgaba pasados los
+    // 30 s en más de la mitad de las corridas completas (aunque todas las pruebas pasaban).
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          environment: "jsdom",
+          setupFiles: ["./src/test/setup.ts"],
+          include: ["src/**/*.test.{ts,tsx}"],
+          exclude: ["src/**/*.e2e.test.{ts,tsx}"],
+          css: { modules: { classNameStrategy: "non-scoped" } },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "e2e",
+          environment: "node",
+          include: ["src/**/*.e2e.test.{ts,tsx}"],
+          // Un archivo a la vez: cada uno compila el sitio y abre su Chrome
+          fileParallelism: false,
+          // Compilar el sitio y cerrar Chrome tardan más cuando la máquina está ocupada (otro build, otro Chrome, el
+          // antivirus). Con los 10 s por defecto el cierre se pasaba y marcaba el archivo como fallido aunque todas las
+          // pruebas pasaran. Los plazos son un margen, no un tiempo esperado: sin carga, el cierre toma ~0,2 s.
+          testTimeout: 60_000,
+          hookTimeout: 120_000,
+        },
+      },
+    ],
   },
 });

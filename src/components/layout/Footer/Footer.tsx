@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from "./Footer.module.css";
+import { Clock, Mail, Phone } from "lucide-react";
 import {
-  PhoneIcon,
-  EmailIcon,
-  ClockIcon,
   InstagramIcon,
   FacebookIcon,
   TikTokIcon,
@@ -61,17 +59,17 @@ export const Footer = () => {
             <h4 className={styles.columnTitle}>Contacto</h4>
             <ul className={styles.contact}>
               <li className={styles.contactItem}>
-                <PhoneIcon className={styles.contactIcon} />
+                <Phone className={styles.contactIcon} />
                 <a href={business.contact.phone.link} onClick={trackPhone("footer")}>
                   {business.contact.phone.display}
                 </a>
               </li>
               <li className={styles.contactItem}>
-                <EmailIcon className={styles.contactIcon} />
+                <Mail className={styles.contactIcon} />
                 <a href={business.contact.email.link}>{business.contact.email.display}</a>
               </li>
               <li className={styles.contactItem}>
-                <ClockIcon className={styles.contactIcon} />
+                <Clock className={styles.contactIcon} />
                 <span>{business.schedule.display}</span>
               </li>
             </ul>

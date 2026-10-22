@@ -75,9 +75,16 @@ describe.skipIf(!chromePath)("texto legible en todas las rutas (BR-045, RNF-A11Y
       type Color = { r: number; g: number; b: number; a: number };
       const parse = (value: string): Color | null => {
         const match = value.match(/rgba?\(([^)]+)\)/);
-        if (!match) return null;
-        const [r, g, b, a] = match[1].split(",").map(Number);
-        return { r, g, b, a: a === undefined ? 1 : a };
+        if (match) {
+          const [r, g, b, a] = match[1].split(",").map(Number);
+          return { r, g, b, a: a === undefined ? 1 : a };
+        }
+        // Lo que sale de color-mix() se informa como `color(srgb r g b / a)`, con canales de 0 a 1 (BR-022). Sin
+        // esto, un fondo así no se reconocía y se comparaba contra el blanco por defecto.
+        const srgb = value.match(/color\(srgb ([\d.e-]+) ([\d.e-]+) ([\d.e-]+)(?: \/ ([\d.e-]+))?\)/);
+        if (!srgb) return null;
+        const [r, g, b] = [srgb[1], srgb[2], srgb[3]].map((channel) => Number(channel) * 255);
+        return { r, g, b, a: srgb[4] === undefined ? 1 : Number(srgb[4]) };
       };
       const luminance = ({ r, g, b }: Color) => {
         const channel = (v: number) => {

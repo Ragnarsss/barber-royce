@@ -7,11 +7,11 @@
   background-color: var(--color-primary-900);
   transition: all var(--duration-slow) var(--ease-smooth);
   padding: var(--spacing-4) 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-brand-white) 10%, transparent);
 }
 
 .navbar.scrolled {
-  background-color: rgba(51, 43, 43, 0.95); /* --color-accent-900 con opacidad */
+  background-color: color-mix(in srgb, var(--color-brand-section-bg) 95%, transparent); /* --color-accent-900 con opacidad */
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 20px var(--color-overlay);
   padding: var(--spacing-3) 0;
@@ -127,11 +127,11 @@
   --nav-glow-halo: color-mix(in srgb, var(--color-brand-white) 60%, transparent);
   --nav-glow-red: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);
   --nav-glow: 0 0 3px var(--nav-glow-core), 0 0 10px var(--nav-glow-halo), 0 0 22px var(--nav-glow-red), 0 0 34px var(--nav-glow-red);
-  /* Glow del botón de reserva con --color-brand-primary (#d52323) a distintas opacidades */
+  /* Glow del botón de reserva con --color-brand-primary a distintas opacidades */
   --nav-cta-glow:
-    0 0 20px rgba(213, 35, 35, 0.8),
-    0 0 40px rgba(213, 35, 35, 0.5),
-    0 4px 12px rgba(213, 35, 35, 0.4);
+    0 0 20px color-mix(in srgb, var(--color-brand-primary) 80%, transparent),
+    0 0 40px color-mix(in srgb, var(--color-brand-primary) 50%, transparent),
+    0 4px 12px color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
 }
 
 .navLink {
@@ -257,7 +257,7 @@
   gap: var(--spacing-4);
   padding: 0 var(--spacing-6);
   background-color: var(--color-primary-900);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid color-mix(in srgb, var(--color-brand-white) 10%, transparent);
   max-height: 0;
   opacity: 0;
   overflow: hidden;
@@ -281,7 +281,7 @@
   font-weight: var(--font-weight-medium);
   font-size: var(--font-size-lg);
   padding: var(--spacing-3) 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-brand-white) 10%, transparent);
 }
 
 .mobileNavLink.active {
