@@ -3613,6 +3613,17 @@ Criterios de aceptación:
 > - SP2 a 1440: Paint 102 ms, Raster 92 ms, estilos 334 ms, composición 509 ms.
 >
 > El hexágono de 1000 px de SP2 no tiene capa propia en móvil: se repinta con la página al moverse.
+>
+> **Decisión del usuario (2026-10-21):** el brillo de los hexágonos medios y de frente de SP1 (un segundo trazo ancho
+> y translúcido, sin difuminar) queda como está.
+>
+> **Medición tras el cambio (2026-10-21):** builds alternados, mediana de 3, ms. El total baja en las tres
+> secciones, sobre todo por el recálculo de estilos, pero la composición sube en dos de ellas:
+> - SP2 en móvil: total 942 → 905; composición 455 → 508.
+> - SP1 a 1440: total 696 → 678; composición 311 → 393.
+> - SP2 a 1440: total 1436 → 1049; composición 676 → 573.
+>
+> El criterio 3 se resuelve al cerrar el ticket.
 4. Con reducir movimiento no hay parallax (CP-A11Y-003).
 5. TBT, CLS y LCP móviles de `/` no empeoran frente a la línea base, mediana de 3 (CP-PERF-003). Se anota el
    costo del hexágono grande de SP2 antes y después.
