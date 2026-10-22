@@ -1375,7 +1375,7 @@ Criterios de aceptación:
 #### BR-095 — Los e2e de Chrome real no corren en paralelo
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso
 - Historia de usuario: no aplica — calidad de la suite de tests.
 - RF/RNF: `RNF-MANT-002`
 
@@ -1387,14 +1387,30 @@ fallido aunque sus 892 pruebas pasan. Darle 30 s no lo resolvió. Solos, juntos 
 
 > **Decisión del usuario (2026-10-22):** ticket aparte, después de la parte de la landing de `BR-022`.
 
+**Línea base (2026-10-22):** de las 7 corridas completas de esa sesión que no fallaron por un bug real, 4 marcaron un
+archivo e2e como fallido por un `afterAll` que superó su plazo (10 s por defecto; 30 s en una de ellas) y 3 pasaron.
+
+**Causa (corregida durante el ticket):** la primera hipótesis, que era el paralelismo con las pruebas de unidades, no
+alcanzó. Con solo el proyecto e2e, un archivo a la vez, dos archivos se colgaron en la primera corrida y en las 7
+siguientes (6 con los tiempos del cierre a la vista) pasaron, con el cierre de Chrome en ~170 ms. El cuelgue
+aparece cuando la máquina está ocupada (otro build, otro Chrome, otras sesiones): cerrar Chrome y el servidor pasa
+de los 10 s por defecto. Es lentitud, no un bloqueo.
+
 Alcance:
-1. Los `*.e2e.test.ts` van en un proyecto propio de Vitest (entorno `node`), sin paralelismo entre sus archivos. El
-   resto de la suite sigue igual.
-2. Si los e2e pueden compartir una sola compilación del sitio y un solo Chrome, se evalúa como mejora.
+1. Los `*.e2e.test.ts` van en un proyecto propio de Vitest (entorno `node`), un archivo a la vez, con plazos
+   holgados de prueba y de cierre (60 s y 120 s). El resto de la suite sigue igual.
+2. Si los e2e pueden compartir una sola compilación del sitio y un solo Chrome, se evalúa como mejora (no se hizo).
 
 Criterios de aceptación:
 1. Cinco corridas seguidas de `npm run test:run` en local terminan en verde, sin archivos fallidos.
 2. `npm run test:coverage` y el CI siguen funcionando igual.
+
+**Verificación (2026-10-22, local):**
+- Cinco corridas seguidas de `npm run test:run`: 85 archivos y 898 pruebas en verde cada vez, sin archivos fallidos
+  (antes, 4 de 7 se colgaban). Duración de 64 a 166 s.
+- `npm run test:coverage`: 898 pruebas en verde y cobertura de 86,9 % en sentencias, 91,0 % en ramas, 87,9 % en
+  funciones y 86,9 % en líneas, sobre los umbrales (73 / 83 / 77 / 73).
+- Pendiente: que el CI de GitHub corra igual con los dos proyectos (se ve al abrir el PR).
 
 ### Épica I — Medición y privacidad
 
@@ -3898,7 +3914,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-092 | SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales | K | P3 | M | En curso | BR-091 |
 | BR-093 | Hero y CTA1: fotos centradas en el rostro y alto de sección acotado | K | P3 | S | En curso | BR-091 |
 | BR-094 | Benefits: cuñas rojas con ángulo fijo | K | P3 | XS | En curso | BR-071 |
-| BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | Propuesta | — |
+| BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | En curso | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
