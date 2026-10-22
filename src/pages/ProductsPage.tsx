@@ -3,7 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import { BackToTop } from "@/components/common/BackToTop/BackToTop";
 import { HoneycombPage } from "@/components/common/HoneycombPage/HoneycombPage";
 import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
-import { SearchIcon } from "@/components/icons";
+import { Search } from "lucide-react";
 import { filterProducts } from "@/components/products/filterProducts";
 import { ProductDialog } from "@/components/products/ProductDialog";
 import { ProductsCatalog } from "@/components/products/ProductsCatalog";
@@ -38,7 +38,7 @@ export function ProductsPage() {
       <HoneycombPage title="Productos premium" subtitle="Las mejores marcas para tu cuidado diario">
         <div className={styles.filters}>
           <div className={styles.search}>
-            <SearchIcon className={styles.searchIcon} />
+            <Search className={styles.searchIcon} />
             <input
               type="text"
               className={`glass-field ${styles.searchInput}`}

@@ -1260,7 +1260,7 @@ Criterios de aceptación:
 #### BR-027 — Ordenar `data/`, `types/` e iconos
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: —
-- Estado: Propuesta
+- Estado: En curso (tramo de íconos)
 - Historia de usuario: no aplica — deuda técnica.
 - RF/RNF: `RNF-MANT-003`
 
@@ -3827,7 +3827,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-024 | Breakpoints unificados, mobile-first (base de la migración) | D | P2 | S | Propuesta | — |
 | BR-025 | Código muerto y dependencias | H | P2 | M | Propuesta | BR-014 |
 | BR-026 | Rutas desde `ROUTES` | H | P2 | S | Propuesta | BR-003, BR-019 |
-| BR-027 | Ordenar data, types e iconos | H | P2 | S | Propuesta | — |
+| BR-027 | Ordenar data, types e iconos | H | P2 | S | En curso (íconos) | — |
 | BR-028 | Prettier y alias | H | P2 | S | Propuesta | BR-004 |
 | BR-029 | CI en GitHub Actions | H | P1 | S | Hecho | BR-004, BR-030 |
 | BR-030 | Vitest y primeros tests | H | P1 | M | Hecho | — |
