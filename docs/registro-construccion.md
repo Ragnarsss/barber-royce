@@ -1901,3 +1901,96 @@ Tres PR integraron el lote a `master`: #33 (BR-061, BR-069 a BR-077), #34 (tarje
 ## Cierre de BR-084 a BR-086 (2026-10-19)
 
 Los tres tickets se integran junto con `BR-024` y `BR-080` a `BR-083` en un solo PR (#38, fusión normal, que cubre también el #37). Las fichas siguen en `Propuesta` hasta verificar el resultado en producción (regla 3).
+
+<a id="br-091"></a>
+
+## BR-091 — Hero y CTA1: figuras de fondo en SVG con geometría fija
+
+**Notas de construcción (2026-10-21):**
+- Causa: los triángulos del Hero y los hexágonos de CTA1 eran `clip-path` en porcentajes sobre cajas en `vw` × `vh`; cada eje se estiraba por separado y la forma cambiaba con la proporción de la ventana (el hexágono rojo medía 0,89 de ancho/alto a 1920×1080 y 0,46 a 1024×1117).
+- **Decisión del usuario (2026-10-21):** la forma de referencia es la que se ve a **1920×1080**. P3.
+- Componente nuevo `components/common/FixedShape/` (`FixedShape.tsx`, `shapeGeometry.ts` con `fixedShape()`, que convierte un `polygon()` en porcentajes en puntos fijos sobre su caja): un `<svg>` decorativo con `viewBox` fijo, ancho del contenedor y alto por proporción. Las geometrías viven en `Hero/heroShapes.ts` y `CTA1/ctaShapes.ts`.
+- Hero: cada triángulo es un SVG dentro de su `motion.div` (el parallax por capas no cambia). El degradado de los dos principales es un `linearGradient` SVG (paradas con tokens por CSS) y el filo de luz de la diagonal pasa de un truco de degradado a una `<line>` con `vector-effect: non-scaling-stroke`.
+- CTA1: los hexágonos del texto se anclan al bloque de texto, no al borde de la sección, con variables comunes (`--cta-gutter`, `--cta-text-max`, `--cta-text-w`, `--cta-text-x`, `--cta-hex-scale` = 1,83, `--cta-hex-w`). El 1,83 sale de calcular cuánto debe medir el hexágono rojo, rotado 15°, para contener el bloque; antes el texto quedaba en parte fuera del rojo incluso a 1920 px.
+- La franja blanca sobre la foto de CTA1 en ventanas altas **salió del ticket** (decisión del usuario, 2026-10-21) y se resolvió en `BR-093`.
+- **Test primero:** `heroShapes.test.ts` y `ctaShapes.test.ts` en rojo antes de implementar (cajas de 1920×1080 y puntos exactos; sin `clip-path` ni `vh` en el CSS). `src/test/fixedShapes.e2e.test.ts` (Chrome real, 9 ventanas) mide que ninguna figura se estire y que el texto quede dentro del hexágono; se vio en rojo al achicar `--cta-hex-scale` a 1,4.
+
+**Verificación:**
+- Chrome real, 9 ventanas (1920×1080, 1440×900, 1440×1289, 1366×768, 1280×720, 1024×1117, 1024×768, 900×1100, 772×839): error de proporción de cualquier figura ≤ 0,15 % (umbral 2 %) y 0 de 16 esquinas del texto fuera del hexágono rojo.
+- Lighthouse local, builds alternados (mediana de 3): sin empeoramiento (móvil LCP 6,52 → 6,36 s, TBT 145 → 136 ms; escritorio LCP 1,92 → 1,88 s). PR #41, CI y Vercel en verde. **Verificado por el usuario en producción.**
+
+<a id="br-092"></a>
+
+## BR-092 — SocialProof1 y 2: hexágonos de fondo en SVG con borde y rotación reales
+
+**Notas de construcción (2026-10-21):**
+- Defectos de SP1 encontrados en la auditoría: la rotación iba en un `transform` del CSS que framer pisa con el suyo (no se veía); el `clip-path` recortaba el borde en cuatro de los seis lados y todo el brillo (`box-shadow`); `backdrop-filter` casi invisible sobre un fondo liso; `transition: transform` persiguiendo a framer.
+- SP1: los 14 hexágonos salen de `SocialProof1/sp1Hexagons.ts` (rotación de diseño y capa de cada uno) y se pintan con `FixedShape`. La rotación va en la propiedad `rotate` (`--hex-rotate`), que se suma al `transform` de framer; el borde es el `stroke` del polígono y el brillo (capas media y de frente), un segundo trazo ancho y translúcido; degradados SVG por capa (`sp1-hex-*`).
+- SP2: los 11 hexágonos usan `FixedShape` con la misma forma, y se quita la `transition: transform` de `hexagonFast1`.
+- **Decisión del usuario (2026-10-21):** un elemento por hexágono, sin agrupar por capa, para no cambiar el parallax (el desplazamiento es un % del alto de cada hexágono y la escala y el giro son sobre su centro). El criterio 3 pasa de «menos elementos» a «el costo no sube».
+- **Decisión del usuario (2026-10-22):** el brillo queda como está, y el criterio 3 se mide sobre el costo **total**.
+- **Test primero:** `sp1Hexagons.test.ts` y `sp2Hexagons.test.ts` en rojo. Al terminar, `fixedShapes.e2e.test.ts` contaba como figuras los hexágonos ocultos bajo 1025 px (0/0 = NaN) y falló; ahora mide solo las visibles.
+
+**Verificación:**
+- Trace con la CPU frenada 4× al recorrer cada sección, builds alternados, mediana de 3 (ms, total antes → después): SP2 móvil 942 → 905; SP1 a 1440, 696 → 678; SP2 a 1440, 1436 → 1049. El recálculo de estilos baja entre un 30 y un 50 %; la composición sube +26 % en SP1 y +12 % en SP2 móvil, y baja −15 % en SP2 a 1440.
+- El hexágono de 1000 px de SP2 no tiene capa propia en móvil (se repinta con la página); no se cambió. PR #41, CI y Vercel en verde. **Verificado por el usuario en producción.**
+
+<a id="br-093"></a>
+
+## BR-093 — Hero y CTA1: fotos centradas en el rostro y alto de sección acotado
+
+**Notas de construcción (2026-10-21):**
+- Causa: en escritorio las dos secciones medían `100vh`, pero sus fotos se dimensionaban por el ancho (alto automático): en ventanas altas quedaban pegadas a un borde con franjas vacías y en las bajas se les cortaba el cuello.
+- **Decisiones del usuario (2026-10-21):** «centrada» es que cada foto llena su zona con el rostro al centro, recortando solo los bordes; solo escritorio (el encuadre del Hero móvil ajustado a mano el 2026-10-17 y el corte de CTA1 móvil del Figma no se tocan); ticket propio; y acotar también el alto de las secciones.
+- Cada foto va con `object-fit: cover` y un punto de enfoque en variables (`--hero-photo-focus`, `--cta-photo-focus`). El Hero y CTA1 miden al menos `min(100svh, 75vw)` (mínimo de 500 px en CTA1): llenan la ventana en 16:9, 16:10 y 4:3 y dejan de estirarse en las más altas. Es un mínimo, no un alto fijo: si el texto necesita más, la sección crece.
+- La punta de la figura blanca y del panel translúcido de CTA1 se mide sobre ese alto (`--cta-height`); el punto de apoyo del zoom de CTA1 (`BR-079`) pasa a `40% 50%`.
+- Test: se ajustaron los de `Hero.test.tsx` (la foto llena su caja con `cover` y el alto tiene tope) y `ctaShapes.test.ts`.
+
+**Verificación:**
+- Chrome real, 9 ventanas: el alto sigue al de la ventana en 16:9, 16:10 y 4:3 y queda en 1080 px a 1440×1289 y en 768 px a 1024×1117; rostro completo en las capturas.
+- Lighthouse local, builds alternados (mediana de 3): sin empeoramiento (móvil LCP 6,46 → 6,49 s, TBT 253 → 240 ms). La foto del Hero sigue siendo el LCP, con `fetchpriority="high"`. PR #41. **Verificado por el usuario en producción** (encuadre del rostro).
+
+<a id="br-094"></a>
+
+## BR-094 — Benefits: cuñas rojas con ángulo fijo
+
+**Notas de construcción (2026-10-22):**
+- Causa: las dos cuñas (`BR-071`, solo en móvil) eran un `clip-path` sobre una caja de ancho y alto en % de la sección: ~30° en un teléfono y 20° a 768 px. La primera medición de la ficha incluía por error ventanas de escritorio, donde no se pintan; se corrigió.
+- **Decisión del usuario (2026-10-22):** el ángulo de referencia es el del móvil (~30° la superior, ~28° la inferior). P3.
+- El alto de cada cuña sigue siendo un % de la sección y el ancho sale de una proporción fija (`aspect-ratio`: 1,72 y 1,91). A 390 px miden exactamente lo de antes (390×227 y 253×132).
+- **Test primero:** en `Benefits.test.tsx`, dos pruebas en rojo (alto + proporción sin `width`; ángulos de ~30° y ~28° calculados desde las variables). Primer intento (ancho en % y alto por proporción): se descartó al verlo en una captura a 768 px, donde la cuña superior pasaba de 275 a 447 px de alto y tapaba el encabezado; el segundo (alto en % y ancho por proporción) conserva el tamaño de siempre.
+
+**Verificación:** Chrome real, 320, 390, 600 y 768 px: 30,2° y 27,6° en todas. PR #42. **Verificado por el usuario en producción.**
+
+<a id="br-095"></a>
+
+## BR-095 — Los e2e de Chrome real no corren en paralelo
+
+**Notas de construcción (2026-10-22):**
+- Síntoma: de 7 corridas completas de la sesión que no fallaron por un bug real, 4 marcaron un archivo e2e como fallido porque su `afterAll` (cerrar Chrome y el servidor) superó los 10 s por defecto, con todas las pruebas en verde.
+- **Hipótesis equivocada:** el paralelismo con las pruebas de unidades. Corriendo solo el proyecto e2e, un archivo a la vez, dos archivos se colgaron en la primera corrida; en las 7 siguientes, con los tiempos de cierre a la vista, pasaron (cierre de Chrome ~170 ms). La causa es que cerrar Chrome y el servidor es lento cuando la máquina está ocupada.
+- `vitest.config.ts` define dos proyectos: `unit` (jsdom, sin los e2e) y `e2e` (node, un archivo a la vez, 60 s por prueba y 120 s por hook). `fixedShapes.e2e.test.ts` deja de llevar plazos sueltos.
+- Sin test unitario (es configuración): se verifica corriendo la suite. Un `git checkout` de mi propio instrumental descartó, sin querer, un cambio sin commit en `contrast.e2e.test.ts`; se detectó al ver el plazo de 10 s en el error.
+
+**Verificación:** cinco corridas seguidas de `npm run test:run` (85 archivos y 898 pruebas en verde cada vez, de 64 a 166 s); `npm run test:coverage` con 86,9 / 91,0 / 87,9 / 86,9 % sobre los umbrales 73 / 83 / 77 / 73; CI de GitHub (PR #42) en verde con los dos proyectos.
+
+## Tramos de BR-022 (landing) y BR-027 (íconos) (2026-10-22)
+
+Las dos fichas siguen **abiertas**: se hizo solo el tramo de la landing (decisión del usuario, 2026-10-22).
+
+- **BR-022, landing:** Hero, Reviews, CTA2 y Navbar tenían 34 colores escritos a mano (CTA2, 20; Navbar, 8; Reviews, 5; Hero, 1). Pasan a tokens y las transparencias a `color-mix()`; el `#332a2b` de CTA2 pasa a `--color-brand-section-bg` (`#332b2b`). `src/test/landingTokens.test.ts` (en rojo antes) fija que esos cuatro módulos no tengan hex ni `rgb()`. Comparada píxel a píxel con el build anterior (CTA2, Reviews y Navbar, escritorio y móvil, con reducir movimiento): 0,00 % de diferencia. Hallazgo: `contrast.e2e.test.ts` no entendía la notación `color(srgb …)` con que Chrome informa lo que sale de `color-mix()` y daba contraste 1 en todas las rutas; ahora la entiende y se comprobó que falla si la Navbar pierde contraste.
+- **BR-027, íconos:** teléfono, correo, reloj, mapa y búsqueda se importan de `lucide-react` (Footer, `LocationCard`, Productos). ShoppingCart, ExternalLink y Twitter no los usaba nadie y se eliminaron. `components/icons` queda con los de marca y el SVG en línea de CTA2 pasa a `WhatsAppIcon`. **Decisión del usuario (2026-10-22):** el ícono de WhatsApp, que era el globo de chat genérico, pasa a ser el logo real (Simple Icons, CC0), con relleno; en CTA2 se quita el trazo que la regla del botón le ponía a todo `svg`. `icons.test.ts` (en rojo antes) fija que solo haya íconos de marca y que CTA2 no tenga un `<svg>` en línea.
+- **Falta:** BR-022, el resto de los CSS Modules y estilos en línea (y `BR-021`); BR-027, ordenar `data/`, `types/` y el CSS propio de `Location/`.
+
+## Cierre de BR-091 a BR-095 (2026-10-22)
+
+Salen de la auditoría de SVG de la landing (2026-10-19) y de su repetición (2026-10-21). Se integran en dos PR sobre `master`: **#41** (BR-091, BR-092 y BR-093, más el commit del parallax interior de BR-089 que estaba solo en local) y **#42** (BR-094, los tramos de BR-022 y BR-027, el ícono de WhatsApp y BR-095), con CI y Vercel en verde. Producción desplegó `95e447d` y `cb3c64b`.
+
+**Lo que verificó y reportó el usuario en producción:** todo visto (2026-10-22): encuadre del rostro, hexágonos de CTA1, cuñas de Benefits y hexágonos de SocialProof con su brillo.
+
+**Mediciones (`RNF-PERF-*`), Lighthouse contra producción tras el PR #42, mediana de 3:**
+- Móvil: rendimiento 69, accesibilidad 96, LCP 5,51 s, TBT 192 ms, CLS 0. Escritorio: rendimiento 97, accesibilidad 96, LCP 1,17 s, TBT 21 ms, CLS 0,001.
+- **El LCP móvil no cumple `RNF-PERF-001` (≤ 2,5 s)**, ni antes ni después de estos tickets: es la foto del Hero, deuda previa (5,72 s el 2026-10-18; 5,59 s el 2026-10-21).
+- El TBT móvil de la home cumple (≤ 200 ms) con margen estrecho: una de las tres corridas dio 215 ms.
+
+**Queda fuera:** el resto de `BR-022` y `BR-027`; el encuadre de la foto móvil de CTA1; el hexágono grande de SP2 en móvil (se repinta con la página); el favicon de 130 KB (`BR-057`, bloqueado hasta tener el «RR» en vector); el LCP móvil. El siguiente paso es `diseno-visual` sobre las figuras ya en SVG.
