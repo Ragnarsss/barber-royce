@@ -216,12 +216,20 @@ describe("Benefits: foto puente con dos cuñas (BR-071, HU-EXP-004 CA-22)", () =
     expect(rule(/\.imageBackground::after/)).toMatch(/clip-path:\s*polygon\(100% 0, 100% 100%, 0 100%\)/);
   });
 
-  it("el tamaño de cada cuña sale de variables, para ajustarlo a ojo", () => {
-    expect(mobile).toMatch(/--wedge-top-height:\s*\d+%/);
-    expect(mobile).toMatch(/--wedge-bottom-width:\s*\d+%/);
-    expect(mobile).toMatch(/--wedge-bottom-height:\s*\d+%/);
-    expect(rule(/\.imageBackground::before/)).toMatch(/height:\s*var\(--wedge-top-height\)/);
-    expect(rule(/\.imageBackground::after/)).toMatch(/width:\s*var\(--wedge-bottom-width\)/);
+  it("BR-094: cada cuña toma su alto de la sección y su ancho de una proporción fija, nunca los dos en porcentaje", () => {
+    // Con el ancho y el alto en % de la sección, el ángulo cambiaba con la ventana (de 20° a 30°)
+    expect(rule(/\.imageBackground::before/)).toMatch(/height:\s*var\(--wedge-top-height\);\s*aspect-ratio:\s*var\(--wedge-top-ratio\)/);
+    expect(rule(/\.imageBackground::after/)).toMatch(/height:\s*var\(--wedge-bottom-height\);\s*aspect-ratio:\s*var\(--wedge-bottom-ratio\)/);
+    for (const wedge of [/\.imageBackground::before/, /\.imageBackground::after/]) {
+      expect(rule(wedge)).not.toMatch(/(^|[^-])width:/);
+    }
+  });
+
+  it("BR-094 (HU-EXP-004 CA-37): los ángulos son los de móvil en que se diseñaron, ~30° y ~28°", () => {
+    const ratio = (name: string) => Number.parseFloat(mobile.match(new RegExp(`--${name}:\\s*([\\d.]+)`))?.[1] ?? "NaN");
+    const degrees = (value: number) => (Math.atan(1 / value) * 180) / Math.PI;
+    expect(degrees(ratio("wedge-top-ratio"))).toBeCloseTo(30.2, 0);
+    expect(degrees(ratio("wedge-bottom-ratio"))).toBeCloseTo(27.6, 0);
   });
 
   it("las dos cuñas son del rojo de la marca, de un token", () => {

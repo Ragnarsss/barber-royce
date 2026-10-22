@@ -3695,34 +3695,39 @@ Criterios de aceptación:
 - RF/RNF: `RNF-PERF-003`
 
 **Origen (2026-10-21):** segunda auditoría de SVG de la landing, sobre `master` y después de `BR-091` a `BR-093`.
-Las dos cuñas rojas de Benefits (`BR-071`, `Benefits.module.css`, `.imageBackground::before` y `::after`) se deforman
-con la ventana. Medido con la caja real del fondo:
+Las dos cuñas rojas de Benefits (`BR-071`, `Benefits.module.css`, `.imageBackground::before` y `::after`) solo
+existen en móvil (desde 769 px no hay cuñas), y se deforman con el ancho de la ventana. Medido con la caja real del
+fondo:
 
 | Ventana | Cuña superior | Cuña inferior |
 |---|---|---|
-| 2560×1080 | 13,5° | 12,2° |
-| 1920×1080 | 17,8° | 16,1° |
-| 1024×1117 | 28,6° | 26,0° |
-| 390×844 | 30,2° | 27,6° |
+| 320×640 | 28,3° | 25,8° |
+| 360×780, 390×844 y 430×932 | 30,2° | 27,6° |
+| 600×960 | 23,3° | 21,1° |
+| 768×1024 | 19,7° | 17,8° |
 
-La franja diagonal (`.band`) también cambia, de 0,9° a 2,4° respecto de la vertical, pero no se nota.
+> **Corrección (2026-10-22):** la primera versión de esta ficha medía también ventanas de escritorio (13,5° a 28,6°),
+> donde las cuñas no se pintan. Esas filas no correspondían y se quitaron.
+
+La franja diagonal (`.band`, solo en escritorio) también cambia, de 0,9° a 2,4° respecto de la vertical, pero no
+se nota.
 
 **Causa:** el mismo problema de `BR-091`. Las cuñas son `clip-path` sobre una caja de `100% × 24%` y `65% × 14%`
 de la sección, y el ancho y el alto de esa caja cambian por separado.
 
 > **Decisión del usuario (2026-10-22):** el ángulo de referencia es el del móvil, donde se diseñaron y ajustaron
-> a ojo (`BR-071`): ~30° la superior y ~28° la inferior, también en escritorio. P3.
+> a ojo (`BR-071`): ~30° la superior y ~28° la inferior. P3.
 
 **Arreglo:** cada cuña fija su proporción con `aspect-ratio` y se dimensiona solo por el ancho. Así el ángulo queda
 fijo y el borde de la sección recorta lo que sobra. No hace falta SVG: es un triángulo plano, sin trazo ni degradado.
 
 Alcance:
-1. La cuña superior y la inferior con el ángulo de referencia que elija el usuario, en móvil y en escritorio.
+1. La cuña superior y la inferior con el ángulo de referencia en todo el rango móvil (hasta 768 px).
 2. Se conservan el color, la posición en las esquinas y las variables para ajustarlas a ojo.
 3. La franja diagonal no cambia.
 
 Criterios de aceptación:
-1. En las ventanas de la tabla, el ángulo de cada cuña no varía más de 1° (HU-EXP-004 CA-37).
+1. En las ventanas de la tabla, el ángulo de cada cuña no varía más de 1° (HU-EXP-004 CA-37); se mide con la caja real.
 2. Ningún `clip-path` de Benefits queda en porcentajes sobre una caja sin proporción fija, salvo la franja (lo
    comprueba un test sobre el CSS Module).
 3. Lint, tipos, tests y `breakpoints.test.ts` en verde.

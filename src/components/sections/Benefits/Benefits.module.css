@@ -60,12 +60,15 @@
   z-index: 1;
   overflow: hidden;
   /*
-   * Dos cuñas rojas (BR-071): una arriba a la izquierda y otra abajo a la derecha, en espejo. El tamaño de cada una
-   * sale de estas variables (porcentaje de la sección) para ajustarlo a ojo.
+   * Dos cuñas rojas (BR-071): una arriba a la izquierda y otra abajo a la derecha, en espejo. Ángulo fijo (BR-094):
+   * el alto de cada una es un % de la sección y su ancho sale de la proporción (ancho / alto), así el ángulo no cambia
+   * con la ventana y en un teléfono miden lo mismo que antes. Los valores dan los ángulos con que se ajustaron a ojo:
+   * ~30° la superior y ~28° la inferior. Antes el ancho también era un % y en tablet se aplanaban hasta 20°.
    */
   --wedge-top-height: 24%;
-  --wedge-bottom-width: 65%;
+  --wedge-top-ratio: 1.72;
   --wedge-bottom-height: 14%;
+  --wedge-bottom-ratio: 1.91;
 }
 
 .imageBackground::before {
@@ -73,8 +76,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
   height: var(--wedge-top-height);
+  aspect-ratio: var(--wedge-top-ratio);
   z-index: 1;
   background: var(--color-brand-primary);
   clip-path: polygon(0 0, 100% 0, 0 100%);
@@ -85,8 +88,8 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  width: var(--wedge-bottom-width);
   height: var(--wedge-bottom-height);
+  aspect-ratio: var(--wedge-bottom-ratio);
   z-index: 1;
   background: var(--color-brand-primary);
   clip-path: polygon(100% 0, 100% 100%, 0 100%);
