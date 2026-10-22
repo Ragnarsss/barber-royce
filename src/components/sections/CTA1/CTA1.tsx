@@ -49,8 +49,11 @@ export function CTA1() {
   const subtitleParts = splitLead(subtitle);
   const reducedMotion = useReducedMotion() ?? false;
   const { ref, controls } = useScrollAnimation();
-  // El borde que se dibuja de cada hexágono, con el mismo disparador que la foto; con «reducir movimiento», ninguno
-  const edgeProps = (variants: Variants) => (reducedMotion ? undefined : { initial: "hidden", animate: controls, variants });
+  const isWide = useMediaQuery(MEDIA.desktop);
+  // El borde que se dibuja de cada hexágono, con el mismo disparador que la foto. Solo donde los hexágonos se ven (desde
+  // 769 px): en móvil están ocultos y animarlos solo sumaría trabajo a la carga. Con «reducir movimiento», ninguno.
+  const edgeProps = (variants: Variants) =>
+    reducedMotion || !isWide ? undefined : { initial: "hidden", animate: controls, variants };
   const magnetRef = useRef<HTMLSpanElement>(null);
   const magnet = useMagnetic(magnetRef);
 
@@ -67,7 +70,6 @@ export function CTA1() {
     fast: useFastLayer(scrollYProgress),
   };
   // Zoom-in de la foto mientras la sección cruza la pantalla (BR-079); sin zoom con reducir movimiento
-  const isWide = useMediaQuery(MEDIA.desktop);
   const zoom = useTransform(scrollYProgress, CTA_ZOOM_WINDOW, [1, isWide ? CTA_ZOOM.DESKTOP : CTA_ZOOM.MOBILE]);
 
   // Ensamble de los hexágonos con el scroll (BR-097): llegan desfasados y encajan antes de que la sección quede alineada.

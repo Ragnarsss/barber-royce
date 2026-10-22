@@ -68,9 +68,10 @@ export function Hero() {
           transformOrigin: isWide ? HERO_ZOOM_ORIGIN.DESKTOP : HERO_ZOOM_ORIGIN.MOBILE,
         };
 
-  // El filo de luz de las diagonales se dibuja una vez cuando la portada se activa, después del neón (BR-096). Con
+  // El filo de luz de las diagonales se dibuja una vez cuando la portada se activa, después del neón (BR-096). Solo donde
+  // los triángulos se ven (desde 769 px): en móvil están ocultos y animarlos solo sumaría trabajo a la carga. Con
   // «reducir movimiento» no hay variantes: el filo aparece dibujado.
-  const edgeVariants = reducedMotion ? undefined : HERO_EDGE_DRAW;
+  const edgeVariants = reducedMotion || !isWide ? undefined : HERO_EDGE_DRAW;
 
   const handleImageLoad = useCallback(() => {
     refreshLenis();

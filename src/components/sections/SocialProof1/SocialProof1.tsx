@@ -19,6 +19,8 @@ import { LensFlare } from "./LensFlare";
 import { CUT, FLARE, REVEAL } from "./sceneTimeline";
 import { SP1_HEXAGON_SHAPE, SP1_HEXAGONS, type Sp1HexagonLayer, type Sp1HexagonName } from "./sp1Hexagons";
 import { FixedShape } from "@/components/common/FixedShape/FixedShape";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { MEDIA } from "@/config/breakpoints";
 
 /** Clase con el aspecto de cada capa de hexágonos (relleno, borde y brillo). */
 const HEXAGON_LAYER_CLASS: Record<Sp1HexagonLayer, string> = {
@@ -65,7 +67,9 @@ export function SocialProof1() {
   // Borde de los 14 hexágonos de fondo que se dibuja con el recorrido del láser (BR-096): un solo MotionValue compartido.
   // Con «reducir movimiento» no hay trazo animado: los bordes aparecen dibujados.
   const hexagonEdge = useTransform(motionProgress, scrub ? CUT.EDGE : CUT.EDGE_FREE, [0, 1]);
-  const hexagonEdgeProps = reducedMotion ? undefined : { style: { pathLength: hexagonEdge } };
+  // Los hexágonos solo se ven desde 1025 px: más abajo están ocultos y dibujarlos solo sumaría trabajo al scroll
+  const showsHexagons = useMediaQuery(MEDIA.lg);
+  const hexagonEdgeProps = reducedMotion || !showsHexagons ? undefined : { style: { pathLength: hexagonEdge } };
 
   // Revelado después del láser (BR-075): cada cosa se ve borrosa hasta su tramo y se enfoca con el scroll, una tras otra
   const titleFocus = useTransform(pinProgress, (value) => ramp(REVEAL.TITLE[0], REVEAL.TITLE[1])(value));

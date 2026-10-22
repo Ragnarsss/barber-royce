@@ -44,7 +44,8 @@ describe("BR-091: triángulos del Hero con geometría fija", () => {
     // `pathLength` no se lleva con non-scaling-stroke: sin él el trazo se puede dibujar, y su grosor sale del viewBox
     expect(source).toMatch(/<motion\.line[^>]*variants=\{edgeVariants\}/);
     expect(source).toMatch(/const HERO_EDGE_DRAW = edgeDraw\(/);
-    expect(source).toMatch(/edgeVariants = reducedMotion \? undefined : HERO_EDGE_DRAW/);
+    // Solo donde los triángulos se ven (desde 769 px) y con movimiento: en móvil están ocultos y animarlos suma carga
+    expect(source).toMatch(/edgeVariants = reducedMotion \|\| !isWide \? undefined : HERO_EDGE_DRAW/);
     expect(source).not.toMatch(/vectorEffect/);
     expect(css).not.toMatch(/--hero-edge-light\)\s*50%/);
     expect(css).toMatch(/\.edge\s*\{[^}]*stroke-width:\s*2/);
