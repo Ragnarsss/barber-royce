@@ -502,7 +502,7 @@ Criterios de aceptación:
 #### BR-022 — Reemplazar colores hex escritos a mano por tokens
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-021
-- Estado: En curso (tramo de la landing)
+- Estado: Propuesta (tramo de la landing hecho el 2026-10-22, PR #42; falta el resto del sitio)
 - Historia de usuario: no aplica — deuda técnica sin cambio visible.
 - RF/RNF: `RNF-MANT-003`
 
@@ -1260,7 +1260,7 @@ Criterios de aceptación:
 #### BR-027 — Ordenar `data/`, `types/` e iconos
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: —
-- Estado: En curso (tramo de íconos)
+- Estado: Propuesta (tramo de íconos hecho el 2026-10-22, PR #42; faltan data/, types/ y el CSS de Location)
 - Historia de usuario: no aplica — deuda técnica.
 - RF/RNF: `RNF-MANT-003`
 
@@ -1375,7 +1375,7 @@ Criterios de aceptación:
 #### BR-095 — Los e2e de Chrome real no corren en paralelo
 
 - Prioridad: P2 · Esfuerzo: S · Depende de: —
-- Estado: En curso
+- Estado: Hecho (2026-10-22, rama `chore/br-095-e2e-en-serie` → master, PR #42; verificado por el usuario en producción)
 - Historia de usuario: no aplica — calidad de la suite de tests.
 - RF/RNF: `RNF-MANT-002`
 
@@ -3537,7 +3537,7 @@ Criterios de aceptación:
 #### BR-091 — Hero y CTA1: figuras de fondo en SVG con geometría fija
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-055, BR-058
-- Estado: En curso
+- Estado: Hecho (2026-10-22, rama `feat/br-091-figuras-svg-geometria-fija` → master, PR #41; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-34)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
 
@@ -3623,7 +3623,7 @@ Criterios de aceptación:
 #### BR-092 — SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-091
-- Estado: En curso
+- Estado: Hecho (2026-10-22, rama `feat/br-092-hexagonos-svg-socialproof` → master, PR #41; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-35)
 - RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`
 
@@ -3689,7 +3689,10 @@ Criterios de aceptación:
 > - SP1 a 1440: total 696 → 678; composición 311 → 393.
 > - SP2 a 1440: total 1436 → 1049; composición 676 → 573.
 >
-> El criterio 3 se resuelve al cerrar el ticket.
+> **Decisión del usuario (2026-10-22), al cerrar:** el criterio 3 se mide sobre el costo **total**. Cumple: el total
+> baja en las tres secciones (−4 %, −3 % y −27 %). La composición, por separado, sube +26 % en SP1 y +12 % en SP2
+> móvil, el costo del brillo que el usuario aprobó, y baja −15 % en SP2 a 1440. Si algún día pesa, se quita el
+> polígono del brillo (`.glow`).
 4. Con reducir movimiento no hay parallax (CP-A11Y-003).
 5. TBT, CLS y LCP móviles de `/` no empeoran frente a la línea base, mediana de 3 (CP-PERF-003). Se anota el
    costo del hexágono grande de SP2 antes y después.
@@ -3700,7 +3703,7 @@ Criterios de aceptación:
 #### BR-093 — Hero y CTA1: fotos centradas en el rostro y alto de sección acotado
 
 - Prioridad: P3 · Esfuerzo: S · Depende de: BR-091
-- Estado: En curso
+- Estado: Hecho (2026-10-22, rama `feat/br-091-figuras-svg-geometria-fija` → master, PR #41; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-36)
 - RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`
 
@@ -3748,7 +3751,7 @@ Criterios de aceptación:
 #### BR-094 — Benefits: cuñas rojas con ángulo fijo
 
 - Prioridad: P3 · Esfuerzo: XS · Depende de: BR-071
-- Estado: En curso
+- Estado: Hecho (2026-10-22, rama `feat/br-094-cunas-angulo-fijo` → master, PR #42; verificado por el usuario en producción)
 - Historia de usuario: HU-EXP-004 (CA-37)
 - RF/RNF: `RNF-PERF-003`
 
@@ -3842,12 +3845,12 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-019 | Error boundaries | C | P1 | S | Hecho | — |
 | BR-020 | Recuperación de chunks | C | P1 | S | Hecho | BR-019 |
 | BR-021 | Fuente única de tokens | D | P2 | M | Propuesta | — |
-| BR-022 | Hex → tokens | D | P2 | M | En curso (landing) | BR-021 |
+| BR-022 | Hex → tokens | D | P2 | M | Propuesta (landing hecha) | BR-021 |
 | BR-023 | Retirar Tailwind y shadcn | D | P2 | L | Propuesta | BR-021 |
 | BR-024 | Breakpoints unificados, mobile-first (base de la migración) | D | P2 | S | Propuesta | — |
 | BR-025 | Código muerto y dependencias | H | P2 | M | Propuesta | BR-014 |
 | BR-026 | Rutas desde `ROUTES` | H | P2 | S | Propuesta | BR-003, BR-019 |
-| BR-027 | Ordenar data, types e iconos | H | P2 | S | En curso (íconos) | — |
+| BR-027 | Ordenar data, types e iconos | H | P2 | S | Propuesta (íconos hechos) | — |
 | BR-028 | Prettier y alias | H | P2 | S | Propuesta | BR-004 |
 | BR-029 | CI en GitHub Actions | H | P1 | S | Hecho | BR-004, BR-030 |
 | BR-030 | Vitest y primeros tests | H | P1 | M | Hecho | — |
@@ -3910,11 +3913,11 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-088 | Cabecera de página unificada: título en Anton y diagonales compactas | K | P3 | S | Propuesta | BR-087 |
 | BR-089 | Productos: encendido en ola, parallax interior, contador y botón de volver arriba | K | P3 | M | Propuesta | BR-068, BR-088 |
 | BR-090 | Productos de prueba: 50 filas con fotos de stock que cargan | K | P3 | XS | Propuesta | — |
-| BR-091 | Hero y CTA1: figuras de fondo en SVG con geometría fija | K | P3 | M | En curso | BR-055, BR-058 |
-| BR-092 | SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales | K | P3 | M | En curso | BR-091 |
-| BR-093 | Hero y CTA1: fotos centradas en el rostro y alto de sección acotado | K | P3 | S | En curso | BR-091 |
-| BR-094 | Benefits: cuñas rojas con ángulo fijo | K | P3 | XS | En curso | BR-071 |
-| BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | En curso | — |
+| BR-091 | Hero y CTA1: figuras de fondo en SVG con geometría fija | K | P3 | M | Hecho | BR-055, BR-058 |
+| BR-092 | SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales | K | P3 | M | Hecho | BR-091 |
+| BR-093 | Hero y CTA1: fotos centradas en el rostro y alto de sección acotado | K | P3 | S | Hecho | BR-091 |
+| BR-094 | Benefits: cuñas rojas con ángulo fijo | K | P3 | XS | Hecho | BR-071 |
+| BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | Hecho | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
