@@ -3849,6 +3849,20 @@ Criterios de aceptación:
 7. Lint, tipos, tests y `breakpoints.test.ts` en verde.
 8. **A confirmar por el usuario en el navegador:** que el dibujo se vea bien en movimiento.
 
+**Verificación local (2026-10-22, hecha mientras el usuario estaba ausente; falta su revisión):**
+- Chrome real: el filo del Hero pasa de 0 a 1 entre ~1,2 y ~2,9 s (arranca al salir el neón); los contornos de CTA1, de
+  Features y de Reviews terminan en 1 a los 772, 1024 y 1440 px; el borde de SP1 va 0 → 0,27 → 0,60 → 1 en los puntos
+  2, 12, 22 y 40 % del recorrido (la fórmula da lo mismo). Con reducir movimiento, todo aparece sin trazo animado. A
+  390 px no hay trazos animados y no hay desborde horizontal.
+- Lint, tipos y 927 pruebas en verde (incluidos los e2e).
+- **Medición** (builds alternados contra master, mediana): escritorio, LCP 1,81 → 1,85 s y TBT 10 → 13 ms; móvil,
+  LCP 6,50 → 6,56 s, CLS 0 y **TBT 237 → 266 ms (5 corridas; rangos 223–282 y 247–302)**. El JavaScript comprimido
+  crece solo 716 bytes (0,3 %), así que no es peso de código. Primero era +39 ms con las animaciones montadas también
+  en móvil; se corrigió animando los bordes solo donde las figuras se ven (769 px, y 1025 en SP1). **Queda +29 ms
+  dentro del ruido de esta máquina (la propia base varía 60 ms entre corridas), pero sin demostrar que sea cero.** El
+  TBT móvil absoluto está sobre 200 ms en las dos versiones porque la máquina estaba cargada (producción: 192 ms).
+  Hay que repetir contra el preview de Vercel (CP-PERF-003).
+
 
 #### BR-097 — CTA1: los hexágonos se ensamblan con el scroll
 
@@ -3882,6 +3896,15 @@ Criterios de aceptación:
 5. TBT, CLS y LCP móviles y de escritorio frente a la línea base (CP-PERF-003).
 6. Lint, tipos, tests y `breakpoints.test.ts` en verde.
 7. **A confirmar por el usuario en el navegador:** que el ensamble se vea bien en movimiento.
+
+**Verificación local (2026-10-22, hecha mientras el usuario estaba ausente; falta su revisión):**
+- Chrome real a 1440×900: el desfase de los tres hexágonos baja de (−83, −65), (74, −102) y (130, 90) px al 8 % del
+  recorrido a nada desde el 46 %, y las barras de luz de −37 px a 0. Con reducir movimiento y a 390 px no se monta
+  ningún contenedor de ensamble; a 772 y 1024 px, sí (los tres).
+- El e2e `fixedShapes.e2e.test.ts` sigue en verde en las 9 ventanas: ninguna figura se estira y el texto queda dentro del
+  hexágono rojo. Lint, tipos y 927 pruebas en verde.
+- Medición: ver `BR-096` (se midió junto, con el resultado de las dos).
+- Distancias y giros (`CTA_ASSEMBLE` en `ctaAssemble.ts`) puestos a ojo; se ajustan en un solo lugar.
 
 
 ---
