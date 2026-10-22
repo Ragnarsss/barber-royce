@@ -1261,9 +1261,17 @@ Alcance:
 2. `Location/` con su propio CSS Module.
 3. SVG inline → `lucide-react` o `components/icons`.
 
+> **Alcance ajustado (2026-10-22, decisión del usuario):** suma lo encontrado en la segunda auditoría de SVG de la
+> landing. 7 de los 12 íconos de `src/components/icons/index.tsx` repiten íconos de `lucide-react` (Phone, Email,
+> MapPin, Clock, Search, ShoppingCart y ExternalLink) y pasan a lucide. Quedan solo los de marca (WhatsApp,
+> Instagram, Facebook, Twitter y TikTok), que lucide no trae. El SVG en línea de `CTA2.tsx` es el `MessageCircle`
+> de lucide. Se hace después de `BR-094`.
+
 Criterios de aceptación:
 1. Ningún import con extensión explícita `.tsx` en `src/`; ningún
    componente importa el CSS Module de otro.
+2. `src/components/icons` exporta solo íconos de marca, y ningún componente dibuja en línea un ícono que trae
+   lucide.
 
 #### BR-028 — Prettier, `.editorconfig` y alias `@/` obligatorio
 
@@ -3679,6 +3687,48 @@ Criterios de aceptación:
 6. **A confirmar por el usuario en el navegador:** el encuadre del rostro en cada foto.
 
 
+#### BR-094 — Benefits: cuñas rojas con ángulo fijo
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: BR-071
+- Estado: En curso
+- Historia de usuario: HU-EXP-004 (CA-37)
+- RF/RNF: `RNF-PERF-003`
+
+**Origen (2026-10-21):** segunda auditoría de SVG de la landing, sobre `master` y después de `BR-091` a `BR-093`.
+Las dos cuñas rojas de Benefits (`BR-071`, `Benefits.module.css`, `.imageBackground::before` y `::after`) se deforman
+con la ventana. Medido con la caja real del fondo:
+
+| Ventana | Cuña superior | Cuña inferior |
+|---|---|---|
+| 2560×1080 | 13,5° | 12,2° |
+| 1920×1080 | 17,8° | 16,1° |
+| 1024×1117 | 28,6° | 26,0° |
+| 390×844 | 30,2° | 27,6° |
+
+La franja diagonal (`.band`) también cambia, de 0,9° a 2,4° respecto de la vertical, pero no se nota.
+
+**Causa:** el mismo problema de `BR-091`. Las cuñas son `clip-path` sobre una caja de `100% × 24%` y `65% × 14%`
+de la sección, y el ancho y el alto de esa caja cambian por separado.
+
+> **Decisión del usuario (2026-10-22):** el ángulo de referencia es el del móvil, donde se diseñaron y ajustaron
+> a ojo (`BR-071`): ~30° la superior y ~28° la inferior, también en escritorio. P3.
+
+**Arreglo:** cada cuña fija su proporción con `aspect-ratio` y se dimensiona solo por el ancho. Así el ángulo queda
+fijo y el borde de la sección recorta lo que sobra. No hace falta SVG: es un triángulo plano, sin trazo ni degradado.
+
+Alcance:
+1. La cuña superior y la inferior con el ángulo de referencia que elija el usuario, en móvil y en escritorio.
+2. Se conservan el color, la posición en las esquinas y las variables para ajustarlas a ojo.
+3. La franja diagonal no cambia.
+
+Criterios de aceptación:
+1. En las ventanas de la tabla, el ángulo de cada cuña no varía más de 1° (HU-EXP-004 CA-37).
+2. Ningún `clip-path` de Benefits queda en porcentajes sobre una caja sin proporción fija, salvo la franja (lo
+   comprueba un test sobre el CSS Module).
+3. Lint, tipos, tests y `breakpoints.test.ts` en verde.
+4. **A confirmar por el usuario en el navegador:** el ángulo de las cuñas.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3800,6 +3850,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-091 | Hero y CTA1: figuras de fondo en SVG con geometría fija | K | P3 | M | En curso | BR-055, BR-058 |
 | BR-092 | SocialProof1 y 2: hexágonos de fondo en SVG por capa, con borde y rotación reales | K | P3 | M | En curso | BR-091 |
 | BR-093 | Hero y CTA1: fotos centradas en el rostro y alto de sección acotado | K | P3 | S | En curso | BR-091 |
+| BR-094 | Benefits: cuñas rojas con ángulo fijo | K | P3 | XS | En curso | BR-071 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

@@ -742,6 +742,9 @@ y confiar en que el servicio está a la altura.
 - CA-36 (2026-10-21, `BR-093`): Given abro la portada en escritorio en una ventana de cualquier proporción, When
   veo la foto del Hero y la de CTA1, Then cada una llena su zona sin franjas vacías, con el rostro completo y
   cerca del centro, y las secciones no se estiran en ventanas más altas que 4:3.
+- CA-37 (2026-10-21, `BR-094`): Given abro la portada en una ventana de cualquier proporción, When llego a
+  Beneficios, Then las dos cuñas rojas de las esquinas tienen siempre el mismo ángulo; solo cambia cuánto
+  recorta el borde.
 
 ---
 
