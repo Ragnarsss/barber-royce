@@ -1280,6 +1280,10 @@ Alcance:
 > MapPin, Clock, Search, ShoppingCart y ExternalLink) y pasan a lucide. Quedan solo los de marca (WhatsApp,
 > Instagram, Facebook, Twitter y TikTok), que lucide no trae. El SVG en línea de `CTA2.tsx` es el `MessageCircle`
 > de lucide. Se hace después de `BR-094`.
+>
+> **Resultado (2026-10-22):** ShoppingCart, ExternalLink y Twitter no los usaba nadie y se eliminaron. El ícono de
+> WhatsApp que ya existía (Footer, Ubicación y CTA2) era el globo de chat genérico, no el logo.
+> **Decisión del usuario (2026-10-22):** ponerle el logo real de WhatsApp (Simple Icons, CC0), con relleno.
 
 Criterios de aceptación:
 1. Ningún import con extensión explícita `.tsx` en `src/`; ningún

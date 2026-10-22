@@ -135,9 +135,9 @@
   text-decoration: none;
 }
 
+/* El logo de WhatsApp va relleno (fill: currentColor): un trazo lo engordaría */
 .ctaButtonGhost svg {
   flex-shrink: 0;
-  stroke: currentColor;
 }
 
 .ctaButtonGhost:hover {
