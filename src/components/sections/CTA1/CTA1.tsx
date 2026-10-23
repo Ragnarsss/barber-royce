@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { motion, useReducedMotion, useTransform } from "framer-motion";
+import { useRef, type ReactNode } from "react";
+import { motion, useReducedMotion, useTransform, type Variants } from "framer-motion";
 import { Calendar, ArrowRight } from "lucide-react";
 import styles from "./CTA1.module.css";
 import cta700w from "@/assets/optimized/cta1_model_700w.webp";
@@ -10,7 +10,7 @@ import profile1684w from "@/assets/optimized/hero_model_left_profile_1684w.webp"
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useMiddleLayer, useSlowLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
-import { fadeInLeft, fadeInRight, lightBarIgnite } from "@/config/animations.config";
+import { edgeDraw, fadeInLeft, fadeInRight, lightBarIgnite } from "@/config/animations.config";
 import { SITE } from "@/config/constants";
 import { Link } from "react-router-dom";
 import { trackReserve } from "@/analytics/track";
@@ -20,10 +20,18 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MEDIA } from "@/config/breakpoints";
 import { CTA_ZOOM, CTA_ZOOM_ORIGIN, CTA_ZOOM_WINDOW } from "./ctaZoom";
 import { CTA_SHAPES } from "./ctaShapes";
+import { AssemblePiece } from "./AssemblePiece";
+import { assembleOffset, CTA_ASSEMBLE, type AssembleOffsets } from "./ctaAssemble";
 import { FixedShape } from "@/components/common/FixedShape/FixedShape";
 
 /** Hexágono regular de puntas laterales (232 × 200), como las barras de luz del techo de la barbería (BR-058). */
 const HEXAGON = "M60 3H172L228 100L172 197H60L4 100Z";
+
+/**
+ * El contorno de cada hexágono del texto se dibuja una vez al entrar la sección, con su propio desfase (BR-096): primero
+ * el de atrás, después el rojo y por último el pequeño. Constantes de módulo: no son objetos nuevos en cada render.
+ */
+const EDGE = { background: edgeDraw(0.1), text: edgeDraw(0.3), foreground: edgeDraw(0.5) };
 
 /**
  * Separa la primera frase del subtítulo (hasta el primer «?», «!» o «.») del resto, para ponerla en negrita en móvil
@@ -41,6 +49,11 @@ export function CTA1() {
   const subtitleParts = splitLead(subtitle);
   const reducedMotion = useReducedMotion() ?? false;
   const { ref, controls } = useScrollAnimation();
+  const isWide = useMediaQuery(MEDIA.desktop);
+  // El borde que se dibuja de cada hexágono, con el mismo disparador que la foto. Solo donde los hexágonos se ven (desde
+  // 769 px): en móvil están ocultos y animarlos solo sumaría trabajo a la carga. Con «reducir movimiento», ninguno.
+  const edgeProps = (variants: Variants) =>
+    reducedMotion || !isWide ? undefined : { initial: "hidden", animate: controls, variants };
   const magnetRef = useRef<HTMLSpanElement>(null);
   const magnet = useMagnetic(magnetRef);
 
@@ -57,8 +70,21 @@ export function CTA1() {
     fast: useFastLayer(scrollYProgress),
   };
   // Zoom-in de la foto mientras la sección cruza la pantalla (BR-079); sin zoom con reducir movimiento
-  const isWide = useMediaQuery(MEDIA.desktop);
   const zoom = useTransform(scrollYProgress, CTA_ZOOM_WINDOW, [1, isWide ? CTA_ZOOM.DESKTOP : CTA_ZOOM.MOBILE]);
+
+  // Ensamble de los hexágonos con el scroll (BR-097): llegan desfasados y encajan antes de que la sección quede alineada.
+  // Solo en escritorio y con movimiento: en móvil las figuras no existen y con «reducir movimiento» quedan en su sitio.
+  const assemble = useTransform(scrollYProgress, CTA_ASSEMBLE.WINDOW, [0, 1]);
+  const barsY = useTransform(assemble, (value) => assembleOffset(CTA_ASSEMBLE.bars.y, value));
+  const assembling = isWide && !reducedMotion;
+  const piece = (from: AssembleOffsets, shape: ReactNode) =>
+    assembling ? (
+      <AssemblePiece progress={assemble} from={from}>
+        {shape}
+      </AssemblePiece>
+    ) : (
+      shape
+    );
   const imageStyle = reducedMotion ? undefined : { scale: zoom, transformOrigin: isWide ? CTA_ZOOM_ORIGIN.DESKTOP : CTA_ZOOM_ORIGIN.MOBILE };
 
   return (
@@ -69,7 +95,7 @@ export function CTA1() {
         style={{ y: layers.slow.y, x: layers.slow.x }}
         data-shape
       >
-        <FixedShape shape={CTA_SHAPES.textHexagonBackground} />
+        {piece(CTA_ASSEMBLE.background, <FixedShape shape={CTA_SHAPES.textHexagonBackground} edge={edgeProps(EDGE.background)} />)}
       </motion.div>
       <motion.div
         className={`${styles.imageHexagonBackground} ${animating}`}
@@ -82,7 +108,7 @@ export function CTA1() {
         style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
         data-shape="text"
       >
-        <FixedShape shape={CTA_SHAPES.textHexagon} />
+        {piece(CTA_ASSEMBLE.text, <FixedShape shape={CTA_SHAPES.textHexagon} edge={edgeProps(EDGE.text)} />)}
       </motion.div>
 
       {/* Capa frontal - hexágono decorativo */}
@@ -91,7 +117,7 @@ export function CTA1() {
         style={{ y: layers.fast.y, x: layers.fast.x }}
         data-shape
       >
-        <FixedShape shape={CTA_SHAPES.textHexagonForeground} />
+        {piece(CTA_ASSEMBLE.foreground, <FixedShape shape={CTA_SHAPES.textHexagonForeground} edge={edgeProps(EDGE.foreground)} />)}
       </motion.div>
 
       {/* Barras de luz hexagonales del techo de la barbería, arriba y cortadas por el borde: se encienden una vez (BR-058) */}
@@ -100,6 +126,7 @@ export function CTA1() {
         viewBox="0 0 572 300"
         aria-hidden="true"
         data-light-bars
+        style={assembling ? { y: barsY } : undefined}
         initial={reducedMotion ? false : "hidden"}
         animate={reducedMotion ? undefined : controls}
         variants={reducedMotion ? undefined : lightBarIgnite}

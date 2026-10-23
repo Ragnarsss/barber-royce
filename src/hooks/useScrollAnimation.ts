@@ -23,7 +23,7 @@ interface UseScrollAnimationOptions {
   delay?: number;
 }
 
-interface UseScrollAnimationReturn {
+export interface UseScrollAnimationReturn {
   ref: React.RefObject<HTMLDivElement | null>;
   controls: ReturnType<typeof useAnimation>;
   isInView: boolean;

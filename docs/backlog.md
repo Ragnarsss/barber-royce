@@ -3795,6 +3795,118 @@ Criterios de aceptación:
 4. **A confirmar por el usuario en el navegador:** el ángulo de las cuñas.
 
 
+#### BR-096 — Filos que se encienden: el borde de cada figura se dibuja
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-091, BR-092
+- Estado: En curso
+- Historia de usuario: HU-EXP-004 (CA-38)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
+
+**Origen (2026-10-22):** `diseno-visual` sobre la portada, ahora que las figuras de fondo son SVG (`BR-091` y `BR-092`).
+Diagnóstico: hay deleite en el centro de la página (corte láser de SP1, íconos que se dibujan en Benefits, barras de
+luz de CTA1) y casi nada al principio ni al final. Después del loader, el Hero es una pieza estática; los hexágonos de
+CTA1, la forma más memorable de la marca, solo hacen parallax; y los polígonos de Features y Reviews están al 5–8 % de
+opacidad y casi no se ven.
+
+> **Decisión del usuario (2026-10-22):** dirección A de la propuesta («filos que se encienden»), hecha junto con
+> `BR-097`; el usuario revisa todo después. Mide al final.
+>
+> **Por defecto (no se eligió; el usuario estaba ausente):**
+> - Solo escritorio: en móvil estas figuras no existen o ya aparecen dibujadas, para no sumar JavaScript donde el TBT
+>   tiene 8 ms de margen.
+> - Con reducir movimiento, todo aparece ya dibujado.
+> - Los trazos se dibujan una vez y quedan; no hay nada que parpadee.
+
+**Hallazgo técnico:** `pathLength` no se lleva con `vector-effect: non-scaling-stroke`. Comprobado en Chrome: con NSS
+el trazo sale siempre completo, sin importar el `stroke-dashoffset`. Por eso este ticket quita NSS del filo del Hero
+(`BR-091`) y de los bordes de SP1 (`BR-092`), y fija el grosor en unidades del `viewBox`: el trazo ya no mide 1 px
+exactos, sino entre 1 y 2 px según el ancho de la figura.
+
+Alcance:
+1. **Hero:** el filo de luz de la diagonal de los dos triángulos principales se traza una vez, de arriba hacia abajo,
+   cuando sale el neón del loader.
+2. **CTA1:** el contorno de los tres hexágonos del texto se dibuja al entrar la sección (el mismo disparador de la
+   foto), con un leve desfase entre ellos. Quedan con su trazo fino ya dibujado.
+3. **SocialProof1:** el borde de los 14 hexágonos se dibuja con el recorrido del láser (`sceneTimeline.ts`), y en las
+   ventanas bajas, sin la sección fija, con el avance de la sección. Es scrub: al subir, se borra.
+4. **Features y Reviews:** sus dos polígonos decorativos pasan de `::before`/`::after` casi invisibles a SVG con un
+   trazo que se dibuja al entrar la sección.
+5. La variante `edgeDraw` vive en `animations.config.ts`; solo anima `pathLength` (nunca `opacity`, que ocultaría el
+   relleno de las figuras).
+6. Fuera de alcance: móvil, SocialProof2 (su galería aún no tiene fotos), el brillo de SP1 y cualquier movimiento de
+   las figuras (`BR-097`).
+
+Criterios de aceptación:
+1. Con la página cargada, el filo del Hero está dibujado de punta a punta; la secuencia de dibujo se ve en una
+   grabación o captura intermedia (HU-EXP-004 CA-38).
+2. A 1440 px, el contorno de los tres hexágonos de CTA1 pasa de 0 a 1 al entrar la sección y queda; los de SP1, con el
+   avance del láser, y los de Features y Reviews al entrar.
+3. Con reducir movimiento, todo se ve ya dibujado y sin animaciones (CP-A11Y-003).
+4. Ningún trazo parpadea más de 3 veces por segundo: son trazos que avanzan una vez (CP-A11Y-005).
+5. Ningún `vector-effect: non-scaling-stroke` queda en una figura que se dibuja (lo comprueba un test).
+6. TBT, CLS y LCP móviles y de escritorio de `/` frente a la línea base de master (2026-10-22), mediana de 3
+   (CP-PERF-003).
+7. Lint, tipos, tests y `breakpoints.test.ts` en verde.
+8. **A confirmar por el usuario en el navegador:** que el dibujo se vea bien en movimiento.
+
+**Verificación local (2026-10-22, hecha mientras el usuario estaba ausente; falta su revisión):**
+- Chrome real: el filo del Hero pasa de 0 a 1 entre ~1,2 y ~2,9 s (arranca al salir el neón); los contornos de CTA1, de
+  Features y de Reviews terminan en 1 a los 772, 1024 y 1440 px; el borde de SP1 va 0 → 0,27 → 0,60 → 1 en los puntos
+  2, 12, 22 y 40 % del recorrido (la fórmula da lo mismo). Con reducir movimiento, todo aparece sin trazo animado. A
+  390 px no hay trazos animados y no hay desborde horizontal.
+- Lint, tipos y 927 pruebas en verde (incluidos los e2e).
+- **Medición** (builds alternados contra master, mediana): escritorio, LCP 1,81 → 1,85 s y TBT 10 → 13 ms; móvil,
+  LCP 6,50 → 6,56 s, CLS 0 y **TBT 237 → 266 ms (5 corridas; rangos 223–282 y 247–302)**. El JavaScript comprimido
+  crece solo 716 bytes (0,3 %), así que no es peso de código. Primero era +39 ms con las animaciones montadas también
+  en móvil; se corrigió animando los bordes solo donde las figuras se ven (769 px, y 1025 en SP1). **Queda +29 ms
+  dentro del ruido de esta máquina (la propia base varía 60 ms entre corridas), pero sin demostrar que sea cero.** El
+  TBT móvil absoluto está sobre 200 ms en las dos versiones porque la máquina estaba cargada (producción: 192 ms).
+  Hay que repetir contra el preview de Vercel (CP-PERF-003).
+
+
+#### BR-097 — CTA1: los hexágonos se ensamblan con el scroll
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-096
+- Estado: En curso
+- Historia de usuario: HU-EXP-004 (CA-39)
+- RF/RNF: `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
+
+**Origen (2026-10-22):** misma sesión de `diseno-visual` que `BR-096`. Los tres hexágonos irregulares de CTA1 son la
+forma más memorable de la marca (los que al usuario le gustan irregulares) y hoy solo se desplazan con el parallax.
+
+> **Decisión del usuario (2026-10-22):** dirección B, solo en CTA1, junto con `BR-096`.
+>
+> **Por defecto (no se eligió):** el ensamble es scrub (reversible, ligado al avance de la sección) y no una entrada
+> de una sola vez; los hexágonos conservan su forma irregular y su rotación de diseño, solo llegan desfasados.
+
+Alcance:
+1. Los tres hexágonos del texto llegan desfasados y rotados, y encajan en su sitio a medida que la sección entra en
+   pantalla (de 0 a 1 en la primera mitad del recorrido). Al terminar, quedan exactamente donde están hoy.
+2. Las barras de luz bajan unos píxeles y se asientan junto al hexágono rojo al mismo tiempo.
+3. Solo `transform`, con `MotionValue`; el desfase va en un contenedor interior, para no pisar el parallax de capa.
+4. Con reducir movimiento, y en móvil (donde estas figuras no existen), no hay ensamble.
+5. Fuera de alcance: los triángulos del Hero y las cuñas de Benefits.
+
+Criterios de aceptación:
+1. Con la sección alineada con la ventana, los tres hexágonos están en su posición de reposo, que es la de `BR-091`
+   (HU-EXP-004 CA-39).
+2. Antes de entrar la sección, los hexágonos están desfasados y rotados; el ensamble avanza y retrocede con el scroll.
+3. Con reducir movimiento no hay ensamble (CP-A11Y-003), y no hay destellos (CP-A11Y-005).
+4. El e2e `fixedShapes.e2e.test.ts` sigue en verde: ninguna figura se estira y el texto queda dentro del hexágono rojo.
+5. TBT, CLS y LCP móviles y de escritorio frente a la línea base (CP-PERF-003).
+6. Lint, tipos, tests y `breakpoints.test.ts` en verde.
+7. **A confirmar por el usuario en el navegador:** que el ensamble se vea bien en movimiento.
+
+**Verificación local (2026-10-22, hecha mientras el usuario estaba ausente; falta su revisión):**
+- Chrome real a 1440×900: el desfase de los tres hexágonos baja de (−83, −65), (74, −102) y (130, 90) px al 8 % del
+  recorrido a nada desde el 46 %, y las barras de luz de −37 px a 0. Con reducir movimiento y a 390 px no se monta
+  ningún contenedor de ensamble; a 772 y 1024 px, sí (los tres).
+- El e2e `fixedShapes.e2e.test.ts` sigue en verde en las 9 ventanas: ninguna figura se estira y el texto queda dentro del
+  hexágono rojo. Lint, tipos y 927 pruebas en verde.
+- Medición: ver `BR-096` (se midió junto, con el resultado de las dos).
+- Distancias y giros (`CTA_ASSEMBLE` en `ctaAssemble.ts`) puestos a ojo; se ajustan en un solo lugar.
+
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -3918,6 +4030,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-093 | Hero y CTA1: fotos centradas en el rostro y alto de sección acotado | K | P3 | S | Hecho | BR-091 |
 | BR-094 | Benefits: cuñas rojas con ángulo fijo | K | P3 | XS | Hecho | BR-071 |
 | BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | Hecho | — |
+| BR-096 | Filos que se encienden: el borde de cada figura se dibuja | K | P3 | M | En curso | BR-091, BR-092 |
+| BR-097 | CTA1: los hexágonos se ensamblan con el scroll | K | P3 | M | En curso | BR-096 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

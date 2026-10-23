@@ -98,7 +98,8 @@ describe("Features en móvil: carrusel (BR-072, BR-070)", () => {
 });
 
 describe("Features: parallax del contenedor solo en escritorio (BR-081)", () => {
-  const container = () => document.querySelector("#features > div") as HTMLElement;
+  // El primer hijo de la sección ya no es el contenedor: antes van las figuras decorativas (BR-096)
+  const container = () => document.querySelector("#features > div:not([data-edge-shape])") as HTMLElement;
 
   beforeAll(() => {
     vi.stubGlobal(
