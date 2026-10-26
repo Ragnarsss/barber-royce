@@ -3909,7 +3909,7 @@ Criterios de aceptación:
 #### BR-098 — Footer: lenguaje de la marca y franja de cierre con llamado a agendar
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-084, BR-087, BR-088
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-098-footer-con-cierre`; hecho en local; falta verificar en el preview y que el dueño confirme el titular)
 - Historia de usuario: HU-EXP-004 (CA-40)
 - RF/RNF: `RNF-A11Y-004`, `RNF-A11Y-003`, `RNF-DATOS-001`, `RNF-PERF-003`
 
@@ -3956,6 +3956,17 @@ Criterios de aceptación:
 5. Con reducir movimiento no hay transiciones (CP-A11Y-003).
 6. TBT, CLS y LCP móviles de `/servicios` y de `/` no empeoran frente a la línea base, mediana de 3 (CP-PERF-003).
 7. **A confirmar por el usuario:** el titular de la franja (texto visible, lo decide el dueño).
+
+Construcción (2026-10-26, local):
+- Logo: sin un asset nuevo; `mix-blend-mode: lighten` deja pasar el rojo y oculta el recuadro negro sobre el degradado.
+- Altura a 390 px (medida con Chrome sin pantalla): 899 px sin la franja (antes 1133) y 1080 px con ella (la franja
+  mide 181 px). **No llega a los ~800 px del objetivo**: faltan unos 100 px; las palancas son quitar la línea
+  «Compártenos en tus redes» o llevar las redes bajo la marca. Se decide con el usuario.
+- Áreas táctiles: ningún enlace ni botón del footer mide menos de 44 px bajo 1025 px; con puntero (desde 1025 px) la
+  lista vuelve a 32 px de alto para no estirar el footer.
+- Lighthouse móvil de `/servicios`, mediana de 3 alternando `master` y la rama: LCP 6036 → 5929 ms, TBT 197 → 154 ms,
+  CLS 0,001 → 0,000. Sin regresión.
+- Lint, tipos y pruebas en verde, incluido `contrast.e2e.test.ts` en las 9 rutas.
 
 
 ---
@@ -4083,7 +4094,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | Hecho | — |
 | BR-096 | Filos que se encienden: el borde de cada figura se dibuja | K | P3 | M | En curso | BR-091, BR-092 |
 | BR-097 | CTA1: los hexágonos se ensamblan con el scroll | K | P3 | M | En curso | BR-096 |
-| BR-098 | Footer: lenguaje de la marca y franja de cierre con llamado a agendar | K | P3 | M | Propuesta | BR-084, BR-087, BR-088 |
+| BR-098 | Footer: lenguaje de la marca y franja de cierre con llamado a agendar | K | P3 | M | En curso | BR-084, BR-087, BR-088 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
