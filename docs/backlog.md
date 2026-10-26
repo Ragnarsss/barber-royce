@@ -3925,8 +3925,8 @@ y 320 px). Hallazgos:
   alto (mínimo táctil: 44 px). A 769 px la rejilla 2×2 deja un hueco bajo la marca.
 
 > **Decisión del usuario (2026-10-26):** dirección 2 de la propuesta de `diseno-visual`: el lenguaje del sitio en
-> el footer más una franja de cierre con el llamado a agendar. Por defecto (no se eligió): la franja no aparece en
-> la portada, que ya termina con `CTA2`.
+> el footer más una franja de cierre con el llamado a agendar. **La franja no aparece en la portada** (que ya
+> termina con `CTA2`), decisión confirmada por el usuario el mismo día.
 
 Alcance:
 1. **Divisoria roja** (`glass-divider`, `BR-087`) como borde superior del footer, en lugar del filo gris.
@@ -3955,8 +3955,7 @@ Criterios de aceptación:
    un literal (lo comprueba un test, `RNF-DATOS-001`).
 5. Con reducir movimiento no hay transiciones (CP-A11Y-003).
 6. TBT, CLS y LCP móviles de `/servicios` y de `/` no empeoran frente a la línea base, mediana de 3 (CP-PERF-003).
-7. **A confirmar por el usuario:** el titular de la franja (texto visible, lo decide el dueño) y que la franja
-   no vaya también en la portada.
+7. **A confirmar por el usuario:** el titular de la franja (texto visible, lo decide el dueño).
 
 
 ---
