@@ -339,7 +339,8 @@
  *
  * Geometría fija (BR-091): cada triángulo es un SVG (`heroShapes.ts`) con la forma que tenía a 1920 × 1080. Solo se fija
  * su ancho; el alto sale de la proporción del viewBox, así el ángulo de la diagonal no cambia con la ventana y el borde
- * de la sección recorta lo que sobra. El filo es una línea con `non-scaling-stroke`: nítida a cualquier tamaño.
+ * de la sección recorta lo que sobra. El filo es una línea que se dibuja una vez al salir el neón (BR-096): con
+ * `non-scaling-stroke` el trazo no se puede dibujar, así que su grosor va en unidades del viewBox (2 → entre 1 y 2 px).
  */
 .hero {
   --hero-edge-light: color-mix(
@@ -422,10 +423,10 @@
   stop-color: var(--hero-red-deep);
 }
 
-/* Filo de luz en la diagonal: 1,5 px a cualquier tamaño, centrado en el borde del triángulo */
+/* Filo de luz en la diagonal, centrado en el borde del triángulo; se dibuja con `pathLength` (BR-096) */
 .edge {
   stroke: var(--hero-edge-light);
-  stroke-width: 1.5;
+  stroke-width: 2;
 }
 
 /* Capa frontal - pequeños triángulos decorativos con opacidad */

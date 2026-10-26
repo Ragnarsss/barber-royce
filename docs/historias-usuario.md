@@ -745,6 +745,13 @@ y confiar en que el servicio está a la altura.
 - CA-37 (2026-10-21, `BR-094`): Given abro la portada en una ventana de cualquier proporción, When llego a
   Beneficios, Then las dos cuñas rojas de las esquinas tienen siempre el mismo ángulo; solo cambia cuánto
   recorta el borde.
+- CA-38 (2026-10-22, `BR-096`): Given abro la portada en escritorio, When veo el Hero, CTA1, «Respaldados por los
+  que saben de estilo», «Innovación y calidad» y las reseñas, Then el borde de sus figuras de fondo se dibuja una
+  vez (el filo de luz del Hero, el contorno de los hexágonos de CTA1, los hexágonos de SocialProof1 con el láser y
+  los polígonos de las otras dos secciones al entrar); con reducir movimiento, ya aparecen dibujados.
+- CA-39 (2026-10-22, `BR-097`): Given bajo hasta CTA1 en escritorio, When la sección entra en pantalla, Then sus tres
+  hexágonos irregulares llegan desfasados y encajan en su sitio con el scroll, y las barras de luz se asientan junto
+  al rojo; con reducir movimiento no hay ensamble.
 
 ---
 

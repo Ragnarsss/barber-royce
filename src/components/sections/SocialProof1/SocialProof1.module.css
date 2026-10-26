@@ -298,9 +298,13 @@
 /*
  * Desde BR-092 cada hexágono es un SVG (`sp1Hexagons.ts`). Antes era un `clip-path`, que recortaba su borde en cuatro de
  * sus seis lados y todo su brillo (`box-shadow`), y pagaba un `backdrop-filter` que casi no se notaba. Ahora el borde es
- * el trazo del polígono y el brillo, un segundo trazo ancho y translúcido; los dos con `non-scaling-stroke`. La rotación
- * de diseño llega en `--hex-rotate` y va en la propiedad `rotate`, que framer no pisa. Las capas definen el aspecto; cada
- * hexágono, su posición, tamaño y opacidad.
+ * el trazo del polígono y el brillo, un segundo trazo ancho y translúcido. La rotación de diseño llega en `--hex-rotate`
+ * y va en la propiedad `rotate`, que framer no pisa. Las capas definen el aspecto; cada hexágono, su posición, tamaño y
+ * opacidad.
+ *
+ * El borde se dibuja con el recorrido del láser (BR-096), y `pathLength` no se lleva con `non-scaling-stroke`: por eso
+ * el grosor va en unidades del viewBox (de 100), calculado para unos 1 a 2 px con los tamaños de cada capa (fondo de
+ * 240 a 320 px, media de 160 a 200, frente de 120 a 140, pequeños de 65 a 80). El brillo no se dibuja: queda fijo.
  */
 
 /* La decoración de hexágonos solo se ve desde 1025 px: en móvil y en tablet se oculta */
@@ -366,7 +370,6 @@
 .hexMiddle polygon,
 .hexForeground polygon,
 .hexSmall polygon {
-  vector-effect: non-scaling-stroke;
   stroke-linejoin: round;
 }
 
@@ -383,7 +386,7 @@
 .hexBackground polygon {
   fill: url(#sp1-hex-background);
   stroke: color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
-  stroke-width: 1;
+  stroke-width: 0.4;
 }
 
 .hexagonBackground1 {
@@ -422,13 +425,13 @@
 .hexMiddle polygon {
   fill: url(#sp1-hex-middle);
   stroke: color-mix(in srgb, var(--color-brand-primary-hover) 25%, transparent);
-  stroke-width: 1.5;
+  stroke-width: 0.85;
 }
 
 .hexMiddle .glow {
   fill: none;
   stroke: color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
-  stroke-width: 10;
+  stroke-width: 5.6;
 }
 
 .hexagonMiddle1 {
@@ -467,13 +470,13 @@
 .hexForeground polygon {
   fill: url(#sp1-hex-foreground);
   stroke: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
-  stroke-width: 2;
+  stroke-width: 1.5;
 }
 
 .hexForeground .glow {
   fill: none;
   stroke: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
-  stroke-width: 14;
+  stroke-width: 11;
 }
 
 .hexagonForeground1 {
@@ -498,7 +501,7 @@
 .hexSmall polygon {
   fill: color-mix(in srgb, var(--color-brand-primary) 8%, transparent);
   stroke: color-mix(in srgb, var(--color-brand-primary) 15%, transparent);
-  stroke-width: 1;
+  stroke-width: 1.3;
 }
 
 .hexagonSmall1 {

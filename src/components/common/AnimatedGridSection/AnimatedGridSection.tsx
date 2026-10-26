@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { type ReactNode } from "react";
-import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useScrollAnimation, type UseScrollAnimationReturn } from "@/hooks/useScrollAnimation";
 import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
 import { CardCarousel } from "@/components/common/CardCarousel/CardCarousel";
@@ -27,6 +27,11 @@ interface AnimatedGridSectionProps<T> {
     carouselLabel?: string;
     /** Con `carouselLabel`, si se indica el carrusel también existe en escritorio con tantas tarjetas visibles (BR-073). */
     carouselDesktopVisible?: number;
+    /**
+     * Figuras decorativas de fondo, antes del contenido (BR-096). Recibe el disparador de entrada de la sección, el mismo
+     * del título y las tarjetas, para dibujar el borde de las figuras cuando la sección entra en pantalla.
+     */
+    decoration?: (controls: UseScrollAnimationReturn["controls"]) => ReactNode;
 }
 
 export function AnimatedGridSection<T>({
@@ -45,6 +50,7 @@ export function AnimatedGridSection<T>({
     parallaxOnMobile = true,
     carouselLabel,
     carouselDesktopVisible,
+    decoration,
 }: AnimatedGridSectionProps<T>) {
     const { ref, controls } = useScrollAnimation();
     const { ref: sectionRef, scrollYProgress } = useParallaxProgress();
@@ -69,6 +75,7 @@ export function AnimatedGridSection<T>({
 
     return (
         <section id={id} className={className} ref={sectionRef}>
+            {decoration?.(controls)}
             <motion.div
                 className={containerClassName}
                 style={parallax ? { y: layers.slow.y } : undefined}

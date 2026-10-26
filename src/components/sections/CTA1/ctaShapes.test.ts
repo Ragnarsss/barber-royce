@@ -7,7 +7,8 @@ import { CTA_SHAPES } from "./ctaShapes";
 // BR-091: las figuras de CTA1 tienen geometría fija, tomada de cómo se ven a 1920×1080 (decisión del usuario, 2026-10-21).
 const here = dirname(fileURLToPath(import.meta.url));
 const css = readFileSync(resolve(here, "CTA1.module.css"), "utf8");
-const shapeSource = readFileSync(resolve(here, "../../common/FixedShape/FixedShape.tsx"), "utf8");
+const ctaSource = readFileSync(resolve(here, "CTA1.tsx"), "utf8");
+const shapeSource =readFileSync(resolve(here, "../../common/FixedShape/FixedShape.tsx"), "utf8");
 const desktop = css.slice(css.indexOf("@media (min-width: 769px)"));
 const rule = (name: string) => css.match(new RegExp(`\\n\\.${name}\\s*\\{([^}]*)\\}`))?.[1] ?? "";
 
@@ -44,6 +45,18 @@ describe("BR-091: figuras de CTA1 con geometría fija", () => {
     expect(desktop).toMatch(/\.content\s*\{\s*padding:\s*60px var\(--cta-gutter\)/);
     expect(desktop).toMatch(/\.textContent\s*\{[^}]*max-width:\s*var\(--cta-text-max\)/);
     expect(rule("container")).toMatch(/max-width:\s*var\(--cta-max-width\)/);
+  });
+
+  it("BR-096 (CA-38): el contorno de los tres hexágonos del texto se dibuja al entrar la sección", () => {
+    for (const name of ["textHexagon", "textHexagonBackground", "textHexagonForeground"]) {
+      const body = css.match(new RegExp(`\\n\\.${name} polygon\\s*\\{([^}]*)\\}`))?.[1] ?? "";
+      expect(body, name).toMatch(/stroke:\s*color-mix\(/);
+      expect(body, name).toMatch(/stroke-width:\s*[\d.]+;/);
+      expect(body, name).not.toMatch(/vector-effect/);
+    }
+    // Cada hexágono con su desfase, desde la variante compartida, y solo con movimiento
+    expect(ctaSource).toMatch(/edgeDraw\(/);
+    expect(ctaSource.match(/edge=\{/g)?.length).toBeGreaterThanOrEqual(3);
   });
 
   it("svg-workflow: la figura es un SVG decorativo con viewBox y sin colores escritos", () => {

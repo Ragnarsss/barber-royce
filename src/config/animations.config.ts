@@ -101,6 +101,16 @@ export const lightBarIgnite: Variants = {
 };
 
 /**
+ * Borde de una figura SVG que se dibuja una vez (BR-096): el trazo va de nada a completo, como el filo de una navaja.
+ * Solo anima `pathLength`, nunca `opacity`: en una figura con relleno la opacidad ocultaría también el relleno. `delay`
+ * desfasa unas figuras de otras. Con «reducir movimiento» el componente no usa esta variante: el borde aparece dibujado.
+ */
+export const edgeDraw = (delay = 0): Variants => ({
+    hidden: { pathLength: 0 },
+    visible: { pathLength: 1, transition: { duration: 1.1, delay, ease: [0.22, 1, 0.36, 1] } }
+});
+
+/**
  * Corte láser de una sola vez (BR-062): en pantallas chicas, el panel que tapa la foto o la tarjeta se retira al
  * entrar la sección, en vez de seguir el scroll. `to` es cuánto se corre (de su propio ancho) y hacia qué lado.
  */
