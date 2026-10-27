@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styles from "./Footer.module.css";
+import { PageBackdrop } from "@/components/common/PageBackdrop/PageBackdrop";
 import { Clock, Mail, Phone } from "lucide-react";
 import {
   InstagramIcon,
@@ -8,25 +9,51 @@ import {
   WhatsAppIcon,
 } from "@/components/icons";
 import { SITE } from "@/config/constants";
-import { getFooterRoutes } from "@/config/routes";
+import { getFooterRoutes, ROUTES } from "@/config/routes";
 import { useSiteContent } from "@/content/useSiteContent";
 import { PrivacyPreferencesButton } from "@/analytics/PrivacyPreferencesButton";
-import { trackPhone, trackWhatsApp } from "@/analytics/track";
+import { trackPhone, trackReserve, trackWhatsApp } from "@/analytics/track";
 import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
 import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
 
+/**
+ * Pie de página (BR-084, BR-098): divisoria roja, franja de cierre con el llamado a agendar (en todas las rutas salvo
+ * la portada, que ya termina con `CTA2`), y las columnas de marca, navegación, contacto y redes.
+ */
 export const Footer = () => {
   const { business } = useSiteContent();
   const footerRoutes = getFooterRoutes();
+  const showClosing = useLocation().pathname !== ROUTES.home.path;
 
   return (
     <footer className={styles.footer}>
+      <div className={`glass-divider ${styles.divider}`} aria-hidden="true" />
+
+      {showClosing && (
+        <section className={styles.closing} aria-labelledby="footer-closing-title">
+          <PageBackdrop className={styles.closingBackdrop} />
+          <div className={styles.closingContent}>
+            <h2 id="footer-closing-title" className={styles.closingTitle}>
+              Reserva tu sesión
+            </h2>
+            <a
+              className={styles.closingButton}
+              href={business.booking.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={trackReserve("footer")}
+            >
+              Agendar Sesión
+            </a>
+          </div>
+        </section>
+      )}
+
       <div className={styles.container}>
         <div className={styles.grid}>
           {/* Columna principal */}
-          <div className={styles.column}>
+          <div className={`${styles.column} ${styles.columnWide}`}>
             <div className={styles.brand}>
-              <h3 className={styles.title}>{SITE.name}</h3>
               <img
                 src={logo46w}
                 srcSet={`${logo46w} 1x, ${logo92w} 2x`}
@@ -36,6 +63,7 @@ export const Footer = () => {
                 height="48"
                 loading="lazy"
               />
+              <h3 className={styles.title}>{SITE.name}</h3>
             </div>
             <p className={styles.description}>
               Estilo y elegancia para el hombre moderno. Más de 10 años de experiencia creando los mejores looks.
@@ -76,7 +104,7 @@ export const Footer = () => {
           </div>
 
           {/* Redes sociales */}
-          <div className={styles.column}>
+          <div className={`${styles.column} ${styles.columnWide}`}>
             <h4 className={styles.columnTitle}>Síguenos</h4>
             <div className={styles.social}>
               <a
@@ -84,7 +112,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={business.social.instagram.label}
-                className={styles.socialLink}
+                className={`glass-chip ${styles.socialLink}`}
               >
                 <InstagramIcon />
               </a>
@@ -93,7 +121,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={business.social.facebook.label}
-                className={styles.socialLink}
+                className={`glass-chip ${styles.socialLink}`}
               >
                 <FacebookIcon />
               </a>
@@ -102,7 +130,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={business.social.tiktok.label}
-                className={styles.socialLink}
+                className={`glass-chip ${styles.socialLink}`}
               >
                 <TikTokIcon />
               </a>
@@ -112,7 +140,7 @@ export const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
-                className={styles.socialLink}
+                className={`glass-chip ${styles.socialLink}`}
               >
                 <WhatsAppIcon />
               </a>

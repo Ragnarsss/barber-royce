@@ -3947,6 +3947,68 @@ Criterios de aceptación:
 - Medición: ver `BR-096` (se midió junto, con el resultado de las dos).
 - Distancias y giros (`CTA_ASSEMBLE` en `ctaAssemble.ts`) puestos a ojo; se ajustan en un solo lugar.
 
+#### BR-098 — Footer: lenguaje de la marca y franja de cierre con llamado a agendar
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-084, BR-087, BR-088
+- Estado: En curso (rama `feat/br-098-footer-con-cierre`; hecho en local; falta verificar en el preview y que el dueño confirme el titular)
+- Historia de usuario: HU-EXP-004 (CA-40)
+- RF/RNF: `RNF-A11Y-004`, `RNF-A11Y-003`, `RNF-DATOS-001`, `RNF-PERF-003`
+
+**Origen (2026-10-26):** auditoría de diseño del footer con la skill `diseno-visual` (capturas a 1440, 1025, 769, 390
+y 320 px). Hallazgos:
+- Es el único bloque del sitio sin el lenguaje de la marca: cuatro columnas iguales de texto gris sobre un degradado
+  casi negro, sin diagonales, chaflán ni la divisoria roja (`Footer.module.css`).
+- La marca es un `<h3>` de 28 px en Montserrat (el resto de la marca va en Anton) y el logo trae su fondo negro: a
+  1440 px se ve el recuadro alrededor de «RR».
+- No invita a nada: es el último lugar de cada página y no ofrece agendar.
+- Las redes son cuadrados de 12 px de radio, anteriores al chaflán y el vidrio de `BR-087`.
+- Móvil: mide 1133 px a 390 px y 1157 px a 320 px; los 8 enlaces de navegación van en una columna y miden 24 px de
+  alto (mínimo táctil: 44 px). A 769 px la rejilla 2×2 deja un hueco bajo la marca.
+
+> **Decisión del usuario (2026-10-26):** dirección 2 de la propuesta de `diseno-visual`: el lenguaje del sitio en
+> el footer más una franja de cierre con el llamado a agendar. **La franja no aparece en la portada** (que ya
+> termina con `CTA2`), decisión confirmada por el usuario el mismo día.
+
+Alcance:
+1. **Divisoria roja** (`glass-divider`, `BR-087`) como borde superior del footer, en lugar del filo gris.
+2. **Marca** en Anton (`--font-family-display`), con el nombre desde `SITE` (`RNF-DATOS-001`), y el logo sin su
+   recuadro negro. Si para eso hace falta una versión del logo con fondo transparente, se pide al usuario.
+3. **Títulos de columna** con un filo rojo corto debajo, como los de la ficha de sucursal.
+4. **Redes** con el chaflán, el vidrio y el brillo de `glass-chip`.
+5. **Franja de cierre** encima de las columnas: las diagonales compactas de las cabeceras (`PageBackdrop`,
+   `BR-088`), un titular en Anton y el botón «Agendar Sesión». El enlace sale de `business.booking.url`, con
+   `target="_blank"`, `rel="noopener noreferrer"` y `trackReserve("footer")`. Se monta en todas las rutas salvo la
+   portada (`/`). Sin animación nueva.
+6. **Móvil y tablet:** navegación en dos columnas, enlaces de al menos 44 px y sin el hueco a 769 px. Objetivo: unos
+   800 px de alto a 390 px.
+7. Fuera de alcance:
+   - Los datos de ejemplo del teléfono y del correo (`BR-005`, bloqueada).
+   - La dirección 3 de la propuesta (firma «ROYCE» gigante de fondo con parallax y línea de luz): idea para más
+     adelante.
+   - El texto de la descripción del footer.
+
+Criterios de aceptación:
+1. Capturas antes y después del footer a 320, 390, 769, 1025 y 1440 px (HU-EXP-004 CA-40).
+2. A 390 px el footer mide unos 800 px o menos (hoy 1133) y todos sus enlaces miden al menos 44 px.
+3. El titular y el botón de la franja cumplen 4,5:1 sobre las diagonales y `contrast.e2e.test.ts` pasa en todas las
+   rutas (CP-A11Y-004).
+4. La franja aparece en todas las rutas salvo la portada, y el enlace de reserva sale de `business.booking.url`, sin
+   un literal (lo comprueba un test, `RNF-DATOS-001`).
+5. Con reducir movimiento no hay transiciones (CP-A11Y-003).
+6. TBT, CLS y LCP móviles de `/servicios` y de `/` no empeoran frente a la línea base, mediana de 3 (CP-PERF-003).
+7. **A confirmar por el usuario:** el titular de la franja (texto visible, lo decide el dueño).
+
+Construcción (2026-10-26, local):
+- Logo: sin un asset nuevo; `mix-blend-mode: lighten` deja pasar el rojo y oculta el recuadro negro sobre el degradado.
+- Altura a 390 px (medida con Chrome sin pantalla): 899 px sin la franja (antes 1133) y 1080 px con ella (la franja
+  mide 181 px). **No llega a los ~800 px del objetivo**: faltan unos 100 px; las palancas son quitar la línea
+  «Compártenos en tus redes» o llevar las redes bajo la marca. Se decide con el usuario.
+- Áreas táctiles: ningún enlace ni botón del footer mide menos de 44 px bajo 1025 px; con puntero (desde 1025 px) la
+  lista vuelve a 32 px de alto para no estirar el footer.
+- Lighthouse móvil de `/servicios`, mediana de 3 alternando `master` y la rama: LCP 6036 → 5929 ms, TBT 197 → 154 ms,
+  CLS 0,001 → 0,000. Sin regresión.
+- Lint, tipos y pruebas en verde, incluido `contrast.e2e.test.ts` en las 9 rutas.
+
 
 ---
 
@@ -4073,6 +4135,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | Hecho | — |
 | BR-096 | Filos que se encienden: el borde de cada figura se dibuja | K | P3 | M | En curso | BR-091, BR-092 |
 | BR-097 | CTA1: los hexágonos se ensamblan con el scroll | K | P3 | M | En curso | BR-096 |
+| BR-098 | Footer: lenguaje de la marca y franja de cierre con llamado a agendar | K | P3 | M | En curso | BR-084, BR-087, BR-088 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

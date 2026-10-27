@@ -752,6 +752,10 @@ y confiar en que el servicio está a la altura.
 - CA-39 (2026-10-22, `BR-097`): Given bajo hasta CTA1 en escritorio, When la sección entra en pantalla, Then sus tres
   hexágonos irregulares llegan desfasados y encajan en su sitio con el scroll, y las barras de luz se asientan junto
   al rojo; con reducir movimiento no hay ensamble.
+- CA-40 (2026-10-26, `BR-098`): Given llego al final de cualquier página, When veo el footer, Then tiene el mismo
+  lenguaje que el resto del sitio (divisoria roja, marca en Anton, redes de vidrio con chaflán), me ofrece agendar
+  con una franja de cierre (en todas las páginas salvo la portada, que ya termina con su propio llamado) y en
+  móvil cabe en menos de una pantalla con enlaces de al menos 44 px; con reducir movimiento no hay transiciones.
 
 ---
 
