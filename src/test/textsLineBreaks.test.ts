@@ -14,6 +14,7 @@ const srcDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const MULTILINE: Partial<Record<TextKey, string>> = {
   "cta1.titulo": "components/sections/CTA1/CTA1.module.css",
   "socialproof2.titulo": "components/sections/SocialProof2/SocialProof2.module.css",
+  "promo.titulo": "promo/WelcomePromo.module.css",
 };
 
 describe("títulos de varias líneas (BR-042)", () => {

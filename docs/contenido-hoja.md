@@ -105,6 +105,10 @@ de siempre. Para un salto de línea dentro de la celda, presiona **Alt + Enter**
 | `features.titulo`, `features.subtitulo` | «Innovación y calidad…» | 120 / 400 |
 | `socialproof2.titulo`, `socialproof2.subtitulo` | «Clientes felices…» | 120 / 400 |
 | `cta2.titulo` | Segundo bloque de reserva | 120 |
+| `promo.activa` | **Interruptor** del cuadro de bienvenida con la mascarilla gratis: escribe `SI` para mostrarlo y `NO` para apagarlo. Cualquier otro valor lo apaga; si no existe la fila (o la dejas vacía), queda encendido | 3 |
+| `promo.titulo` | Titular del cuadro de bienvenida (Alt + Enter para cambiar de línea) | 120 |
+| `promo.frase` | La frase que el cliente debe decir en el local (por defecto, «Royce web») | 30 |
+| `promo.condiciones` | Condiciones de la oferta: con qué servicio, en qué sucursales, cuántas por persona | 400 |
 
 Notas:
 

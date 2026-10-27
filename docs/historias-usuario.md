@@ -163,6 +163,10 @@ sitio, para resolver una duda antes de reservar.
 
 ## HU-RES-003 - Recibir una mascarilla facial gratis al entrar al sitio
 
+> Actualizada (2026-10-27, decisión del usuario): `promo.activa` parte **encendida** (valor por defecto «SI»): una
+> fila ausente o vacía en la hoja deja la promoción encendida; solo otro valor, como «NO», la apaga. Esto reemplaza
+> «una clave ausente deja la promoción apagada» (CA-04 y `RF-CNT-008`, que se leen con esa salvedad).
+
 Como cliente, quiero enterarme al entrar al sitio de que puedo llevarme una
 mascarilla facial gratis en mi próxima visita si menciono «Royce web», para
 decidir reservar con un motivo extra y saber cómo canjearla.

@@ -1,0 +1,153 @@
+/*
+ * Modal de bienvenida (BR-100, dirección 2 «Franjas en diagonal»). Se apoya en la caja de `ModalDialog` (chaflán, borde
+ * claro y halo rojo) y reparte el interior en tres franjas. Móvil primero: apiladas, con la foto como cinta arriba; desde
+ * 769 px, en tres columnas cuyos bordes se cortan en diagonal, como la navaja. El filo rojo entre franjas es la propia
+ * franja del titular. Solo `transform` y `opacity` se animan (variante `promoStripIn`).
+ */
+.promo {
+  --slant: 2.5rem;
+
+  display: grid;
+  grid-template-rows: 9rem auto auto;
+  overflow-y: auto;
+}
+
+.photo {
+  position: relative;
+  overflow: hidden;
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 38%;
+}
+
+/* Franja del titular: el rojo de la marca. Blanco sobre este rojo da 5,1:1 (RNF-A11Y-004). */
+.headline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-6);
+  background: var(--color-brand-primary);
+  color: var(--color-brand-white);
+}
+
+/* «GRATIS» en un hexágono de puntas laterales, como las barras de luz del techo de la barbería. */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 6.5rem;
+  padding: var(--spacing-2) var(--spacing-6);
+  background: var(--color-brand-white);
+  color: var(--color-brand-primary);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-xl);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  clip-path: polygon(14% 0, 86% 0, 100% 50%, 86% 100%, 14% 100%, 0 50%);
+}
+
+.title {
+  margin: 0;
+  color: var(--color-brand-white); /* los h1-h6 globales son oscuros: sin esto el titular se pierde sobre el rojo */
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-4xl);
+  font-weight: 400;
+  line-height: 1.05;
+  text-transform: uppercase;
+  white-space: pre-line;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-6) var(--spacing-6) var(--spacing-8);
+}
+
+.lead {
+  margin: 0;
+  font-size: var(--font-size-base);
+  color: var(--muted);
+}
+
+.phrase {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-3xl);
+  line-height: 1.1;
+  color: var(--color-brand-white);
+}
+
+.conditions {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.reserve {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  min-height: var(--spacing-12);
+  padding: 0 var(--spacing-8);
+  background: var(--color-brand-white);
+  color: var(--color-brand-background);
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color var(--transition-base);
+}
+
+.reserve:hover {
+  background: var(--color-neutral-200);
+}
+
+.reserve:focus-visible {
+  outline: 2px solid var(--color-brand-white);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reserve {
+    transition: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .promo {
+    grid-template-rows: none;
+    grid-template-columns: 30% 1fr 1.2fr;
+    min-height: 24rem;
+    overflow: hidden;
+  }
+
+  /* Cada franja se mete bajo la anterior y se corta en diagonal; el rojo del medio queda como filo entre foto y texto. */
+  .photo {
+    clip-path: polygon(0 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
+  }
+
+  .headline {
+    margin-left: calc(-1 * var(--slant));
+    padding: var(--spacing-8) calc(var(--spacing-8) + var(--slant) / 2) var(--spacing-8) calc(var(--spacing-6) + var(--slant));
+    clip-path: polygon(var(--slant) 0, 100% 0, calc(100% - var(--slant)) 100%, 0 100%);
+  }
+
+  .detail {
+    justify-content: center;
+    margin-left: calc(-1 * var(--slant));
+    padding: var(--spacing-12) var(--spacing-12) var(--spacing-12) calc(var(--spacing-4) + var(--slant));
+  }
+
+  .title {
+    font-size: var(--font-size-5xl);
+  }
+}

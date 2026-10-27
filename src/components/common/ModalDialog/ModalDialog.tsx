@@ -15,6 +15,8 @@ interface ModalDialogProps {
   split?: boolean;
   /** Clase con más diseño interior. */
   className?: string;
+  /** Nombre accesible del botón de cerrar (por defecto, el de las fichas). */
+  closeLabel?: string;
   children: ReactNode;
 }
 
@@ -29,7 +31,15 @@ const EASE = [0.22, 1, 0.36, 1] as const;
  * página no se desplaza mientras está abierto (Lenis se detiene y `html` queda sin desbordamiento). Se usa dentro de
  * `AnimatePresence` para animar la salida; con reducir movimiento aparece y se va sin animación.
  */
-export const ModalDialog = ({ onClose, titleId, descriptionId, split, className, children }: ModalDialogProps) => {
+export const ModalDialog = ({
+  onClose,
+  titleId,
+  descriptionId,
+  split,
+  className,
+  closeLabel = "Cerrar ficha",
+  children,
+}: ModalDialogProps) => {
   const reducedMotion = useReducedMotion() ?? false;
   const lenis = useLenisInstance();
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -100,7 +110,7 @@ export const ModalDialog = ({ onClose, titleId, descriptionId, split, className,
           onKeyDown={handleKeyDown}
         >
           {children}
-          <button ref={closeRef} type="button" className={styles.close} onClick={onClose} aria-label="Cerrar ficha">
+          <button ref={closeRef} type="button" className={styles.close} onClick={onClose} aria-label={closeLabel}>
             <X aria-hidden="true" />
           </button>
         </div>

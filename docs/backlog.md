@@ -3911,7 +3911,7 @@ Criterios de aceptación:
 #### BR-100 — Modal de bienvenida con una mascarilla facial gratis
 
 - Prioridad: P3 · Esfuerzo: M · Depende de: BR-037 (aviso de privacidad), BR-042 (textos de la hoja)
-- Estado: Pendiente
+- Estado: En curso
 - Historia de usuario: HU-RES-003 (CA-01 a CA-09)
 - RF/RNF: `RF-RES-003`, `RF-RES-004`, `RF-CNT-008`, `RF-MED-006`, `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-002` a
   `RNF-A11Y-005`, `RNF-DATOS-001`, `RNF-PRIV-001`
@@ -3933,6 +3933,22 @@ Criterios de aceptación: los de HU-RES-003 y, además:
 2. TBT, CLS y LCP móviles de `/` no empeoran frente a la línea base (mediana de 3, `RNF-PERF-003`).
 3. **A confirmar por el usuario:** la dirección visual (`diseno-visual`, tres propuestas), la imagen y los textos
    finales, y las condiciones con el dueño.
+
+> **Decisiones del usuario (2026-10-27):** dirección 2 «Franjas en diagonal»; `promo.activa` parte **encendida** (una
+> fila ausente en la hoja la deja encendida; solo otro valor, como «NO», la apaga).
+
+Construcción (2026-10-27, local):
+- `src/promo/`: `promoState.ts` (lógica pura), `PromoGate.tsx` (cuándo sale; no pinta nada), `WelcomePromo.tsx` y su CSS
+  (tres franjas en diagonal), `useConsentPending.ts` (aislado detrás de la constante del ID de medición para que el
+  build sin ID no lleve el código del consentimiento, `RNF-PRIV-001`). El modal viaja en un trozo aparte (`lazy()`).
+- Textos `promo.*` en `TEXTS`, en `docs/contenido-hoja.md` y en `docs/contenido/textos.csv`; `/privacidad` menciona el
+  indicador «ya lo vio»; `contrast.e2e.test.ts` marca la promoción como cerrada.
+- Imagen **provisional**: `cta1_model`. El titular y las condiciones son los de `TEXTS`: **a confirmar con el dueño**.
+- Lighthouse móvil de `/`, mediana de 3 (línea base de la rama sin cambios → con el modal): LCP 6316 → 6226 ms,
+  TBT 157 → 152 ms, CLS 0 → 0. Sin regresión. Con la promoción cerrada o antes de la espera no se descarga su trozo.
+- Capturas en Chrome real a 1440 px y a 500 px de ancho (el mínimo de Chrome sin pantalla); falta 390 px real.
+- **Falta (DoD):** verificar los CA en el preview de Vercel, la animación de entrada en movimiento y el modal en un
+  celular, con el aviso de privacidad. Por eso el estado sigue `En curso`.
 
 
 #### BR-101 — Canje de la mascarilla con formulario, cupón y registro en la hoja
@@ -4079,7 +4095,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | Hecho | — |
 | BR-096 | Filos que se encienden: el borde de cada figura se dibuja | K | P3 | M | En curso | BR-091, BR-092 |
 | BR-097 | CTA1: los hexágonos se ensamblan con el scroll | K | P3 | M | En curso | BR-096 |
-| BR-100 | Modal de bienvenida con una mascarilla facial gratis | K | P3 | M | Pendiente | BR-037, BR-042 |
+| BR-100 | Modal de bienvenida con una mascarilla facial gratis | K | P3 | M | En curso | BR-037, BR-042 |
 | BR-101 | Canje de la mascarilla con formulario, cupón y registro en la hoja | K | P3 | L | Bloqueado | BR-100 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se

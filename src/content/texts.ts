@@ -44,6 +44,15 @@ export const TEXTS = {
   },
 
   "cta2.titulo": { default: "¿Ya te decidiste a andar con el flow?", max: TITLE },
+
+  // Modal de bienvenida (BR-100). `promo.activa` es el interruptor: solo «SI» la enciende (ver `src/promo`).
+  "promo.activa": { default: "SI", max: 3 },
+  "promo.titulo": { default: "Mascarilla facial\ngratis", max: TITLE },
+  "promo.frase": { default: "Royce web", max: 30 },
+  "promo.condiciones": {
+    default: "Con cualquier servicio pagado, en cualquiera de nuestras sucursales. Una por persona.",
+    max: SUBTITLE,
+  },
 } as const satisfies Record<string, { default: string; max: number }>;
 
 export type TextKey = keyof typeof TEXTS;
