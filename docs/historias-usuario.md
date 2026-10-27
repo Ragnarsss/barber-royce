@@ -225,6 +225,9 @@ cada sucursal, para llegar sin perderme y no encontrarla cerrada.
   idénticos (incluidos los datos estructurados de `index.html`).
 - CA-03: Given el mapa embebido no carga, When miro la sucursal, Then sigo
   viendo la dirección en texto y un enlace para abrirla en Google Maps.
+- CA-04 (2026-10-27, `BR-099`): Given entro a `/ubicacion` en una tablet o en un escritorio, When elijo una sucursal,
+  Then su tarjeta ocupa el ancho disponible (hasta 70 rem), con la dirección, los horarios y el mapa bien repartidos,
+  sin quedar angosta en el centro de la pantalla.
 
 ### Reglas de negocio asociadas:
 

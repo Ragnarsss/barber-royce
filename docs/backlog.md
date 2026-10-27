@@ -4010,6 +4010,35 @@ Construcción (2026-10-26, local):
 - Lint, tipos y pruebas en verde, incluido `contrast.e2e.test.ts` en las 9 rutas.
 
 
+#### BR-099 — Sucursales: la tarjeta de cada sucursal usa el ancho disponible
+
+- Prioridad: P3 · Esfuerzo: XS · Depende de: —
+- Estado: En curso
+- Historia de usuario: HU-INFO-002 (CA-04)
+- RF/RNF: `RF-INFO-003`
+
+**Origen (2026-10-27):** el usuario ve que, en `/ubicacion`, la tarjeta de la sucursal se ve angosta incluso en
+escritorio: a 1902 px mide 690 px (el contenedor deja 1352) y en una tablet de 768 px mide 350 px, con las dos
+columnas de la tarjeta (datos y mapa) apretadas y mucho vacío a los lados.
+
+**Causa:** `.tabs` de `LocationPage.module.css` es una columna con `align-items: center`, para centrar la lista de
+pestañas. El contenido de cada pestaña (`.tabContent`, con `flex-1`) es un hijo de ese contenedor y no se estira: toma el
+ancho que le piden sus hijos (en escritorio, el de dos columnas apretadas; bajo 1025 px, `350px`).
+
+**Arreglo:** `.tabContent` ocupa todo el ancho de las pestañas (`width: 100%`) y la tarjeta (`.locationContent`) se
+centra con un máximo de 70 rem, para que en pantallas muy anchas no se estire sin límite. La lista de pestañas sigue
+centrada.
+
+Alcance:
+1. La tarjeta ocupa el ancho disponible hasta 70 rem, en tablet y en escritorio, con las pestañas centradas.
+2. Fuera de alcance: el contenido de la tarjeta, los horarios y el mapa de Coquimbo (`BR-005`).
+
+Criterios de aceptación:
+1. A 768, 1024, 1440 y 1902 px, la tarjeta mide al menos el 90 % del ancho disponible o 70 rem, el que sea menor, y no
+   desborda (HU-INFO-002 CA-04).
+2. Lint, tipos, tests y `breakpoints.test.ts` en verde.
+3. **A confirmar por el usuario en el navegador:** que la tarjeta se vea bien en escritorio y en tablet.
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -4136,6 +4165,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-096 | Filos que se encienden: el borde de cada figura se dibuja | K | P3 | M | En curso | BR-091, BR-092 |
 | BR-097 | CTA1: los hexágonos se ensamblan con el scroll | K | P3 | M | En curso | BR-096 |
 | BR-098 | Footer: lenguaje de la marca y franja de cierre con llamado a agendar | K | P3 | M | En curso | BR-084, BR-087, BR-088 |
+| BR-099 | Sucursales: la tarjeta de cada sucursal usa el ancho disponible | K | P3 | XS | En curso | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
