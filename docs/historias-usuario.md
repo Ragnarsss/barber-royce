@@ -40,6 +40,8 @@ citan.
 |---|---|---|---|---|---|---|---|
 | HU-RES-001 | RES | Reservar hora desde cualquier página | Alta | 5 | 3 | HU-INFO-002 | Aprobada |
 | HU-RES-002 | RES | Consultar por WhatsApp o teléfono | Alta | 4 | 2 | HU-INFO-002 | Aprobada |
+| HU-RES-003 | RES | Recibir una mascarilla facial gratis al entrar al sitio | Media | 4 | 5 | HU-RES-001, HU-MED-003, HU-CNT-002 | Propuesta |
+| HU-RES-004 | RES | Canjear la mascarilla dejando mi nombre en un cupón | Media | 3 | 8 | HU-RES-003 | Propuesta |
 | HU-INFO-001 | INFO | Ver servicios con precio y duración | Alta | 5 | 3 | — | Aprobada |
 | HU-INFO-002 | INFO | Ver sucursales, horarios y contacto correctos | Alta | 5 | 3 | — | Aprobada |
 | HU-INFO-003 | INFO | Conocer al equipo y la barbería | Media | 3 | 2 | — | Aprobada |
@@ -63,7 +65,7 @@ citan.
 
 | Épica | Historias |
 |---|---|
-| Captación y reserva | HU-RES-001, HU-RES-002 |
+| Captación y reserva | HU-RES-001 .. HU-RES-004 |
 | Contenido del negocio | HU-INFO-001 .. HU-INFO-005 |
 | Visibilidad local | HU-SEO-001 |
 | Experiencia | HU-EXP-001 .. HU-EXP-004 |
@@ -156,6 +158,171 @@ sitio, para resolver una duda antes de reservar.
 
 - Entrada: clic o toque.
 - Salida: `tel:` o enlace de WhatsApp con mensaje prellenado.
+
+---
+
+## HU-RES-003 - Recibir una mascarilla facial gratis al entrar al sitio
+
+Como cliente, quiero enterarme al entrar al sitio de que puedo llevarme una
+mascarilla facial gratis en mi próxima visita si menciono «Royce web», para
+decidir reservar con un motivo extra y saber cómo canjearla.
+
+- Epic: Captación y reserva
+- Actor / Persona: Cliente (y Dueño, que enciende y apaga la promoción)
+- Prioridad: Media
+- Estimación: 5 SP
+- Fuente: pedido del usuario (2026-10-27): «un modal que aparezca al entrar
+  en la página y que ofrezca una mascarilla facial gratis mencionando "royce
+  web" en su próxima visita». Insumo: `docs/handoff-modal-promocion-2026-10-27.md`.
+- Dependencias: HU-RES-001 (el modal lleva a reservar), HU-MED-003 (no puede
+  salir encima del aviso de privacidad), HU-CNT-002 (textos y el interruptor
+  `promo.activa` viven en la pestaña `textos`).
+- Riesgo: Medio — es una capa que abre sola: puede tapar la primera impresión
+  (loader de neón, aviso de privacidad), costar TBT/LCP (hoy el TBT móvil de
+  la home está en 192 ms, el límite es 200) y resultar agresiva para un
+  lector de pantalla. Las condiciones de la oferta las confirma el dueño.
+- Decisiones cerradas (2026-10-27, decisión del usuario):
+  - Aparece en **cualquier ruta**, **una vez por visitante**: al cerrarlo
+    queda anotado en el navegador (`localStorage`, tolerante a fallos) y no
+    vuelve a salir.
+  - Sale **después del loader de neón y de que el visitante responda el aviso
+    de privacidad** (si el aviso existe), con unos 5 s de espera. Nunca hay
+    dos capas a la vez.
+  - El dueño cambia el texto y la **apaga** desde la pestaña `textos` con la
+    clave `promo.activa` (clave nueva en la hoja, decisión del usuario).
+  - Condiciones: la mascarilla va **con cualquier servicio pagado**, **una
+    por persona**, en **ambas sucursales**, **sin vigencia ni tope de
+    cupos**. En esta HU se canjea **diciendo «Royce web» al barbero** en el
+    local, sin validación en el sitio (prototipo; el canje con cupón es
+    HU-RES-004).
+  - Diseño en **tres franjas** (imagen · titular y llamado · contenido); la
+    franja de la derecha concentra los textos y botones. El diseño exacto lo
+    elige el usuario con `diseno-visual`.
+  - Medición con consentimiento: vistas, cierres y clic en reservar.
+- RF relacionados: RF-RES-003, RF-RES-004, RF-CNT-008, RF-MED-006.
+- RNF impactados: RNF-PERF-002, RNF-PERF-003, RNF-A11Y-002, RNF-A11Y-003,
+  RNF-A11Y-004, RNF-A11Y-005, RNF-DATOS-001, RNF-PRIV-001.
+- Casos de uso relacionados: Ninguno (el flujo es lineal; la espera del aviso
+  de privacidad se cubre en CA-02).
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given `promo.activa` está encendida y es mi primera visita, When
+  termina el loader y pasan unos 5 s, Then veo un modal que ofrece una
+  mascarilla facial gratis en mi próxima visita y dice qué debo mencionar
+  («Royce web»).
+- CA-02: Given el aviso de privacidad está visible, When aún no respondo,
+  Then el modal no aparece; y When respondo, Then aparece tras la espera.
+- CA-03: Given veo el modal, When lo cierro (botón, Escape o fondo), Then el
+  foco vuelve donde estaba y, al recargar o entrar a otra ruta, no vuelve a
+  salir. Con `localStorage` bloqueado no falla y puede reaparecer.
+- CA-04: Given `promo.activa` está apagada o falta, When abro cualquier ruta,
+  Then el modal no aparece ni se descarga su código.
+- CA-05: Given veo el modal, When toco «Reservar», Then se abre AgendaPro
+  (`business.booking.url`) en una pestaña nueva.
+- CA-06: Given uso solo teclado o lector de pantalla, When aparece, Then el
+  foco queda atrapado en el modal, tiene nombre y descripción, los botones
+  miden al menos 44 px y el texto cumple 4,5:1.
+- CA-07: Given tengo activado reducir movimiento, When aparece, Then no hay
+  animación de entrada ni de salida.
+- CA-08: Given consentí la medición, When el modal se ve, se cierra o toco
+  «Reservar», Then se registran `promo_view`, `promo_close` y `reserve_click`
+  con sección `promo`; sin consentimiento no se envía nada.
+- CA-09: Given abro la home en un celular, When el modal está cerrado u
+  oculto, Then el CLS no cambia y TBT y LCP móviles no empeoran frente a la
+  línea base.
+
+### Reglas de negocio asociadas:
+
+- RN-01: La mascarilla se canjea con cualquier servicio pagado, una por
+  persona, en ambas sucursales, sin vigencia ni tope (**por confirmar con el
+  dueño**).
+- RN-02: Las condiciones se muestran en el modal; ninguna sale de un literal
+  en el componente (textos por `useSiteText()`, URL de reserva por
+  `useSiteContent()`).
+- RN-03: «Ya lo vio» no es un dato personal, pero `/privacidad` lo menciona.
+
+### Datos:
+
+- Entrada: visita, respuesta al aviso de privacidad, clave `promo.activa`.
+- Salida: modal visible o no; indicador «cerrado» en `localStorage`.
+
+---
+
+## HU-RES-004 - Canjear la mascarilla dejando mi nombre en un cupón
+
+Como cliente, quiero canjear la oferta desde el mismo modal escribiendo mis
+datos y obtener un cupón, para no depender de acordarme de la frase; y como
+dueño, quiero un registro de los canjes en la hoja de Google para controlar
+abusos.
+
+- Epic: Captación y reserva
+- Actor / Persona: Cliente y Dueño
+- Prioridad: Media
+- Estimación: 8 SP
+- Fuente: pedido del usuario (2026-10-27): «la mejor idea sería que la
+  persona escriba en el modal: primero un botón "canjear cupón" (o un texto
+  más persuasivo) y que se despliegue un formulario dentro del mismo modal,
+  con dos botones, uno para completar el formulario y otro para volver al
+  botón anterior»; «sin backend, pero que permita llevar el seguimiento
+  para evitar abusos» (registro en una pestaña de la hoja).
+- Dependencias: HU-RES-003 (el modal y su franja derecha).
+- Riesgo: **Alto** — (1) escribir en la hoja exige un receptor fuera del
+  sitio (un script de Google Apps Script o un Google Form), es decir, un
+  tercero nuevo y un cambio al ADR-001 («sin backend propio») que el usuario
+  debe decidir; (2) se recogen datos personales: `/privacidad` promete que no
+  se guardan, hay que actualizarla (Ley 19.628/21.719) y pedir consentimiento
+  explícito; (3) la CSP debe permitir ese destino (RNF-SEG-004); (4) desde el
+  navegador no se puede impedir el abuso, solo dejar registro (se puede
+  repetir el canje con otro nombre): el registro ayuda a detectarlo, no a
+  prevenirlo.
+- Decisiones cerradas (2026-10-27, decisión del usuario):
+  - Partir de la base **sin backend propio**: el formulario genera un cupón
+    en pantalla (nombre + «Royce web») que la persona muestra al barbero.
+  - Además se quiere **registrar cada canje en una pestaña de la hoja** para
+    seguimiento. **Abierta**: qué receptor se usa (Apps Script o Google Form)
+    y qué campos se piden; se decide con un ADR antes de implementar.
+  - El formulario vive dentro del modal, en la franja derecha, con dos
+    botones: completar y volver al botón anterior.
+- RF relacionados: RF-RES-005, RF-RES-006, RF-RES-007.
+- RNF impactados: RNF-PRIV-001, RNF-PRIV-002, RNF-SEG-004, RNF-A11Y-002,
+  RNF-DATOS-001.
+- Casos de uso relacionados: CU-RES-002.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given veo el modal, When toco «Canjear cupón», Then la franja de la
+  derecha pasa del texto al formulario, sin cerrar el modal ni mover el
+  resto del sitio.
+- CA-02: Given estoy en el formulario, When toco «Volver», Then regreso al
+  botón anterior sin perder la oferta y sin enviar nada.
+- CA-03: Given completo los campos válidos y acepto el uso de mis datos,
+  When toco «Obtener cupón», Then veo un cupón con mi nombre y la frase
+  «Royce web» para mostrar al barbero.
+- CA-04: Given dejo un campo obligatorio vacío o inválido, When intento
+  enviar, Then veo el error junto al campo, anunciado al lector de pantalla,
+  y no se registra nada.
+- CA-05: Given obtuve el cupón, When se registra el canje, Then queda una
+  fila (fecha, nombre y el dato de contacto acordado) en la pestaña de
+  canjes de la hoja; y When el registro falla, Then igual veo mi cupón.
+- CA-06: Given ya canjeé desde este navegador, When vuelvo al sitio, Then veo
+  mi cupón y no puedo generar otro (control en el navegador; no impide el
+  abuso desde otro dispositivo).
+- CA-07: Given abro `/privacidad`, When leo, Then explica qué datos del canje
+  se recogen, para qué, dónde se guardan y cómo pedir su borrado.
+
+### Reglas de negocio asociadas:
+
+- RN-01: No se envía nada antes de que la persona acepte el uso de sus datos.
+- RN-02: El destino del registro y sus campos salen de configuración, nunca
+  de un literal en el componente.
+- RN-03: El registro es de seguimiento; la validación real del canje ocurre
+  en el local, por el barbero.
+
+### Datos:
+
+- Entrada: nombre y el dato de contacto acordado.
+- Salida: cupón en pantalla y una fila en la hoja de canjes.
 
 ---
 

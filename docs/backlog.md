@@ -3907,6 +3907,53 @@ Criterios de aceptación:
 - Distancias y giros (`CTA_ASSEMBLE` en `ctaAssemble.ts`) puestos a ojo; se ajustan en un solo lugar.
 
 
+
+#### BR-100 — Modal de bienvenida con una mascarilla facial gratis
+
+- Prioridad: P3 · Esfuerzo: M · Depende de: BR-037 (aviso de privacidad), BR-042 (textos de la hoja)
+- Estado: Pendiente
+- Historia de usuario: HU-RES-003 (CA-01 a CA-09)
+- RF/RNF: `RF-RES-003`, `RF-RES-004`, `RF-CNT-008`, `RF-MED-006`, `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-002` a
+  `RNF-A11Y-005`, `RNF-DATOS-001`, `RNF-PRIV-001`
+
+**Origen (2026-10-27):** pedido del usuario. Insumo: `docs/handoff-modal-promocion-2026-10-27.md`.
+
+Alcance (decisiones del usuario del 2026-10-27, ver HU-RES-003):
+1. Modal sobre `ModalDialog`, montado con `lazy()` tras la carga, en cualquier ruta, una vez por visitante (indicador en
+   `localStorage` con `try/catch`), después del loader de neón y del aviso de privacidad, con ~5 s de espera.
+2. Tres franjas: imagen · titular y llamado · contenido y botones (la derecha). En esta etapa la franja derecha lleva
+   el texto de la oferta, la frase «Royce web» y «Reservar»; el botón «Canjear cupón» es de `BR-101`.
+3. `promo.activa` y los textos del modal en la pestaña `textos` (claves nuevas en `TEXTS` y en
+   `docs/contenido-hoja.md`); apagada o ausente, no se monta ni se descarga.
+4. Eventos `promo_view`, `promo_close` y `reserve_click` (`section = promo`), solo con consentimiento.
+5. Fuera de alcance: el formulario y el registro en la hoja (`BR-101`); validar el canje.
+
+Criterios de aceptación: los de HU-RES-003 y, además:
+1. Lint, tipos y tests en verde; `contrast.e2e.test.ts` pasa con la promoción apagada y con ella encendida y cerrada.
+2. TBT, CLS y LCP móviles de `/` no empeoran frente a la línea base (mediana de 3, `RNF-PERF-003`).
+3. **A confirmar por el usuario:** la dirección visual (`diseno-visual`, tres propuestas), la imagen y los textos
+   finales, y las condiciones con el dueño.
+
+
+#### BR-101 — Canje de la mascarilla con formulario, cupón y registro en la hoja
+
+- Prioridad: P3 · Esfuerzo: L · Depende de: BR-100
+- Estado: Bloqueado (necesita un ADR del receptor del registro y la decisión sobre `/privacidad`)
+- Historia de usuario: HU-RES-004 (CA-01 a CA-07)
+- RF/RNF: `RF-RES-005`, `RF-RES-006`, `RF-RES-007`, `RNF-PRIV-002`, `RNF-SEG-004`, `RNF-A11Y-002`, `RNF-DATOS-001`
+
+**Origen (2026-10-27):** pedido del usuario: botón «Canjear cupón» que despliega un formulario dentro del modal, con
+«completar» y «volver», un cupón en pantalla y un registro en una pestaña de la hoja «para evitar abusos».
+
+**Por qué está bloqueado:** el sitio es estático (`ADR-001`). Escribir en la hoja exige un receptor externo (Google
+Apps Script publicado como aplicación web, o un Google Form) y eso es un tercero nuevo: ADR nuevo, CSP (`RNF-SEG-004`),
+consentimiento y actualizar `/privacidad` (`RNF-PRIV-002`). El registro permite detectar abusos, no impedirlos.
+
+Alcance: formulario en la franja derecha (campos por decidir), cupón con el nombre y «Royce web», registro del canje,
+recuerdo del canje en el navegador. Fuera de alcance: validar el canje en el local.
+
+Criterios de aceptación: los de HU-RES-004 más el ADR aprobado antes de escribir código.
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -4032,6 +4079,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-095 | Los e2e de Chrome real no corren en paralelo | H | P2 | S | Hecho | — |
 | BR-096 | Filos que se encienden: el borde de cada figura se dibuja | K | P3 | M | En curso | BR-091, BR-092 |
 | BR-097 | CTA1: los hexágonos se ensamblan con el scroll | K | P3 | M | En curso | BR-096 |
+| BR-100 | Modal de bienvenida con una mascarilla facial gratis | K | P3 | M | Pendiente | BR-037, BR-042 |
+| BR-101 | Canje de la mascarilla con formulario, cupón y registro en la hoja | K | P3 | L | Bloqueado | BR-100 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
