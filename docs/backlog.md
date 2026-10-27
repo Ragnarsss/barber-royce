@@ -226,7 +226,7 @@ Criterios de aceptación:
 #### BR-006 — Corregir SEO técnico: JSON-LD, sitemap, `og:locale`, manifest
 
 - Prioridad: P0 · Esfuerzo: S · Depende de: BR-005
-- Estado: Propuesta
+- Estado: En curso (parte sin datos del dueño)
 - Historia de usuario: HU-SEO-001 (CA-01, CA-02, CA-03), HU-INFO-005 (CA-03)
 - RF/RNF: `RF-SEO-001`, `RF-SEO-002`, `RF-SEO-003`, `RNF-SEO-002`
 
@@ -255,6 +255,47 @@ Alcance:
 Criterios de aceptación:
 1. CP-SEO-001, CP-SEO-002 y CP-SEO-003 pasan.
 2. Test que compara el JSON-LD con `src/config/` (CP-SEO-002-N).
+
+> **Alcance ajustado (2026-10-27, decisión del usuario):** se hace ahora **solo lo que no depende de `BR-005`** (los datos
+> reales del dueño). Salió de la auditoría del tablero: el ticket estaba bloqueado entero, pero la mayoría de sus defectos
+> no necesitan nada del dueño.
+>
+> **Decisión del usuario (2026-10-27):** el JSON-LD de las dos sucursales y el `FAQPage` se generan **en la página, con
+> `SEOHelmet`**, desde los mismos datos que muestra la página (`useSiteContent()`: config más lo que edite el dueño en la
+> hoja), no al construir. Así lo estructurado nunca diverge de lo visible, que Google exige. Se quitan de `index.html` los
+> bloques fijos de `HairSalon` y `FAQPage`; el JSON-LD pasa a verse al ejecutar JS, como ya pasa con el título y la
+> descripción de cada ruta (lo atiende el spike `BR-034`, `RNF-SEO-003`).
+>
+> **Por defecto (no se eligió):**
+> - Lo que no se puede afirmar se omite en vez de inventarse: sin `postalCode`, sin `priceRange` y sin `aggregateRating`.
+>   El `geo` solo sale si las coordenadas del mapa de la sucursal caen en Chile (hoy, La Serena sí; Coquimbo no, porque
+>   su mapa apunta a Bogotá).
+> - El `sitemap.xml` sigue siendo un archivo estático al que se le suman las dos rutas que faltan, y un test lo ata a
+>   `ROUTES` (generarlo al construir exigiría importar `routes.ts` desde `vite.config.ts`, que no conoce el alias `@/`).
+> - `theme_color` y `background_color` del manifest son los tokens `--color-brand-section-bg` y `--color-brand-background`,
+>   y un test los compara con `colors.css`.
+> - El catálogo de servicios (`ItemList`) de `index.html` queda como está: no es parte de este ticket.
+>
+> **Queda para cuando el dueño entregue los datos (`BR-005`):** teléfono real de contacto (hoy `(123) 456-7890`),
+> horarios (hoy dos versiones distintas en `constants.ts` y en `locationsData.ts`), el mapa de Coquimbo, el código postal y
+> las coordenadas de las dos sucursales.
+>
+> **Hecho en esta parte (2026-10-27, en la rama `feat/br-006-seo-tecnico`):**
+> - `src/seo/structuredData.ts` arma un `HairSalon` por sucursal (país `CL`, localidad, teléfono, correo, horario desde su
+>   tabla, redes y reserva a AgendaPro, con coordenadas solo si el mapa cae en Chile) y el `FAQPage`; `SEOHelmet` los
+>   escribe con la propiedad `jsonLd` y agrega `og:locale` (`SITE.locale`, `es_CL`). Inicio y Ubicación declaran las
+>   sucursales; Preguntas frecuentes, su `FAQPage`. Se quitaron de `index.html` el `HairSalon` y el `FAQPage` fijos
+>   (con país `ES`, coordenadas 0,0, una calificación inventada y una reserva a un ancla que no existe).
+> - React 19 deja el `<script>` en línea donde se renderiza (dentro de `<main>`), no en `<head>`: Google lo acepta.
+> - `sitemap.xml` con las 7 rutas (se sumaron `/nosotros` y `/preguntas-frecuentes`) y `site.webmanifest` con los
+>   colores oscuros del sitio y los íconos como `any` y `maskable`; tests que los atan a `ROUTES` y a los tokens.
+> - `ProductsPage` ya usaba `SEOHelmet` (el defecto de la ficha estaba desactualizado).
+>
+> **Hallazgos para ticket aparte (no se tocaron):**
+> - `index.html` y `SEOHelmet` dejan **dos** `og:title`, `og:url` y `description` en el `<head>` de cada ruta (React 19
+>   agrega las metas en vez de reemplazarlas). Los rastreadores que no ejecutan JS (WhatsApp, Facebook) ven solo las de la
+>   home. Lo resuelve el spike `BR-034` (prerender) o un ticket propio.
+> - El catálogo de servicios (`ItemList`) de `index.html` copia nombres y precios a mano: puede divergir de la hoja.
 
 #### BR-007 — Enlaces externos y de reserva seguros y correctos
 
@@ -3940,7 +3981,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-003 | Página 404 | B | P0 | S | Hecho | BR-030 (test) |
 | BR-004 | Lint sin errores | B | P0 | S | Hecho | BR-001 |
 | BR-005 | Datos del negocio: fuente única y reales | B | P0 | M | Bloqueada | — |
-| BR-006 | SEO técnico | B | P0 | S | Propuesta | BR-005 |
+| BR-006 | SEO técnico | B | P0 | S | En curso (parte sin dueño) | BR-005 |
 | BR-007 | Enlaces externos seguros | B | P0 | XS | En curso | — |
 | BR-008 | Fotos propias en lugar de Unsplash | B | P0 | M | Bloqueada | — |
 | BR-009 | Quitar el botón "Comprar" (decidido) | B | P1 | XS | Hecho | — |

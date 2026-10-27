@@ -44,4 +44,20 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Nosotros (BR-006: faltaba) -->
+  <url>
+    <loc>https://roycebarber.com/nosotros</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Preguntas frecuentes (BR-006: faltaba) -->
+  <url>
+    <loc>https://roycebarber.com/preguntas-frecuentes</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
 </urlset>

@@ -1,6 +1,9 @@
 import { BackToTop } from "@/components/common/BackToTop/BackToTop";
 import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
 import { ROUTES } from "@/config/routes";
+import { SITE } from "@/config/constants";
+import { useSiteContent } from "@/content/useSiteContent";
+import { hairSalonJsonLd } from "@/seo/structuredData";
 import { Benefits } from "../components/sections/Benefits/Benefits";
 import { CTA1 } from "../components/sections/CTA1/CTA1";
 import { CTA2 } from "../components/sections/CTA2/CTA2";
@@ -11,9 +14,12 @@ import { SocialProof1 } from "../components/sections/SocialProof1/SocialProof1";
 import { SocialProof2 } from "../components/sections/SocialProof2/SocialProof2";
 
 export function HomePage() {
+  const { business, locations } = useSiteContent();
+
   return (
     <>
-      <SEOHelmet route={ROUTES.home} />
+      {/* Datos estructurados de las dos sucursales, con los mismos datos que muestra el sitio (BR-006) */}
+      <SEOHelmet route={ROUTES.home} jsonLd={hairSalonJsonLd({ site: SITE, business, locations })} />
       <Hero />
       <CTA1 />
       <SocialProof1 />
