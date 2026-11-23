@@ -21,7 +21,8 @@ despliegue. Formato tomado de *Segunda Opinión de Build*.
 
 - **RF:** `RF-<MOD>-NNN`. Módulos: `RES` (reserva y contacto), `INFO`
   (contenido), `NAV` (navegación y errores), `SEO`, `OPS` (despliegue y
-  calidad), `MED` (medición y privacidad), `CNT` (contenido editable).
+  calidad), `MED` (medición y privacidad), `CNT` (contenido editable),
+  `SUC` (multi-sucursal).
 - **RNF:** `RNF-<CAT>-NNN`. Categorías en §3.1.
 - **CP:** `CP-<MOD|CAT>-NNN`, criterio de prueba. Es el caso concreto que
   verifica el requisito. Un ticket lo cita así: "CP-RES-001 pasó en el
@@ -80,6 +81,7 @@ Salvo que el CP diga otra cosa:
 | RF-RES-005 | RES | Ofrecer dentro del modal un botón «Canjear cupón» que despliega un formulario (dos botones: completar y volver) y, al completarlo con consentimiento, mostrar un cupón con el nombre y la frase «Royce web». | Media | **CP-RES-005:** «Canjear cupón» muestra el formulario sin cerrar el modal; «Volver» regresa al botón sin enviar nada; un campo inválido muestra su error y no avanza; el formulario válido muestra el cupón. | HU-RES-004 | CU-RES-002 | Propuesto (`BR-101`) |
 | RF-RES-006 | RES | Registrar cada canje (fecha, nombre y el contacto acordado) en una pestaña de la hoja mediante el receptor que decida el ADR nuevo, solo tras el consentimiento explícito; si el registro falla, el cupón igual se muestra. | Media | **CP-RES-006:** completar el formulario agrega una fila en la pestaña de canjes; sin consentimiento no se hace ninguna petición; con el receptor caído se ve el cupón. | HU-RES-004 | CU-RES-002 | Propuesto (`BR-101`; bloqueado hasta el ADR) |
 | RF-RES-007 | RES | Recordar en el navegador el canje hecho y mostrar el mismo cupón en vez del formulario, sin permitir generar otro desde ese navegador. | Baja | **CP-RES-007:** tras canjear, al recargar el modal muestra el cupón y no el formulario; con `localStorage` bloqueado no falla. | HU-RES-004 | CU-RES-002 | Propuesto (`BR-101`) |
+| RF-RES-008 | RES | Todo botón «Reservar» abre la URL de AgendaPro de la sucursal activa (columna `reserva` de su fila en la pestaña `sucursales`); si la sucursal no tiene la suya, abre `reservas.url` de la pestaña `negocio`. | Alta | **CP-RES-008:** con La Serena activa, «Reservar» del navbar, de los CTA, de «no encontrada» y del modal abre `…/sucursal/98243`; con Coquimbo, `…/sucursal/400965`; sin `reserva` en la fila, abre `reservas.url`. | HU-RES-001 | CU-RES-001, CU-SUC-001 | Propuesto (`BR-103`) |
 | RF-INFO-001 | INFO | Listar los servicios con nombre, descripción, precio en CLP, duración y qué incluye, filtrables por categoría. | Alta | **CP-INFO-001:** `/servicios` muestra todos los servicios de `servicesData.ts` con esos campos; elegir una categoría deja solo sus servicios; "Todos" restablece la lista. | HU-INFO-001 | CU-INFO-001 | Implementado (defecto: imágenes de Unsplash; `BR-008`) |
 | RF-INFO-002 | INFO | Listar los productos con nombre, descripción, foto y precio en CLP, filtrables por categoría y por texto. | Baja | **CP-INFO-002:** `/productos` muestra los productos de `productsData.ts`; escribir un texto filtra por nombre sin recargar; un filtro sin resultados muestra un estado vacío con acción para limpiarlo. | HU-INFO-004 | CU-INFO-001 | Implementado (botón «Comprar» quitado por decisión del usuario, `BR-009`; defecto restante: imágenes de Unsplash, `BR-008`) |
 | RF-INFO-003 | INFO | Mostrar por sucursal: dirección, mapa embebido, enlace a Google Maps, horario por día y contacto, con una pestaña por sucursal. | Alta | **CP-INFO-003:** `/ubicacion` muestra La Serena y Coquimbo; cambiar de pestaña con clic o flechas del teclado actualiza los datos; con el iframe del mapa bloqueado, la dirección y el enlace a Maps siguen visibles. | HU-INFO-002 | CU-INFO-002 | Implementado |
@@ -113,6 +115,14 @@ Salvo que el CP diga otra cosa:
 | RF-CNT-006 | CNT | Volver a leer la hoja en el navegador cuando la página termina de cargar y mostrar el contenido nuevo; una pestaña que falla conserva el contenido del build; sin hoja configurada no hay peticiones ni código de lectura. | Alta | **CP-CNT-006:** con la hoja configurada, cambiar un nombre en ella y recargar lo muestra sin reconstruir; con la hoja caída o una fila inválida se ve el contenido del build; sin variables no hay ninguna petición a Google. | HU-CNT-001 | CU-CNT-001 | Implementado (`BR-047`: probado con Chrome real, un servidor que imita a Google y con tu hoja real bajo la política de seguridad de Vercel) |
 | RF-CNT-007 | CNT | Editar desde la hoja los datos de contacto, reservas, horarios y redes (pestaña `negocio`) y las sucursales (pestaña `sucursales`), validando teléfonos, correos y enlaces, y armar los enlaces de llamada, correo y WhatsApp a partir de lo que escribe el dueño. | Alta | **CP-CNT-007:** cambiar `telefono` en la hoja cambia el footer y el enlace `tel:`; un teléfono, correo o enlace inválido rechaza la pestaña y se conserva el dato anterior; el mapa solo acepta Google Maps. | HU-CNT-003 | CU-CNT-001 | Implementado (`BR-048`: probado con Chrome real; falta crear las pestañas en la hoja real) |
 | RF-CNT-008 | CNT | Encender o apagar la promoción de bienvenida desde la clave `promo.activa` de la pestaña `textos` y editar desde ahí los textos del modal; una clave ausente deja la promoción encendida (decisión del 2026-10-27, ver HU-RES-003). | Media | **CP-CNT-008:** con `promo.activa` en `SI` el modal sale; en `NO` o ausente no sale ni se descarga su código; cambiar un texto de la hoja cambia el modal. | HU-RES-003 | CU-CNT-001 | Implementado (`BR-100`; falta verificarlo en el preview) |
+| RF-CNT-009 | CNT | Leer de la pestaña `sucursales` una columna opcional `reserva` con la URL de AgendaPro de cada sucursal, validada como `https://`, con respaldo en `src/data/locationsData.ts`. | Alta | **CP-CNT-009:** una fila con `reserva` válida la usa; una fila sin la columna o vacía deja la sucursal sin URL propia; una URL sin `https://` se rechaza con aviso y se conserva el respaldo. | HU-RES-001, HU-CNT-003 | CU-CNT-001 | Propuesto (`BR-103`) |
+| RF-SUC-001 | SUC | Resolver la sucursal activa con este orden: prefijo de la URL (`/coquimbo`, `/la-serena`), elección guardada en el navegador, Coquimbo; reflejarla en el atributo `data-branch` de `<html>`. | Alta | **CP-SUC-001:** `/la-serena` da La Serena aunque la guardada sea Coquimbo; `/servicios` con La Serena guardada da La Serena; sin guardada, Coquimbo; un valor guardado inválido se ignora; `<html data-branch>` coincide en cada caso. | HU-SUC-001 | CU-SUC-001 | Propuesto (`BR-103`) |
+| RF-SUC-002 | SUC | Publicar una portada por sucursal en `/coquimbo` y `/la-serena`, mantener sin prefijo las páginas comunes y responder «no encontrada» a cualquier otro primer segmento. | Alta | **CP-SUC-002:** las dos portadas responden 200 al entrar directo y al recargar; `/servicios` sigue funcionando; `/la-serena-x` muestra «no encontrada». | HU-SUC-001 | CU-SUC-001 | Propuesto (`BR-103`, `BR-106`) |
+| RF-SUC-003 | SUC | Ofrecer en el navbar (escritorio y menú móvil) un control con los nombres de las dos sucursales que, en una página común, cambia el tema y guarda la elección sin navegar, y en una portada navega a la de la otra sucursal; con una transición en diagonal que se omite con reducir movimiento o sin soporte. | Alta | **CP-SUC-003:** en `/servicios`, elegir La Serena cambia `data-branch` sin cambiar la URL ni el scroll; en `/coquimbo`, lleva a `/la-serena`; el control es un `radiogroup` operable con teclado; con `prefers-reduced-motion` no hay transición. | HU-SUC-001 | CU-SUC-001 | Propuesto (`BR-105`) |
+| RF-SUC-004 | SUC | Mostrar en `/` una portada partida con una mitad por sucursal, cada una con su identidad, que enlaza a su portada. | Alta | **CP-SUC-004:** `/` muestra las dos mitades con enlaces reales a `/coquimbo` y `/la-serena`; el `<title>` y la descripción nombran las dos sucursales. | HU-SUC-001 | CU-SUC-001 | Propuesto (`BR-106`) |
+| RF-SUC-005 | SUC | Aplicar el tema de La Serena (paleta y figuras cuadradas con trazo de neón en lugar de hexágonos) cuando es la sucursal activa, e interpolar cada figura en la de la otra sucursal al cambiar. | Media | **CP-SUC-005:** con La Serena activa, los fondos de SocialProof1, SocialProof2, CTA1 y Reviews muestran cuadrados o rectángulos; cada par de formas tiene la misma cantidad de puntos (test); los colores salen solo de los tokens. | HU-SUC-002 | — | Propuesto (`BR-104`) |
+| RF-SUC-006 | SUC | Con La Serena activa, mostrar el equipo en un carrusel de tarjetas rectangulares con botones de vidrio, operable con arrastre, teclado y botones; con Coquimbo, la grilla actual. | Media | **CP-SUC-006:** con La Serena, `/equipo` muestra el carrusel con «Barbero N de M», los botones anterior y siguiente y la tarjeta activa destacada; con Coquimbo, la grilla; el código del carrusel no se descarga con Coquimbo. | HU-SUC-002 | — | Propuesto (`BR-107`) |
+| RF-SUC-007 | SUC | Con La Serena activa, mostrar enredaderas decorativas a los costados de algunas secciones, que crecen con el scroll y no se anuncian a los lectores de pantalla. | Baja | **CP-SUC-007:** con La Serena, las secciones elegidas muestran las enredaderas con `aria-hidden`; con Coquimbo no se renderizan ni se descargan; con `prefers-reduced-motion` se ven completas y quietas. | HU-SUC-002 | — | Propuesto (`BR-108`) |
 
 ### 2.2 Notas de trazabilidad
 
@@ -120,6 +130,11 @@ Salvo que el CP diga otra cosa:
   este sitio: la resuelve AgendaPro (ADR-001 de `architecture.md`).
 - `HU-EXP-001` y `HU-EXP-002` no tienen RF propio: son requisitos de
   calidad y viven como RNF.
+- (2026-11-23) Con la reserva por sucursal (`RF-RES-008`, `RF-CNT-009`),
+  `CP-RES-001` se lee así: `agendapro.com` aparece solo en la fuente de los
+  datos del negocio (`src/config/` y `src/data/locationsData.ts`, una vez
+  por sucursal más el valor por defecto) y en el snapshot que se genera de
+  la hoja; nunca en un componente.
 
 ---
 
@@ -172,6 +187,8 @@ Salvo que el CP diga otra cosa:
 | RNF-SEG-004 | SEG | La CSP permite solo lo necesario para la analítica y nada más. | Directivas de `script-src` con `unsafe-inline` o `unsafe-eval`; orígenes de terceros permitidos | 0; solo `googletagmanager.com`, `google-analytics.com` y `*.analytics.google.com` | **CP-SEG-004:** test sobre `vercel.json` y consola del preview sin violaciones de CSP con GA activo. | Todo el sitio | Propuesto |
 | RNF-CONF-003 | CONF | El contenido de la hoja nunca rompe el build ni deja el sitio incompleto. | Builds que fallan por la hoja; tiempo máximo esperando la hoja | 0; 10 s | **CP-CONF-003:** build con la hoja caída, con una pestaña inválida y con el tiempo de espera agotado: termina bien usando el snapshot de lo que falló. | Build | Propuesto |
 | RNF-DATOS-002 | DATOS | Hay una sola fuente editable por contenido y su formato es verificable. | Contenidos con dos fuentes editables; precios que no son enteros en CLP | 0; 0 | **CP-DATOS-002:** un test valida el snapshot con el mismo esquema que la hoja y comprueba que `src/data` no duplica el contenido. | Catálogo | Verificado en local (`BR-039` + `BR-041`: respaldo y plantillas se leen como hoja sin cambios y `src/data` ya no duplica el catálogo, con tests) |
+| RNF-PERF-008 | PERF | El tema de la sucursal activa se pinta desde el primer cuadro. | Cuadros pintados con el tema de la otra sucursal al recargar una página común con La Serena guardada | 0 | **CP-PERF-008:** en el preview, con La Serena guardada, recargar `/servicios` con CPU 4x y 4G lenta, y revisar la tira de capturas del panel Performance de Chrome; además, un test que compara el script de arranque de `index.html` con `src/config/branches.ts`. | Todas las rutas | Propuesto (`BR-103`) |
+| RNF-SEG-005 | SEG | El script de arranque de la sucursal se permite en la CSP solo por su hash. | `script-src` con `'unsafe-inline'`; diferencia entre el hash de la CSP y el del script de `index.html` | 0; 0 | **CP-SEG-005:** un test recalcula el `sha256` del script de `index.html` y lo compara con el de `vercel.json`; en el preview, la consola no muestra violaciones de CSP. | `index.html`, `vercel.json` | Propuesto (`BR-103`) |
 
 ### 3.3 Notas de trazabilidad RNF
 
@@ -187,7 +204,7 @@ Salvo que el CP diga otra cosa:
 
 | HU | RF | RNF |
 |---|---|---|
-| HU-RES-001 | RF-RES-001 | RNF-SEG-002, RNF-DATOS-001 |
+| HU-RES-001 | RF-RES-001, RF-RES-008, RF-CNT-009 | RNF-SEG-002, RNF-DATOS-001 |
 | HU-RES-002 | RF-RES-002 | RNF-DATOS-001 |
 | HU-RES-003 | RF-RES-003, RF-RES-004, RF-CNT-008, RF-MED-006 | RNF-PERF-002, RNF-PERF-003, RNF-A11Y-002 .. RNF-A11Y-005, RNF-DATOS-001, RNF-PRIV-001 |
 | HU-RES-004 | RF-RES-005, RF-RES-006, RF-RES-007 | RNF-PRIV-002, RNF-SEG-004, RNF-A11Y-002, RNF-DATOS-001 |
@@ -208,7 +225,9 @@ Salvo que el CP diga otra cosa:
 | HU-MED-003 | RF-MED-003, RF-MED-005 | RNF-PRIV-001, RNF-A11Y-002, RNF-PERF-002 |
 | HU-CNT-001 | RF-CNT-001 .. RF-CNT-004, RF-CNT-006 | RNF-CONF-003, RNF-DATOS-002, RNF-PERF-001, RNF-SEG-004 |
 | HU-CNT-002 | RF-CNT-005 | RNF-CONF-003, RNF-DATOS-002 |
-| HU-CNT-003 | RF-CNT-007 | RNF-DATOS-001, RNF-CONF-003, RNF-SEG-004 |
+| HU-CNT-003 | RF-CNT-007, RF-CNT-009 | RNF-DATOS-001, RNF-CONF-003, RNF-SEG-004 |
+| HU-SUC-001 | RF-SUC-001 .. RF-SUC-004 | RNF-PERF-008, RNF-SEG-005, RNF-A11Y-002, RNF-A11Y-003, RNF-SEO-001, RNF-CONF-001 |
+| HU-SUC-002 | RF-SUC-005, RF-SUC-006, RF-SUC-007 | RNF-PERF-001 .. RNF-PERF-003, RNF-PERF-005, RNF-A11Y-003 .. RNF-A11Y-005, RNF-MANT-004 |
 
 ## 5. Documentos relacionados
 
