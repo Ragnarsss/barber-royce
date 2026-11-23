@@ -1,3 +1,4 @@
+import { BranchVines } from "@/components/decor/BranchVines";
 import { BackToTop } from "@/components/common/BackToTop/BackToTop";
 import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
 import { ROUTES } from "@/config/routes";
@@ -32,9 +33,13 @@ export function LaSerenaPage() {
       <SocialProof1 />
       <Benefits />
       <Reviews />
-      <Features />
+      <BranchVines sides="both">
+        <Features />
+      </BranchVines>
       <SocialProof2 />
-      <BranchVisit branch="la-serena" />
+      <BranchVines sides="both">
+        <BranchVisit branch="la-serena" />
+      </BranchVines>
       <CTA2 />
       <BackToTop />
     </>
