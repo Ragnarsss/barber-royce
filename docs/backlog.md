@@ -4584,7 +4584,7 @@ Criterios de aceptación:
 #### BR-110 — Textos por sucursal: una pestaña para cada landing
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-042, BR-106
-- Estado: Propuesta (el código no está bloqueado; los textos de La Serena los escribe el dueño)
+- Estado: En curso (código hecho en la rama `feat/br-110-textos-por-sucursal`; faltan el `gid` de `textos-la-serena` y que el dueño escriba los textos de La Serena)
 - Historia de usuario: HU-CNT-002 (CA-04 .. CA-06)
 - RF/RNF: `RF-CNT-010`, `RNF-CONF-003`, `RNF-DATOS-002`
 
@@ -4751,7 +4751,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | En curso (falta LCP, BR-034) | BR-103 .. BR-105 |
 | BR-107 | Equipo de La Serena: tarjetas rectangulares en carrusel | M | P2 | M | En curso (falta accesibilidad) | BR-103, BR-104 |
 | BR-108 | Enredaderas laterales del tema La Serena | M | P2 | M | Hecho | BR-104 |
-| BR-110 | Textos por sucursal: una pestaña para cada landing | M | P2 | M | Propuesta | BR-042, BR-106 |
+| BR-110 | Textos por sucursal: una pestaña para cada landing | M | P2 | M | En curso | BR-042, BR-106 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

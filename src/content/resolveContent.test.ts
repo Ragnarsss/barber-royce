@@ -10,6 +10,7 @@ const OTHER: SiteContent = {
   team: [{ name: "Respaldo", role: "r", experience: "e", image: "", isLead: false, specialties: [], description: "", bookingUrl: "", instagram: "", works: [], quote: "", workDays: [], branchIds: [] }],
   faq: [{ category: "Otros", question: "¿Respaldo?", answer: "Sí" }],
   texts: { "hero.lema": "Respaldo" },
+  textsByBranch: { coquimbo: {}, "la-serena": {} },
   business: snapshot.business,
   locations: snapshot.locations,
 };
@@ -20,6 +21,8 @@ const goodSheet: SheetCsv = {
   equipo: "id,nombre,cargo,experiencia\nc,Carlos,Master,15 años\n",
   preguntas: "id,categoria,pregunta,respuesta\np,Otros,¿Algo?,Sí\n",
   textos: "clave,valor\nhero.lema,Nuevo título\n",
+  "textos-coquimbo": "clave,valor\ncta2.titulo,Reserva en Coquimbo\n",
+  "textos-la-serena": "clave,valor\ncta2.titulo,Reserva en La Serena\n",
   negocio: "clave,valor\ntelefono,+56 9 5555 4444\n",
   sucursales:
     "id,nombre,direccion,ciudad,telefono,email,whatsapp,mapa,horario_semana,horario_sabado,horario_domingo\n" +
@@ -273,5 +276,53 @@ describe("reserva por sucursal al fusionar la hoja con el respaldo (BR-103, RF-C
     const { content } = resolveContent({ ...goodSheet, sucursales: `${head}\n${row("otra")}\n` }, backupWithUrl);
 
     expect(content.locations[0]).not.toHaveProperty("bookingUrl");
+  });
+});
+
+describe("textos por sucursal (BR-110, RF-CNT-010, HU-CNT-002 CA-04 a CA-06)", () => {
+  it("CA-04: la pestaña textos-la-serena llena solo los textos de La Serena", () => {
+    const { content, reports } = resolveContent({ "textos-la-serena": "clave,valor\nhero.lema,Serenidad\n" }, OTHER);
+
+    expect(content.textsByBranch["la-serena"]).toEqual({ "hero.lema": "Serenidad" });
+    expect(content.textsByBranch.coquimbo).toEqual({});
+    expect(reports.find((r) => r.tab === "textos-la-serena")?.source).toBe("hoja");
+  });
+
+  it("textos-coquimbo llena solo los de Coquimbo, y textos sigue siendo la base común", () => {
+    const { content } = resolveContent({ textos: "clave,valor\nhero.lema,Común\n", "textos-coquimbo": "clave,valor\ncta2.titulo,Coquimbo\n" }, OTHER);
+
+    expect(content.texts).toEqual({ "hero.lema": "Común" });
+    expect(content.textsByBranch.coquimbo).toEqual({ "cta2.titulo": "Coquimbo" });
+    expect(content.textsByBranch["la-serena"]).toEqual({});
+  });
+
+  it("CA-06: sin la pestaña de una sucursal queda el respaldo (vacío): esa sucursal usa la base común", () => {
+    const { content, reports } = resolveContent({ textos: "clave,valor\nhero.lema,Común\n" }, OTHER);
+
+    expect(content.textsByBranch.coquimbo).toEqual({});
+    expect(reports.find((r) => r.tab === "textos-coquimbo")?.source).toBe("respaldo");
+  });
+
+  it("una pestaña de sucursal con solo el encabezado es válida: significa «sin textos propios»", () => {
+    const { content, reports } = resolveContent({ "textos-la-serena": "clave,valor\n" }, OTHER);
+
+    expect(content.textsByBranch["la-serena"]).toEqual({});
+    expect(reports.find((r) => r.tab === "textos-la-serena")?.source).toBe("hoja");
+  });
+
+  it("CA-03: un valor sobre el largo máximo rechaza solo esa pestaña, y se avisa con el nombre de la pestaña", () => {
+    const largo = "x".repeat(400);
+    const { content, reports } = resolveContent({ "textos-la-serena": `clave,valor\nhero.lema,${largo}\n` }, OTHER);
+
+    expect(content.textsByBranch["la-serena"]).toEqual({});
+    expect(reports.find((r) => r.tab === "textos-la-serena")?.issues[0].tab).toBe("textos-la-serena");
+    expect(formatReports(reports).join("\n")).toContain("textos-la-serena fila 2, valor");
+  });
+
+  it("una clave que el sitio no conoce se ignora con un aviso, en la pestaña de la sucursal", () => {
+    const { content, reports } = resolveContent({ "textos-coquimbo": "clave,valor\nhero.titlo,Con error\n" }, OTHER);
+
+    expect(content.textsByBranch.coquimbo).toEqual({});
+    expect(reports.find((r) => r.tab === "textos-coquimbo")?.warnings).toHaveLength(1);
   });
 });

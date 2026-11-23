@@ -97,6 +97,8 @@ export function contentToSheet(content: SiteContent): SheetCsv {
       ...content.faq.map((q, i) => [faqIds[i], q.category, q.question, q.answer, "SI", String(i + 1)]),
     ]),
     textos: toCsv([["clave", "valor"], ...Object.entries(content.texts)]),
+    "textos-coquimbo": toCsv([["clave", "valor"], ...Object.entries(content.textsByBranch.coquimbo)]),
+    "textos-la-serena": toCsv([["clave", "valor"], ...Object.entries(content.textsByBranch["la-serena"])]),
     negocio: toCsv([["clave", "valor"], ...businessToEntries(content.business)]),
     sucursales: toCsv([
       ["id", "nombre", "direccion", "ciudad", "telefono", "email", "whatsapp", "mapa", "horario_semana", "horario_sabado", "horario_domingo", "activo", "orden", "reserva"],

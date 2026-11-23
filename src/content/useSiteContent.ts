@@ -1,4 +1,5 @@
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useMemo } from "react";
+import { useBranch } from "@/branch/useBranch";
 import { ContentContext } from "./ContentContext";
 import { textOf, type TextKey } from "./texts";
 import type { SiteContent } from "./types";
@@ -8,8 +9,13 @@ export function useSiteContent(): SiteContent {
   return useContext(ContentContext);
 }
 
-/** Un texto editable: el de la hoja si lo definió, si no el que trae el código (`./texts.ts`). */
+/**
+ * Un texto editable (BR-110): el de la pestaña de la sucursal activa si lo definió, si no el de la base común
+ * (`textos`) y, si tampoco, el que trae el código (`./texts.ts`). Sin pestaña de la sucursal, vale la base.
+ */
 export function useSiteText(): (key: TextKey) => string {
-  const { texts } = useContext(ContentContext);
-  return useCallback((key: TextKey) => textOf(texts, key), [texts]);
+  const { texts, textsByBranch } = useContext(ContentContext);
+  const { branch } = useBranch();
+  const merged = useMemo(() => ({ ...texts, ...textsByBranch?.[branch] }), [texts, textsByBranch, branch]);
+  return useCallback((key: TextKey) => textOf(merged, key), [merged]);
 }
