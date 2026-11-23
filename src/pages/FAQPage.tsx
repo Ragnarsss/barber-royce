@@ -6,6 +6,7 @@ import { PageHero } from "@/components/common/PageHero/PageHero";
 import { useSiteContent } from "@/content/useSiteContent";
 import { FAQ_CATEGORIES } from "@/types/faq.types";
 import { ROUTES } from "@/config/routes";
+import { faqPageJsonLd } from "@/seo/structuredData";
 import { trackWhatsApp } from "@/analytics/track";
 import styles from "./FAQPage.module.css";
 import { useState } from "react";
@@ -22,7 +23,7 @@ export const FAQPage = () => {
 
     return (
         <div className={styles.page}>
-            <SEOHelmet route={route} />
+            <SEOHelmet route={route} jsonLd={faqPageJsonLd(FAQ_LIST)} />
 
             <PageHero
                 title="Preguntas Frecuentes"
