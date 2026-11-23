@@ -31,3 +31,9 @@ export const BRANCH_LOCATION_ID = {
 export function isBranch(value: unknown): value is Branch {
   return typeof value === "string" && (BRANCHES as readonly string[]).includes(value);
 }
+
+/** Nombre de cada sucursal tal como lo lee el visitante en el control para cambiar de sucursal (BR-105). */
+export const BRANCH_LABEL = {
+  coquimbo: "Coquimbo",
+  "la-serena": "La Serena",
+} as const satisfies Record<Branch, string>;

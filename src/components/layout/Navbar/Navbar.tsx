@@ -10,6 +10,7 @@ import { useBookingUrl } from "@/branch/useBookingUrl";
 import { trackReserve } from "@/analytics/track";
 import { SITE } from "@/config/constants";
 import { MEDIA } from "@/config/breakpoints";
+import { BranchSwitch } from "@/components/layout/BranchSwitch/BranchSwitch";
 
 export const Navbar = () => {
   const bookingUrl = useBookingUrl();
@@ -92,6 +93,8 @@ export const Navbar = () => {
         </div>
 
         <div className={styles.actions}>
+          {/* La barra completa, desde 1025 px; en móvil el control va dentro del menú */}
+          <BranchSwitch className={styles.desktopSwitch} />
           <a
             className={styles.ctaButton}
             href={bookingUrl}
@@ -134,6 +137,7 @@ export const Navbar = () => {
             {link.label}
           </NavLink>
         ))}
+        <BranchSwitch roomy className={styles.mobileSwitch} />
         <a
           href={bookingUrl}
           target="_blank"

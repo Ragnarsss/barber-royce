@@ -48,3 +48,11 @@ describe("Navbar: menú móvil (BR-085, RNF-A11Y-002)", () => {
     expect(screen.getByAltText(SITE.name)).toBeInTheDocument();
   });
 });
+
+describe("Navbar: control de sucursal (BR-105, HU-SUC-001 CA-05)", () => {
+  it("lo trae dos veces, en la barra y en el menú móvil, y solo uno se muestra según el ancho", () => {
+    renderNavbar();
+
+    expect(screen.getAllByRole("radiogroup", { name: "Sucursal", hidden: true })).toHaveLength(2);
+  });
+});

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { BRANCH_STORAGE_KEY } from "@/config/branches";
@@ -124,5 +124,34 @@ describe("BranchProvider: color de la barra del navegador (BR-104)", () => {
 
   it("si la página no tiene el meta, no falla", () => {
     expect(() => renderAt("/la-serena")).not.toThrow();
+  });
+});
+
+describe("BranchProvider con View Transitions (BR-105)", () => {
+  afterEach(() => {
+    localStorage.clear();
+    delete document.documentElement.dataset.branch;
+    delete (document as unknown as { startViewTransition?: unknown }).startViewTransition;
+    vi.unstubAllGlobals();
+  });
+
+  it("el cambio corre dentro de la transición y su promesa se resuelve cuando la sucursal nueva ya está en <html>", async () => {
+    vi.stubGlobal("matchMedia", () => ({ matches: false, addEventListener() {}, removeEventListener() {} }));
+    let done: Promise<void> | undefined;
+    let themeWhenDone: string | undefined;
+    (document as unknown as { startViewTransition: (update: () => Promise<void>) => void }).startViewTransition = (update) => {
+      done = update().then(() => {
+        themeWhenDone = document.documentElement.dataset.branch;
+      });
+    };
+    renderAt("/servicios");
+
+    await act(async () => {
+      screen.getByRole("button", { name: "a-la-serena" }).click();
+      await done;
+    });
+
+    expect(themeWhenDone).toBe("la-serena");
+    expect(state()).toBe("la-serena|stored|/servicios");
   });
 });

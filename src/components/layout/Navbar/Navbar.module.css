@@ -275,6 +275,15 @@
   padding: var(--spacing-6);
 }
 
+/* El control de sucursal: dentro del menú en móvil, en la barra desde 1025 px */
+.actions .desktopSwitch {
+  display: none;
+}
+
+.mobileSwitch {
+  align-self: flex-start;
+}
+
 .mobileNavLink {
   color: var(--color-brand-primary);
   text-decoration: none;
@@ -329,8 +338,17 @@
     gap: var(--spacing-4);
   }
 
+  /* Sin las barras entre enlaces en este rango: el control de sucursal (BR-105) ocupa su lugar y el botón no se corta */
+  .separator {
+    display: none;
+  }
+
   .actions {
     order: 0;
+  }
+
+  .actions .desktopSwitch {
+    display: inline-flex;
   }
 
   .actions .ctaButton {
@@ -356,9 +374,10 @@
   }
 }
 
-/* Con espacio de sobra, los huecos amplios de siempre entre los enlaces */
+/* Desde 1280 px vuelven las barras entre enlaces, con los mismos huecos de 16 px: con los de 32 px de antes no cabe el
+   control de sucursal junto al botón (BR-105) */
 @media (min-width: 1280px) {
-  .navLinks {
-    gap: var(--spacing-8);
+  .separator {
+    display: inline;
   }
 }
