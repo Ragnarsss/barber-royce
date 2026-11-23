@@ -20,7 +20,8 @@ import { useMagnetic } from "./magnetic";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MEDIA } from "@/config/breakpoints";
 import { CTA_ZOOM, CTA_ZOOM_ORIGIN, CTA_ZOOM_WINDOW } from "./ctaZoom";
-import { CTA_SHAPES } from "./ctaShapes";
+import { useBranch } from "@/branch/useBranch";
+import { CTA_SHAPES_BY_BRANCH } from "./ctaShapes";
 import { AssemblePiece } from "./AssemblePiece";
 import { assembleOffset, CTA_ASSEMBLE, type AssembleOffsets } from "./ctaAssemble";
 import { FixedShape } from "@/components/common/FixedShape/FixedShape";
@@ -44,6 +45,7 @@ function splitLead(text: string): { lead: string; rest: string } | null {
 }
 
 export function CTA1() {
+  const shapes = CTA_SHAPES_BY_BRANCH[useBranch().branch];
   const bookingUrl = useBookingUrl();
   const siteText = useSiteText();
   const subtitle = siteText("cta1.subtitulo");
@@ -96,7 +98,7 @@ export function CTA1() {
         style={{ y: layers.slow.y, x: layers.slow.x }}
         data-shape
       >
-        {piece(CTA_ASSEMBLE.background, <FixedShape shape={CTA_SHAPES.textHexagonBackground} edge={edgeProps(EDGE.background)} />)}
+        {piece(CTA_ASSEMBLE.background, <FixedShape shape={shapes.textHexagonBackground} edge={edgeProps(EDGE.background)} />)}
       </motion.div>
       <motion.div
         className={`${styles.imageHexagonBackground} ${animating}`}
@@ -109,7 +111,7 @@ export function CTA1() {
         style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
         data-shape="text"
       >
-        {piece(CTA_ASSEMBLE.text, <FixedShape shape={CTA_SHAPES.textHexagon} edge={edgeProps(EDGE.text)} />)}
+        {piece(CTA_ASSEMBLE.text, <FixedShape shape={shapes.textHexagon} edge={edgeProps(EDGE.text)} />)}
       </motion.div>
 
       {/* Capa frontal - hexágono decorativo */}
@@ -118,7 +120,7 @@ export function CTA1() {
         style={{ y: layers.fast.y, x: layers.fast.x }}
         data-shape
       >
-        {piece(CTA_ASSEMBLE.foreground, <FixedShape shape={CTA_SHAPES.textHexagonForeground} edge={edgeProps(EDGE.foreground)} />)}
+        {piece(CTA_ASSEMBLE.foreground, <FixedShape shape={shapes.textHexagonForeground} edge={edgeProps(EDGE.foreground)} />)}
       </motion.div>
 
       {/* Barras de luz hexagonales del techo de la barbería, arriba y cortadas por el borde: se encienden una vez (BR-058) */}
@@ -145,7 +147,7 @@ export function CTA1() {
           style={{ y: layers.fast.y, x: layers.fast.x }}
           data-shape
         >
-          <FixedShape shape={CTA_SHAPES.imageHexagonForeground} />
+          <FixedShape shape={shapes.imageHexagonForeground} />
         </motion.div>
         <motion.picture
           className={`${styles.ctaImage} ${animating}`}

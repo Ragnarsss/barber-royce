@@ -8,15 +8,12 @@ import { SCROLL_SPEED_FASTER } from "@/utils/scrollMotion";
 import { useSiteText } from "@/content/useSiteContent";
 import { fadeInUp, scaleIn, staggerContainer } from "@/config/animations.config";
 import { FixedShape } from "@/components/common/FixedShape/FixedShape";
-import { fixedShape } from "@/components/common/FixedShape/shapeGeometry";
-
-/**
- * Hexágono de puntas arriba y abajo de los fondos (BR-092): el mismo `clip-path` de antes, ahora un SVG sobre una caja
- * cuadrada. El color va en el `fill` del CSS de cada hexágono.
- */
-const SP2_HEXAGON_SHAPE = fixedShape(100, 100, [[50, 0], [100, 25], [100, 75], [50, 100], [0, 75], [0, 25]]);
+import { useBranch } from "@/branch/useBranch";
+import { SP2_HEXAGON_BY_BRANCH } from "./sp2Shapes";
 
 export function SocialProof2() {
+  // Hexágono de puntas arriba y abajo de los fondos (BR-092), o su cuadrado en La Serena (BR-104). El color va en el `fill` del CSS.
+  const hexagonShape = SP2_HEXAGON_BY_BRANCH[useBranch().branch];
   const siteText = useSiteText();
   const { ref, controls } = useScrollAnimation();
   const direction = useScrollDirection();
@@ -53,14 +50,14 @@ export function SocialProof2() {
         style={{ y: layers.background.y, scale: layers.background.scale }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
       <motion.div
         className={styles.hexagonBg2}
         style={{ y: layers.background.y, scale: layers.background.scale }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
 
       {/* Capa media - hexágonos medianos con rotación */}
@@ -69,7 +66,7 @@ export function SocialProof2() {
         style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
       <motion.div
         className={styles.hexagonMiddle2}
@@ -80,14 +77,14 @@ export function SocialProof2() {
         }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
       <motion.div
         className={styles.hexagonMiddle3}
         style={{ y: layers.middle.y, rotate: layers.middle.rotate }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
 
       {/* Capa rápida - hexágonos pequeños con movimiento dinámico */}
@@ -100,7 +97,7 @@ export function SocialProof2() {
         }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
       <motion.div
         className={styles.hexagonFast2}
@@ -110,7 +107,7 @@ export function SocialProof2() {
         }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
       <motion.div
         className={styles.hexagonFast3}
@@ -120,7 +117,7 @@ export function SocialProof2() {
         }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
 
       {/* Capa frontal - elementos decorativos pequeños */}
@@ -132,7 +129,7 @@ export function SocialProof2() {
         }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
       <motion.div
         className={styles.hexagonFg2}
@@ -143,7 +140,7 @@ export function SocialProof2() {
         }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
 
       {/* Hexágono principal decorativo */}
@@ -155,7 +152,7 @@ export function SocialProof2() {
         }}
         data-shape
       >
-        <FixedShape shape={SP2_HEXAGON_SHAPE} />
+        <FixedShape shape={hexagonShape} />
       </motion.div>
 
       {/* ═══════════════════════════════════════════════

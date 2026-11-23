@@ -17,7 +17,8 @@ import { usePinnedScene } from "@/hooks/usePinnedScene";
 import { ramp } from "@/utils/scrollReveal";
 import { LensFlare } from "./LensFlare";
 import { CUT, FLARE, REVEAL } from "./sceneTimeline";
-import { SP1_HEXAGON_SHAPE, SP1_HEXAGONS, type Sp1HexagonLayer, type Sp1HexagonName } from "./sp1Hexagons";
+import { useBranch } from "@/branch/useBranch";
+import { SP1_HEXAGON_BY_BRANCH, SP1_HEXAGONS, type Sp1HexagonLayer, type Sp1HexagonName } from "./sp1Hexagons";
 import { FixedShape } from "@/components/common/FixedShape/FixedShape";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MEDIA } from "@/config/breakpoints";
@@ -34,6 +35,7 @@ const PHOTO_SRCSET = `${socialProof560w} 560w, ${socialProof1120w} 1120w, ${soci
 const PHOTO_SIZES = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 560px";
 
 export function SocialProof1() {
+  const hexagonShape = SP1_HEXAGON_BY_BRANCH[useBranch().branch];
   const siteText = useSiteText();
   const { ref, controls } = useScrollAnimation();
   const direction = useScrollDirection();
@@ -147,9 +149,9 @@ export function SocialProof1() {
             style={{ ...hexagonLayerStyle[hexagon.layer], ...hexagonOwnStyle[name], "--hex-rotate": `${hexagon.rotate}deg` } as MotionStyle}
             data-shape
           >
-            <FixedShape shape={SP1_HEXAGON_SHAPE} edge={hexagonEdgeProps}>
+            <FixedShape shape={hexagonShape} edge={hexagonEdgeProps}>
               {(hexagon.layer === "middle" || hexagon.layer === "foreground") && (
-                <polygon className={styles.glow} points={SP1_HEXAGON_SHAPE.points} />
+                <polygon className={styles.glow} points={hexagonShape.points} />
               )}
             </FixedShape>
           </motion.div>

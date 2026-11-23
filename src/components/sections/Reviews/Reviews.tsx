@@ -8,10 +8,12 @@ import { AnimatedGridSection } from "@/components/common/AnimatedGridSection/Ani
 import { FixedShape } from "@/components/common/FixedShape/FixedShape";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MEDIA } from "@/config/breakpoints";
-import { REVIEWS_EDGE, REVIEWS_SHAPES } from "./reviewsShapes";
+import { useBranch } from "@/branch/useBranch";
+import { REVIEWS_EDGE, REVIEWS_SHAPES_BY_BRANCH } from "./reviewsShapes";
 
 // ✅ React 19: memo() eliminado - bailout automático mejorado
 export function Reviews() {
+  const shapes = REVIEWS_SHAPES_BY_BRANCH[useBranch().branch];
   const siteText = useSiteText();
   // El borde del octágono y del hexágono de fondo se dibuja al entrar la sección, solo en escritorio y con movimiento
   // (BR-096): en móvil no suma JavaScript, y con «reducir movimiento» aparecen dibujados.
@@ -37,10 +39,10 @@ export function Reviews() {
       decoration={(controls) => (
         <>
           <div className={styles.shapeTop} data-edge-shape aria-hidden="true">
-            <FixedShape shape={REVIEWS_SHAPES.octagon} edge={edge(controls, REVIEWS_EDGE.top)} />
+            <FixedShape shape={shapes.octagon} edge={edge(controls, REVIEWS_EDGE.top)} />
           </div>
           <div className={styles.shapeBottom} data-edge-shape aria-hidden="true">
-            <FixedShape shape={REVIEWS_SHAPES.hexagon} edge={edge(controls, REVIEWS_EDGE.bottom)} />
+            <FixedShape shape={shapes.hexagon} edge={edge(controls, REVIEWS_EDGE.bottom)} />
           </div>
         </>
       )}

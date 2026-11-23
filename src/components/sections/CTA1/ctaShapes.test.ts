@@ -2,7 +2,10 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { CTA_SHAPES } from "./ctaShapes";
+import { CTA_SHAPES_BY_BRANCH } from "./ctaShapes";
+
+// Las figuras de Coquimbo son las de siempre; las de La Serena las cubre src/test/branchShapes.test.ts (BR-104).
+const CTA_SHAPES = CTA_SHAPES_BY_BRANCH.coquimbo;
 
 // BR-091: las figuras de CTA1 tienen geometría fija, tomada de cómo se ven a 1920×1080 (decisión del usuario, 2026-10-21).
 const here = dirname(fileURLToPath(import.meta.url));

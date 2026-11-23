@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import { motion, useMotionValue } from "framer-motion";
 import { describe, expect, it } from "vitest";
 import { FixedShape } from "./FixedShape";
@@ -39,5 +39,53 @@ describe("FixedShape", () => {
       </FixedShape>,
     );
     expect(container.querySelector("svg")?.lastElementChild?.tagName.toLowerCase()).toBe("line");
+  });
+});
+
+// BR-104 (HU-SUC-002 CA-03): al cambiar de sucursal la figura se transforma en la otra en vez de saltar.
+describe("FixedShape: cambio de forma", () => {
+  const hexagon = fixedShape(100, 100, [[25, 0], [75, 0], [100, 50], [75, 100], [25, 100], [0, 50]]);
+  const square = fixedShape(100, 100, [[0, 0], [100, 0], [100, 50], [100, 100], [0, 100], [0, 50]]);
+  const triangle = fixedShape(100, 100, [[50, 0], [100, 100], [0, 100]]);
+
+  it("arranca desde los puntos anteriores, no salta a los nuevos, y termina exactamente en los nuevos", async () => {
+    const { container, rerender } = render(<FixedShape shape={hexagon} />);
+
+    rerender(<FixedShape shape={square} />);
+    const polygon = container.querySelector("polygon")!;
+    expect(polygon.getAttribute("points")).toBe(hexagon.points);
+
+    await waitFor(() => expect(polygon.getAttribute("points")).toBe(square.points), { timeout: 3000 });
+  });
+
+  it("transforma también el filo de luz que va dentro, que comparte los puntos de la figura", async () => {
+    const withGlow = (shape: typeof hexagon) => (
+      <FixedShape shape={shape}>
+        <polygon className="glow" points={shape.points} />
+      </FixedShape>
+    );
+    const { container, rerender } = render(withGlow(hexagon));
+
+    rerender(withGlow(square));
+    const [main, glow] = [...container.querySelectorAll("polygon")];
+    expect([main.getAttribute("points"), glow.getAttribute("points")]).toEqual([hexagon.points, hexagon.points]);
+
+    await waitFor(() => expect([main.getAttribute("points"), glow.getAttribute("points")]).toEqual([square.points, square.points]), { timeout: 3000 });
+  });
+
+  it("si la forma no cambia, no toca los puntos", () => {
+    const { container, rerender } = render(<FixedShape shape={hexagon} />);
+
+    rerender(<FixedShape shape={{ ...hexagon }} />);
+
+    expect(container.querySelector("polygon")?.getAttribute("points")).toBe(hexagon.points);
+  });
+
+  it("con distinta cantidad de puntos cambia de golpe: framer no podría interpolarlos", () => {
+    const { container, rerender } = render(<FixedShape shape={hexagon} />);
+
+    rerender(<FixedShape shape={triangle} />);
+
+    expect(container.querySelector("polygon")?.getAttribute("points")).toBe(triangle.points);
   });
 });
