@@ -88,3 +88,41 @@ describe("BranchProvider (BR-103)", () => {
     expect(state()).toBe("coquimbo|url|/coquimbo");
   });
 });
+
+describe("BranchProvider: color de la barra del navegador (BR-104)", () => {
+  afterEach(() => {
+    localStorage.clear();
+    delete document.documentElement.dataset.branch;
+    document.head.querySelector('meta[name="theme-color"]')?.remove();
+  });
+
+  const addMeta = () => {
+    const meta = document.createElement("meta");
+    meta.name = "theme-color";
+    meta.content = "#000000";
+    document.head.append(meta);
+    return meta;
+  };
+
+  it("deja en el meta theme-color el fondo de la sucursal activa", () => {
+    const meta = addMeta();
+
+    renderAt("/la-serena");
+
+    expect(meta.content).toBe("#f7f3ec");
+  });
+
+  it("lo cambia al cambiar de sucursal", () => {
+    const meta = addMeta();
+    renderAt("/servicios");
+    expect(meta.content).toBe("#1a1a1a");
+
+    click("a-la-serena");
+
+    expect(meta.content).toBe("#f7f3ec");
+  });
+
+  it("si la página no tiene el meta, no falla", () => {
+    expect(() => renderAt("/la-serena")).not.toThrow();
+  });
+});
