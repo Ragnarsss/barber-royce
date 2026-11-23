@@ -1,4 +1,4 @@
-/* Mobile-first (ADR-009): una mitad sobre la otra; desde 769 px, lado a lado. Cada mitad usa su paleta fija. */
+/* Mobile-first (ADR-009): una mitad sobre la otra; desde 769 px, lado a lado. */
 .picker {
   position: relative;
   min-height: calc(100svh - 5rem);
@@ -29,42 +29,60 @@
   min-height: 50svh;
   padding: var(--spacing-8) var(--spacing-6);
   overflow: hidden;
+  background-color: var(--color-charcoal);
+  color: var(--color-bone);
   text-decoration: none;
-  transition: background-color var(--duration-slow) var(--ease-smooth);
+}
+
+/* El selector a:hover global cambia el color del texto: la mitad lo fija también con el cursor encima */
+.half:hover,
+.half:focus-visible {
+  color: var(--color-bone);
 }
 
 .half:focus-visible {
-  outline: 3px solid currentColor;
+  outline: 3px solid var(--color-bone);
   outline-offset: -6px;
 }
 
 .coquimbo {
   --half-accent: var(--color-ember);
-  background-color: var(--color-charcoal);
-  color: var(--color-neutral-50);
-}
-
-/* El `a:hover` global cambia el color del texto: cada mitad lo fija también con el cursor encima */
-.coquimbo:hover {
-  color: var(--color-neutral-50);
-  background-color: color-mix(in srgb, var(--color-ember) 14%, var(--color-charcoal));
 }
 
 .la-serena {
-  --half-accent: var(--color-earth);
-  background-color: var(--color-sand);
-  color: var(--color-espresso);
+  --half-accent: var(--color-neon);
 }
 
-.la-serena:hover {
-  color: var(--color-espresso);
-  background-color: var(--color-bone);
+/* La foto del local: en escala de grises hasta que el cursor o el foco la iluminan */
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) brightness(0.8);
+  transition: filter var(--duration-slow) var(--ease-smooth);
+}
+
+.half:hover .photo,
+.half:focus-visible .photo {
+  filter: none;
+}
+
+/* Velo inferior: el nombre se lee sobre cualquier foto */
+.half::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, color-mix(in srgb, var(--color-espresso) 85%, transparent), transparent 55%);
+  pointer-events: none;
 }
 
 .figures {
   position: absolute;
   top: 6%;
   right: -4%;
+  z-index: 1;
   width: 9rem;
   aspect-ratio: 1;
   pointer-events: none;
@@ -73,7 +91,6 @@
 .figure {
   position: absolute;
   inset: 0;
-  opacity: 0.55;
   transition: opacity var(--duration-slow) var(--ease-smooth);
 }
 
@@ -81,34 +98,24 @@
   inset: 10% -10% -10% 10%;
 }
 
-.half:hover .figure {
-  opacity: 1;
-}
-
+/* Las figuras también van sin color hasta el hover */
 .figure polygon {
   fill: none;
-  stroke: var(--half-accent);
+  stroke: var(--color-neutral-300);
   stroke-width: 1.2;
   stroke-linejoin: round;
+  transition: stroke var(--duration-slow) var(--ease-smooth);
 }
 
-.body {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-2);
-  max-width: 24rem;
+.half:hover .figure polygon,
+.half:focus-visible .figure polygon {
+  stroke: var(--half-accent);
 }
 
-.kicker {
-  font-size: var(--font-size-xs);
-  letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
-  opacity: 0.8;
-}
-
-/* Los h1 a h6 globales son oscuros: sobre la mitad oscura el título fija su color */
+/* Los h1 a h6 globales son oscuros: el nombre fija su color sobre la foto */
 .name {
+  position: relative;
+  z-index: 1;
   margin: 0;
   color: inherit;
   font-family: var(--font-family-heading);
@@ -116,28 +123,10 @@
   line-height: 1.05;
 }
 
-.tagline {
-  font-size: var(--font-size-lg);
-}
-
-.address {
-  font-size: var(--font-size-sm);
-  opacity: 0.8;
-}
-
-.enter {
-  margin-top: var(--spacing-3);
-  align-self: flex-start;
-  padding-bottom: var(--spacing-1);
-  border-bottom: 2px solid var(--half-accent);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .half,
-  .figure {
+  .photo,
+  .figure,
+  .figure polygon {
     transition: none;
   }
 }

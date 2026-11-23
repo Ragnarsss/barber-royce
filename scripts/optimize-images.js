@@ -38,6 +38,16 @@ const images = [
     displayName: "cta2_crew",
   },
   {
+    input: "royce_cqbo.png",
+    sizes: [697], // Tamano original: fondo de la mitad de Coquimbo en la portada partida (BR-106), con object-fit: cover
+    displayName: "branch_coquimbo",
+  },
+  {
+    input: "royce_ls.png",
+    sizes: [874], // Tamano original: fondo de la mitad de La Serena en la portada partida (BR-106)
+    displayName: "branch_la_serena",
+  },
+  {
     input: "royce-barber-logo.png",
     sizes: [46, 92], // Actual display size (46x56) + 2x
     displayName: "royce-barber-logo",

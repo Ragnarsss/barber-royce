@@ -1331,6 +1331,10 @@ barbería a la que voy a ir y reservar en ella sin buscar otro sitio.
 - CA-01: Given entro a `/`, When carga la página, Then veo dos mitades, una
   por sucursal, cada una con su identidad, y cada una lleva a su portada
   (`/coquimbo`, `/la-serena`).
+  > Actualizada (2026-11-23, decisión del usuario): la sucursal se elige **una sola vez**. Given ya elegí una
+  > sucursal (o entré por una portada), When entro a `/`, Then paso directo a su portada y cambio de sucursal con el
+  > control del menú. Las dos mitades las ven quienes nunca eligieron y los buscadores. Cada mitad muestra solo el nombre
+  > de la sucursal sobre la foto de su local, en escala de grises hasta que el cursor o el foco la iluminan.
 - CA-02: Given entré por `/la-serena`, When abro Servicios desde el menú,
   Then la URL es `/servicios` y la página se ve con el tema de La Serena.
 - CA-03: Given elegí La Serena en una visita anterior, When vuelvo a entrar

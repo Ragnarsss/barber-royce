@@ -4470,6 +4470,10 @@ Criterios de aceptación:
 > - `ROUTES` suma `coquimbo` y `laSerena` (título y descripción propios) y el sitemap, las dos portadas. `/` nombra las dos sucursales.
 > - Los cuatro cuadrados usan `edgeDraw` con desfase y se encienden con un halo CSS; con reducir movimiento aparecen completos y
 >   las hojas no se mueven. Sin imagen del local (decisión del usuario): la madera es una veta dibujada.
+> - **Ajuste (2026-11-23, decisión del usuario):** `/` se muestra una sola vez; quien ya eligió pasa directo a su portada
+>   (`BranchPickerPage` redirige si la sucursal viene de la elección guardada). Cada mitad lleva la foto de su local
+>   (`royce_cqbo.png`, `royce_ls.png`, optimizadas a WebP) en escala de grises, con las figuras, y se ilumina con el cursor o el
+>   foco; sin etiqueta, frase, dirección ni «Entrar». En pantallas táctiles no hay cursor: las fotos quedan en grises.
 > - **Pendiente:** Lighthouse móvil de `/` y `/la-serena` en el preview y `seo-performance-auditor`; los textos del hero y del picker
 >   están en el código, no en la hoja de textos (decidir si se mueven); la imagen del local cuando llegue el original.
 

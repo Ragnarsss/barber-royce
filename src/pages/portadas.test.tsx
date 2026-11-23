@@ -1,8 +1,10 @@
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, expect, it, vi } from "vitest";
-import { screen, waitFor } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { HelmetProvider } from "react-helmet-async";
+import { BranchProvider } from "@/branch/BranchProvider";
 import { renderWithProviders } from "@/test/renderWithProviders";
 import { LenisContext } from "@/contexts/lenisContextValue";
 import { ROUTES } from "@/config/routes";
@@ -17,6 +19,7 @@ vi.mock("../components/sections/SocialProof1/SocialProof1", () => ({ SocialProof
 vi.mock("../components/sections/SocialProof2/SocialProof2", () => ({ SocialProof2: () => null }));
 vi.mock("@/components/common/BackToTop/BackToTop", () => ({ BackToTop: () => null }));
 
+import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { BranchPickerPage } from "./BranchPickerPage";
 import { HomePage } from "./HomePage";
 import { LaSerenaPage } from "./LaSerenaPage";
@@ -64,5 +67,46 @@ describe("portadas (BR-106)", () => {
     for (const file of ["pages/HomePage.tsx", "pages/BranchPickerPage.tsx"]) {
       expect(read(file)).not.toMatch(/HeroLaSerena|LaSerenaPage/);
     }
+  });
+});
+
+// HU-SUC-001 (decisión del usuario, 2026-11-23): la sucursal se elige una sola vez; después, `/` lleva a su portada.
+describe("`/` tras elegir sucursal (BR-106)", () => {
+  afterEach(() => {
+    localStorage.clear();
+    delete document.documentElement.dataset.branch;
+  });
+
+  const renderAtRoot = () =>
+    render(
+      <HelmetProvider>
+        <MemoryRouter initialEntries={["/"]}>
+          <BranchProvider>
+            <Routes>
+              <Route index element={<BranchPickerPage />} />
+              <Route path="la-serena" element={<p>portada de La Serena</p>} />
+              <Route path="coquimbo" element={<p>portada de Coquimbo</p>} />
+            </Routes>
+          </BranchProvider>
+        </MemoryRouter>
+      </HelmetProvider>,
+    );
+
+  it("quien nunca eligió ve las dos mitades", () => {
+    renderAtRoot();
+
+    expect(screen.getByRole("link", { name: "La Serena" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Coquimbo" })).toBeInTheDocument();
+  });
+
+  it.each([
+    ["la-serena", "portada de La Serena"],
+    ["coquimbo", "portada de Coquimbo"],
+  ])("quien ya eligió %s pasa directo a su portada, sin ver el selector", (branch, text) => {
+    localStorage.setItem("royce:branch", branch);
+    renderAtRoot();
+
+    expect(screen.getByText(text)).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 2, name: "Coquimbo" })).toBeNull();
   });
 });
