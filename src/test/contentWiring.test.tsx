@@ -135,7 +135,7 @@ describe("plantillas CSV de docs/contenido (BR-041, HU-CNT-001)", () => {
   const sheet = Object.fromEntries(
     CONTENT_TABS.map((tab) => [tab, readFileSync(resolve(root, "docs/contenido", `${tab}.csv`), "utf8").replace(/\r\n/g, "\n")]),
   ) as SheetCsv;
-  const emptyFallback: SiteContent = { services: [], products: [], team: [], faq: [], texts: {}, business: snapshot.business, locations: [] };
+  const emptyFallback: SiteContent = { services: [], products: [], team: [], faq: [], texts: {}, textsByBranch: { coquimbo: {}, "la-serena": {} }, business: snapshot.business, locations: [] };
 
   it("existe una plantilla por pestaña", () => {
     for (const tab of CONTENT_TABS) expect(existsSync(resolve(root, "docs/contenido", `${tab}.csv`)), tab).toBe(true);
@@ -174,11 +174,18 @@ describe("plantillas CSV de docs/contenido (BR-041, HU-CNT-001)", () => {
   it("BR-048: cada plantilla es exactamente lo que se genera del respaldo (si cambia un dato, se regenera la plantilla)", () => {
     const generated = contentToSheet(snapshot);
 
-    // `textos` lista los textos por defecto del código (`texts.ts`), no el respaldo: se prueba aparte.
+    // `textos` y los de cada sucursal listan los textos por defecto del código (`texts.ts`), no el respaldo: se prueban aparte.
     // `productos` puede tener más filas que el respaldo (BR-090, decisión del usuario 2026-10-19): se prueba abajo.
-    for (const tab of CONTENT_TABS.filter((tab) => tab !== "textos" && tab !== "productos")) {
+    for (const tab of CONTENT_TABS.filter((tab) => !tab.startsWith("textos") && tab !== "productos")) {
       expect(sheet[tab], tab).toBe(generated[tab]?.replace(/\r\n/g, "\n"));
     }
+  });
+
+  it.each(["coquimbo", "la-serena"] as const)("BR-110: la plantilla de textos de %s trae las claves de la landing con el texto de siempre como borrador", (branch) => {
+    const { content } = resolveContent(sheet, emptyFallback);
+    const landing = Object.fromEntries(Object.entries(TEXTS).filter(([key]) => !key.startsWith("promo.")).map(([key, { default: text }]) => [key, text]));
+
+    expect(content.textsByBranch[branch]).toEqual(landing);
   });
 
   it("BR-090: la plantilla de productos empieza con exactamente las filas del respaldo y puede sumar más", () => {

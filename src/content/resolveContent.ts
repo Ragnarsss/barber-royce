@@ -2,7 +2,8 @@ import type { Location } from "../types/location.types";
 import { parseCsv, toTable } from "./csv";
 import { buildBusiness } from "./business";
 import { readBusiness, readFaq, readLocations, readProducts, readServices, readTeam, readTexts, type TabResult } from "./schemas";
-import { CONTENT_TABS, type ContentIssue, type ContentTab, type SiteContent, type TabReport } from "./types";
+import { BRANCHES, type Branch } from "../config/branches";
+import { BRANCH_TEXT_TAB, CONTENT_TABS, type ContentIssue, type ContentTab, type SiteContent, type TabReport } from "./types";
 
 /** Hoja descargada: el texto CSV de cada pestaña. Una pestaña ausente significa "no se pudo obtener". */
 export type SheetCsv = Partial<Record<ContentTab, string>>;
@@ -19,9 +20,14 @@ const APPLY: Record<ContentTab, (content: SiteContent, items: never[]) => void> 
   equipo: (content, items) => void (content.team = items),
   preguntas: (content, items) => void (content.faq = items),
   textos: (content, items) => void (content.texts = Object.fromEntries(items as [string, string][])),
+  "textos-coquimbo": (content, items) => void (content.textsByBranch.coquimbo = Object.fromEntries(items as [string, string][])),
+  "textos-la-serena": (content, items) => void (content.textsByBranch["la-serena"] = Object.fromEntries(items as [string, string][])),
   negocio: (content, items) => void (content.business = buildBusiness(Object.fromEntries(items as [string, string][]), content.business)),
   sucursales: (content, items) => void (content.locations = withBackupBookingUrls(items as Location[], content.locations)),
 };
+
+/** Pestañas que pueden quedar sin filas: sin textos o datos propios el sitio usa los de siempre. */
+const EMPTY_IS_FINE = new Set<ContentTab>(["textos", "negocio", ...BRANCHES.map((branch: Branch) => BRANCH_TEXT_TAB[branch])]);
 
 /** `content` es lo resuelto hasta ese momento: el equipo valida sus sucursales contra las que usará el sitio. */
 const READERS: Record<ContentTab, (table: ReturnType<typeof toTable>, content: SiteContent) => TabResult<unknown>> = {
@@ -29,7 +35,9 @@ const READERS: Record<ContentTab, (table: ReturnType<typeof toTable>, content: S
   productos: readProducts,
   equipo: (table, content) => readTeam(table, content.locations.map((location) => location.id)),
   preguntas: readFaq,
-  textos: readTexts,
+  textos: (table) => readTexts(table),
+  "textos-coquimbo": (table) => readTexts(table, "textos-coquimbo"),
+  "textos-la-serena": (table) => readTexts(table, "textos-la-serena"),
   negocio: readBusiness,
   sucursales: readLocations,
 };
@@ -88,7 +96,7 @@ export function resolveContent(sheet: SheetCsv, snapshot: SiteContent): Resolved
     const { items, issues, warnings } = READERS[tab](table, content);
     if (issues.length > 0) {
       reports.push(backup(tab, `${issues.length} problema${issues.length === 1 ? "" : "s"} en la hoja`, issues, warnings));
-    } else if (items.length === 0 && tab !== "textos" && tab !== "negocio") {
+    } else if (items.length === 0 && !EMPTY_IS_FINE.has(tab)) {
       // Una pestaña sin filas activas dejaría el sitio sin servicios, productos, equipo, preguntas o sucursales.
       reports.push(backup(tab, "no tiene ninguna fila activa", [], warnings));
     } else {

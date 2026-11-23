@@ -334,9 +334,9 @@ const TEXT_KEY = /^[a-z0-9]+(?:\.[a-z0-9]+)+$/;
  * - Un valor más largo que el máximo de su clave rechaza la pestaña.
  * - Un valor vacío significa "usar el texto por defecto": el dueño puede borrar la celda para volver atrás.
  */
-export function readTexts(table: CsvTable): TabResult<[string, string]> {
+export function readTexts(table: CsvTable, tab: ContentTab = "textos"): TabResult<[string, string]> {
   return readTab(
-    "textos",
+    tab,
     table,
     {
       required: ["clave", "valor"],
