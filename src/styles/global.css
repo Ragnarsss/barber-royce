@@ -9,6 +9,7 @@
 @import "./reset.css";
 @import "./mixins.css";
 @import "./shared/glass.css"; /* Filtros, buscador y divisoria (BR-087) */
+@import "./shared/branchTransition.css"; /* Cortina al cambiar de sucursal (BR-105) */
 @import "./performance.css"; /* Performance optimizations */
 
 /* Configuración base del body */

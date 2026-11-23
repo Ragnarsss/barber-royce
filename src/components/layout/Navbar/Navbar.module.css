@@ -20,7 +20,7 @@
 /*
  * Mobile-first (BR-080, ADR-009). En móvil (BR-061, HU-EXP-004 CA-13): la hamburguesa roja a la izquierda, la marca
  * en dos líneas ("ROYCE" en blanco sobre "BARBERÍA" en rojo) y, a la derecha, el botón de reserva chico, blanco con
- * texto rojo. Desde 1025 px (BR-086), el logo en imagen, los enlaces y el botón con borde rojo.
+ * texto rojo. Desde 1280 px (BR-105), el logo en imagen, los enlaces y el botón con borde rojo.
  */
 /* Alto mínimo del contenido en móvil: la barra mide lo mismo que en escritorio y el layout reserva 80 px (Layout.module.css) */
 .container {
@@ -275,6 +275,15 @@
   padding: var(--spacing-6);
 }
 
+/* El control de sucursal: dentro del menú en móvil, en la barra desde 1280 px */
+.actions .desktopSwitch {
+  display: none;
+}
+
+.mobileSwitch {
+  align-self: flex-start;
+}
+
 .mobileNavLink {
   color: var(--color-brand-primary);
   text-decoration: none;
@@ -300,9 +309,9 @@
   }
 }
 
-/* Escritorio, desde 1025 px (BR-086): el logo en imagen, los enlaces y el botón de reserva con borde rojo.
-   De 769 a 1024 px la barra completa no cabe, así que se mantiene la de móvil. */
-@media (min-width: 1025px) {
+/* Escritorio, desde 1280 px (BR-105; antes 1025 px, BR-086): el logo en imagen, los enlaces, el control de sucursal y el botón
+   de reserva con borde rojo. Por debajo no caben todos, así que se mantiene la barra de móvil con la hamburguesa. */
+@media (min-width: 1280px) {
   .container {
     min-height: auto;
     padding: 0 var(--spacing-6);
@@ -323,14 +332,18 @@
     display: none;
   }
 
-  /* Huecos de 16 px entre 1025 y 1279 px: con 32 px los enlaces ocupan 773 px y el botón se parte en dos líneas */
   .navLinks {
     display: flex;
     gap: var(--spacing-4);
   }
 
+
   .actions {
     order: 0;
+  }
+
+  .actions .desktopSwitch {
+    display: inline-flex;
   }
 
   .actions .ctaButton {
@@ -353,12 +366,5 @@
 
   .mobileMenuButton {
     display: none;
-  }
-}
-
-/* Con espacio de sobra, los huecos amplios de siempre entre los enlaces */
-@media (min-width: 1280px) {
-  .navLinks {
-    gap: var(--spacing-8);
   }
 }

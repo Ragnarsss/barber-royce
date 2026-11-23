@@ -1,0 +1,26 @@
+/*
+ * Cortina de «cambiar de sucursal» (BR-105, ADR-010 punto 8): la página nueva se descubre en diagonal, desde la esquina
+ * superior izquierda, sobre la vieja, que se queda quieta debajo. Solo con movimiento permitido; sin él, withBranchTransition
+ * ni siquiera abre la transición.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  ::view-transition-new(root) {
+    animation: branch-curtain 0.8s cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+}
+
+@keyframes branch-curtain {
+  from {
+    clip-path: polygon(0 0, 0 0, 0 0);
+  }
+
+  to {
+    clip-path: polygon(0 0, 220% 0, 0 220%);
+  }
+}

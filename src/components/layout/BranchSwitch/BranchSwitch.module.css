@@ -1,0 +1,87 @@
+/* Mobile-first (ADR-009). Colores solo de tokens: en La Serena el navbar es claro y los alias se reasignan. */
+.group {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1);
+  border: 1px solid color-mix(in srgb, var(--color-brand-white) 25%, transparent);
+  border-radius: var(--radius-md);
+  color: var(--color-brand-white);
+}
+
+.pin {
+  display: none;
+  flex: none;
+  margin: 0 var(--spacing-1) 0 var(--spacing-2);
+  color: var(--color-brand-primary);
+}
+
+/* Área táctil de 44 px de alto (HU-SUC-001 CA-07) */
+.option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
+  min-height: 2.75rem;
+  padding: 0 var(--spacing-2);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--duration-slow) var(--ease-smooth),
+    color var(--duration-slow) var(--ease-smooth);
+}
+
+.option:hover {
+  color: var(--color-hover-text);
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.checked,
+.checked:hover {
+  background-color: var(--color-brand-primary);
+  color: var(--color-on-primary);
+}
+
+/* La figura del tema activo: rellena en la opción elegida y solo contorno en la otra */
+.marker {
+  flex: none;
+  width: 0.75rem;
+}
+
+.marker polygon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 10;
+}
+
+.checked .marker polygon {
+  fill: currentColor;
+}
+
+/* En el menú móvil sobra espacio: con el ícono de ubicación y más aire */
+.group.roomy {
+  padding: var(--spacing-1) var(--spacing-2);
+}
+
+.roomy .pin {
+  display: block;
+}
+
+.roomy .option {
+  padding: 0 var(--spacing-3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .option {
+    transition: none;
+  }
+}

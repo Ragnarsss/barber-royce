@@ -4376,7 +4376,7 @@ Criterios de aceptación:
 #### BR-105 — Control para cambiar de sucursal, con transición
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-104
-- Estado: Propuesta
+- Estado: En curso
 - Historia de usuario: HU-SUC-001 (CA-05 .. CA-08)
 - RF/RNF: `RF-SUC-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-PERF-003`
 
@@ -4404,6 +4404,19 @@ Criterios de aceptación:
 4. Con `prefers-reduced-motion` o sin View Transitions, no hay animación
    (HU-SUC-001 CA-08).
 5. El TBT móvil de la home no empeora frente a la línea base (CP-PERF-003).
+
+> **Resultado de la construcción (2026-11-23):**
+> - `BranchSwitch`: `radiogroup` «Sucursal» con dos `radio` (Coquimbo, La Serena), una sola parada de tabulación, flechas con
+>   vuelta y objetivos de 44 px. El indicador de cada opción es la figura del tema (`SP2_HEXAGON_BY_BRANCH`): hexágono en
+>   Coquimbo, cuadrado en La Serena, y `FixedShape` lo transforma. Va en la barra (desde 1280 px, compacto) y en el menú móvil
+>   (con el ícono de ubicación).
+> - `withBranchTransition` + `branchTransition.css`: `document.startViewTransition` con una cortina diagonal por `clip-path`
+>   sobre `::view-transition-new(root)`. `BranchProvider.setBranch` devuelve a la transición una promesa que se resuelve cuando la
+>   sucursal nueva ya está en `<html>` (sin `flushSync`: el router navega dentro de `startTransition`). Sin soporte o con reducir
+>   movimiento, el cambio es directo.
+> - **Decisión del usuario (2026-11-23):** la barra completa empieza ahora en 1280 px (antes 1025 px, BR-086); de 769 a 1279 px
+>   se mantiene la hamburguesa, con el control de sucursal dentro del menú. A 1280 px los huecos entre enlaces son de 16 px.
+> - Pendiente: verificar la cortina en el preview de Vercel (Chrome; Firefox no tiene View Transitions) y `accesibilidad-auditor`.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-105).
 
@@ -4660,7 +4673,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-102 | Poner al día `architecture.md` y las guías con lo que ya existe | A | P2 | S | Propuesta | — |
 | BR-103 | Sucursal activa: `BranchProvider`, rutas y reserva por sucursal | M | P1 | M | En curso | — |
 | BR-104 | Tema La Serena en tokens y figuras por sucursal | M | P1 | M | En curso | BR-103, BR-022 |
-| BR-105 | Control para cambiar de sucursal, con transición | M | P1 | M | Propuesta | BR-103, BR-104 |
+| BR-105 | Control para cambiar de sucursal, con transición | M | P1 | M | En curso | BR-103, BR-104 |
 | BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | Propuesta | BR-103 .. BR-105 |
 | BR-107 | Equipo de La Serena: tarjetas rectangulares en carrusel | M | P2 | M | Propuesta | BR-103, BR-104 |
 | BR-108 | Enredaderas laterales del tema La Serena | M | P2 | M | Propuesta | BR-104 |

@@ -10,6 +10,7 @@ import { useBookingUrl } from "@/branch/useBookingUrl";
 import { trackReserve } from "@/analytics/track";
 import { SITE } from "@/config/constants";
 import { MEDIA } from "@/config/breakpoints";
+import { BranchSwitch } from "@/components/layout/BranchSwitch/BranchSwitch";
 
 export const Navbar = () => {
   const bookingUrl = useBookingUrl();
@@ -19,9 +20,9 @@ export const Navbar = () => {
   const lenis = useLenisInstance();
 
   // Cerrar menú móvil automáticamente cuando la ventana cruza a escritorio (solo al cruzar el corte, no en cada resize).
-  // La barra completa empieza en 1025 px: de 769 a 1024 px no cabe y se mantiene la hamburguesa (BR-086).
+  // La barra completa empieza en 1280 px: por debajo no cabe con el control de sucursal y se mantiene la hamburguesa (BR-105).
   useEffect(() => {
-    const desktop = window.matchMedia?.(MEDIA.lg);
+    const desktop = window.matchMedia?.(MEDIA.xl);
     const handleChange = (event: MediaQueryListEvent) => {
       if (event.matches) {
         setIsMobileMenuOpen(false);
@@ -92,6 +93,8 @@ export const Navbar = () => {
         </div>
 
         <div className={styles.actions}>
+          {/* La barra completa, desde 1280 px; en móvil el control va dentro del menú */}
+          <BranchSwitch className={styles.desktopSwitch} />
           <a
             className={styles.ctaButton}
             href={bookingUrl}
@@ -134,6 +137,7 @@ export const Navbar = () => {
             {link.label}
           </NavLink>
         ))}
+        <BranchSwitch roomy className={styles.mobileSwitch} />
         <a
           href={bookingUrl}
           target="_blank"
