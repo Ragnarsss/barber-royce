@@ -181,8 +181,8 @@
 }
 
 /*
- * Variante de vidrio (BR-107): botones redondos de gris semitransparente con desenfoque, dentro de los bordes de la fila
- * para que floten sobre las fotos. Sin soporte de backdrop-filter, o con preferencia por menos transparencia, el fondo
+ * Variante de vidrio (BR-107): botones rectangulares de gris semitransparente con desenfoque, del alto de las tarjetas y
+ * fuera de la fila, uno a cada lado. Sin soporte de backdrop-filter, o con preferencia por menos transparencia, el fondo
  * es sólido (el del tema).
  */
 .glass .dot::before {
@@ -194,28 +194,38 @@
 }
 
 @media (min-width: 769px) {
+  /* Las flechas van fuera de la fila, una a cada lado: rectángulos del alto de las tarjetas y no encima de ellas */
+  .glass.desktop {
+    --carousel-arrow: 3rem;
+    --carousel-arrow-gap: 0.75rem;
+    padding-inline: calc(var(--carousel-arrow) + var(--carousel-arrow-gap));
+  }
+
+  /* Alto de la fila menos su aire vertical (0,75 rem arriba y abajo, lo que ya tiene la fila) y menos los puntos (1 rem de margen + 1,5 rem) */
   .glass .arrow {
-    width: 3rem;
-    height: 3rem;
+    top: 0.75rem;
+    bottom: 3.25rem;
+    width: var(--carousel-arrow);
+    height: auto;
     color: var(--color-brand-white);
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    border-radius: var(--radius-full);
+    border-radius: 0;
     clip-path: none;
     backdrop-filter: blur(14px) saturate(1.2);
   }
 
   .glass .arrowPrev {
-    left: 0.75rem;
+    left: 0;
   }
 
   .glass .arrowNext {
-    right: 0.75rem;
+    right: 0;
   }
 
   .glass .arrow:hover:not(:disabled) {
     background: color-mix(in srgb, var(--color-brand-white) 26%, transparent);
-    scale: 1.06;
+    scale: 1;
   }
 
   .glass .arrow:disabled {
