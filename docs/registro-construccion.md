@@ -1994,3 +1994,79 @@ Salen de la auditoría de SVG de la landing (2026-10-19) y de su repetición (20
 - El TBT móvil de la home cumple (≤ 200 ms) con margen estrecho: una de las tres corridas dio 215 ms.
 
 **Queda fuera:** el resto de `BR-022` y `BR-027`; el encuadre de la foto móvil de CTA1; el hexágono grande de SP2 en móvil (se repinta con la página); el favicon de 130 KB (`BR-057`, bloqueado hasta tener el «RR» en vector); el LCP móvil. El siguiente paso es `diseno-visual` sobre las figuras ya en SVG.
+
+---
+
+<a id="br-022"></a>
+
+## BR-022 — Reemplazar colores escritos a mano por tokens (resto del sitio)
+
+**Notas de construcción (2026-11-23):**
+- Tras el tramo de la landing (2026-10-22), el resto del sitio: 135 colores escritos a mano en 9 archivos pasan a tokens y a `color-mix()`. Tokens nuevos en `styles/tokens/colors.css` (`--color-tint`, `--color-shade`, `--color-on-primary`, `--color-ink`, entre otros) que cada sucursal puede redefinir (ADR-010).
+- `src/test/landingTokens.test.ts` ahora recorre todo el CSS de `src/` (hex, `rgb()`, `rgba()`, `hsl()` y `white`/`black` como palabra) y los estilos inline de color.
+- Coquimbo quedó igual píxel a píxel (capturas de 390 y 1280 px antes y después). Una diferencia que parecía del logo era un artefacto de la captura de página completa, no del cambio.
+- Fuera de alcance: `styles/variables.css` (segunda fuente de tokens, `BR-021`) y el código muerto (`BR-025`).
+- **Verificación:** `design-tokens-auditor` sin hallazgos de colores fuera de los tokens; la suite completa y el CI en verde.
+
+<a id="br-103"></a>
+
+## BR-103 — Sucursal activa: provider, rutas y reserva por sucursal
+
+**Notas de construcción (2026-11-23):**
+- `src/config/branches.ts` y `src/branch/` (`resolveBranch`, `branchStorage`, `BranchProvider`, `useBranch`, `useBookingUrl`); rutas `/coquimbo` y `/la-serena` con `caseSensitive`; script de arranque en `index.html` con su hash en la CSP de `vercel.json` y test de paridad.
+- Reserva por sucursal: `bookingUrl` en `Location`, columna opcional `reserva` en la pestaña `sucursales` y respaldo en `locationsData.ts`.
+- Test-first en la lógica pura (`resolveBranch`); el resto, tests después.
+- **Verificación en producción (2026-11-23, Chrome real):** las dos portadas responden 200 sin errores ni violaciones de CSP en la consola; `/la-serena-x` muestra «no encontrada»; con La Serena guardada, `data-branch` ya vale `la-serena` al cargar el documento; el botón de reserva abre `…/400965` con Coquimbo y `…/98243` con La Serena.
+- **`datos-negocio-auditor`:** los componentes nuevos no escriben datos del negocio. Un hallazgo era de este ticket y se corrigió (#57): el JSON-LD de La Serena publicaba la reserva de Coquimbo. Quedan hallazgos que **no** son de este ticket: teléfono de relleno en el pie, mapa de Coquimbo que apunta a Bogotá, horarios que se contradicen y el WhatsApp del pie que no cambia con la sucursal activa. Por eso la ficha sigue abierta: el criterio 7 pide «sin hallazgos».
+
+<a id="br-104"></a>
+
+## BR-104 — Tema La Serena en tokens y figuras por sucursal
+
+**Notas de construcción (2026-11-23):** ver también el resultado en la ficha.
+- Bloque `:root[data-branch="la-serena"]` con la paleta y los alias; figuras por sucursal con la misma cantidad de puntos (`FixedShape` las transforma al cambiar); `theme-color` y loader por sucursal.
+- Contraste: 26 pares leídos de `colors.css` en `laSerenaTheme.test.ts`, y el e2e de contraste corre en las dos sucursales (en el CI). Ese e2e encontró el subtítulo de CTA2 casi invisible (1,14:1), corregido con `--color-ink`.
+- **Verificación:** `design-tokens-auditor` sin colores fuera de los tokens; capturas de las rutas con La Serena a 390 y 1280 px; Coquimbo idéntico a antes.
+
+<a id="br-105"></a>
+
+## BR-105 — Control para cambiar de sucursal, con transición
+
+**Notas de construcción (2026-11-23):**
+- `BranchSwitch` (`radiogroup`, flechas, 44 px, fondo que se desliza con `layoutId`), `withBranchTransition` y `branchTransition.css` (cortina diagonal con View Transitions; sin soporte o con reducir movimiento, directo). La barra queda fuera de la cortina para que se vea el deslizamiento.
+- **Decisión del usuario:** la barra completa empieza en 1280 px y debajo hay hamburguesa (el control no cabía junto al botón de reserva).
+- **Verificación:** tests de rol, teclado, cambio con y sin prefijo y menú móvil; Lighthouse móvil de las rutas: TBT 35 a 150 ms. El movimiento de la cortina y del control se revisó a ojo, no con una medición.
+- **`accesibilidad-auditor`:** sin hallazgos altos. Corregido: el menú móvil se cierra al elegir sucursal. Queda: Escape y foco del menú móvil (`BR-033`, anterior a la épica) y que las flechas del control naveguen al mover el foco (decisión tomada).
+
+<a id="br-106"></a>
+
+## BR-106 — Portada partida y portadas de cada sucursal
+
+**Notas de construcción (2026-11-23):**
+- `/` es `BranchPicker` (sin barra de navegación; quien ya eligió pasa directo a su portada); `/coquimbo` es la home de siempre; `/la-serena` es `LaSerenaPage` (`lazy`): `HeroLaSerena` con cuatro cuadrados de neón que se dibujan, hojas y madera, las secciones de la home con el tema de La Serena, el bloque «Visítanos» y las enredaderas.
+- SEO: título y descripción por portada, sitemap, JSON-LD por sucursal; sin canonical estática (#58).
+- **Lighthouse móvil contra producción tras #58 (mediana de 3):** `/`: rendimiento 74, SEO 100, accesibilidad 100, LCP 5,6 s, TBT 35 ms, CLS 0. `/la-serena`: 73, 100, 100, 5,3 s, 103 ms, 0. `/coquimbo` (línea base): 71, 100, 96, 5,6 s, 150 ms, 0.
+- **Falta:** el LCP no llega a 2,5 s en ninguna ruta, tampoco en la línea base; viene de que la página se arma en el navegador (`BR-034`). Por eso el criterio 4 no se cumple y la ficha sigue abierta.
+- **`seo-performance-auditor`:** corregidos la barra de progreso (solo estaba en `/`) y la prioridad de las fotos del selector. Queda para otro ticket: el preload de las imágenes de Coquimbo en todas las rutas, `HomePage` con `lazy` y la redirección de `/` con elección guardada.
+
+<a id="br-107"></a>
+
+## BR-107 — Equipo de La Serena: carrusel con botones de vidrio
+
+**Notas de construcción (2026-11-23):**
+- `TeamPage` elige la vista por sucursal (`TEAM_VIEW`); `TeamCarouselLaSerena` (`lazy`) sobre `CardCarousel`, que suma la variante `glass` (flechas rectangulares del alto de las tarjetas y fuera de la fila, tokens `--glass-bg` y `--glass-border`). La escala y la opacidad de las vecinas salen de `data-active`: sin estado por scroll.
+- **Desviación:** el neón de la tarjeta es de la visible en móvil y, en escritorio, de la que toca el cursor o el foco.
+- **`accesibilidad-auditor`:** corregidos los puntos de vidrio (contraste), la atenuación (solo de la foto), el anillo de foco en móvil y el nombre de la tarjeta. Queda: el botón deshabilitado al llegar al borde pierde el foco y los enlaces a AgendaPro no avisan que abren otra pestaña.
+
+<a id="br-108"></a>
+
+## BR-108 — Enredaderas laterales del tema La Serena
+
+**Notas de construcción (2026-11-23):**
+- `BranchVines` envuelve una sección según un mapa por sucursal (Coquimbo: nada, y el trozo `SideVines` no se descarga); la geometría (tallo y 11 hojas) está en `vineShapes.ts`, aparte, para cambiarla por un SVG de Figma. El tallo se dibuja con `pathLength` y cada hoja se abre al llegar el tallo a su altura, con `MotionValue`; con reducir movimiento se ve completa.
+- Primera versión en Features y «Visítanos». **Pendiente del usuario:** elegir las secciones definitivas.
+- **Verificación:** tests (lazy, sin estado por scroll, `aria-hidden`, sin clics, reducir movimiento), capturas a 1280 px y Lighthouse móvil de `/la-serena` sin empeorar. `accesibilidad-auditor` sin hallazgos en las enredaderas.
+
+## Cierre de la épica M, auditorías (2026-11-23)
+
+Ficha y estado de cada ticket: `BR-022`, `BR-104` y `BR-108` quedan **Hecho**; `BR-103`, `BR-105`, `BR-106` y `BR-107` siguen **En curso** por el motivo anotado arriba. Hallazgos que no son de la épica y quedan para tickets nuevos: datos de relleno del negocio, WhatsApp por sucursal, rendimiento (preload y `HomePage` con `lazy`), Escape y foco del menú móvil (`BR-033`), enlaces que abren otra pestaña sin avisar, y los títulos de Ubicación y Nosotros que dicen solo «Coquimbo».
