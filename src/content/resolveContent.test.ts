@@ -242,3 +242,36 @@ describe("formatReports: líneas para el log del build", () => {
     expect(lines).toContain("equipo: respaldo (no se obtuvo de la hoja)");
   });
 });
+
+describe("reserva por sucursal al fusionar la hoja con el respaldo (BR-103, RF-CNT-009)", () => {
+  const BACKUP_URL = "https://roycespa.site.agendapro.com/cl/sucursal/1";
+  const SHEET_URL = "https://roycespa.site.agendapro.com/cl/sucursal/2";
+  const backupWithUrl: SiteContent = { ...OTHER, locations: [{ ...snapshot.locations[0], id: "s", bookingUrl: BACKUP_URL }] };
+  const head = "id,nombre,direccion,ciudad,telefono,email,whatsapp,mapa,horario_semana,horario_sabado,horario_domingo";
+  const row = (id: string, reserva?: string) =>
+    `${id},Sucursal,Calle 1,Ciudad,+56 9 5555 4444,a@b.cl,+56 9 5555 4444,https://www.google.com/maps/embed?pb=1,09:00,09:00,Cerrado` + (reserva === undefined ? "" : `,${reserva}`);
+
+  it("una fila sin la columna reserva conserva el enlace de respaldo de esa sucursal, no el general", () => {
+    const { content } = resolveContent({ ...goodSheet, sucursales: `${head}\n${row("s")}\n` }, backupWithUrl);
+
+    expect(content.locations[0].bookingUrl).toBe(BACKUP_URL);
+  });
+
+  it("una celda reserva vacía también conserva el respaldo", () => {
+    const { content } = resolveContent({ ...goodSheet, sucursales: `${head},reserva\n${row("s", "")}\n` }, backupWithUrl);
+
+    expect(content.locations[0].bookingUrl).toBe(BACKUP_URL);
+  });
+
+  it("la reserva que escribe el dueño en la hoja manda sobre el respaldo", () => {
+    const { content } = resolveContent({ ...goodSheet, sucursales: `${head},reserva\n${row("s", SHEET_URL)}\n` }, backupWithUrl);
+
+    expect(content.locations[0].bookingUrl).toBe(SHEET_URL);
+  });
+
+  it("una sucursal nueva que el respaldo no conoce queda sin enlace propio", () => {
+    const { content } = resolveContent({ ...goodSheet, sucursales: `${head}\n${row("otra")}\n` }, backupWithUrl);
+
+    expect(content.locations[0]).not.toHaveProperty("bookingUrl");
+  });
+});

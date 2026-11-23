@@ -99,10 +99,10 @@ export function contentToSheet(content: SiteContent): SheetCsv {
     textos: toCsv([["clave", "valor"], ...Object.entries(content.texts)]),
     negocio: toCsv([["clave", "valor"], ...businessToEntries(content.business)]),
     sucursales: toCsv([
-      ["id", "nombre", "direccion", "ciudad", "telefono", "email", "whatsapp", "mapa", "horario_semana", "horario_sabado", "horario_domingo", "activo", "orden"],
+      ["id", "nombre", "direccion", "ciudad", "telefono", "email", "whatsapp", "mapa", "horario_semana", "horario_sabado", "horario_domingo", "activo", "orden", "reserva"],
       ...content.locations.map((l, i) => [
         l.id, l.name, l.address, l.city, l.phone, l.email, l.whatsapp, l.mapUrl,
-        l.schedule[0]?.hours ?? "", l.schedule[1]?.hours ?? "", l.schedule[2]?.hours ?? "", "SI", String(i + 1),
+        l.schedule[0]?.hours ?? "", l.schedule[1]?.hours ?? "", l.schedule[2]?.hours ?? "", "SI", String(i + 1), l.bookingUrl ?? "",
       ]),
     ]),
   };

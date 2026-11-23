@@ -11,6 +11,8 @@ import {
 import { SITE } from "@/config/constants";
 import { getFooterRoutes, ROUTES } from "@/config/routes";
 import { useSiteContent } from "@/content/useSiteContent";
+import { useBookingUrl } from "@/branch/useBookingUrl";
+import { branchFromPath } from "@/branch/resolveBranch";
 import { PrivacyPreferencesButton } from "@/analytics/PrivacyPreferencesButton";
 import { trackPhone, trackReserve, trackWhatsApp } from "@/analytics/track";
 import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
@@ -22,8 +24,11 @@ import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
  */
 export const Footer = () => {
   const { business } = useSiteContent();
+  const bookingUrl = useBookingUrl();
   const footerRoutes = getFooterRoutes();
-  const showClosing = useLocation().pathname !== ROUTES.home.path;
+  const { pathname } = useLocation();
+  // Las portadas (`/` y la de cada sucursal) ya terminan con CTA2: la franja de cierre no va ahí (BR-098, BR-103).
+  const showClosing = pathname !== ROUTES.home.path && branchFromPath(pathname) === null;
 
   return (
     <footer className={styles.footer}>
@@ -38,7 +43,7 @@ export const Footer = () => {
             </h2>
             <a
               className={styles.closingButton}
-              href={business.booking.url}
+              href={bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={trackReserve("footer")}

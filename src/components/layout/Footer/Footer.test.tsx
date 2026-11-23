@@ -4,6 +4,7 @@ import { renderWithProviders } from "@/test/renderWithProviders";
 import { Footer } from "./Footer";
 import { SITE } from "@/config/constants";
 import { snapshot } from "@/content/snapshot";
+import { BranchContext } from "@/branch/BranchContext";
 
 describe("Footer: marca (BR-084, RNF-DATOS-001)", () => {
   it("el título, el copyright y el alt del logo salen de SITE.name, no de un literal", () => {
@@ -31,6 +32,23 @@ describe("Footer: franja de cierre (BR-098, RNF-DATOS-001)", () => {
 
     expect(screen.queryByRole("link", { name: "Agendar Sesión" })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { level: 2 })).not.toBeInTheDocument();
+  });
+
+  it.each(["/coquimbo", "/la-serena"])("en la portada de la sucursal (%s) tampoco se monta (BR-103)", (route) => {
+    renderWithProviders(<Footer />, { route });
+
+    expect(screen.queryByRole("link", { name: "Agendar Sesión" })).not.toBeInTheDocument();
+  });
+
+  it("con La Serena activa, «Agendar Sesión» abre el enlace de La Serena (BR-103, CP-RES-008)", () => {
+    renderWithProviders(
+      <BranchContext value={{ branch: "la-serena", source: "stored", setBranch: () => {} }}>
+        <Footer />
+      </BranchContext>,
+      { route: "/servicios" },
+    );
+
+    expect(screen.getByRole("link", { name: "Agendar Sesión" })).toHaveAttribute("href", "https://roycespa.site.agendapro.com/cl/sucursal/98243");
   });
 });
 

@@ -8,10 +8,12 @@ import { useScrollDirection } from "@/hooks/useScrollMotion";
 import { useParallaxProgress, useSlowLayer } from "@/hooks/useParallaxLayers";
 import { trackReserve, trackWhatsApp } from "@/analytics/track";
 import { useSiteContent, useSiteText } from "@/content/useSiteContent";
+import { useBookingUrl } from "@/branch/useBookingUrl";
 import { scaleIn } from "@/config/animations.config";
 
 export function CTA2() {
   const { business } = useSiteContent();
+  const bookingUrl = useBookingUrl();
   const siteText = useSiteText();
   const { ref, controls } = useScrollAnimation();
   const direction = useScrollDirection();
@@ -53,7 +55,7 @@ export function CTA2() {
           <strong> confianza en nuestra calidad.</strong>
         </p>
         <div className={styles.ctaButtons}>
-          <a className={styles.ctaButton} href={business.booking.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta2")}>
+          <a className={styles.ctaButton} href={bookingUrl} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta2")}>
             <Calendar size={20} />
             Agendar Ahora
           </a>

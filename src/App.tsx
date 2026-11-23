@@ -11,6 +11,8 @@ import { LenisContext } from "./contexts/lenisContextValue";
 import { CatastrophicError, reportError } from "./components/common/ErrorBoundary";
 import { analyticsEnabled } from "./analytics/enabled";
 import { ContentProvider } from "./content/ContentProvider";
+import { BranchProvider } from "./branch/BranchProvider";
+import { BRANCHES } from "./config/branches";
 import "lenis/dist/lenis.css";
 import "./styles/global.css";
 import "./styles/variables.css";
@@ -38,10 +40,15 @@ function App() {
         <MotionConfig reducedMotion="user">
           <LenisContext value={lenis}>
             <BrowserRouter>
+              <BranchProvider>
               <ScrollToTop />
               <Routes>
                 <Route path="/" element={<Layout />}>
                   <Route index element={<HomePage />} />
+                  {/* Una portada por sucursal (ADR-010, BR-103). Distinguen mayúsculas: /LA-SERENA no es una sucursal. */}
+                  {BRANCHES.map((branch) => (
+                    <Route key={branch} path={branch} caseSensitive element={<HomePage />} />
+                  ))}
                   <Route path="servicios" element={<ServicesPage />} />
                   <Route path="productos" element={<ProductsPage />} />
                   <Route path="equipo" element={<TeamPage />} />
@@ -54,6 +61,7 @@ function App() {
                   <Route path="*" element={<NotFoundPage />} />
                 </Route>
               </Routes>
+              </BranchProvider>
             </BrowserRouter>
           </LenisContext>
         </MotionConfig>

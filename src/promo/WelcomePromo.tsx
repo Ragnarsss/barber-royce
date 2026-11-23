@@ -4,6 +4,7 @@ import { ModalDialog } from "@/components/common/ModalDialog/ModalDialog";
 import { promoStripIn } from "@/config/animations.config";
 import { trackEvent, trackReserve } from "@/analytics/track";
 import { useSiteContent, useSiteText } from "@/content/useSiteContent";
+import { useBookingUrl } from "@/branch/useBookingUrl";
 import photo from "@/assets/optimized/cta1_model_700w.webp";
 import styles from "./WelcomePromo.module.css";
 
@@ -23,6 +24,7 @@ export const WelcomePromo = ({ onClose }: WelcomePromoProps) => {
   const reducedMotion = useReducedMotion() ?? false;
   const siteText = useSiteText();
   const { business } = useSiteContent();
+  const bookingUrl = useBookingUrl();
 
   useEffect(() => {
     trackEvent("promo_view");
@@ -70,7 +72,7 @@ export const WelcomePromo = ({ onClose }: WelcomePromoProps) => {
         </p>
         <a
           className={styles.reserve}
-          href={business.booking.url}
+          href={bookingUrl}
           target="_blank"
           rel="noopener noreferrer"
           onClick={trackReserve("promo")}

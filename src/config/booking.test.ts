@@ -3,6 +3,9 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { BOOKING } from "./constants";
+import { parseCsv, toTable } from "@/content/csv";
+import { readLocations } from "@/content/schemas";
+import { locationsList } from "@/data/locationsData";
 
 // BR-066 (HU-RES-001 CA-03, RNF-DATOS-001): el respaldo del enlace de reserva usaba un subdominio de AgendaPro que no
 // existe (redirigía a su página comercial). Es la dirección que el dueño tiene en la hoja.
@@ -29,5 +32,24 @@ describe("enlace de reserva de respaldo (BR-066)", () => {
 
     const offenders = files.filter((file) => readFileSync(file, "utf8").includes(OLD_SUBDOMAIN));
     expect(offenders).toEqual([]);
+  });
+});
+
+// BR-103 (RF-CNT-009, HU-RES-001 CA-04): cada sucursal tiene su propio enlace de AgendaPro, también en la plantilla de la hoja.
+describe("enlace de reserva por sucursal (BR-103)", () => {
+  const template = readFileSync(join(root, "docs/contenido/sucursales.csv"), "utf8");
+
+  it("la plantilla sucursales.csv trae la columna reserva con el mismo enlace que el respaldo de cada sucursal", () => {
+    const { items, issues } = readLocations(toTable(parseCsv(template)));
+
+    expect(issues).toEqual([]);
+    for (const location of locationsList) {
+      expect(items.find((item) => item.id === location.id)?.bookingUrl, location.id).toBe(location.bookingUrl);
+    }
+  });
+
+  it("Coquimbo conserva el enlace de siempre y La Serena tiene el suyo", () => {
+    expect(locationsList.find((l) => l.id === "barberia-royce-coquimbo")?.bookingUrl).toBe(BOOKING.url);
+    expect(locationsList.find((l) => l.id === "barberia-royce-la-serena")?.bookingUrl).toBe("https://roycespa.site.agendapro.com/cl/sucursal/98243");
   });
 });

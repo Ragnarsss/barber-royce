@@ -6,6 +6,7 @@ import { ModalDialog, ModalSplit } from "@/components/common/ModalDialog/ModalDi
 import { InstagramIcon } from "@/components/icons";
 import { WEEK_DAYS } from "@/content/days";
 import { useSiteContent } from "@/content/useSiteContent";
+import { useBookingUrl } from "@/branch/useBookingUrl";
 import { experienceHighlight } from "./experience";
 import styles from "./BarberProfileDialog.module.css";
 
@@ -21,7 +22,8 @@ interface BarberProfileDialogProps {
  * El comportamiento del diálogo (foco, Escape, fondo, Lenis) es el de `ModalDialog`.
  */
 export const BarberProfileDialog = ({ member, onClose }: BarberProfileDialogProps) => {
-  const { business, locations } = useSiteContent();
+  const { locations } = useSiteContent();
+  const bookingUrl = useBookingUrl();
   const branches = locations.filter((location) => member.branchIds.includes(location.id));
   const years = experienceHighlight(member.experience);
   const firstName = member.name.split(" ")[0];
@@ -104,7 +106,7 @@ export const BarberProfileDialog = ({ member, onClose }: BarberProfileDialogProp
         <div className={styles.actions}>
           <a
             className={styles.reserve}
-            href={member.bookingUrl || business.booking.url}
+            href={member.bookingUrl || bookingUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={trackReserve("equipo")}
