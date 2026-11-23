@@ -11,6 +11,9 @@
  * src/components/sections/Hero/cards.test.ts.
  */
 :root {
+  /* Botones de vidrio gris semitransparente (BR-107): el gris es el color de texto de cada tema, así que sirve en los dos */
+  --glass-bg: color-mix(in srgb, var(--color-brand-white) 16%, transparent);
+  --glass-border: color-mix(in srgb, var(--color-brand-white) 28%, transparent);
   --card-glass: color-mix(in srgb, var(--color-brand-background) 62%, transparent);
   --card-edge: color-mix(in srgb, var(--color-brand-white) 18%, transparent);
   --card-edge-hot: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);

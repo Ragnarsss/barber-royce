@@ -18,6 +18,8 @@ interface CardCarouselProps {
    * escritorio no monta nada y la grilla queda como estaba.
    */
   desktopVisible?: number;
+  /** Botones y puntos de vidrio gris semitransparente, sobre las tarjetas (BR-107). Sin él, los rojos de siempre. */
+  glass?: boolean;
 }
 
 /**
@@ -30,7 +32,7 @@ interface CardCarouselProps {
  * o sale de la vista, no en cada evento de desplazamiento (regla 6 de CLAUDE.md; mismo patrón que el centinela de
  * BR-068). La tarjeta «actual» es la primera de las visibles.
  */
-export function CardCarousel({ label, children, desktopVisible }: CardCarouselProps) {
+export function CardCarousel({ label, children, desktopVisible, glass = false }: CardCarouselProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion() ?? false;
   // Móvil = no escritorio. Sin `matchMedia` (jsdom, servidor) no se asume móvil: la fila con snap solo existe con pantalla
@@ -138,7 +140,7 @@ export function CardCarousel({ label, children, desktopVisible }: CardCarouselPr
   return (
     <div
       ref={wrapperRef}
-      className={`${styles.carousel} ${isMobile ? styles.snap : ""} ${desktopMode ? styles.desktop : ""}`}
+      className={`${styles.carousel} ${isMobile ? styles.snap : ""} ${desktopMode ? styles.desktop : ""} ${glass ? styles.glass : ""}`}
       style={desktopMode ? ({ "--carousel-visible": desktopVisible } as CSSProperties) : undefined}
     >
       {children}

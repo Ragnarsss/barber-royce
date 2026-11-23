@@ -1,0 +1,130 @@
+/* Mobile-first (ADR-009). Tarjetas rectangulares de esquinas rectas, foto a sangre y una franja inferior (BR-107). */
+.page {
+  background-color: var(--color-brand-background);
+}
+
+.section {
+  --carousel-gutter: var(--spacing-6);
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: var(--spacing-12) var(--spacing-6);
+  overflow: hidden;
+}
+
+.track {
+  align-items: stretch;
+}
+
+/* Cada diapositiva: la tarjeta activa a escala completa, las vecinas más chicas y tenues. Se mueve `scale`, no `transform`. */
+.slide {
+  transition:
+    scale 0.45s var(--ease-smooth),
+    opacity 0.45s var(--ease-smooth);
+}
+
+.section .track > .slide[data-active="false"] {
+  scale: 0.92;
+  opacity: 0.5;
+}
+
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  overflow: hidden;
+  background-color: var(--color-espresso);
+  color: var(--color-bone);
+  cursor: pointer;
+  text-align: left;
+}
+
+/* El borde de neón fino: solo la tarjeta que se ve (en móvil) o sobre la que está el cursor o el foco */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: none;
+  pointer-events: none;
+  transition: box-shadow 0.45s var(--ease-smooth);
+}
+
+.section .track > .slide[data-active="true"] .card::after,
+.card:hover::after,
+.card:focus-visible::after {
+  box-shadow:
+    inset 0 0 0 1px var(--color-neon),
+    inset 0 0 14px color-mix(in srgb, var(--color-neon) 35%, transparent);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 3px;
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+/* Franja inferior: el nombre y las especialidades sobre un velo oscuro */
+.band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+  padding: var(--spacing-8) var(--spacing-4) var(--spacing-4);
+  background: linear-gradient(to top, color-mix(in srgb, var(--color-espresso) 92%, transparent), transparent);
+}
+
+.name {
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.15;
+}
+
+.specialty {
+  color: color-mix(in srgb, var(--color-bone) 80%, transparent);
+  font-size: var(--font-size-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide,
+  .card::after {
+    transition: none;
+  }
+
+  /* Sin escala animada: las tarjetas vecinas solo se tenuan */
+  .section .track > .slide[data-active="false"] {
+    scale: 1;
+  }
+}
+
+@media (min-width: 769px) {
+  .section {
+    padding: var(--spacing-12) var(--spacing-10);
+  }
+
+  /* Con tres tarjetas a la vez, el neón es de la que toca el cursor o el foco */
+  .section .track > .slide[data-active="true"] .card::after {
+    box-shadow: none;
+  }
+
+  .section .track > .slide[data-active="true"] .card:hover::after,
+  .section .track > .slide[data-active="true"] .card:focus-visible::after {
+    box-shadow:
+      inset 0 0 0 1px var(--color-neon),
+      inset 0 0 14px color-mix(in srgb, var(--color-neon) 35%, transparent);
+  }
+}

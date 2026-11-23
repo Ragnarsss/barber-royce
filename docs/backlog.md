@@ -4485,7 +4485,7 @@ Criterios de aceptación:
 #### BR-107 — Equipo de La Serena: tarjetas rectangulares en carrusel con botones de vidrio
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-103, BR-104
-- Estado: Propuesta
+- Estado: En curso
 - Historia de usuario: HU-SUC-002 (CA-05, CA-07)
 - RF/RNF: `RF-SUC-006`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-PERF-006`
 
@@ -4522,6 +4522,17 @@ Criterios de aceptación:
 3. Ningún re-render por evento de scroll (CP-PERF-006); con reducir
    movimiento no hay escala animada.
 4. `accesibilidad-auditor` sin hallazgos.
+
+> **Resultado de la construcción (2026-11-23):**
+> - `TeamPage` elige la vista por sucursal (`TEAM_VIEW`): `TeamHoneycombView` (Coquimbo, el panal de siempre) y `TeamCarouselLaSerena`
+>   (`lazy`, otro trozo del build). Se reutiliza `CardCarousel`, que suma la variante `glass` (flechas y puntos de vidrio gris
+>   semitransparente; fondo sólido sin `backdrop-filter` o con `prefers-reduced-transparency`); tokens `--glass-bg` y `--glass-border`.
+> - Tarjetas rectangulares de esquinas rectas con la foto a sangre y la franja con nombre y especialidades. La escala 1 / 0,92 y
+>   la opacidad 1 / 0,5 salen de `data-active`, que marca el `IntersectionObserver` del carrusel: sin `setState` por scroll
+>   (en vez de `MotionValue`). Con reducir movimiento no hay escala.
+> - **Desviación:** el borde de neón es de la tarjeta visible en móvil; en escritorio, con tres tarjetas a la vez, es de la que
+>   toca el cursor o el foco (el carrusel no distingue una «activa» entre varias visibles).
+> - Pendiente: `accesibilidad-auditor`, y verlo en el preview.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-107).
 
