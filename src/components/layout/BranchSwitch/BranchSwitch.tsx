@@ -54,7 +54,7 @@ export function BranchSwitch({ className = "", roomy = false }: BranchSwitchProp
             onClick={() => setBranch(option)}
           >
             {/* El fondo de la opción elegida se desliza de una a otra (con «reducir movimiento», salta) */}
-            {checked && <motion.span layoutId={pillId} className={styles.pill} transition={{ type: "spring", stiffness: 520, damping: 42 }} />}
+            {checked && <motion.span layoutId={pillId} className={styles.pill} transition={{ type: "spring", stiffness: 360, damping: 32 }} />}
             <span className={styles.content}>
               <span className={styles.marker} aria-hidden="true">
                 <FixedShape shape={SP2_HEXAGON_BY_BRANCH[branch]} />

@@ -1,4 +1,6 @@
 .navbar {
+  /* Su propio grupo en la transición de cambio de sucursal (BR-105): la cortina no la tapa y el control se ve deslizarse */
+  view-transition-name: site-navbar;
   position: fixed;
   top: 0;
   left: 0;

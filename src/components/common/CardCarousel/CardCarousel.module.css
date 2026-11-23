@@ -180,6 +180,63 @@
   }
 }
 
+/*
+ * Variante de vidrio (BR-107): botones redondos de gris semitransparente con desenfoque, dentro de los bordes de la fila
+ * para que floten sobre las fotos. Sin soporte de backdrop-filter, o con preferencia por menos transparencia, el fondo
+ * es sólido (el del tema).
+ */
+.glass .dot::before {
+  background: var(--glass-border);
+}
+
+.glass .dot[aria-current="true"]::before {
+  background: var(--color-brand-white);
+}
+
+@media (min-width: 769px) {
+  .glass .arrow {
+    width: 3rem;
+    height: 3rem;
+    color: var(--color-brand-white);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-full);
+    clip-path: none;
+    backdrop-filter: blur(14px) saturate(1.2);
+  }
+
+  .glass .arrowPrev {
+    left: 0.75rem;
+  }
+
+  .glass .arrowNext {
+    right: 0.75rem;
+  }
+
+  .glass .arrow:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--color-brand-white) 26%, transparent);
+    scale: 1.06;
+  }
+
+  .glass .arrow:disabled {
+    opacity: 0.4;
+    background: var(--glass-bg);
+  }
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .glass .arrow {
+    background: var(--color-brand-background);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass .arrow {
+    background: var(--color-brand-background);
+    backdrop-filter: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .snap > :first-child > *,
   .dot::before,

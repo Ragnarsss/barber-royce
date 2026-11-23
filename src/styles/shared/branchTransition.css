@@ -10,6 +10,15 @@
     mix-blend-mode: normal;
   }
 
+  /* La barra queda fuera de la cortina: solo se ve la nueva, en vivo, para que el control de sucursal se vea deslizarse */
+  ::view-transition-old(site-navbar) {
+    display: none;
+  }
+
+  ::view-transition-new(site-navbar) {
+    animation: none;
+  }
+
   ::view-transition-new(root) {
     animation: branch-curtain 0.8s cubic-bezier(0.65, 0, 0.35, 1) both;
   }
