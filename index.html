@@ -35,11 +35,14 @@
       name="keywords"
       content="barbería, cortes de cabello hombre, barbería premium, corte masculino, afeitado clásico, estilo hombre, barbería profesional"
     />
-    <link rel="canonical" href="https://roycebarber.com/" />
+    <!--
+      Sin canonical, og:url ni twitter:url estáticos: dependen de la ruta y los pone cada página con SEOHelmet. Una canonical
+      fija a "/" convivía con la de la página y Google veía dos en conflicto (hallazgo de Lighthouse, BR-106). Los demás
+      metadatos de abajo son los de la marca, para quien no ejecuta JavaScript (prerender: BR-034).
+    -->
 
     <!-- SEO: Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://roycebarber.com/" />
     <meta
       property="og:title"
       content="Royce Barbería - Cortes Premium para el Hombre Moderno"
@@ -56,7 +59,6 @@
 
     <!-- SEO: Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://roycebarber.com/" />
     <meta
       name="twitter:title"
       content="Royce Barbería - Cortes Premium para el Hombre Moderno"

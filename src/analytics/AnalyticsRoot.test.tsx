@@ -59,7 +59,7 @@ describe("AnalyticsRoot: aviso de consentimiento y carga de Google (BR-037)", ()
       expect(screen.getByRole("dialog", { name: "Tu privacidad" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Aceptar" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Rechazar" })).toBeInTheDocument();
-      expect(screen.getByRole("link", { name: "Más información" })).toHaveAttribute("href", "/privacidad");
+      expect(screen.getByRole("link", { name: "Política de privacidad" })).toHaveAttribute("href", "/privacidad");
     });
 
     it("RNF-PRIV-001: sin decidir no se pide nada a Google ni se crea gtag", () => {
