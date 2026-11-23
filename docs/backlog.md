@@ -604,8 +604,8 @@ Criterios de aceptación:
 
 #### BR-022 — Reemplazar colores hex escritos a mano por tokens
 
-- Prioridad: P2 · Esfuerzo: M · Depende de: BR-021
-- Estado: Propuesta (tramo de la landing hecho el 2026-10-22, PR #42; falta el resto del sitio)
+- Prioridad: P1 · Esfuerzo: M · Depende de: BR-021
+- Estado: En curso (tramo de la landing hecho el 2026-10-22, PR #42; resto del sitio en curso desde 2026-11-23)
 - Historia de usuario: no aplica — deuda técnica sin cambio visible.
 - RF/RNF: `RNF-MANT-003`
 
@@ -634,6 +634,53 @@ Criterios de aceptación:
    `styles/tokens/`.
 2. (Tramo de la landing) Ningún CSS Module de Hero, Reviews, CTA2 ni Navbar tiene hex ni `rgb()`/`rgba()` (lo
    comprueba un test), y la portada se ve igual que antes.
+
+> **Alcance ajustado (2026-11-23, decisión del usuario):** el resto del sitio se hace ahora y el ticket sube a P1,
+> porque `BR-104` (tema de La Serena) necesita que ningún módulo escriba colores a mano: un `rgba(…)` no cambia con
+> el tema. Se descartó crear un ticket nuevo (`BR-109`), que habría duplicado este alcance. `BR-021` sigue sin ser
+> necesario, por lo mismo que en el tramo de la landing. Medición del 2026-11-23 en los CSS de `src/`:
+> - **135 colores escritos a mano en 9 archivos** (42 hex y 93 `rgba()`): los módulos de `ConsentBanner`,
+>   `CatastrophicError`, `Loading`, `AboutPage`, `FAQPage`, `LocationPage` y `ServicesPage`, `styles/shared/page.css` y
+>   los estilos inline de `ScrollProgressBar.tsx` (se monta en `Layout`). Los `rgba()`: 33 `rgba(213, 35, 35, ·)`, 32
+>   `rgba(255, 255, 255, ·)`, 18 `rgba(0, 0, 0, ·)`, 6 `rgba(51, 43, 43, ·)`, 2 `rgba(26, 26, 26, ·)` y 2
+>   `rgba(220, 38, 38, ·)`. Los hex: `#ffffff` ×19, `#1a1a1a` ×6, `#d52323` ×5, `#fe0000` ×3 y 8 sueltos más.
+> - `Button.module.css`, `App.css` e `index.css` no se importan en ningún lado: código muerto que retira `BR-025`.
+>   `styles/variables.css` es una segunda fuente de tokens: es de `BR-021`.
+>
+> Alcance del tramo:
+> 1. Dos tokens de rol en `src/styles/tokens/colors.css` con el valor de hoy: `--color-tint` (la capa que aclara,
+>    `#ffffff`) y `--color-shade` (la que oscurece, `#000000`). `--color-accent-900` y `--color-brand-background` ya
+>    cubren `rgba(51, 43, 43)` y `rgba(26, 26, 26)`.
+> 2. Cada `rgba(R, G, B, A)` pasa a `color-mix(in srgb, var(--token) A%, transparent)` (patrón de `ADR-002`): blanco →
+>    `--color-tint`; `213, 35, 35` → `--color-brand-primary`; negro → `--color-shade`; `220, 38, 38` →
+>    `--color-error-dark`. Cada hex pasa al token que ya tiene ese valor (`#ffffff` → `--color-brand-white`, `#1a1a1a` →
+>    `--color-brand-background`, `#d52323` → `--color-brand-primary`, `#fe0000` → `--color-brand-primary-hover`); los
+>    sueltos se revisan uno por uno.
+> 3. Los estilos inline de `ScrollProgressBar.tsx` pasan a un CSS Module.
+> 4. `landingTokens.test.ts` se amplía a **todo** el CSS de `src/` fuera de `styles/tokens/` (con el código muerto y `variables.css` como excepciones
+>    anotadas, hasta `BR-025` y `BR-021`): ni hex ni `rgb()`, `rgba()` o `hsl()`.
+> 5. Cero cambio visual en Coquimbo: `color-mix(in srgb, #fff 12%, transparent)` da el mismo color que
+>    `rgba(255, 255, 255, .12)`.
+>
+> Criterios del tramo:
+> 1. Ningún CSS vivo de `src/` fuera de `styles/tokens/` ni `ScrollProgressBar.tsx` tiene hex, `rgb()`, `rgba()` ni `hsl()` (test ampliado).
+> 2. Coquimbo se ve igual: capturas de cada ruta antes y después, con reducir movimiento y a 390 y 1280 px, sin
+>    diferencias.
+> 3. `design-tokens-auditor` sin hallazgos; lint, tipos, tests y build en verde; el e2e de contraste pasa en el CI.
+>
+> **Verificación local (2026-11-23):** capturas de 8 rutas a 390 y 1280 px, con reducir movimiento, antes y después
+> (Chrome real sobre `vite preview`). Dos tandas del mismo build dan 16 de 16 idénticas, salvo el mapa de Google y las
+> fotos de productos en móvil, que se enmascararon por ser contenido externo. Resultado: ninguna diferencia visible;
+> los píxeles distintos son de 1 a 4 niveles por canal (de 255) en capas translúcidas, porque `rgba()` redondea el
+> alfa a 8 bits y `color-mix()` no. En la home, con ventana normal, solo difiere la franja de 4 px de la barra de
+> progreso (1/255); en la captura de página completa, el logo del footer se remuestrea distinto al ser la ventana de
+> ~7.400 px (artefacto de la captura, no se ve con ventana normal).
+>
+> Desviaciones de color, todas en la pantalla de error `CatastrophicError`: `#b91c1c` → mezcla de `--color-error-dark` y
+> `--color-shade`; `#2d2d2d` → mezcla de `--color-brand-background` y `--color-tint`; `#6b7280` →
+> `--color-neutral-500` (`#737373`); `#4b5563` → `--color-neutral-600` (`#525252`); `#332a2b` →
+> `--color-brand-section-bg` (`#332b2b`). No se capturaron `ConsentBanner`, `Loading` ni `CatastrophicError`: salen
+> con analítica activa, durante la carga perezosa o ante un fallo.
 
 #### BR-023 — Retirar Tailwind, shadcn y sus componentes `ui/*`
 
@@ -4245,7 +4292,7 @@ Criterios de aceptación:
 
 #### BR-104 — Tema La Serena en tokens y figuras por sucursal
 
-- Prioridad: P1 · Esfuerzo: M · Depende de: BR-103
+- Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-022
 - Estado: Propuesta
 - Historia de usuario: HU-SUC-002 (CA-01 .. CA-03)
 - RF/RNF: `RF-SUC-005`, `RNF-A11Y-004`, `RNF-A11Y-003`, `RNF-MANT-004`
@@ -4285,6 +4332,19 @@ Criterios de aceptación:
 3. Al cambiar de sucursal las figuras se transforman; con
    `prefers-reduced-motion`, cambian de golpe (HU-SUC-002 CA-03).
 4. `design-tokens-auditor` sin hallazgos: ningún hex fuera de los tokens.
+
+> **Alcance ajustado (2026-11-23, decisión del usuario):** al iniciarlo se midió que era de tamaño L y se partió.
+> Pasar los `rgba()` y demás colores escritos a mano a tokens es `BR-022` (ampliado, P1) y va **primero**; este
+> ticket depende de él y solo define los valores de La Serena.
+> - **Features** entra aquí: son **cinco** secciones con figuras (SocialProof1, SocialProof2, CTA1, Reviews y
+>   Features, cuyo pentágono pasa a cuadrado). Donde dice «cuatro secciones», léase cinco.
+> - Los triángulos del Hero (`heroShapes.ts`) no se tocan aquí: los reemplaza `HeroLaSerena` en `BR-106`.
+> - `BR-022` deja la capa que aclara y la que oscurece como `--color-tint` y `--color-shade`; aquí se les da su valor
+>   para La Serena.
+> - `index.html` no tiene `<meta name="theme-color">`: se agrega y `BranchProvider` lo actualiza con la sucursal.
+> - Framer interpola los puntos solo si ambas figuras tienen la **misma cantidad**; con distinta cantidad salta al
+>   destino sin error (comprobado el 2026-11-23), por eso el test de puntos es obligatorio.
+> - Verificación extra: capturas de cada ruta con La Serena activa, para ver qué queda mal además del contraste.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-104).
 
@@ -4360,6 +4420,9 @@ Criterios de aceptación:
 4. Lighthouse móvil de `/` y `/la-serena` en el preview cumple LCP, CLS, TBT
    y SEO ≥ 95 (HU-SUC-002 CA-08, CP-PERF-001 .. CP-PERF-003, CP-SEO-001-N);
    `seo-performance-auditor` sin hallazgos.
+
+> **Alcance ajustado (2026-11-23, decisión del usuario):** `HeroLaSerena` reemplaza los triángulos del Hero
+> (`HERO_SHAPES`); no se interpolan con una forma de Coquimbo, porque el Hero de La Serena es otra composición.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-106).
 
@@ -4490,7 +4553,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-019 | Error boundaries | C | P1 | S | Hecho | — |
 | BR-020 | Recuperación de chunks | C | P1 | S | Hecho | BR-019 |
 | BR-021 | Fuente única de tokens | D | P2 | M | Propuesta | — |
-| BR-022 | Hex → tokens | D | P2 | M | Propuesta (landing hecha) | BR-021 |
+| BR-022 | Hex → tokens | D | P1 | M | En curso (landing hecha) | BR-021 |
 | BR-023 | Retirar Tailwind y shadcn | D | P2 | L | Propuesta | BR-021 |
 | BR-024 | Breakpoints unificados, mobile-first (base de la migración) | D | P2 | S | Propuesta | — |
 | BR-025 | Código muerto y dependencias | H | P2 | M | Propuesta | BR-014 |
@@ -4571,7 +4634,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-101 | Canje de la mascarilla con formulario, cupón y registro en la hoja | K | P3 | L | Bloqueado | BR-100 |
 | BR-102 | Poner al día `architecture.md` y las guías con lo que ya existe | A | P2 | S | Propuesta | — |
 | BR-103 | Sucursal activa: `BranchProvider`, rutas y reserva por sucursal | M | P1 | M | En curso | — |
-| BR-104 | Tema La Serena en tokens y figuras por sucursal | M | P1 | M | Propuesta | BR-103 |
+| BR-104 | Tema La Serena en tokens y figuras por sucursal | M | P1 | M | Propuesta | BR-103, BR-022 |
 | BR-105 | Control para cambiar de sucursal, con transición | M | P1 | M | Propuesta | BR-103, BR-104 |
 | BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | Propuesta | BR-103 .. BR-105 |
 | BR-107 | Equipo de La Serena: tarjetas rectangulares en carrusel | M | P2 | M | Propuesta | BR-103, BR-104 |

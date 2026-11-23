@@ -5,19 +5,19 @@
   background-image:
     radial-gradient(
       circle at 20% 50%,
-      rgba(213, 35, 35, 0.03) 0%,
+      color-mix(in srgb, var(--color-brand-primary) 3%, transparent) 0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 80% 80%,
-      rgba(213, 35, 35, 0.03) 0%,
+      color-mix(in srgb, var(--color-brand-primary) 3%, transparent) 0%,
       transparent 50%
     );
 }
 
 .hero {
-  background: #332b2b;
-  color: var(--color-white, #ffffff);
+  background: var(--color-brand-section-bg);
+  color: var(--color-white, var(--color-brand-white));
   padding: 80px 0 40px;
   text-align: center;
   position: relative;
@@ -33,7 +33,7 @@
   height: 500px;
   background: radial-gradient(
     circle,
-    rgba(213, 35, 35, 0.15) 0%,
+    color-mix(in srgb, var(--color-brand-primary) 15%, transparent) 0%,
     transparent 70%
   );
   border-radius: 50%;
@@ -50,7 +50,7 @@
   height: 600px;
   background: radial-gradient(
     circle,
-    rgba(213, 35, 35, 0.12) 0%,
+    color-mix(in srgb, var(--color-brand-primary) 12%, transparent) 0%,
     transparent 70%
   );
   border-radius: 50%;
@@ -81,7 +81,7 @@
 .subtitle {
   font-size: 18px;
   margin: 0;
-  color: rgba(255, 255, 255, 0.9);
+  color: color-mix(in srgb, var(--color-tint) 90%, transparent);
   position: relative;
   z-index: 1;
 }
@@ -113,16 +113,16 @@
 }
 
 .faqCard {
-  background: rgba(51, 43, 43, 0.6);
-  border: 2px solid rgba(213, 35, 35, 0.15);
+  background: color-mix(in srgb, var(--color-accent-900) 60%, transparent);
+  border: 2px solid color-mix(in srgb, var(--color-brand-primary) 15%, transparent);
   border-radius: 12px;
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .faqCard:hover {
-  border-color: rgba(213, 35, 35, 0.3);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  border-color: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
+  box-shadow: 0 8px 16px color-mix(in srgb, var(--color-shade) 20%, transparent);
 }
 
 .faqButton {
@@ -136,11 +136,11 @@
 }
 
 .faqButton:hover {
-  background: rgba(213, 35, 35, 0.05);
+  background: color-mix(in srgb, var(--color-brand-primary) 5%, transparent);
 }
 
 .faqButton:focus {
-  outline: 2px solid rgba(213, 35, 35, 0.5);
+  outline: 2px solid color-mix(in srgb, var(--color-brand-primary) 50%, transparent);
   outline-offset: -2px;
 }
 
@@ -158,7 +158,7 @@
   align-items: center;
   justify-content: center;
   background: var(--color-brand-primary);
-  color: #ffffff;
+  color: var(--color-brand-white);
   font-size: 24px;
   font-weight: 700;
   border-radius: 8px;
@@ -167,13 +167,13 @@
 
 .faqButton:hover .questionIcon {
   transform: scale(1.1);
-  box-shadow: 0 0 20px rgba(213, 35, 35, 0.5);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-brand-primary) 50%, transparent);
 }
 
 .questionText {
   font-size: 16px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-brand-white);
   line-height: 1.4;
 }
 
@@ -183,7 +183,7 @@
 
 .faqAnswer {
   padding: 0 24px 24px 24px;
-  color: rgba(255, 255, 255, 0.8);
+  color: color-mix(in srgb, var(--color-tint) 80%, transparent);
   font-size: 15px;
   line-height: 1.6;
 }
@@ -200,10 +200,10 @@
 .contactCard {
   background: linear-gradient(
     135deg,
-    rgba(213, 35, 35, 0.15) 0%,
-    rgba(51, 43, 43, 0.8) 100%
+    color-mix(in srgb, var(--color-brand-primary) 15%, transparent) 0%,
+    color-mix(in srgb, var(--color-accent-900) 80%, transparent) 100%
   );
-  border: 2px solid rgba(213, 35, 35, 0.3);
+  border: 2px solid color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
   border-radius: 16px;
   overflow: hidden;
 }
@@ -216,7 +216,7 @@
 .contactTitle {
   font-size: 24px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-brand-white);
   margin-bottom: 16px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -225,7 +225,7 @@
 .contactText {
   font-size: 16px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.85);
+  color: color-mix(in srgb, var(--color-tint) 85%, transparent);
   margin-bottom: 32px;
   max-width: 600px;
   margin-left: auto;
@@ -248,7 +248,7 @@
   gap: 8px;
   padding: 14px 32px;
   background: var(--color-brand-primary);
-  color: #ffffff;
+  color: var(--color-brand-white);
   text-decoration: none;
   font-size: 16px;
   font-weight: 600;
@@ -261,8 +261,8 @@
   background: var(--color-brand-primary-hover);
   transform: translateY(-2px);
   box-shadow:
-    0 0 20px rgba(213, 35, 35, 0.5),
-    0 8px 16px rgba(0, 0, 0, 0.3);
+    0 0 20px color-mix(in srgb, var(--color-brand-primary) 50%, transparent),
+    0 8px 16px color-mix(in srgb, var(--color-shade) 30%, transparent);
 }
 
 .contactButton:active {

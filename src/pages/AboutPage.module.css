@@ -5,19 +5,19 @@
   background-image:
     radial-gradient(
       circle at 20% 50%,
-      rgba(213, 35, 35, 0.03) 0%,
+      color-mix(in srgb, var(--color-brand-primary) 3%, transparent) 0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 80% 80%,
-      rgba(213, 35, 35, 0.03) 0%,
+      color-mix(in srgb, var(--color-brand-primary) 3%, transparent) 0%,
       transparent 50%
     );
 }
 
 .hero {
-  background: #332b2b;
-  color: var(--color-white, #ffffff);
+  background: var(--color-brand-section-bg);
+  color: var(--color-white, var(--color-brand-white));
   padding: 80px 0 40px;
   text-align: center;
   position: relative;
@@ -33,7 +33,7 @@
   height: 500px;
   background: radial-gradient(
     circle,
-    rgba(213, 35, 35, 0.15) 0%,
+    color-mix(in srgb, var(--color-brand-primary) 15%, transparent) 0%,
     transparent 70%
   );
   border-radius: 50%;
@@ -50,7 +50,7 @@
   height: 600px;
   background: radial-gradient(
     circle,
-    rgba(213, 35, 35, 0.12) 0%,
+    color-mix(in srgb, var(--color-brand-primary) 12%, transparent) 0%,
     transparent 70%
   );
   border-radius: 50%;
@@ -81,7 +81,7 @@
 .subtitle {
   font-size: 18px;
   margin: 0;
-  color: rgba(255, 255, 255, 0.9);
+  color: color-mix(in srgb, var(--color-tint) 90%, transparent);
   position: relative;
   z-index: 1;
 }
@@ -98,7 +98,7 @@
 .sectionTitle {
   font-size: 28px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-brand-white);
   text-align: center;
   margin-bottom: 40px;
   text-transform: uppercase;
@@ -114,7 +114,7 @@
 .paragraph {
   font-size: 16px;
   line-height: 1.8;
-  color: rgba(255, 255, 255, 0.85);
+  color: color-mix(in srgb, var(--color-tint) 85%, transparent);
   margin-bottom: 24px;
   text-align: center;
 }
@@ -128,8 +128,8 @@
 }
 
 .card {
-  background: rgba(51, 43, 43, 0.6);
-  border: 2px solid rgba(213, 35, 35, 0.2);
+  background: color-mix(in srgb, var(--color-accent-900) 60%, transparent);
+  border: 2px solid color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
   border-radius: 16px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
@@ -146,7 +146,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(213, 35, 35, 0.1),
+    color-mix(in srgb, var(--color-brand-primary) 10%, transparent),
     transparent
   );
   transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -154,10 +154,10 @@
 
 .card:hover {
   transform: translateY(-8px);
-  border-color: rgba(213, 35, 35, 0.5);
+  border-color: color-mix(in srgb, var(--color-brand-primary) 50%, transparent);
   box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.3),
-    0 0 30px rgba(213, 35, 35, 0.2);
+    0 20px 40px color-mix(in srgb, var(--color-shade) 30%, transparent),
+    0 0 30px color-mix(in srgb, var(--color-brand-primary) 20%, transparent);
 }
 
 .card:hover::before {
@@ -180,7 +180,7 @@
 .cardTitle {
   font-size: 24px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-brand-white);
   margin-bottom: 16px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -189,7 +189,7 @@
 .cardText {
   font-size: 16px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.8);
+  color: color-mix(in srgb, var(--color-tint) 80%, transparent);
 }
 
 /* Valores */
@@ -200,16 +200,16 @@
 }
 
 .valueCard {
-  background: rgba(51, 43, 43, 0.4);
-  border: 2px solid rgba(213, 35, 35, 0.15);
+  background: color-mix(in srgb, var(--color-accent-900) 40%, transparent);
+  border: 2px solid color-mix(in srgb, var(--color-brand-primary) 15%, transparent);
   border-radius: 12px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .valueCard:hover {
   transform: translateY(-4px) scale(1.02);
-  border-color: rgba(213, 35, 35, 0.4);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--color-shade) 20%, transparent);
 }
 
 .valueCardContent {
@@ -237,7 +237,7 @@
 .valueDescription {
   font-size: 15px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.75);
+  color: color-mix(in srgb, var(--color-tint) 75%, transparent);
 }
 
 /* Por qué elegirnos */
@@ -250,22 +250,22 @@
 .whyUsItem {
   text-align: center;
   padding: 32px 24px;
-  background: rgba(51, 43, 43, 0.3);
+  background: color-mix(in srgb, var(--color-accent-900) 30%, transparent);
   border-radius: 12px;
-  border: 2px solid rgba(213, 35, 35, 0.1);
+  border: 2px solid color-mix(in srgb, var(--color-brand-primary) 10%, transparent);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .whyUsItem:hover {
   transform: translateY(-6px);
-  border-color: rgba(213, 35, 35, 0.3);
-  background: rgba(51, 43, 43, 0.5);
+  border-color: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
+  background: color-mix(in srgb, var(--color-accent-900) 50%, transparent);
 }
 
 .whyUsNumber {
   font-size: 48px;
   font-weight: 800;
-  color: #d52323;
+  color: var(--color-brand-primary);
   margin-bottom: 16px;
   opacity: 0.3;
 }
@@ -273,7 +273,7 @@
 .whyUsTitle {
   font-size: 22px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-brand-white);
   margin-bottom: 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -282,7 +282,7 @@
 .whyUsText {
   font-size: 16px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.75);
+  color: color-mix(in srgb, var(--color-tint) 75%, transparent);
 }
 
 @media (min-width: 769px) {
