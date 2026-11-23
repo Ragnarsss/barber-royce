@@ -285,6 +285,15 @@ Criterios de aceptación:
 1. CP-DATOS-001 y CP-RES-002 pasan.
 2. Cambiar la URL de reserva exige editar una sola línea (HU-RES-001 CA-03).
 
+> **Alcance ajustado (2026-11-23, decisión del usuario):** suma los hallazgos de `datos-negocio-auditor` tras la épica M (vienen de `BR-103`):
+> 1. **Contacto por sucursal:** el pie y `CONTACT.whatsapp` no cambian con la sucursal activa; en `/la-serena` se ve el WhatsApp de Coquimbo.
+>    Decidir con el dueño si el pie lee la fila de la sucursal activa (`useSiteContent().locations`).
+> 2. **Mapa de Coquimbo** (`mapUrl` en `src/data/locationsData.ts`): apunta a Bogotá; hace falta el real (así también sale `geo` en el JSON-LD).
+> 3. **Correos de sucursal:** `centro@` y `norte@barberroyce.com` frente a `info@barberroyce.com`, con el dominio `barberroyce.com` y no `roycebarber.com`.
+> 4. **Horario en la FAQ** (`src/content/snapshot/faq.ts`): «lunes a viernes de 10:00 a 20:00, sábados de 10:00 a 18:00», frente a los datos por sucursal.
+> 5. `LocationCard` arma `tel:`, `mailto:` y `wa.me` a mano: usar `telLink` y `whatsappLink` de `src/content/business.ts`.
+> Sigue **bloqueado** por los datos del dueño. El detalle está en [`handoff-excepciones-epica-m-2026-11-23.md`](./handoff-excepciones-epica-m-2026-11-23.md).
+
 #### BR-006 — Corregir SEO técnico: JSON-LD, sitemap, `og:locale`, manifest
 
 - Prioridad: P0 · Esfuerzo: S · Depende de: BR-005
@@ -1310,7 +1319,7 @@ Criterios de aceptación:
 
 #### BR-033 — Accesibilidad del menú móvil, imágenes y formularios
 
-- Prioridad: P2 · Esfuerzo: S · Depende de: —
+- Prioridad: P1 · Esfuerzo: S · Depende de: —
 - Estado: Propuesta
 - Historia de usuario: HU-EXP-002 (CA-01, CA-03)
 - RF/RNF: `RNF-A11Y-001`, `RNF-A11Y-002`
@@ -1326,6 +1335,16 @@ Alcance:
 
 Criterios de aceptación:
 1. CP-A11Y-001 y CP-A11Y-002 pasan.
+
+> **Alcance ajustado (2026-11-23, decisión del usuario, sube de P2 a P1):** recibe lo que `accesibilidad-auditor` dejó abierto en la
+> épica M (`BR-105` y `BR-107`):
+> 1. Nombre fijo «Menú» en el botón de la hamburguesa (hoy cambia entre «Abrir menú» y «Cerrar menú» a la vez que `aria-expanded`).
+> 2. `BranchSwitch`: teclas Inicio y Fin, y documentar en `HU-SUC-001` (CA-05 a CA-08) que las flechas navegan al mover el foco.
+> 3. `CardCarousel`: al llegar al borde, la flecha deshabilitada hace perder el foco (usar `aria-disabled` con guard, o pasar el foco).
+> 4. Aviso «(se abre en una pestaña nueva)» en los enlaces a AgendaPro (`Navbar`, `CTA1`, `CTA2`, `Footer`, `HeroLaSerena`, equipo).
+> 5. `Navbar`: sus transiciones dentro de `prefers-reduced-motion`, y el `aria-label` del logo coherente con su texto visible.
+> Criterio añadido: `accesibilidad-auditor` sin hallazgos sobre esos componentes y `axe` sin violaciones en el preview con los dos temas.
+> El detalle está en [`handoff-excepciones-epica-m-2026-11-23.md`](./handoff-excepciones-epica-m-2026-11-23.md).
 
 > **Hallazgo (2026-10-12):** en el footer, el título "Barber Royce" se ve
 > oscuro sobre fondo oscuro (casi ilegible; incumple `RNF-A11Y-004`).
@@ -4222,7 +4241,7 @@ vistas propias de La Serena.
 #### BR-103 — Sucursal activa: `BranchProvider`, rutas y reserva por sucursal
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: —
-- Estado: En curso (hecho y en producción, PR #49; falta decidir las excepciones del `datos-negocio-auditor`, ver el registro)
+- Estado: Hecho (2026-11-23, rama `feat/br-103-sucursal-activa` → master, PR #49 y #57)
 - Historia de usuario: HU-SUC-001 (CA-02 .. CA-04, CA-09, CA-10), HU-RES-001 (CA-04)
 - RF/RNF: `RF-SUC-001`, `RF-SUC-002`, `RF-RES-008`, `RF-CNT-009`, `RNF-PERF-008`, `RNF-SEG-005`, `RNF-DATOS-001`
 
@@ -4287,6 +4306,11 @@ Criterios de aceptación:
 >   Serena abriría la de Coquimbo hasta que el dueño agregue la columna.
 > - `useBranch()` fuera del provider devuelve Coquimbo (como `ContentContext`) en
 >   vez de lanzar un error, para no romper los tests que montan un componente suelto.
+
+> **Alcance ajustado (2026-11-23, decisión del usuario, al cerrar):** el criterio 7 (`datos-negocio-auditor` sin hallazgos) se
+> cumple para lo que este ticket tocó (la reserva por sucursal, incluido el JSON-LD, corregido en el PR #57). Los hallazgos que
+> quedan no son de este ticket y pasan a `BR-005`: el teléfono de relleno del pie, el mapa de Coquimbo que apunta a Bogotá, los
+> horarios que se contradicen, los correos de sucursal y el WhatsApp del pie, que no cambia con la sucursal activa.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-103).
 
@@ -4376,7 +4400,7 @@ Criterios de aceptación:
 #### BR-105 — Control para cambiar de sucursal, con transición
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-104
-- Estado: En curso (hecho y en producción, PR #52; falta `accesibilidad-auditor` sin hallazgos: Escape y foco del menú móvil, `BR-033`)
+- Estado: Hecho (2026-11-23, rama `feat/br-105-selector-sucursal` → master, PR #52)
 - Historia de usuario: HU-SUC-001 (CA-05 .. CA-08)
 - RF/RNF: `RF-SUC-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-PERF-003`
 
@@ -4418,12 +4442,17 @@ Criterios de aceptación:
 >   se mantiene la hamburguesa, con el control de sucursal dentro del menú. A 1280 px los huecos entre enlaces son de 16 px.
 > - Pendiente: verificar la cortina en el preview de Vercel (Chrome; Firefox no tiene View Transitions) y `accesibilidad-auditor`.
 
+> **Alcance ajustado (2026-11-23, decisión del usuario, al cerrar):** el criterio 3 (`accesibilidad-auditor` sin hallazgos) se
+> cumple para el control en sí (`radiogroup`, teclado, 44 px, foco). Lo que queda pasa a `BR-033`: Escape y foco del menú móvil,
+> el nombre fijo del botón del menú, las teclas Inicio y Fin del control y documentar que las flechas navegan al mover el foco.
+> **Decisión de diseño de este ticket (2026-11-23):** la barra completa empieza en 1280 px, con hamburguesa por debajo.
+
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-105).
 
 #### BR-106 — Portada partida y portadas básicas de cada sucursal
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-104, BR-105
-- Estado: En curso (hecho y en producción, PR #53, #57 y #58; falta el LCP móvil de `RNF-PERF-001`, que depende de `BR-034`)
+- Estado: Hecho (2026-11-23, rama `feat/br-106-portadas-por-sucursal` → master, PR #53, #57, #58 y #63)
 - Historia de usuario: HU-SUC-001 (CA-01), HU-SUC-002 (CA-04, CA-07, CA-08)
 - RF/RNF: `RF-SUC-002`, `RF-SUC-004`, `RNF-PERF-001` .. `RNF-PERF-003`, `RNF-SEO-001`, `RNF-A11Y-003`, `RNF-A11Y-005`
 
@@ -4480,12 +4509,20 @@ Criterios de aceptación:
 > - **Pendiente:** Lighthouse móvil de `/` y `/la-serena` en el preview y `seo-performance-auditor`; los textos del hero y del picker
 >   están en el código, no en la hoja de textos (decidir si se mueven); la imagen del local cuando llegue el original.
 
+> **Alcance ajustado (2026-11-23, decisión del usuario, al cerrar):**
+> - El LCP móvil de `/` y `/la-serena` (5,6 y 5,3 s, frente a 2,5 s) no es de este ticket: es igual en `/coquimbo` y viene de que la
+>   página se arma en el navegador. Pasa a `BR-034` (prerender). El resto del criterio 4 se cumple: SEO 100, TBT 35 y 103 ms, CLS 0.
+> - Los hallazgos de `seo-performance-auditor` (preload del hero de Coquimbo en todas las rutas, `HomePage` con `lazy`, la espera de
+>   `/` con elección guardada, textos de `ROUTES` que dicen solo «Coquimbo» y la URL del JSON-LD) pasan a `BR-111`.
+> - **La sección «Visítanos» (alcance 3, «bloque de la sucursal») se retiró de `/la-serena` por pedido del usuario (2026-11-23, PR #63)**,
+>   y con ella `BranchVisit` y `useBranchLocation`. El selector de `/` quedó sin dirección ni etiquetas, solo el nombre y la foto.
+
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-106).
 
 #### BR-107 — Equipo de La Serena: tarjetas rectangulares en carrusel con botones de vidrio
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-103, BR-104
-- Estado: En curso (hecho y en producción, PR #54 y #56; falta `accesibilidad-auditor` sin hallazgos: detalles menores del carrusel)
+- Estado: Hecho (2026-11-23, rama `feat/br-107-equipo-la-serena` → master, PR #54 y #56)
 - Historia de usuario: HU-SUC-002 (CA-05, CA-07)
 - RF/RNF: `RF-SUC-006`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-PERF-006`
 
@@ -4533,6 +4570,10 @@ Criterios de aceptación:
 > - **Desviación:** el borde de neón es de la tarjeta visible en móvil; en escritorio, con tres tarjetas a la vez, es de la que
 >   toca el cursor o el foco (el carrusel no distingue una «activa» entre varias visibles).
 > - Pendiente: `accesibilidad-auditor`, y verlo en el preview.
+
+> **Alcance ajustado (2026-11-23, decisión del usuario, al cerrar):** el criterio 4 (`accesibilidad-auditor` sin hallazgos) se cumple
+> tras corregir los puntos de vidrio, la atenuación, el foco en móvil y el nombre de la tarjeta. Lo que queda pasa a `BR-033`: el foco
+> que se pierde al deshabilitarse la flecha del borde y el aviso de «se abre en una pestaña nueva» en los enlaces a AgendaPro.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-107).
 
@@ -4615,6 +4656,38 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-110).
 
+#### BR-111 — Rendimiento y SEO de las portadas: lo que dejó la auditoría de la épica M
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-106
+- Estado: Propuesta
+- Historia de usuario: no aplica — deuda técnica de rendimiento y SEO.
+- RF/RNF: `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`, `RNF-SEO-001`, `RNF-SEO-002`
+
+**Origen (2026-11-23):** `seo-performance-auditor` sobre la épica M y el Lighthouse móvil de producción. El LCP de fondo (5,3 a 5,6 s
+en las tres rutas) no es de este ticket: es `BR-034`.
+
+Alcance (cada punto con su medición antes y después, y de a uno):
+1. Quitar el preload de las imágenes del hero de Coquimbo de `index.html` para `/` y `/la-serena`, donde se descargan sin usarse
+   (100 a 198 KB, con `fetchpriority="high"`). Si se inyecta desde el script de arranque, cambia su hash en la CSP de `vercel.json`
+   y hay que actualizar `src/test/vercelConfig.test.ts`.
+2. `HomePage` con `lazy` en `src/App.tsx`, como `LaSerenaPage`, para que `/` y `/la-serena` no bajen el hero ni CTA1 de Coquimbo.
+3. `/` con elección guardada: precargar el trozo de la portada de esa sucursal, para acortar la cadena de redirección.
+4. Neutralizar título y descripción de `location` y `about` en `ROUTES`, que dicen solo «Coquimbo».
+5. `url` y `@id` del `HairSalon` de cada sucursal en `structuredData.ts`: apuntan siempre a `/ubicacion`; usar la ruta de cada portada
+   o documentar que `/ubicacion` es la ficha canónica.
+6. Menores: `srcset` en las fotos del selector, y un test que compare los precios del `ItemList` de `index.html` con los servicios.
+
+Criterios de aceptación:
+1. En `/` y `/la-serena` no se descarga ninguna imagen del hero de Coquimbo (pestaña Network en el preview) (RNF-PERF-001).
+2. `/` no baja el JS de la home de Coquimbo, y el tamaño del trozo inicial no sube (RNF-PERF-003).
+3. Lighthouse móvil de `/`, `/la-serena` y `/coquimbo` (mediana de 3): TBT y CLS no empeoran frente a la línea base del registro de `BR-106`
+   y el SEO se mantiene en 100 (RNF-SEO-001).
+4. `seo-performance-auditor` sin hallazgos sobre estos puntos.
+
+El detalle y las rutas de los archivos están en [`handoff-excepciones-epica-m-2026-11-23.md`](./handoff-excepciones-epica-m-2026-11-23.md).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-111).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -4676,7 +4749,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-030 | Vitest y primeros tests | H | P1 | M | Hecho | — |
 | BR-031 | Lighthouse CI | H | P2 | S | Propuesta | BR-029, BR-002 |
 | BR-032 | Actualizar README | A | P2 | S | En curso | BR-001 |
-| BR-033 | Accesibilidad | G | P2 | S | Propuesta | — |
+| BR-033 | Accesibilidad | G | P1 | S | Propuesta | — |
 | BR-034 | Spike prerender | G | P1 | M | Propuesta (spike) | BR-006 |
 | BR-036 | Vercel Analytics por variable | I | P2 | S | En curso | BR-010 |
 | BR-037 | Consentimiento y Google Analytics 4 | I | P2 | M | En curso | BR-044, BR-030 |
@@ -4745,13 +4818,14 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-100 | Modal de bienvenida con una mascarilla facial gratis | K | P3 | M | En curso | BR-037, BR-042 |
 | BR-101 | Canje de la mascarilla con formulario, cupón y registro en la hoja | K | P3 | L | Bloqueado | BR-100 |
 | BR-102 | Poner al día `architecture.md` y las guías con lo que ya existe | A | P2 | S | Propuesta | — |
-| BR-103 | Sucursal activa: `BranchProvider`, rutas y reserva por sucursal | M | P1 | M | En curso (falta auditor de datos) | — |
+| BR-103 | Sucursal activa: `BranchProvider`, rutas y reserva por sucursal | M | P1 | M | Hecho | — |
 | BR-104 | Tema La Serena en tokens y figuras por sucursal | M | P1 | M | Hecho | BR-103, BR-022 |
-| BR-105 | Control para cambiar de sucursal, con transición | M | P1 | M | En curso (falta accesibilidad) | BR-103, BR-104 |
-| BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | En curso (falta LCP, BR-034) | BR-103 .. BR-105 |
-| BR-107 | Equipo de La Serena: tarjetas rectangulares en carrusel | M | P2 | M | En curso (falta accesibilidad) | BR-103, BR-104 |
+| BR-105 | Control para cambiar de sucursal, con transición | M | P1 | M | Hecho | BR-103, BR-104 |
+| BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | Hecho | BR-103 .. BR-105 |
+| BR-107 | Equipo de La Serena: tarjetas rectangulares en carrusel | M | P2 | M | Hecho | BR-103, BR-104 |
 | BR-108 | Enredaderas laterales del tema La Serena | M | P2 | M | Hecho | BR-104 |
 | BR-110 | Textos por sucursal: una pestaña para cada landing | M | P2 | M | En curso | BR-042, BR-106 |
+| BR-111 | Rendimiento y SEO de las portadas: lo que dejó la auditoría de la épica M | M | P2 | M | Propuesta | BR-106 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
