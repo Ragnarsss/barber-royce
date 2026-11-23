@@ -4331,7 +4331,8 @@ Alcance:
    la captura de Instagram recortada (sin el avatar) como provisional, por
    `npm run optimize:images` (`scripts/optimize-images.js`).
 5. SEO: título y descripción de `/`, `/coquimbo` y `/la-serena` en `ROUTES`;
-   `sitemap.xml` con las dos portadas.
+   `sitemap.xml` con las dos portadas. El JSON-LD de cada portada reutiliza
+   `src/seo/structuredData.ts` (`BR-006`), con la sucursal de esa portada.
 
 Criterios de aceptación:
 1. `/` muestra las dos mitades con enlaces a `/coquimbo` y `/la-serena`, y su
