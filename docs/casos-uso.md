@@ -21,6 +21,7 @@ su HU y sus criterios de aceptación.
 | ID | Nombre | Actor | HU relacionada | Estado |
 |---|---|---|---|---|
 | CU-RES-001 | Reservar una hora | Cliente | HU-RES-001, HU-RES-002 | Propuesto |
+| CU-RES-002 | Canjear la mascarilla de bienvenida | Cliente | HU-RES-003, HU-RES-004 | Propuesto |
 | CU-INFO-001 | Filtrar servicios o productos | Cliente | HU-INFO-001, HU-INFO-004 | Propuesto |
 | CU-INFO-002 | Consultar una sucursal | Cliente | HU-INFO-002 | Propuesto |
 | CU-EXP-001 | Llegar a una ruta profunda, inexistente o con error | Cliente | HU-EXP-003 | Propuesto |
@@ -57,6 +58,46 @@ su HU y sus criterios de aceptación.
 
 El cliente está en AgendaPro (o en una conversación con la barbería) y el
 sitio sigue abierto en la pestaña original.
+
+---
+
+## CU-RES-002 - Canjear la mascarilla de bienvenida
+
+- Actor: Cliente
+- Historia de usuario relacionada: HU-RES-003, HU-RES-004
+- Precondición: la promoción está encendida (`promo.activa`) y el cliente no
+  ha cerrado ni canjeado el modal antes.
+
+### Flujo principal
+
+1. El cliente entra a cualquier ruta; termina el loader de neón.
+2. El sistema espera la respuesta al aviso de privacidad (si existe) y unos
+   5 s, y abre el modal con la oferta.
+3. El cliente toca «Canjear cupón»; el sistema muestra el formulario en la
+   franja derecha.
+4. El cliente completa los campos, acepta el uso de sus datos y toca
+   «Obtener cupón».
+5. El sistema registra el canje en la hoja y muestra el cupón con su nombre
+   y la frase «Royce web».
+6. El cliente muestra el cupón al barbero con un servicio pagado.
+
+### Flujos alternativos
+
+- 2a. El aviso de privacidad sigue sin responderse: el modal espera.
+- 2b. `promo.activa` apagada o ausente: no hay modal.
+- 3a. El cliente toca «Reservar» en vez de canjear: se abre AgendaPro en una
+  pestaña nueva y termina.
+- 3b. El cliente cierra el modal: se anota en el navegador y no vuelve a salir.
+- 4a. Un campo es inválido: el error aparece junto al campo y no se envía nada.
+- 4b. El cliente toca «Volver»: regresa al botón, sin enviar nada.
+- 5a. El registro en la hoja falla: igual se muestra el cupón.
+- 6a. El cliente solo dice «Royce web» al barbero (flujo de `HU-RES-003`, sin
+  formulario).
+
+### Postcondición
+
+El cliente tiene su cupón (o conoce la frase), el canje queda anotado en el
+navegador y, si hubo registro, en la hoja del dueño.
 
 ---
 

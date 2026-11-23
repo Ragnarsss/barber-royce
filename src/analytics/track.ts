@@ -13,10 +13,26 @@ import type { GoogleWindow } from "./googleAnalytics";
  * - Los parámetros son solo la sección del sitio: nunca teléfono, nombre ni texto del visitante (RN-01).
  * - `gtag` encola en `dataLayer` de forma síncrona: el clic no se retrasa (RN-02).
  */
-export type AnalyticsEventName = "page_view" | "reserve_click" | "whatsapp_click" | "phone_click";
+export type AnalyticsEventName =
+  | "page_view"
+  | "reserve_click"
+  | "whatsapp_click"
+  | "phone_click"
+  | "promo_view"
+  | "promo_close";
 
 /** Parte del sitio donde estaba el botón. */
-export type ClickSection = "navbar" | "navbar-movil" | "cta1" | "cta2" | "footer" | "ubicacion" | "faq" | "404" | "equipo";
+export type ClickSection =
+  | "navbar"
+  | "navbar-movil"
+  | "cta1"
+  | "cta2"
+  | "footer"
+  | "ubicacion"
+  | "faq"
+  | "404"
+  | "equipo"
+  | "promo";
 
 export function trackEvent(name: AnalyticsEventName, params: Record<string, string> = {}): void {
   const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;

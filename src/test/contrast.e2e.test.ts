@@ -62,6 +62,8 @@ describe.skipIf(!chromePath)("texto legible en todas las rutas (BR-045, RNF-A11Y
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
     await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "dark" }]);
+    // El modal de bienvenida (BR-100) cuenta como ya cerrado: este test mide la página en reposo.
+    await page.evaluateOnNewDocument(() => window.localStorage.setItem("barber-royce:promo-dismissed", "1"));
     await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle0" });
     // Baja por la página para que se disparen las animaciones de entrada.
     const height = await page.evaluate(() => document.documentElement.scrollHeight);

@@ -54,7 +54,8 @@ export const PrivacyPage = () => {
             que usa cookies, solo si lo aceptas, y otro que cuenta visitas sin cookies. Para mantener al día los precios y
             los datos de contacto, tu navegador también consulta un servicio externo de hojas de cálculo; esa consulta no
             lleva datos tuyos, pero el proveedor puede ver tu dirección IP. Al reservar, pasas a AgendaPro, que tiene su
-            propia política de privacidad.
+            propia política de privacidad. Si cierras el cuadro de bienvenida con la promoción, tu navegador anota solo que
+            ya lo viste, para no mostrártelo de nuevo; no es un dato personal y no sale de tu dispositivo.
           </p>
         </section>
 

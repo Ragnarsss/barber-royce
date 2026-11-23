@@ -6,6 +6,7 @@ import { Footer } from "../Footer/Footer";
 import { ScrollProgressBar } from "@/components/ui/ScrollProgressBar/ScrollProgressBar";
 import { SkipLink } from "@/components/common/SkipLink/SkipLink";
 import { RouteErrorBoundary } from "@/components/common/ErrorBoundary";
+import { PromoGate } from "@/promo/PromoGate";
 
 // Google Analytics y su aviso de consentimiento solo existen si hay un ID de medición (BR-037).
 // Con la variable ausente la condición es constante en el build: ni este código ni el de Google
@@ -32,6 +33,7 @@ export const Layout = () => {
         </RouteErrorBoundary>
       </main>
       <Footer />
+      <PromoGate />
     </div>
   );
 };
