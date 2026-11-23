@@ -18,9 +18,11 @@ interface BranchSwitchProps {
   className?: string;
   /** Con espacio de sobra (el menú móvil): suma el ícono de ubicación y más relleno. En la barra va compacto. */
   roomy?: boolean;
+  /** Se llama tras elegir una sucursal con el puntero (el menú móvil se cierra). */
+  onSelect?: () => void;
 }
 
-export function BranchSwitch({ className = "", roomy = false }: BranchSwitchProps) {
+export function BranchSwitch({ className = "", roomy = false, onSelect }: BranchSwitchProps) {
   const { branch, setBranch } = useBranch();
   const options = useRef<Array<HTMLButtonElement | null>>([]);
   // Cada control (barra y menú móvil) tiene su propio fondo deslizante: con el mismo `layoutId` se disputarían la animación
@@ -51,7 +53,10 @@ export function BranchSwitch({ className = "", roomy = false }: BranchSwitchProp
             aria-checked={checked}
             tabIndex={checked ? 0 : -1}
             className={`${styles.option} ${checked ? styles.checked : ""}`}
-            onClick={() => setBranch(option)}
+            onClick={() => {
+              setBranch(option);
+              onSelect?.();
+            }}
           >
             {/* El fondo de la opción elegida se desliza de una a otra (con «reducir movimiento», salta) */}
             {checked && <motion.span layoutId={pillId} className={styles.pill} transition={{ type: "spring", stiffness: 360, damping: 32 }} />}

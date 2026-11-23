@@ -53,12 +53,19 @@ describe("hairSalonJsonLd (CP-SEO-002-N: el JSON-LD coincide con src/config/)", 
   });
 
   it("CA-02: las redes y la reserva salen de la config, y la reserva va a AgendaPro, no a un ancla que no existe", () => {
-    for (const salon of salons) {
+    for (const [index, salon] of salons.entries()) {
       expect(salon.sameAs).toEqual([SOCIAL_MEDIA.instagram.url, SOCIAL_MEDIA.facebook.url, SOCIAL_MEDIA.tiktok.url]);
       expect(salon.potentialAction["@type"]).toBe("ReserveAction");
-      expect(salon.potentialAction.target.urlTemplate).toBe(BOOKING.url);
+      // Cada sucursal reserva en su propia página de AgendaPro (BR-103); sin ella, el enlace general
+      expect(salon.potentialAction.target.urlTemplate).toBe(locationsList[index].bookingUrl ?? BOOKING.url);
       expect(salon.potentialAction.target.urlTemplate).not.toContain("#reservar");
     }
+  });
+
+  it("BR-103: las dos sucursales reservan en páginas distintas de AgendaPro", () => {
+    const urls = salons.map((salon) => salon.potentialAction.target.urlTemplate);
+
+    expect(new Set(urls).size).toBe(locationsList.length);
   });
 
   it("CA-02: las coordenadas solo salen si el mapa de la sucursal cae en Chile (La Serena sí; el mapa de Coquimbo apunta a Bogotá)", () => {

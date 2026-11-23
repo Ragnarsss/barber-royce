@@ -137,7 +137,7 @@ export const Navbar = () => {
             {link.label}
           </NavLink>
         ))}
-        <BranchSwitch roomy className={styles.mobileSwitch} />
+        <BranchSwitch roomy className={styles.mobileSwitch} onSelect={() => setIsMobileMenuOpen(false)} />
         <a
           href={bookingUrl}
           target="_blank"

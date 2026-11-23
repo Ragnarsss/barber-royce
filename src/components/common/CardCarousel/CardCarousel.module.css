@@ -186,7 +186,8 @@
  * es sólido (el del tema).
  */
 .glass .dot::before {
-  background: var(--glass-border);
+  /* 3:1 sobre el fondo en los dos temas (WCAG 1.4.11): el borde de vidrio es demasiado tenue para un punto */
+  background: color-mix(in srgb, var(--color-brand-white) 60%, transparent);
 }
 
 .glass .dot[aria-current="true"]::before {

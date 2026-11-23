@@ -155,7 +155,7 @@ export function hairSalonJsonLd({
       sameAs,
       potentialAction: {
         "@type": "ReserveAction",
-        target: { "@type": "EntryPoint", urlTemplate: business.booking.url, inLanguage: "es", actionPlatform: PLATFORMS },
+        target: { "@type": "EntryPoint", urlTemplate: location.bookingUrl ?? business.booking.url, inLanguage: "es", actionPlatform: PLATFORMS },
         result: { "@type": "Reservation", name: `Reserva de hora en ${location.name}` },
       },
     };
