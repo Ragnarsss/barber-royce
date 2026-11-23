@@ -55,7 +55,7 @@ describe("el calculador de contraste (BR-104)", () => {
 describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
   it("el bloque existe y redefine los alias de marca", () => {
     expect(LA_SERENA.size).toBeGreaterThan(0);
-    for (const alias of ["--color-brand-background", "--color-brand-section-bg", "--color-brand-primary", "--color-brand-primary-hover", "--color-brand-white", "--color-on-primary", "--color-detail", "--color-hover-text"]) {
+    for (const alias of ["--color-brand-background", "--color-brand-section-bg", "--color-brand-primary", "--color-brand-primary-hover", "--color-brand-white", "--color-on-primary", "--color-detail", "--color-hover-text", "--color-ink"]) {
       expect(LA_SERENA.has(alias), alias).toBe(true);
     }
   });
@@ -73,6 +73,8 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
     ["--color-leaf", "--color-brand-background", 4.5, "verde hoja como texto"],
     ["--color-detail", "--color-brand-background", 4.5, "verde de los detalles y hovers sobre el fondo"],
     ["--color-detail", "--color-brand-section-bg", 4.5, "verde de los detalles y hovers sobre las secciones alternas"],
+    ["--color-ink", "--color-brand-section-bg", 4.5, "tinta sobre las secciones alternas (subtítulo de CTA2)"],
+    ["--color-ink", "--color-brand-background", 4.5, "tinta sobre el fondo"],
     ["--color-hover-text", "--color-brand-background", 4.5, "texto de un enlace con el cursor encima, sobre el fondo"],
     ["--color-hover-text", "--color-brand-section-bg", 4.5, "texto de un enlace con el cursor encima, sobre las secciones alternas"],
     ["--color-accent-on-inverse", "--color-brand-white", 4.5, "acento sobre el botón oscuro (relleno --color-brand-white)"],

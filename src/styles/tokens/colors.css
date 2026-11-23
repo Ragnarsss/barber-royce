@@ -72,6 +72,9 @@
   /* Texto sobre una foto con velo oscuro: es claro en los dos temas (el velo es oscuro en los dos). */
   --color-on-image: #ffffff;
 
+  /* Tinta: texto oscuro sobre una foto o un fondo claro. Es oscura en los dos temas (primary-900 pasa a ser una superficie clara en La Serena). */
+  --color-ink: var(--color-primary-900);
+
   /* Texto de acento sobre un relleno --color-brand-white (el botón «blanco» de Coquimbo; en La Serena, ese relleno es oscuro). */
   --color-accent-on-inverse: var(--color-brand-primary);
   --color-accent-on-inverse-hover: var(--color-brand-primary-hover);
@@ -152,6 +155,7 @@
   --color-on-primary: #ffffff;
   --color-detail: var(--color-leaf);
   --color-hover-text: var(--color-leaf);
+  --color-ink: var(--color-espresso);
   --color-accent-on-inverse: var(--color-amber); /* ámbar sobre el relleno espresso: 5,3:1 */
   --color-accent-on-inverse-hover: var(--color-amber);
   --color-background-inverse: var(--color-sand); /* aviso de privacidad, 404 y pantallas de error: aquí son claros */
