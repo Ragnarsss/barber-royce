@@ -4474,6 +4474,9 @@ Criterios de aceptación:
 >   (`BranchPickerPage` redirige si la sucursal viene de la elección guardada). Cada mitad lleva la foto de su local
 >   (`royce_cqbo.png`, `royce_ls.png`, optimizadas a WebP) en escala de grises, con las figuras, y se ilumina con el cursor o el
 >   foco; sin etiqueta, frase, dirección ni «Entrar». En pantallas táctiles no hay cursor: las fotos quedan en grises.
+> - **Ajuste (2026-11-23, decisión del usuario):** `/la-serena` reutiliza bajo su hero las secciones de la home (CTA1, SocialProof1,
+>   Benefits, Reviews, Features, SocialProof2, el bloque de la sucursal y CTA2), con el tema de La Serena. Las fotos y los textos
+>   son los de Coquimbo hasta que haya propios; eso pide un ticket aparte.
 > - **Pendiente:** Lighthouse móvil de `/` y `/la-serena` en el preview y `seo-performance-auditor`; los textos del hero y del picker
 >   están en el código, no en la hoja de textos (decidir si se mueven); la imagen del local cuando llegue el original.
 
