@@ -26,7 +26,9 @@ minúsculas.
 | `productos` | La página de productos | `id`, `nombre`, `descripcion`, `precio`, `categoria` |
 | `equipo` | La página del equipo | `id`, `nombre`, `cargo`, `experiencia` |
 | `preguntas` | Las preguntas frecuentes | `id`, `categoria`, `pregunta`, `respuesta` |
-| `textos` | Títulos y textos de la portada | `clave`, `valor` |
+| `textos` | Títulos y textos que son iguales en las dos sucursales (la base común) | `clave`, `valor` |
+| `textos-coquimbo` | Los textos de la portada de Coquimbo | `clave`, `valor` |
+| `textos-la-serena` | Los textos de la portada de La Serena | `clave`, `valor` |
 | `negocio` | Teléfono, WhatsApp, correo, enlace de reservas, horarios y redes sociales | `clave`, `valor` |
 | `sucursales` | La página de ubicación: dirección, contacto, horarios y mapa de cada sucursal | `id`, `nombre`, `direccion`, `ciudad`, `telefono`, `email`, `whatsapp`, `mapa`, `horario_semana`, `horario_sabado`, `horario_domingo` |
 
@@ -88,7 +90,12 @@ nombres.
 - Productos: `Styling`, `Barba`, `Cuidado`, `Kits`
 - Preguntas: `Reservas y Horarios`, `Servicios`, `Precios y Pagos`, `Otros`
 
-### La pestaña `textos`
+### Las pestañas `textos`, `textos-coquimbo` y `textos-la-serena`
+
+La portada de cada sucursal tiene sus propios textos. El sitio busca cada texto **primero en la pestaña de
+la sucursal que se está viendo** (`textos-coquimbo` o `textos-la-serena`), después en `textos` (la base común) y,
+si tampoco está, usa el de siempre. Las tres pestañas tienen las mismas columnas y las mismas claves; en las de
+sucursal solo pones las que quieras cambiar. Mientras no exista `textos-coquimbo`, Coquimbo usa `textos`.
 
 Cada fila cambia **un texto** del sitio. En `clave` va el nombre del texto y en
 `valor` lo que quieres que diga. Si dejas el valor **vacío**, el sitio usa el texto
@@ -183,7 +190,7 @@ Si una sola fila tiene un teléfono, un correo o un mapa mal escritos, el sitio 
    (por ejemplo, «Contenido Royce Barbería»).
 2. Por cada pestaña, importa su plantilla desde la carpeta
    [`docs/contenido/`](./contenido/) de este repositorio:
-   `servicios.csv`, `productos.csv`, `equipo.csv`, `preguntas.csv`, `textos.csv`, `negocio.csv` y `sucursales.csv`.
+   `servicios.csv`, `productos.csv`, `equipo.csv`, `preguntas.csv`, `textos.csv`, `textos-coquimbo.csv`, `textos-la-serena.csv`, `negocio.csv` y `sucursales.csv`.
    - **Archivo → Importar → Subir**, elige el archivo y, en «Ubicación de
      importación», **«Insertar hoja(s) nueva(s)»**.
    - Renombra cada pestaña con el nombre exacto de la tabla de arriba.
@@ -230,7 +237,7 @@ publicar, también **Preview**):
 | Nombre | Valor |
 |---|---|
 | `CONTENT_SHEET_ID` | El identificador `2PACX-…` |
-| `CONTENT_SHEET_GIDS` | `servicios:0,productos:111,equipo:222,preguntas:333,textos:444,negocio:555,sucursales:666` (cambia los números por los `gid` reales de cada pestaña) |
+| `CONTENT_SHEET_GIDS` | `servicios:0,productos:111,equipo:222,preguntas:333,textos:444,textos-coquimbo:777,textos-la-serena:888,negocio:555,sucursales:666` (cambia los números por los `gid` reales de cada pestaña) |
 
 Luego **vuelve a desplegar** el sitio una vez (Deployments → los tres puntos del
 último → Redeploy) para que las lea.

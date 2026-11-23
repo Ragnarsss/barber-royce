@@ -18,6 +18,7 @@ export const snapshot: SiteContent = {
   team: teamMembersList,
   faq: FAQ_LIST,
   texts: {},
+  textsByBranch: { coquimbo: {}, "la-serena": {} },
   business,
   locations,
 };
