@@ -111,6 +111,68 @@ Criterios de aceptación:
 1. Siguiendo solo el README, alguien levanta el sitio en local y sabe cómo
    se despliega.
 
+#### BR-102 — Poner al día `architecture.md` y `engineering-guidelines.md` con lo que ya existe
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: —
+- Estado: Propuesta
+- Historia de usuario: no aplica — documentación interna, sin superficie de usuario.
+- RF/RNF: no aplica — documentación.
+
+**Origen (2026-11-21):** una auditoría del repo (agentes `arquitecto-cv` y
+`practicas-cv`) encontró pasajes de la documentación que describen un
+estado anterior del código:
+
+- `docs/architecture.md:394-395` (§10): la analítica y el contenido desde
+  la hoja figuran como "Planificada, por confirmar", pero están
+  implementados y con tests (`src/analytics/`, `src/content/`,
+  `vite-plugins/siteContentPlugin.ts`).
+- `docs/architecture.md:236-237` y `273-274`: ADR-007 y ADR-008 siguen
+  "decididos por defecto con el usuario ausente; por confirmar". ADR-008
+  ya tuvo una enmienda decidida por el usuario (BR-047), pero el
+  encabezado no lo refleja.
+- `docs/architecture.md:223` (ADR-005): el disparador "la primera llamada
+  de red propia" ya se cumplió con la lectura de la hoja desde el
+  navegador (BR-047, `src/content/sheetSource.ts`) y el ADR no se revisó.
+- `docs/architecture.md` §11 ("Dónde ir para…"): manda a cambiar teléfono
+  y horarios en `src/config/constants.ts` y el catálogo en `src/data/`,
+  cuando desde BR-048 se editan en la hoja y se leen con
+  `useSiteContent()`.
+- `docs/engineering-guidelines.md:220` (§12): dice que "no hay
+  analítica en producción".
+- `docs/engineering-guidelines.md:243` (§13): da por existentes Prettier y
+  `.editorconfig`, que no están en el repo (`BR-028` sigue en
+  `Propuesta`).
+
+La dependencia fantasma `@radix-ui/react-progress`, que salió en la misma
+auditoría, ya está en el alcance 2 de `BR-025` y no entra aquí.
+
+Alcance:
+1. §10 de `architecture.md`: el estado de cada fila coincide con el de sus
+   tickets en el tablero (§6).
+2. §11 de `architecture.md`: cada destino es el lugar donde hoy se hace ese
+   cambio (hoja de Google, `src/config/`, `src/data/locationsData.ts`),
+   según la regla 4 de `CLAUDE.md`.
+3. Encabezados de ADR-007 y ADR-008: se le pregunta al usuario si confirma
+   cada decisión y se registra su respuesta con fecha. No se marca como
+   confirmada sin esa respuesta (regla 10 de `CLAUDE.md`).
+4. ADR-005: se revisa con el usuario si la lectura de la hoja justifica
+   cambiar algo. El resultado (se mantiene, con su porqué, o un ticket
+   nuevo) queda registrado en el ADR con fecha.
+5. `engineering-guidelines.md` §12 y §13: describen lo que existe hoy.
+   Prettier y `.editorconfig` aparecen como pendientes de `BR-028`.
+
+Criterios de aceptación:
+1. Ninguna fila de §10 de `architecture.md` contradice el estado de su
+   ticket en §6 del backlog.
+2. Cada ruta que nombra §11 de `architecture.md` existe y es donde se hace
+   el cambio que describe.
+3. ADR-005, ADR-007 y ADR-008 tienen una línea con fecha que dice qué se
+   decidió en la revisión y quién lo decidió.
+4. `engineering-guidelines.md` no da por existente ninguna herramienta ni
+   archivo que no esté en el repo.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-102).
+
 ---
 
 ### Épica B — Bloqueantes de despliegue
@@ -4097,6 +4159,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-097 | CTA1: los hexágonos se ensamblan con el scroll | K | P3 | M | En curso | BR-096 |
 | BR-100 | Modal de bienvenida con una mascarilla facial gratis | K | P3 | M | En curso | BR-037, BR-042 |
 | BR-101 | Canje de la mascarilla con formulario, cupón y registro en la hoja | K | P3 | L | Bloqueado | BR-100 |
+| BR-102 | Poner al día `architecture.md` y las guías con lo que ya existe | A | P2 | S | Propuesta | — |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
