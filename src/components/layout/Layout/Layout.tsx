@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
+import { ROUTES } from "@/config/routes";
 import styles from "./Layout.module.css";
 import { Navbar } from "../Navbar/Navbar";
 import { Footer } from "../Footer/Footer";
@@ -17,6 +18,9 @@ const AnalyticsRoot = gaMeasurementId
   : null;
 
 export const Layout = () => {
+  // `/` es la portada para elegir sucursal (BR-106): sin barra de navegación, que sería elegir dos veces
+  const chooser = useLocation().pathname === ROUTES.home.path;
+
   return (
     <div className={styles.layout}>
       <SkipLink />
@@ -26,8 +30,8 @@ export const Layout = () => {
         </Suspense>
       )}
       <ScrollProgressBar />
-      <Navbar />
-      <main id="main-content" role="main" tabIndex={-1} className={styles.main}>
+      {!chooser && <Navbar />}
+      <main id="main-content" role="main" tabIndex={-1} className={`${styles.main} ${chooser ? styles.bare : ""}`}>
         <RouteErrorBoundary>
           <Outlet />
         </RouteErrorBoundary>

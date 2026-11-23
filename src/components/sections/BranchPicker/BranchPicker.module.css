@@ -1,7 +1,7 @@
 /* Mobile-first (ADR-009): una mitad sobre la otra; desde 769 px, lado a lado. */
 .picker {
   position: relative;
-  min-height: calc(100svh - 5rem);
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
 }
@@ -143,7 +143,7 @@
   }
 
   .half {
-    min-height: calc(100svh - 5rem);
+    min-height: 100svh;
     padding: var(--spacing-12) var(--spacing-10);
   }
 }
