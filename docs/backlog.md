@@ -605,7 +605,7 @@ Criterios de aceptación:
 #### BR-022 — Reemplazar colores hex escritos a mano por tokens
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-021
-- Estado: En curso (tramo de la landing hecho el 2026-10-22, PR #42; resto del sitio en curso desde 2026-11-23)
+- Estado: Hecho (2026-11-23, rama `refactor/br-022-colores-a-tokens` → master, PR #50)
 - Historia de usuario: no aplica — deuda técnica sin cambio visible.
 - RF/RNF: `RNF-MANT-003`
 
@@ -4222,7 +4222,7 @@ vistas propias de La Serena.
 #### BR-103 — Sucursal activa: `BranchProvider`, rutas y reserva por sucursal
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: —
-- Estado: En curso
+- Estado: En curso (hecho y en producción, PR #49; falta decidir las excepciones del `datos-negocio-auditor`, ver el registro)
 - Historia de usuario: HU-SUC-001 (CA-02 .. CA-04, CA-09, CA-10), HU-RES-001 (CA-04)
 - RF/RNF: `RF-SUC-001`, `RF-SUC-002`, `RF-RES-008`, `RF-CNT-009`, `RNF-PERF-008`, `RNF-SEG-005`, `RNF-DATOS-001`
 
@@ -4293,7 +4293,7 @@ Criterios de aceptación:
 #### BR-104 — Tema La Serena en tokens y figuras por sucursal
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-022
-- Estado: En curso
+- Estado: Hecho (2026-11-23, rama `feat/br-104-tema-la-serena` → master, PR #51)
 - Historia de usuario: HU-SUC-002 (CA-01 .. CA-03)
 - RF/RNF: `RF-SUC-005`, `RNF-A11Y-004`, `RNF-A11Y-003`, `RNF-MANT-004`
 
@@ -4376,7 +4376,7 @@ Criterios de aceptación:
 #### BR-105 — Control para cambiar de sucursal, con transición
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-104
-- Estado: En curso
+- Estado: En curso (hecho y en producción, PR #52; falta `accesibilidad-auditor` sin hallazgos: Escape y foco del menú móvil, `BR-033`)
 - Historia de usuario: HU-SUC-001 (CA-05 .. CA-08)
 - RF/RNF: `RF-SUC-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-PERF-003`
 
@@ -4423,7 +4423,7 @@ Criterios de aceptación:
 #### BR-106 — Portada partida y portadas básicas de cada sucursal
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-104, BR-105
-- Estado: En curso
+- Estado: En curso (hecho y en producción, PR #53, #57 y #58; falta el LCP móvil de `RNF-PERF-001`, que depende de `BR-034`)
 - Historia de usuario: HU-SUC-001 (CA-01), HU-SUC-002 (CA-04, CA-07, CA-08)
 - RF/RNF: `RF-SUC-002`, `RF-SUC-004`, `RNF-PERF-001` .. `RNF-PERF-003`, `RNF-SEO-001`, `RNF-A11Y-003`, `RNF-A11Y-005`
 
@@ -4485,7 +4485,7 @@ Criterios de aceptación:
 #### BR-107 — Equipo de La Serena: tarjetas rectangulares en carrusel con botones de vidrio
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-103, BR-104
-- Estado: En curso
+- Estado: En curso (hecho y en producción, PR #54 y #56; falta `accesibilidad-auditor` sin hallazgos: detalles menores del carrusel)
 - Historia de usuario: HU-SUC-002 (CA-05, CA-07)
 - RF/RNF: `RF-SUC-006`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-PERF-006`
 
@@ -4539,7 +4539,7 @@ Criterios de aceptación:
 #### BR-108 — Enredaderas laterales del tema La Serena
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-104
-- Estado: En curso
+- Estado: Hecho (2026-11-23, rama `feat/br-108-enredaderas` → master, PR #55)
 - Historia de usuario: HU-SUC-002 (CA-06, CA-07)
 - RF/RNF: `RF-SUC-007`, `RNF-A11Y-003`, `RNF-PERF-003`, `RNF-PERF-006`
 
@@ -4665,7 +4665,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-019 | Error boundaries | C | P1 | S | Hecho | — |
 | BR-020 | Recuperación de chunks | C | P1 | S | Hecho | BR-019 |
 | BR-021 | Fuente única de tokens | D | P2 | M | Propuesta | — |
-| BR-022 | Hex → tokens | D | P1 | M | En curso (landing hecha) | BR-021 |
+| BR-022 | Hex → tokens | D | P1 | M | Hecho | BR-021 |
 | BR-023 | Retirar Tailwind y shadcn | D | P2 | L | Propuesta | BR-021 |
 | BR-024 | Breakpoints unificados, mobile-first (base de la migración) | D | P2 | S | Propuesta | — |
 | BR-025 | Código muerto y dependencias | H | P2 | M | Propuesta | BR-014 |
@@ -4745,12 +4745,12 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-100 | Modal de bienvenida con una mascarilla facial gratis | K | P3 | M | En curso | BR-037, BR-042 |
 | BR-101 | Canje de la mascarilla con formulario, cupón y registro en la hoja | K | P3 | L | Bloqueado | BR-100 |
 | BR-102 | Poner al día `architecture.md` y las guías con lo que ya existe | A | P2 | S | Propuesta | — |
-| BR-103 | Sucursal activa: `BranchProvider`, rutas y reserva por sucursal | M | P1 | M | En curso | — |
-| BR-104 | Tema La Serena en tokens y figuras por sucursal | M | P1 | M | En curso | BR-103, BR-022 |
-| BR-105 | Control para cambiar de sucursal, con transición | M | P1 | M | En curso | BR-103, BR-104 |
-| BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | Propuesta | BR-103 .. BR-105 |
-| BR-107 | Equipo de La Serena: tarjetas rectangulares en carrusel | M | P2 | M | Propuesta | BR-103, BR-104 |
-| BR-108 | Enredaderas laterales del tema La Serena | M | P2 | M | Propuesta | BR-104 |
+| BR-103 | Sucursal activa: `BranchProvider`, rutas y reserva por sucursal | M | P1 | M | En curso (falta auditor de datos) | — |
+| BR-104 | Tema La Serena en tokens y figuras por sucursal | M | P1 | M | Hecho | BR-103, BR-022 |
+| BR-105 | Control para cambiar de sucursal, con transición | M | P1 | M | En curso (falta accesibilidad) | BR-103, BR-104 |
+| BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | En curso (falta LCP, BR-034) | BR-103 .. BR-105 |
+| BR-107 | Equipo de La Serena: tarjetas rectangulares en carrusel | M | P2 | M | En curso (falta accesibilidad) | BR-103, BR-104 |
+| BR-108 | Enredaderas laterales del tema La Serena | M | P2 | M | Hecho | BR-104 |
 | BR-110 | Textos por sucursal: una pestaña para cada landing | M | P2 | M | Propuesta | BR-042, BR-106 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
