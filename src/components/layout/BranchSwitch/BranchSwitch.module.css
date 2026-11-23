@@ -18,6 +18,7 @@
 
 /* Área táctil de 44 px de alto (HU-SUC-001 CA-07) */
 .option {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-2);
@@ -31,9 +32,7 @@
   font-weight: var(--font-weight-medium);
   white-space: nowrap;
   cursor: pointer;
-  transition:
-    background-color var(--duration-slow) var(--ease-smooth),
-    color var(--duration-slow) var(--ease-smooth);
+  transition: color var(--duration-slow) var(--ease-smooth);
 }
 
 .option:hover {
@@ -47,8 +46,22 @@
 
 .checked,
 .checked:hover {
-  background-color: var(--color-brand-primary);
   color: var(--color-on-primary);
+}
+
+/* El fondo que se desliza bajo la opción elegida */
+.pill {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-brand-primary);
+}
+
+.content {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-2);
 }
 
 /* La figura del tema activo: rellena en la opción elegida y solo contorno en la otra */

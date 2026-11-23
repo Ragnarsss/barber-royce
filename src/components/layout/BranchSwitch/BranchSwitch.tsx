@@ -1,4 +1,5 @@
-import { useRef, type KeyboardEvent } from "react";
+import { useId, useRef, type KeyboardEvent } from "react";
+import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
 import { BRANCHES, BRANCH_LABEL } from "@/config/branches";
 import { useBranch } from "@/branch/useBranch";
@@ -10,7 +11,8 @@ import styles from "./BranchSwitch.module.css";
  * Control para cambiar de sucursal (BR-105, HU-SUC-001 CA-05 a CA-08): un grupo de dos opciones con los nombres de las
  * sucursales, no un interruptor mudo que se lea como «modo claro u oscuro». Es un `radiogroup` con una sola parada de
  * tabulación y flechas para moverse; elegir una opción llama a `setBranch`, que decide si navega o solo guarda la elección.
- * El indicador de cada opción es la figura del tema activo: pasa de hexágono a cuadrado al cambiar.
+ * El fondo de la opción elegida se desliza de una a otra (layoutId de framer) y el indicador de cada opción es la figura
+ * del tema activo: pasa de hexágono a cuadrado al cambiar.
  */
 interface BranchSwitchProps {
   className?: string;
@@ -21,6 +23,8 @@ interface BranchSwitchProps {
 export function BranchSwitch({ className = "", roomy = false }: BranchSwitchProps) {
   const { branch, setBranch } = useBranch();
   const options = useRef<Array<HTMLButtonElement | null>>([]);
+  // Cada control (barra y menú móvil) tiene su propio fondo deslizante: con el mismo `layoutId` se disputarían la animación
+  const pillId = useId();
 
   function handleKeyDown(event: KeyboardEvent<HTMLDivElement>) {
     const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[event.key];
@@ -49,10 +53,14 @@ export function BranchSwitch({ className = "", roomy = false }: BranchSwitchProp
             className={`${styles.option} ${checked ? styles.checked : ""}`}
             onClick={() => setBranch(option)}
           >
-            <span className={styles.marker} aria-hidden="true">
-              <FixedShape shape={SP2_HEXAGON_BY_BRANCH[branch]} />
+            {/* El fondo de la opción elegida se desliza de una a otra (con «reducir movimiento», salta) */}
+            {checked && <motion.span layoutId={pillId} className={styles.pill} transition={{ type: "spring", stiffness: 520, damping: 42 }} />}
+            <span className={styles.content}>
+              <span className={styles.marker} aria-hidden="true">
+                <FixedShape shape={SP2_HEXAGON_BY_BRANCH[branch]} />
+              </span>
+              {BRANCH_LABEL[option]}
             </span>
-            {BRANCH_LABEL[option]}
           </button>
         );
       })}
