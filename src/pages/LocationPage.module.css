@@ -88,7 +88,12 @@
   margin-bottom: clamp(2rem, 5vh, 3.125rem);
 }
 
+/*
+ * `.tabs` centra a sus hijos (`align-items: center`) para la lista de pestañas; sin un ancho propio el contenido de cada
+ * pestaña tomaba el que le pedían sus hijos: 690 px en escritorio y 350 px en tablet (BR-099).
+ */
 .tabContent {
+  width: 100%;
   animation: fadeIn 0.4s ease-in-out;
 }
 
@@ -106,6 +111,10 @@
 /* Location content layout */
 .locationContent {
   display: grid;
+  /* Ocupa el ancho disponible hasta 70 rem y se centra: en pantallas muy anchas no se estira sin límite (BR-099) */
+  width: 100%;
+  max-width: 70rem;
+  margin-inline: auto;
   grid-template-columns: 1fr;
   gap: 2rem;
   align-items: start;

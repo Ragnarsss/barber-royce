@@ -62,6 +62,8 @@ export const SITE = {
     // El hero dibuja la marca en dos partes (BR-050); no se edita desde la hoja.
     brand: { prefix: "Barbería", name: "Royce" },
     domain: "https://roycebarber.com",
+    // Idioma y país de `og:locale` (BR-006): el sitio es de Chile, no de España (`es_ES`).
+    locale: "es_CL",
     description: "Barbería premium en Coquimbo. Cortes clásicos y modernos, afeitado tradicional, tratamientos capilares de calidad.",
     tagline: "Estilo y elegancia para el hombre moderno",
 } as const;

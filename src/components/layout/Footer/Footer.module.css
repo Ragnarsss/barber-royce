@@ -1,78 +1,155 @@
-/* Mobile-first (BR-080, ADR-009): una columna en móvil, dos desde 769 px y cuatro desde 1025 px */
+/*
+ * Mobile-first (BR-080, BR-098, ADR-009): en móvil la marca y los contactos van a todo el ancho y la navegación en dos
+ * columnas; desde 769 px la rejilla es de dos columnas y desde 1025 px de cuatro. Lenguaje del resto del sitio
+ * (BR-087, BR-088): divisoria roja arriba, marca en Anton, filo rojo bajo los títulos y redes con chaflán y vidrio.
+ */
 .footer {
   --footer-fg: var(--color-brand-white);
   --footer-fg-muted: color-mix(in srgb, var(--footer-fg) 70%, transparent);
   --footer-fg-subtle: color-mix(in srgb, var(--footer-fg) 50%, transparent);
   --footer-line: color-mix(in srgb, var(--footer-fg) 10%, transparent);
+  --footer-touch: 2.75rem; /* 44 px: área táctil mínima (RNF-A11Y-004) */
   background: linear-gradient(180deg, var(--color-primary-800) 0%, var(--color-primary-500) 100%);
   color: var(--footer-fg);
-  padding: 60px 0 24px;
+  padding: 0 0 var(--spacing-6);
   position: relative;
 }
 
-.footer::before {
-  content: "";
+/* Borde superior del footer: la divisoria roja de `glass.css` */
+.divider {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--footer-line) 50%,
-    transparent 100%
+  z-index: 1;
+}
+
+/* Franja de cierre (BR-098): las diagonales compactas de las cabeceras con el llamado a agendar */
+.closing {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-brand-section-bg);
+  padding: var(--spacing-10) 0;
+  text-align: center;
+}
+
+.closingBackdrop {
+  --shade-width: 45%;
+  --shade-height: 100%;
+  --red-width: 32%;
+  --red-height: 100%;
+}
+
+.closingContent {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-5);
+}
+
+.closingTitle {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-brand-white);
+}
+
+/* Blanco con texto rojo: se lee igual sobre el charcoal y sobre el triángulo rojo. El chaflán recorta el `outline`,
+   por eso el foco es un anillo interior. */
+.closingButton {
+  --closing-cut: var(--spacing-3);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--spacing-12);
+  padding: var(--spacing-3) var(--spacing-8);
+  background: var(--color-brand-white);
+  color: var(--color-brand-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wider);
+  text-decoration: none;
+  text-transform: uppercase;
+  clip-path: polygon(
+    var(--closing-cut) 0,
+    100% 0,
+    100% calc(100% - var(--closing-cut)),
+    calc(100% - var(--closing-cut)) 100%,
+    0 100%,
+    0 var(--closing-cut)
   );
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
+}
+
+.closingButton:hover {
+  background: var(--color-brand-primary);
+  color: var(--color-brand-white);
+}
+
+.closingButton:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 3px var(--color-brand-background);
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: var(--spacing-8) var(--spacing-6) 0;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 40px;
-  margin-bottom: 40px;
+  gap: var(--spacing-6);
+  margin-bottom: var(--spacing-6);
 }
 
 .column {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-3);
+}
+
+/* En la rejilla de dos columnas (769 a 1024 px) la marca y las redes van a todo el ancho: sin hueco bajo la marca */
+.columnWide {
+  grid-column: 1 / -1;
 }
 
 /* Brand section */
 .brand {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  margin-bottom: 8px;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-3);
 }
 
 .title {
-  font-size: 28px;
-  font-weight: 700;
   margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
   color: var(--footer-fg);
-  letter-spacing: -0.5px;
 }
 
+/* El logo trae su fondo negro: `lighten` deja pasar solo lo más claro entre la imagen y el degradado, así el rojo
+   queda y el recuadro no se ve. */
 .logoIcon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, var(--color-brand-white) 0%, var(--color-primary-200) 100%);
-  color: var(--color-primary-500);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 18px;
-  letter-spacing: -1px;
+  mix-blend-mode: lighten;
 }
 
 .description {
@@ -83,30 +160,47 @@
 }
 
 .columnTitle {
-  font-size: 16px;
-  font-weight: 700;
+  position: relative;
   margin: 0;
+  padding-bottom: var(--spacing-2);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
   color: var(--footer-fg);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: var(--letter-spacing-widest);
 }
 
-/* Links */
+/* Filo rojo corto, como en la ficha de sucursal */
+.columnTitle::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: var(--spacing-8);
+  height: 2px;
+  background: var(--color-brand-primary);
+}
+
+/* Links: de al menos 44 px de alto y en dos columnas, salvo en la rejilla de cuatro (BR-098) */
 .links {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--spacing-6);
 }
 
 .links a {
+  display: flex;
+  align-items: center;
+  min-height: var(--footer-touch);
   color: var(--footer-fg-muted);
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition:
+    color var(--transition-base),
+    transform var(--transition-base);
   font-size: 15px;
-  display: inline-block;
 }
 
 .links a:hover {
@@ -121,21 +215,28 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
 }
 
 .contactItem {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--spacing-3);
   color: var(--footer-fg-muted);
   font-size: 15px;
 }
 
+/* La fila del horario no es un enlace: no necesita el área táctil, pero sí el aire de las demás */
+.contactItem > span {
+  padding: var(--spacing-2) 0;
+}
+
 .contactItem a {
+  display: flex;
+  align-items: center;
+  min-height: var(--footer-touch);
   color: var(--footer-fg-muted);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color var(--transition-base);
 }
 
 .contactItem a:hover {
@@ -148,30 +249,21 @@
   flex-shrink: 0;
 }
 
-/* Social */
+/* Social: la forma, el vidrio y el brillo vienen de `glass-chip` */
 .social {
   display: flex;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
 }
 
 .socialLink {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--footer-fg) 5%, transparent);
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--footer-fg);
   text-decoration: none;
-  transition: all 0.3s ease;
-  border: 1px solid var(--footer-line);
-}
-
-.socialLink:hover {
-  background: color-mix(in srgb, var(--footer-fg) 15%, transparent);
-  border-color: color-mix(in srgb, var(--footer-fg) 30%, transparent);
-  transform: translateY(-4px);
 }
 
 .socialLink svg {
@@ -187,7 +279,7 @@
 
 /* Bottom */
 .bottom {
-  padding-top: 32px;
+  padding-top: var(--spacing-6);
   border-top: 1px solid var(--footer-line);
   text-align: center;
 }
@@ -199,18 +291,29 @@
 }
 
 @media (min-width: 769px) {
-  .footer {
-    padding: 80px 0 24px;
+  .closing {
+    padding: var(--spacing-12) 0;
+  }
+
+  .closingTitle {
+    font-size: var(--font-size-4xl);
+  }
+
+  .container {
+    padding-top: var(--spacing-16);
+  }
+
+  .grid {
+    gap: var(--spacing-10);
+    margin-bottom: var(--spacing-12);
   }
 
   .grid {
     grid-template-columns: 1fr 1fr;
-    margin-bottom: 60px;
   }
 
   .brand {
-    flex-direction: row;
-    align-items: center;
+    gap: var(--spacing-4);
   }
 }
 
@@ -218,12 +321,38 @@
 @media (min-width: 1025px) {
   .grid {
     grid-template-columns: 2fr 1fr 1fr 1.5fr;
-    gap: 60px;
+    gap: var(--spacing-16);
+  }
+
+  .column.columnWide {
+    grid-column: auto;
+  }
+
+  .links {
+    grid-template-columns: 1fr;
+  }
+
+  /* Con puntero, la lista vuelve a un ritmo compacto: el área de 44 px es para el dedo */
+  .footer {
+    --footer-touch: 2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .closingButton,
+  .links a,
+  .contactItem a {
+    transition: none;
+  }
+
+  .links a:hover {
+    transform: none;
   }
 }
 
 /* "Preferencias de privacidad": se ve como un enlace del footer (BR-037). */
 .privacyButton {
+  min-height: var(--footer-touch);
   margin-top: 8px;
   padding: 0;
   border: 0;

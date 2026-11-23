@@ -413,6 +413,9 @@ cada sucursal, para llegar sin perderme y no encontrarla cerrada.
   idénticos (incluidos los datos estructurados de `index.html`).
 - CA-03: Given el mapa embebido no carga, When miro la sucursal, Then sigo
   viendo la dirección en texto y un enlace para abrirla en Google Maps.
+- CA-04 (2026-10-27, `BR-099`): Given entro a `/ubicacion` en una tablet o en un escritorio, When elijo una sucursal,
+  Then su tarjeta ocupa el ancho disponible (hasta 70 rem), con la dirección, los horarios y el mapa bien repartidos,
+  sin quedar angosta en el centro de la pantalla.
 
 ### Reglas de negocio asociadas:
 
@@ -940,6 +943,10 @@ y confiar en que el servicio está a la altura.
 - CA-39 (2026-10-22, `BR-097`): Given bajo hasta CTA1 en escritorio, When la sección entra en pantalla, Then sus tres
   hexágonos irregulares llegan desfasados y encajan en su sitio con el scroll, y las barras de luz se asientan junto
   al rojo; con reducir movimiento no hay ensamble.
+- CA-40 (2026-10-26, `BR-098`): Given llego al final de cualquier página, When veo el footer, Then tiene el mismo
+  lenguaje que el resto del sitio (divisoria roja, marca en Anton, redes de vidrio con chaflán), me ofrece agendar
+  con una franja de cierre (en todas las páginas salvo la portada, que ya termina con su propio llamado) y en
+  móvil cabe en menos de una pantalla con enlaces de al menos 44 px; con reducir movimiento no hay transiciones.
 
 ---
 

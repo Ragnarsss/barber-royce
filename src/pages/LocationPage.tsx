@@ -1,4 +1,6 @@
 import { ROUTES } from "@/config/routes";
+import { SITE } from "@/config/constants";
+import { hairSalonJsonLd } from "@/seo/structuredData";
 import styles from "./LocationPage.module.css";
 import { useSiteContent } from "@/content/useSiteContent";
 import { SEOHelmet } from "@/components/common/SEOHelmet/SEOHelmet";
@@ -14,12 +16,12 @@ import { LocationTabs } from "@/components/sections/Location/LocationTabs";
  * @returns Contenido principal de la pagina de ubicacion.
  */
 export const LocationPage = () => {
-  const { locations } = useSiteContent();
+  const { locations, business } = useSiteContent();
   const route = ROUTES.location;
 
   return (
     <div className={styles.page}>
-      <SEOHelmet route={route} />
+      <SEOHelmet route={route} jsonLd={hairSalonJsonLd({ site: SITE, business, locations })} />
 
       <PageHero
         title="Ubicación y Horarios"
