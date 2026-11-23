@@ -11,7 +11,7 @@ describe("navbar: resplandor de neón (BR-059, HU-EXP-004 CA-11)", () => {
   it("CA-11: hover y foco de teclado comparten el resplandor: texto blanco y sombra de luz", () => {
     const rule = ruleFor(/\.navLink:hover,\s*\n?\.navLink:focus-visible/);
 
-    expect(rule).toMatch(/color:\s*var\(--color-brand-white\)/);
+    expect(rule).toMatch(/color:\s*var\(--color-hover-text\)/);
     expect(rule).toMatch(/text-shadow:/);
   });
 

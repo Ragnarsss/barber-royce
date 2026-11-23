@@ -59,7 +59,7 @@ describe("Features: tarjetas de vidrio (BR-072, HU-EXP-004 CA-23)", () => {
     expect(rule(/\.cardTitle/)).toMatch(/color:\s*var\(--color-brand-white\)/);
     expect(rule(/\.cardDescription/)).toMatch(/color:\s*var\(--color-brand-white\)/);
     expect(rule(/\.cardIcon/)).toMatch(/background:\s*var\(--color-brand-primary\)/);
-    expect(rule(/\.cardIcon/)).toMatch(/color:\s*var\(--color-brand-white\)/);
+    expect(rule(/\.cardIcon/)).toMatch(/color:\s*var\(--color-on-primary\)/);
   });
 
   it("CA-23: el borde se enciende en rojo al pasar el ratón, y la luz que barre solo existe con ratón", () => {

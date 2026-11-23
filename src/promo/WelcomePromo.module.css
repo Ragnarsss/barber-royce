@@ -35,7 +35,7 @@
   gap: var(--spacing-3);
   padding: var(--spacing-6);
   background: var(--color-brand-primary);
-  color: var(--color-brand-white);
+  color: var(--color-on-primary);
 }
 
 /* «GRATIS» en un hexágono de puntas laterales, como las barras de luz del techo de la barbería. */
@@ -46,7 +46,7 @@
   min-width: 6.5rem;
   padding: var(--spacing-2) var(--spacing-6);
   background: var(--color-brand-white);
-  color: var(--color-brand-primary);
+  color: var(--color-accent-on-inverse);
   font-family: var(--font-family-display);
   font-size: var(--font-size-xl);
   letter-spacing: 0.08em;

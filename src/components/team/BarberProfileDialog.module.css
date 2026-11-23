@@ -98,7 +98,7 @@
 }
 
 .weekDay[data-on] {
-  color: var(--color-brand-white);
+  color: var(--color-on-primary);
   background: var(--color-brand-primary);
   box-shadow: none;
 }
@@ -225,12 +225,12 @@
 
 .reserve {
   background: var(--color-brand-primary);
-  color: var(--color-brand-white);
+  color: var(--color-on-primary);
 }
 
 .reserve:hover {
   background: var(--color-brand-white);
-  color: var(--color-brand-primary);
+  color: var(--color-accent-on-inverse);
 }
 
 .social {
