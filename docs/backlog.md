@@ -4581,6 +4581,40 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-108).
 
+#### BR-110 — Textos por sucursal: una pestaña para cada landing
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-042, BR-106
+- Estado: Propuesta (el código no está bloqueado; los textos de La Serena los escribe el dueño)
+- Historia de usuario: HU-CNT-002 (CA-04 .. CA-06)
+- RF/RNF: `RF-CNT-010`, `RNF-CONF-003`, `RNF-DATOS-002`
+
+**Origen (2026-11-23):** la portada de La Serena reutiliza los textos de la home de Coquimbo porque no existen
+los suyos, y cada landing tiene textos distintos. El usuario decidió una pestaña por sucursal, con `textos` como
+base común de lo que es igual.
+
+Alcance:
+1. Hoja: pestañas `textos-coquimbo` y `textos-la-serena` (`clave`, `valor`, como `textos`) y `textos` como base común.
+2. Plugin de build (`vite-plugins/`), `schemas.ts` y `resolveContent.ts`: leer las tres pestañas, con el largo máximo por
+   clave de siempre, y dejar en el contenido los textos de cada sucursal (ADR-008: se lee al construir).
+3. `useSiteText()` resuelve la clave en este orden: pestaña de la sucursal activa, `textos`, valor por defecto del
+   código (`ADR-010` nivel 2: un mapa por sucursal).
+4. Migración sin romper producción: si `textos-coquimbo` no existe, Coquimbo usa `textos`. Orden: primero el código;
+   después el dueño crea las pestañas y mueve a `textos-coquimbo` las filas que hoy están en `textos` y son de Coquimbo.
+5. Respaldo en el repo (`src/content/snapshot/`) y guía de la hoja (`docs/`, con su test) al día.
+6. El dueño escribe los textos de La Serena (las claves de la home: `hero.*`, `cta1.*`, `cta2.*`, etc.).
+
+Fuera de alcance: las fotos de cada landing (ticket aparte, con el mismo criterio de pestaña por sucursal) y el
+prerender (`BR-034`).
+
+Criterios de aceptación:
+1. Una clave en `textos-la-serena` cambia solo la portada de La Serena (HU-CNT-002 CA-04, CP-CNT-010).
+2. Una clave que solo está en `textos` se ve en las dos sucursales (HU-CNT-002 CA-05).
+3. Sin la pestaña `textos-coquimbo`, Coquimbo se ve igual que antes, sin textos vacíos (HU-CNT-002 CA-06).
+4. Un valor sobre el largo máximo se rechaza con aviso en el build y se usa el siguiente de la cadena (HU-CNT-002 CA-03).
+5. Verificado de punta a punta con una hoja local de tres pestañas, como el test de `BR-042`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-110).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -4717,6 +4751,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | Propuesta | BR-103 .. BR-105 |
 | BR-107 | Equipo de La Serena: tarjetas rectangulares en carrusel | M | P2 | M | Propuesta | BR-103, BR-104 |
 | BR-108 | Enredaderas laterales del tema La Serena | M | P2 | M | Propuesta | BR-104 |
+| BR-110 | Textos por sucursal: una pestaña para cada landing | M | P2 | M | Propuesta | BR-042, BR-106 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

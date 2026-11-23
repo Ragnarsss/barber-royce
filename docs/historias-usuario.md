@@ -1224,7 +1224,11 @@ el de la portada) desde la hoja, para ajustar el mensaje sin tocar código.
   `textos` con columnas `clave` y `valor`; cada texto tiene un valor por
   defecto en el código, así que una clave ausente no rompe nada; solo
   texto plano.
-- RF relacionados: RF-CNT-005.
+  > Actualizada (2026-11-23, decisión del usuario): con dos sucursales, la landing de cada una tiene sus propios textos.
+  > Hay una pestaña por sucursal, `textos-coquimbo` y `textos-la-serena`, y `textos` queda como base común de lo que
+  > es igual en las dos. El texto de una clave sale de la pestaña de la sucursal activa; si no está, de `textos`; si
+  > tampoco, del código.
+- RF relacionados: RF-CNT-005, RF-CNT-010.
 - RNF impactados: RNF-CONF-003, RNF-DATOS-002.
 - Casos de uso relacionados: CU-CNT-001.
 
@@ -1237,6 +1241,12 @@ el de la portada) desde la hoja, para ajustar el mensaje sin tocar código.
 - CA-03: Given un valor supera el largo máximo definido para esa clave,
   When se construye el sitio, Then se rechaza ese valor, se usa el texto
   por defecto y queda escrito en el build.
+- CA-04: Given la pestaña `textos-la-serena` define `hero.titulo`, When La Serena es la sucursal activa, Then su
+  portada muestra ese texto y la de Coquimbo muestra el suyo.
+- CA-05: Given una clave no está en la pestaña de la sucursal activa pero sí en `textos`, When se muestra la
+  página, Then se usa el texto de `textos`.
+- CA-06: Given todavía no existe la pestaña `textos-coquimbo`, When se construye el sitio, Then Coquimbo usa `textos`
+  como hasta ahora y no queda ningún texto vacío.
 
 ### Reglas de negocio asociadas:
 
@@ -1245,7 +1255,7 @@ el de la portada) desde la hoja, para ajustar el mensaje sin tocar código.
 
 ### Datos:
 
-- Entrada: pestaña `textos` (`clave`, `valor`).
+- Entrada: pestañas `textos` (base común), `textos-coquimbo` y `textos-la-serena` (`clave`, `valor`).
 - Salida: textos que reemplazan a los literales del código.
 
 ---
