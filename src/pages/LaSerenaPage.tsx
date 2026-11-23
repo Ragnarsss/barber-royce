@@ -13,7 +13,6 @@ import { Features } from "../components/sections/Features/Features";
 import { Reviews } from "../components/sections/Reviews/Reviews";
 import { SocialProof1 } from "../components/sections/SocialProof1/SocialProof1";
 import { SocialProof2 } from "../components/sections/SocialProof2/SocialProof2";
-import { BranchVisit } from "../components/sections/BranchVisit/BranchVisit";
 import { HeroLaSerena } from "../components/sections/HeroLaSerena/HeroLaSerena";
 
 /**
@@ -37,9 +36,6 @@ export function LaSerenaPage() {
         <Features />
       </BranchVines>
       <SocialProof2 />
-      <BranchVines sides="both">
-        <BranchVisit branch="la-serena" />
-      </BranchVines>
       <CTA2 />
       <BackToTop />
     </>
