@@ -31,6 +31,8 @@ const chromePath = CHROME_CANDIDATES.find((candidate) => candidate && existsSync
 
 const MIN_CONTRAST = 1.5;
 const routes = [...Object.values(ROUTES).map((route) => route.path), "/ruta-que-no-existe"];
+// Las dos sucursales (ADR-010, BR-104): el mismo recorrido con el tema de Coquimbo y con el de La Serena.
+const cases = (["coquimbo", "la-serena"] as const).flatMap((branch) => routes.map((route) => [branch, route] as const));
 
 interface Finding {
   tag: string;
@@ -58,12 +60,15 @@ describe.skipIf(!chromePath)("texto legible en todas las rutas (BR-045, RNF-A11Y
     cleanup?.();
   });
 
-  it.each(routes)("%s: ningún texto se confunde con su fondo", async (route) => {
+  it.each(cases)("%s · %s: ningún texto se confunde con su fondo", async (branch, route) => {
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
     await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "dark" }]);
     // El modal de bienvenida (BR-100) cuenta como ya cerrado: este test mide la página en reposo.
-    await page.evaluateOnNewDocument(() => window.localStorage.setItem("barber-royce:promo-dismissed", "1"));
+    await page.evaluateOnNewDocument((selected) => {
+      window.localStorage.setItem("barber-royce:promo-dismissed", "1");
+      window.localStorage.setItem("royce:branch", selected);
+    }, branch);
     await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle0" });
     // Baja por la página para que se disparen las animaciones de entrada.
     const height = await page.evaluate(() => document.documentElement.scrollHeight);
