@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -36,8 +37,23 @@ describe("vercel.json (BR-002, BR-013)", () => {
     }
   });
 
-  it("RNF-SEG-004: los scripts solo pueden ser propios o de Google Tag Manager; sin unsafe-inline, unsafe-eval ni hashes", () => {
-    expect(directive(csp, "script-src")).toBe("script-src 'self' https://www.googletagmanager.com");
+  it("RNF-SEG-004: los scripts solo pueden ser propios, de Google Tag Manager o el script de arranque por su hash; sin unsafe-inline ni unsafe-eval", () => {
+    // Enmienda 2026-11-23 (ADR-010, BR-103): antes no admitía ningún hash. Ahora admite exactamente uno, el del script de
+    // arranque de la sucursal (`RNF-SEG-005` comprueba que sea el de `index.html`).
+    expect(directive(csp, "script-src")).toMatch(/^script-src 'self' https:\/\/www\.googletagmanager\.com 'sha256-[A-Za-z0-9+/]{43}='$/);
+    expect(csp).not.toContain("'unsafe-inline' https");
+    expect(directive(csp, "script-src")).not.toMatch(/unsafe-(inline|eval|hashes)/);
+  });
+
+  it("RNF-SEG-005, CP-SEG-005: el hash de la CSP es el del script de arranque de index.html, byte por byte", () => {
+    const script = indexHtml.match(/<script id="branch-init">([^<]*)<\/script>/)?.[1];
+    expect(script, "index.html no trae <script id=\"branch-init\">").toBeTruthy();
+    // Una sola línea: así el hash no depende de si el archivo se guardó con CRLF o con LF.
+    expect(script).not.toMatch(/[\r\n]/);
+
+    const hash = `'sha256-${createHash("sha256").update(script!, "utf8").digest("base64")}'`;
+
+    expect(directive(csp, "script-src")?.split(" ")).toContain(hash);
   });
 
   it("RNF-SEG-004: los únicos orígenes de terceros nuevos son los de Google Analytics y la hoja de contenido (BR-047)", () => {

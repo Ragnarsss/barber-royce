@@ -3,6 +3,11 @@
   <head>
     <meta charset="UTF-8" />
 
+    <!-- Sucursal activa (ADR-010, BR-103): fija data-branch antes de pintar para que el tema no llegue un cuadro tarde.
+         Va en una sola línea: su hash sha256 está en la CSP de vercel.json y un test lo recalcula; repite la regla de
+         src/branch/resolveBranch.ts con los valores de src/config/branches.ts, que otro test compara. -->
+    <script id="branch-init">(function(){var b=["coquimbo","la-serena"],p=location.pathname.split("/")[1],s=null;try{s=localStorage.getItem("royce:branch")}catch(e){}document.documentElement.dataset.branch=b.indexOf(p)>-1?p:b.indexOf(s)>-1?s:"coquimbo"})();</script>
+
     <!-- Favicons: Complete package for all devices -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
