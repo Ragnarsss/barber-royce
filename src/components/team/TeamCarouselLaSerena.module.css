@@ -13,17 +13,25 @@
 
 .track {
   align-items: stretch;
+  /* Aire para el anillo de foco de las tarjetas: la fila recorta lo que se sale */
+  padding-block: 0.25rem;
 }
 
 /* Cada diapositiva: la tarjeta activa a escala completa, las vecinas más chicas y tenues. Se mueve `scale`, no `transform`. */
 .slide {
-  transition:
-    scale 0.45s var(--ease-smooth),
-    opacity 0.45s var(--ease-smooth);
+  transition: scale 0.45s var(--ease-smooth);
 }
 
+.photo {
+  transition: opacity 0.45s var(--ease-smooth);
+}
+
+/* La atenuación es de la foto: el nombre y las especialidades conservan su contraste (WCAG 1.4.3) */
 .section .track > .slide[data-active="false"] {
   scale: 0.92;
+}
+
+.section .track > .slide[data-active="false"] .photo {
   opacity: 0.5;
 }
 
@@ -101,6 +109,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .slide,
+  .photo,
   .card::after {
     transition: none;
   }

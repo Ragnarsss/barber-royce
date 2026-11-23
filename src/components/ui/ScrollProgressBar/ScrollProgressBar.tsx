@@ -5,14 +5,15 @@
 
 import { motion, useScroll } from "framer-motion";
 import { useLocation } from "react-router-dom";
+import { BRANCHES } from "@/config/branches";
 import styles from "./ScrollProgressBar.module.css";
 
 export const ScrollProgressBar = () => {
   const { scrollYProgress } = useScroll();
   const location = useLocation();
 
-  // Solo mostrar en el homepage
-  if (location.pathname !== "/") {
+  // Solo en las portadas de cada sucursal (BR-106): `/` es el selector, de una sola pantalla, sin scroll
+  if (!BRANCHES.some((branch) => location.pathname === `/${branch}`)) {
     return null;
   }
 

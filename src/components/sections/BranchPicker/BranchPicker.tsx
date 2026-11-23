@@ -16,7 +16,7 @@ function Half({ branch }: { branch: Branch }) {
   const { src, width, height } = PHOTO[branch];
   return (
     <Link to={`/${branch}`} className={`${styles.half} ${styles[branch]}`}>
-      <img className={styles.photo} src={src} width={width} height={height} alt="" decoding="async" />
+      <img className={styles.photo} src={src} width={width} height={height} alt="" loading="eager" fetchPriority="high" decoding="async" />
       <span className={styles.figures} aria-hidden="true">
         {PICKER_FIGURES[branch].map((shape, index) => (
           <span key={index} className={styles.figure}>

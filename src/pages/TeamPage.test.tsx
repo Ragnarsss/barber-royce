@@ -60,7 +60,7 @@ describe("TeamPage por sucursal (BR-107)", () => {
     renderTeam("/la-serena");
     const first = snapshot.team[0];
 
-    fireEvent.click(await screen.findByRole("button", { name: `${first.name}, ${first.role}` }));
+    fireEvent.click(await screen.findByRole("button", { name: new RegExp(first.name) }));
 
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
   });

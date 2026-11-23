@@ -56,3 +56,15 @@ describe("Navbar: control de sucursal (BR-105, HU-SUC-001 CA-05)", () => {
     expect(screen.getAllByRole("radiogroup", { name: "Sucursal", hidden: true })).toHaveLength(2);
   });
 });
+
+describe("Navbar: el menú móvil tras elegir sucursal (BR-105)", () => {
+  it("se cierra al elegir una sucursal desde él", () => {
+    renderNavbar();
+    fireEvent.click(screen.getByRole("button", { name: "Abrir menú" }));
+    expect(getMobileMenu()).not.toHaveAttribute("inert");
+
+    fireEvent.click(getMobileMenu()!.querySelector('[role="radio"][aria-checked="false"]')!);
+
+    expect(getMobileMenu()).toHaveAttribute("inert");
+  });
+});

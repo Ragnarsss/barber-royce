@@ -29,7 +29,7 @@ export default function TeamCarouselLaSerena({ team, onSelect }: TeamViewProps) 
                 aria-roledescription="diapositiva"
                 aria-label={`Barbero ${index + 1} de ${team.length}`}
               >
-                <button type="button" className={styles.card} onClick={() => onSelect(member)} aria-label={`${member.name}, ${member.role}`}>
+                <button type="button" className={styles.card} onClick={() => onSelect(member)}>
                   <img
                     className={styles.photo}
                     src={member.image}
