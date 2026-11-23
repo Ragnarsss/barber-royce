@@ -61,6 +61,14 @@
   ); /* #332b2b - Fondo secciones */
   --color-brand-white: #ffffff;
 
+  /*
+   * Capas translúcidas (BR-022): la que aclara y la que oscurece. Se usan siempre con
+   * color-mix(in srgb, var(--color-tint) 10%, transparent), nunca con rgba() escrito a mano.
+   * Cada sucursal las redefine bajo [data-branch] (ADR-010).
+   */
+  --color-tint: #ffffff;
+  --color-shade: #000000;
+
   /* Gradients */
   --gradient-primary: linear-gradient(
     135deg,

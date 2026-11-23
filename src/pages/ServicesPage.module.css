@@ -6,12 +6,12 @@
   background-image:
     radial-gradient(
       circle at 20% 50%,
-      rgba(213, 35, 35, 0.03) 0%,
+      color-mix(in srgb, var(--color-brand-primary) 3%, transparent) 0%,
       transparent 50%
     ),
     radial-gradient(
       circle at 80% 80%,
-      rgba(213, 35, 35, 0.03) 0%,
+      color-mix(in srgb, var(--color-brand-primary) 3%, transparent) 0%,
       transparent 50%
     );
 }
@@ -95,12 +95,12 @@
 
 .fadeLeft {
   left: 0;
-  background: linear-gradient(to right, #1a1a1a 0%, rgba(26, 26, 26, 0) 100%);
+  background: linear-gradient(to right, var(--color-brand-background) 0%, color-mix(in srgb, var(--color-brand-background) 0%, transparent) 100%);
 }
 
 .fadeRight {
   right: 0;
-  background: linear-gradient(to left, #1a1a1a 0%, rgba(26, 26, 26, 0) 100%);
+  background: linear-gradient(to left, var(--color-brand-background) 0%, color-mix(in srgb, var(--color-brand-background) 0%, transparent) 100%);
 }
 
 .scrollContent {
@@ -126,7 +126,7 @@
 
 .serviceCard:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--color-shade) 30%, transparent);
 }
 
 /* Imagen de fondo */
@@ -154,9 +154,9 @@
   height: 100%;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.4) 0%,
-    rgba(0, 0, 0, 0.7) 50%,
-    rgba(0, 0, 0, 0.9) 100%
+    color-mix(in srgb, var(--color-shade) 40%, transparent) 0%,
+    color-mix(in srgb, var(--color-shade) 70%, transparent) 50%,
+    color-mix(in srgb, var(--color-shade) 90%, transparent) 100%
   );
 }
 
@@ -217,7 +217,7 @@
   margin-top: auto;
   font-size: 13px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
+  color: color-mix(in srgb, var(--color-tint) 90%, transparent);
   margin-bottom: 0;
 }
 
