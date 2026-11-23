@@ -86,3 +86,17 @@ describe("las páginas declaran sus metadatos (CP-SEO-001)", () => {
     },
   );
 });
+
+describe("index.html no fija metadatos que dependen de la ruta (BR-106, hallazgo de Lighthouse)", () => {
+  // SEOHelmet agrega los suyos y React 19 no reemplaza los estáticos: una canonical fija a «/» queda junto a la de la página
+  // y Google ve dos en conflicto en `/coquimbo`, `/la-serena` y el resto.
+  const head = read("index.html").replace(/<!--[\s\S]*?-->/g, "");
+
+  it.each([
+    ["canonical", /<link[^>]*rel="canonical"/],
+    ["og:url", /<meta[^>]*property="og:url"/],
+    ["twitter:url", /<meta[^>]*name="twitter:url"/],
+  ])("no trae %s estático", (_name, pattern) => {
+    expect(head).not.toMatch(pattern);
+  });
+});
