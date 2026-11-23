@@ -79,7 +79,7 @@ describe("site.webmanifest (RF-SEO-001)", () => {
 });
 
 describe("las páginas declaran sus metadatos (CP-SEO-001)", () => {
-  it.each(["AboutPage", "FAQPage", "HomePage", "LocationPage", "PrivacyPage", "ProductsPage", "ServicesPage", "TeamPage"])(
+  it.each(["AboutPage", "BranchPickerPage", "FAQPage", "HomePage", "LaSerenaPage", "LocationPage", "PrivacyPage", "ProductsPage", "ServicesPage", "TeamPage"])(
     "%s usa SEOHelmet con su ruta de ROUTES",
     (page) => {
       expect(read(`src/pages/${page}.tsx`)).toMatch(/<SEOHelmet[^>]*route=/);

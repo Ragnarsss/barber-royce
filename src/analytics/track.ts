@@ -32,7 +32,8 @@ export type ClickSection =
   | "faq"
   | "404"
   | "equipo"
-  | "promo";
+  | "promo"
+  | "portada";
 
 export function trackEvent(name: AnalyticsEventName, params: Record<string, string> = {}): void {
   const measurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;

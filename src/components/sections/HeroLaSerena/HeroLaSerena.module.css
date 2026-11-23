@@ -1,0 +1,234 @@
+/* Mobile-first (ADR-009). Una banda oscura: el neón solo luce sobre espresso (ver --color-neon en colors.css). */
+.hero {
+  position: relative;
+  min-height: calc(100svh - 5rem);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--color-espresso);
+  color: var(--color-bone);
+}
+
+/* El racimo de cuadrados: en móvil va detrás del texto y tenue; en escritorio, a la derecha */
+.squares {
+  position: absolute;
+  top: 6%;
+  right: -12%;
+  width: min(92vw, 34rem);
+  aspect-ratio: 1;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.square {
+  position: absolute;
+  aspect-ratio: 1;
+}
+
+.square polygon {
+  fill: none;
+  stroke: var(--color-neon);
+  stroke-width: 0.7;
+  stroke-linejoin: round;
+}
+
+/* El halo del neón: encendido de base; con movimiento permitido se enciende cuando el trazo se cierra */
+.square svg {
+  filter: drop-shadow(0 0 3px var(--color-neon)) drop-shadow(0 0 12px color-mix(in srgb, var(--color-neon) 55%, transparent));
+}
+
+@keyframes neon-on {
+  from {
+    filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .square svg {
+    animation: neon-on 0.7s ease-out both;
+    animation-delay: calc(var(--delay) + 1s);
+  }
+}
+
+.leaves {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.leaf {
+  position: absolute;
+  bottom: 0;
+  fill: var(--color-leaf);
+  transform-origin: 50% 100%;
+}
+
+.vein {
+  fill: none;
+  stroke: var(--color-espresso);
+  stroke-width: 1.5;
+  opacity: 0.5;
+}
+
+.leafA {
+  left: 2%;
+  width: 3.5rem;
+  transform: rotate(-12deg);
+}
+
+.leafB {
+  left: 9%;
+  width: 2.5rem;
+  transform: rotate(8deg);
+}
+
+.leafC {
+  right: 4%;
+  width: 3rem;
+  transform: rotate(14deg);
+}
+
+@keyframes sway {
+  50% {
+    rotate: 4deg;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .leaf {
+    animation: sway 6s ease-in-out infinite;
+  }
+
+  .leafB {
+    animation-duration: 7.5s;
+    animation-delay: -2s;
+  }
+
+  .leafC {
+    animation-duration: 9s;
+    animation-delay: -4s;
+  }
+}
+
+/* Veta de madera en la base: tablas finas sobre la madera */
+.wood {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0.9rem;
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--color-espresso) 35%, transparent) 0 2px, transparent 2px 3.5rem),
+    var(--color-wood);
+}
+
+.content {
+  position: relative;
+  width: 100%;
+  max-width: 40rem;
+  padding: var(--spacing-12) var(--spacing-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4);
+}
+
+.kicker {
+  margin: 0;
+  color: var(--color-amber);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+/* Los h1 a h6 globales son oscuros: sobre esta banda oscura el título fija su color */
+.title {
+  margin: 0;
+  color: var(--color-bone);
+  font-family: var(--font-family-heading);
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  line-height: 1.1;
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 32rem;
+  color: color-mix(in srgb, var(--color-bone) 82%, transparent);
+  font-size: var(--font-size-lg);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-2);
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--spacing-6);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-semibold);
+  text-decoration: none;
+  transition: background-color var(--duration-slow) var(--ease-smooth);
+}
+
+.primary {
+  background-color: var(--color-amber);
+  color: var(--color-espresso);
+}
+
+.primary:hover {
+  background-color: color-mix(in srgb, var(--color-amber) 85%, var(--color-bone));
+}
+
+.secondary {
+  border: 1px solid color-mix(in srgb, var(--color-bone) 45%, transparent);
+  color: var(--color-bone);
+}
+
+.secondary:hover {
+  background-color: color-mix(in srgb, var(--color-bone) 12%, transparent);
+}
+
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 2px solid var(--color-neon);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary,
+  .secondary {
+    transition: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .squares {
+    top: 50%;
+    right: 4%;
+    translate: 0 -50%;
+    opacity: 1;
+  }
+
+  .content {
+    padding: var(--spacing-12) var(--spacing-10);
+    margin-left: 4%;
+  }
+
+  .leafA {
+    width: 5rem;
+  }
+
+  .leafB {
+    width: 3.5rem;
+  }
+
+  .leafC {
+    width: 4.5rem;
+  }
+}

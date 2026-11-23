@@ -61,7 +61,7 @@ describe.skipIf(!chromePath)("figuras de fondo con geometría fija (BR-091, HU-E
   it.each(VIEWPORTS)("%ix%i: las figuras no se estiran y el texto de CTA1 queda dentro del hexágono rojo", async (width, height) => {
     const page = await browser.newPage();
     await page.setViewport({ width, height });
-    await page.goto(`${baseUrl}/`, { waitUntil: "networkidle0" });
+    await page.goto(`${baseUrl}/coquimbo`, { waitUntil: "networkidle0" });
     await page.evaluate(() => document.querySelector("#cta-1")?.scrollIntoView());
     // La entrada del texto (fadeInLeft) termina antes de medir
     await new Promise((resolve) => setTimeout(resolve, 1800));

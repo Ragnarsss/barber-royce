@@ -4423,7 +4423,7 @@ Criterios de aceptación:
 #### BR-106 — Portada partida y portadas básicas de cada sucursal
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-104, BR-105
-- Estado: Propuesta
+- Estado: En curso
 - Historia de usuario: HU-SUC-001 (CA-01), HU-SUC-002 (CA-04, CA-07, CA-08)
 - RF/RNF: `RF-SUC-002`, `RF-SUC-004`, `RNF-PERF-001` .. `RNF-PERF-003`, `RNF-SEO-001`, `RNF-A11Y-003`, `RNF-A11Y-005`
 
@@ -4461,6 +4461,17 @@ Criterios de aceptación:
 
 > **Alcance ajustado (2026-11-23, decisión del usuario):** `HeroLaSerena` reemplaza los triángulos del Hero
 > (`HERO_SHAPES`); no se interpolan con una forma de Coquimbo, porque el Hero de La Serena es otra composición.
+
+> **Resultado de la construcción (2026-11-23):**
+> - `/` es `BranchPicker` (dos mitades con su paleta fija, enlaces reales); `/coquimbo` es la `HomePage` de siempre, con el JSON-LD
+>   de su sucursal; `/la-serena` es `LaSerenaPage` (`HeroLaSerena` + `BranchVisit`), cargada con `lazy`: es otro trozo del build.
+> - Las paletas crudas de las dos sucursales (`--color-charcoal`, `--color-ember`, `--color-bone`…) pasaron a `:root` para que `/` muestre las
+>   dos identidades a la vez; los alias de marca siguen cambiando con la sucursal activa.
+> - `ROUTES` suma `coquimbo` y `laSerena` (título y descripción propios) y el sitemap, las dos portadas. `/` nombra las dos sucursales.
+> - Los cuatro cuadrados usan `edgeDraw` con desfase y se encienden con un halo CSS; con reducir movimiento aparecen completos y
+>   las hojas no se mueven. Sin imagen del local (decisión del usuario): la madera es una veta dibujada.
+> - **Pendiente:** Lighthouse móvil de `/` y `/la-serena` en el preview y `seo-performance-auditor`; los textos del hero y del picker
+>   están en el código, no en la hoja de textos (decidir si se mueven); la imagen del local cuando llegue el original.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-106).
 

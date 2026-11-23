@@ -1,0 +1,160 @@
+/* Mobile-first (ADR-009): una mitad sobre la otra; desde 769 px, lado a lado. Cada mitad usa su paleta fija. */
+.picker {
+  position: relative;
+  min-height: calc(100svh - 5rem);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Un título para lectores de pantalla y buscadores; las mitades ya dicen todo lo que ve el visitante */
+.title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.halves {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.half {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 50svh;
+  padding: var(--spacing-8) var(--spacing-6);
+  overflow: hidden;
+  text-decoration: none;
+  transition: background-color var(--duration-slow) var(--ease-smooth);
+}
+
+.half:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: -6px;
+}
+
+.coquimbo {
+  --half-accent: var(--color-ember);
+  background-color: var(--color-charcoal);
+  color: var(--color-neutral-50);
+}
+
+/* El `a:hover` global cambia el color del texto: cada mitad lo fija también con el cursor encima */
+.coquimbo:hover {
+  color: var(--color-neutral-50);
+  background-color: color-mix(in srgb, var(--color-ember) 14%, var(--color-charcoal));
+}
+
+.la-serena {
+  --half-accent: var(--color-earth);
+  background-color: var(--color-sand);
+  color: var(--color-espresso);
+}
+
+.la-serena:hover {
+  color: var(--color-espresso);
+  background-color: var(--color-bone);
+}
+
+.figures {
+  position: absolute;
+  top: 6%;
+  right: -4%;
+  width: 9rem;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+.figure {
+  position: absolute;
+  inset: 0;
+  opacity: 0.55;
+  transition: opacity var(--duration-slow) var(--ease-smooth);
+}
+
+.figure + .figure {
+  inset: 10% -10% -10% 10%;
+}
+
+.half:hover .figure {
+  opacity: 1;
+}
+
+.figure polygon {
+  fill: none;
+  stroke: var(--half-accent);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+
+.body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  max-width: 24rem;
+}
+
+.kicker {
+  font-size: var(--font-size-xs);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* Los h1 a h6 globales son oscuros: sobre la mitad oscura el título fija su color */
+.name {
+  margin: 0;
+  color: inherit;
+  font-family: var(--font-family-heading);
+  font-size: clamp(2rem, 6vw, 3.25rem);
+  line-height: 1.05;
+}
+
+.tagline {
+  font-size: var(--font-size-lg);
+}
+
+.address {
+  font-size: var(--font-size-sm);
+  opacity: 0.8;
+}
+
+.enter {
+  margin-top: var(--spacing-3);
+  align-self: flex-start;
+  padding-bottom: var(--spacing-1);
+  border-bottom: 2px solid var(--half-accent);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .half,
+  .figure {
+    transition: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .figures {
+    top: 8%;
+    right: -8%;
+    width: min(70%, 22rem);
+  }
+
+  .halves {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .half {
+    min-height: calc(100svh - 5rem);
+    padding: var(--spacing-12) var(--spacing-10);
+  }
+}
