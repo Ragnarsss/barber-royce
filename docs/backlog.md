@@ -4175,7 +4175,7 @@ vistas propias de La Serena.
 #### BR-103 — Sucursal activa: `BranchProvider`, rutas y reserva por sucursal
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: —
-- Estado: Propuesta
+- Estado: En curso
 - Historia de usuario: HU-SUC-001 (CA-02 .. CA-04, CA-09, CA-10), HU-RES-001 (CA-04)
 - RF/RNF: `RF-SUC-001`, `RF-SUC-002`, `RF-RES-008`, `RF-CNT-009`, `RNF-PERF-008`, `RNF-SEG-005`, `RNF-DATOS-001`
 
@@ -4224,6 +4224,22 @@ Criterios de aceptación:
    todos los botones; sin `reserva` en la fila, abre `reservas.url`
    (HU-RES-001 CA-04, CP-RES-008, CP-CNT-009).
 7. `datos-negocio-auditor` sin hallazgos (CP-DATOS-001).
+
+> **Alcance ajustado (2026-11-23, al iniciar el ticket):**
+> - El script de arranque va en `index.html` con su hash en la CSP (decisión del
+>   usuario); `RNF-SEG-004` se enmienda para admitir exactamente ese hash.
+> - Las portadas `/coquimbo` y `/la-serena` **no** suman entradas en `ROUTES` en
+>   este ticket: renderizan `HomePage` con su `canonical` en `/`. Sus entradas,
+>   título y sitemap llegan con `BR-106`, junto con su `SEOHelmet`.
+> - Además de los botones del alcance, `Footer` usa `useBookingUrl()` y no monta
+>   su franja de cierre en las portadas de sucursal (la portada ya termina con
+>   `CTA2`, `BR-098`). El JSON-LD (`structuredData.ts`) sigue con el enlace general:
+>   es estático.
+> - La hoja reemplaza la lista de sucursales entera, así que una fila sin `reserva`
+>   conserva el enlace de respaldo de esa sucursal; sin esto, la reserva de La
+>   Serena abriría la de Coquimbo hasta que el dueño agregue la columna.
+> - `useBranch()` fuera del provider devuelve Coquimbo (como `ContentContext`) en
+>   vez de lanzar un error, para no romper los tests que montan un componente suelto.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-103).
 
@@ -4554,7 +4570,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-100 | Modal de bienvenida con una mascarilla facial gratis | K | P3 | M | En curso | BR-037, BR-042 |
 | BR-101 | Canje de la mascarilla con formulario, cupón y registro en la hoja | K | P3 | L | Bloqueado | BR-100 |
 | BR-102 | Poner al día `architecture.md` y las guías con lo que ya existe | A | P2 | S | Propuesta | — |
-| BR-103 | Sucursal activa: `BranchProvider`, rutas y reserva por sucursal | M | P1 | M | Propuesta | — |
+| BR-103 | Sucursal activa: `BranchProvider`, rutas y reserva por sucursal | M | P1 | M | En curso | — |
 | BR-104 | Tema La Serena en tokens y figuras por sucursal | M | P1 | M | Propuesta | BR-103 |
 | BR-105 | Control para cambiar de sucursal, con transición | M | P1 | M | Propuesta | BR-103, BR-104 |
 | BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | Propuesta | BR-103 .. BR-105 |

@@ -265,6 +265,9 @@ No hay gestor de estado global (ADR-004).
 - **Consecuencia:** la CSP suma los orígenes de Google solo para GA
   (`script-src`, `connect-src`, `img-src`), sin `unsafe-inline`. Se agrega
   la página `/privacidad` (borrador sin validar legalmente).
+  > Enmienda (2026-11-23, `ADR-010`): `script-src` admite además el hash
+  > `sha256` del script de arranque de la sucursal (`index.html`). Sigue sin
+  > `unsafe-inline` ni `unsafe-eval`.
 - **A confirmar con el usuario:** si quiere GA4 además de Vercel Analytics;
   quién valida el texto de privacidad; datos del responsable.
 
