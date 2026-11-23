@@ -1,0 +1,52 @@
+/* Mobile-first (ADR-009). Decorativa: llena la sección sin tapar el contenido ni recibir clics. */
+.vines {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  /* En móvil, una versión reducida: una franja de 24 px pegada al borde, el margen que deja el contenido */
+  width: 1.5rem;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.left {
+  left: 0;
+}
+
+.right {
+  right: 0;
+  /* La misma enredadera, espejada */
+  scale: -1 1;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.stem {
+  fill: none;
+  stroke: var(--color-wood);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.leaf {
+  fill: var(--color-leaf);
+}
+
+.vein {
+  fill: none;
+  stroke: var(--color-brand-background);
+  stroke-width: 2;
+  opacity: 0.45;
+}
+
+@media (min-width: 769px) {
+  .vines {
+    width: 7.5rem;
+  }
+}

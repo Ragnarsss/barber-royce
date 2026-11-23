@@ -1,0 +1,4 @@
+/* El contenedor sobre el que crecen las enredaderas: ellas llenan su alto, por encima del fondo de la sección. */
+.host {
+  position: relative;
+}

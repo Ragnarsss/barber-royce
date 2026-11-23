@@ -4539,7 +4539,7 @@ Criterios de aceptación:
 #### BR-108 — Enredaderas laterales del tema La Serena
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-104
-- Estado: Propuesta
+- Estado: En curso
 - Historia de usuario: HU-SUC-002 (CA-06, CA-07)
 - RF/RNF: `RF-SUC-007`, `RNF-A11Y-003`, `RNF-PERF-003`, `RNF-PERF-006`
 
@@ -4567,6 +4567,17 @@ Criterios de aceptación:
 2. Con Coquimbo no se renderizan ni se descargan (HU-SUC-002 CA-07).
 3. Ningún re-render por scroll (CP-PERF-006) y el TBT móvil no empeora
    (CP-PERF-003).
+
+> **Resultado de la construcción (2026-11-23):**
+> - `BranchVines` envuelve una sección y le suma `SideVines` (izquierda, derecha o ambas) según un mapa `Record<Branch, …>`: con Coquimbo
+>   es `null` y el trozo de La Serena (`lazy`) no se pide. La geometría (tallo y 11 hojas) está en `vineShapes.ts`, aparte del componente,
+>   para reemplazarla por un SVG de Figma o Illustrator sin tocarlo.
+> - El tallo se dibuja con `pathLength` y cada hoja se abre (escala y opacidad) al llegar el tallo a su altura; todo con `MotionValue`
+>   de `useScroll`, sin estado. Con reducir movimiento se ve completa y quieta. `aria-hidden` y `pointer-events: none`.
+> - En móvil, una franja de 24 px (el margen del contenido); en escritorio, 7,5 rem.
+> - **Secciones de la primera versión (a elegir por el usuario):** Features y el bloque «Visítanos», con enredadera a los dos lados. En
+>   Benefits y Reviews el contenido llega al borde izquierdo y la enredadera lo tapaba; quedaron sin ella.
+> - Pendiente: verlas en el preview y elegir las secciones.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-108).
 
