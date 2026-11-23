@@ -401,7 +401,7 @@ describe("CardCarousel en escritorio: estilos (BR-073)", () => {
     expect(css).toMatch(/\n\.arrow\s*\{[^}]*display:\s*none/);
     expect(desktop).toMatch(/\.arrow\s*\{[^}]*display:\s*grid/);
     expect(desktop).toMatch(/\.arrow\s*\{[^}]*background:\s*var\(--color-brand-primary\)/);
-    expect(desktop).toMatch(/\.arrow\s*\{[^}]*color:\s*var\(--color-brand-white\)/);
+    expect(desktop).toMatch(/\.arrow\s*\{[^}]*color:\s*var\(--color-on-primary\)/);
   });
 
   it("al arrastrar, el cursor cambia y no se selecciona el texto", () => {

@@ -1,10 +1,15 @@
-import { fixedShape } from "@/components/common/FixedShape/shapeGeometry";
+import { fixedShape, type FixedShapeGeometry } from "@/components/common/FixedShape/shapeGeometry";
+import type { Branch } from "@/config/branches";
 
 /** Capa de parallax de cada hexágono: decide su movimiento y su aspecto (relleno, borde y brillo). */
 export type Sp1HexagonLayer = "background" | "middle" | "foreground" | "small";
 
 /** Hexágono de lados planos arriba y abajo, el mismo `clip-path` de antes (BR-092), sobre una caja cuadrada. */
-export const SP1_HEXAGON_SHAPE = fixedShape(100, 100, [[25, 0], [75, 0], [100, 50], [75, 100], [25, 100], [0, 50]]);
+export const SP1_HEXAGON_BY_BRANCH = {
+  coquimbo: fixedShape(100, 100, [[25, 0], [75, 0], [100, 50], [75, 100], [25, 100], [0, 50]]),
+  // El cuadrado de La Serena (BR-104): las puntas de los lados se quedan y las aristas planas se abren hasta las esquinas.
+  "la-serena": fixedShape(100, 100, [[0, 0], [100, 0], [100, 50], [100, 100], [0, 100], [0, 50]]),
+} as const satisfies Record<Branch, FixedShapeGeometry>;
 
 /**
  * Los 14 hexágonos de fondo de «Respaldados por los mejores» (BR-092), en el orden en que se pintan. La rotación es la de

@@ -20,7 +20,7 @@
   --glow-red: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);
   --glow: drop-shadow(0 0 3px var(--glow-core)) drop-shadow(0 0 10px var(--glow-core))
     drop-shadow(0 0 24px var(--glow-red));
-  --rest-shadow: drop-shadow(0 var(--spacing-2) var(--spacing-4) color-mix(in srgb, var(--color-primary-900) 55%, transparent));
+  --rest-shadow: drop-shadow(0 var(--spacing-2) var(--spacing-4) color-mix(in srgb, var(--color-shade) 55%, transparent));
   --caption-shade: color-mix(in srgb, var(--color-primary-900) 80%, transparent);
 
   display: grid;

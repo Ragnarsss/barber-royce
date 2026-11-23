@@ -149,7 +149,7 @@
 
 .navLink:hover,
 .navLink:focus-visible {
-  color: var(--color-brand-white);
+  color: var(--color-hover-text);
   text-shadow: var(--nav-glow);
 }
 
@@ -182,7 +182,7 @@
 
 .ctaButton:hover {
   background-color: var(--color-brand-primary);
-  color: var(--color-brand-white);
+  color: var(--color-on-primary);
   transform: translateY(-2px);
   box-shadow: var(--nav-cta-glow);
   border-color: var(--color-brand-primary-hover);
@@ -191,7 +191,7 @@
 /* El botón de reserva de la barra, en móvil: chico, blanco y con texto rojo */
 .actions .ctaButton {
   background-color: var(--color-brand-white);
-  color: var(--color-brand-primary);
+  color: var(--color-accent-on-inverse);
   border: 0;
   border-radius: var(--radius-md);
   padding: var(--spacing-2) var(--spacing-3);
@@ -206,7 +206,7 @@
 
 .actions .ctaButton:hover {
   background-color: var(--color-brand-white);
-  color: var(--color-brand-primary-hover);
+  color: var(--color-accent-on-inverse-hover);
   transform: none;
   box-shadow: none;
 }
@@ -285,7 +285,7 @@
 }
 
 .mobileNavLink.active {
-  color: var(--color-brand-primary-hover);
+  color: var(--color-detail);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -345,7 +345,7 @@
 
   .actions .ctaButton:hover {
     background-color: var(--color-brand-primary);
-    color: var(--color-brand-white);
+    color: var(--color-on-primary);
     transform: translateY(-2px);
     box-shadow: var(--nav-cta-glow);
     border-color: var(--color-brand-primary-hover);

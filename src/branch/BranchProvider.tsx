@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import type { Branch } from "@/config/branches";
+import { BRANCH_THEME_COLOR, type Branch } from "@/config/branches";
 import { BranchContext } from "./BranchContext";
 import { readStoredBranch, writeStoredBranch } from "./branchStorage";
 import { branchFromPath, resolveBranch, swapBranchInPath } from "./resolveBranch";
@@ -26,6 +26,7 @@ export function BranchProvider({ children }: { children: ReactNode }) {
   // Antes de pintar, para que el tema nunca llegue un cuadro tarde.
   useLayoutEffect(() => {
     document.documentElement.dataset.branch = branch;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", BRANCH_THEME_COLOR[branch]);
   }, [branch]);
 
   const setBranch = useCallback(

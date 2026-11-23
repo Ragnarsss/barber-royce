@@ -61,6 +61,24 @@
   ); /* #332b2b - Fondo secciones */
   --color-brand-white: #ffffff;
 
+  /* Texto sobre un relleno de marca (botones, chips). No sigue a --color-brand-white: en La Serena ese es oscuro. */
+  --color-on-primary: var(--color-brand-white);
+
+  /* Detalles y hovers que no son el botón principal. Coquimbo: su rojo de hover de siempre. La Serena: el verde hoja mate. */
+  --color-detail: var(--color-brand-primary-hover);
+  /* Texto de un enlace al pasar el cursor (barra y footer). Coquimbo: el blanco de siempre. La Serena: el verde mate. */
+  --color-hover-text: var(--color-brand-white);
+
+  /* Texto sobre una foto con velo oscuro: es claro en los dos temas (el velo es oscuro en los dos). */
+  --color-on-image: #ffffff;
+
+  /* Tinta: texto oscuro sobre una foto o un fondo claro. Es oscura en los dos temas (primary-900 pasa a ser una superficie clara en La Serena). */
+  --color-ink: var(--color-primary-900);
+
+  /* Texto de acento sobre un relleno --color-brand-white (el botón «blanco» de Coquimbo; en La Serena, ese relleno es oscuro). */
+  --color-accent-on-inverse: var(--color-brand-primary);
+  --color-accent-on-inverse-hover: var(--color-brand-primary-hover);
+
   /*
    * Capas translúcidas (BR-022): la que aclara y la que oscurece. Se usan siempre con
    * color-mix(in srgb, var(--color-tint) 10%, transparent), nunca con rgba() escrito a mano.
@@ -106,4 +124,59 @@
 
   --color-overlay: rgba(0, 0, 0, 0.5);
   --color-overlay-light: rgba(0, 0, 0, 0.25);
+}
+
+/* ============================================
+   TEMA LA SERENA (ADR-010, BR-104)
+   Blanco, café tierra y madera. Invierte el sitio: lo que en Coquimbo es texto claro sobre fondo oscuro
+   (--color-brand-white sobre --color-brand-background) aquí es texto oscuro sobre fondo claro, así que cada par
+   se mantiene junto. `:root[data-branch]` gana por especificidad al `:root` de arriba, sin depender del orden.
+   ============================================ */
+:root[data-branch="la-serena"] {
+  /* Paleta (muestreada de las fotos del local) */
+  --color-bone: #f7f3ec; /* blanco hueso: fondo */
+  --color-sand: #ede4d6; /* arena: secciones alternas */
+  --color-line: #ddd3c6; /* bordes y divisores */
+  --color-espresso: #2b211b; /* texto principal; bandas oscuras */
+  --color-bark: #6b5a4c; /* texto secundario */
+  --color-earth: #7a4f2e; /* café tierra: marca */
+  --color-earth-deep: #5e3b22; /* café tierra: hover */
+  --color-wood: #b5824e; /* madera: solo decorativa, no texto (3,0:1 sobre el hueso) */
+  --color-leaf: #4e6347; /* verde hoja */
+  --color-neon: #eaf4ff; /* neón frío: solo luce sobre una banda oscura */
+  --color-amber: #dc8018; /* ámbar del logo de las capas: 2,7:1 sobre el hueso, 5,3:1 sobre el espresso */
+
+  /* Alias de marca */
+  --color-brand-background: var(--color-bone);
+  --color-brand-section-bg: var(--color-sand);
+  --color-brand-white: var(--color-espresso); /* "blanco" de Coquimbo = texto principal: aquí es oscuro */
+  --color-brand-primary: var(--color-earth);
+  --color-brand-primary-hover: var(--color-earth-deep);
+  --color-on-primary: #ffffff;
+  --color-detail: var(--color-leaf);
+  --color-hover-text: var(--color-leaf);
+  --color-ink: var(--color-espresso);
+  --color-accent-on-inverse: var(--color-amber); /* ámbar sobre el relleno espresso: 5,3:1 */
+  --color-accent-on-inverse-hover: var(--color-amber);
+  --color-background-inverse: var(--color-sand); /* aviso de privacidad, 404 y pantallas de error: aquí son claros */
+  --color-text-inverse: var(--color-espresso);
+  --color-tint: var(--color-espresso); /* la capa que contrasta con el fondo: velo y vidrio oscuros sobre claro */
+  --color-shade: var(--color-espresso);
+  --color-text-secondary: var(--color-bark);
+
+  /* Escalas que los módulos usan directamente (no pasan por un alias de marca) */
+  --color-accent-300: var(--color-earth-deep);
+  --color-accent-400: var(--color-earth);
+  --color-accent-500: var(--color-earth);
+  --color-accent-600: var(--color-wood);
+  --color-accent-700: var(--color-bark);
+  --color-accent-900: var(--color-sand);
+  --color-primary-500: var(--color-espresso);
+  --color-primary-700: var(--color-bark);
+  --color-primary-800: var(--color-sand);
+  --color-primary-900: var(--color-bone);
+
+  /* De variables.css (segunda fuente de tokens, BR-021) */
+  --color-white: var(--color-espresso);
+  --color-dark: var(--color-bone);
 }

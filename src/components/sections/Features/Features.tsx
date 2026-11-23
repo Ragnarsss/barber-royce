@@ -7,10 +7,12 @@ import { AnimatedGridSection } from "@/components/common/AnimatedGridSection/Ani
 import { FixedShape } from "@/components/common/FixedShape/FixedShape";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MEDIA } from "@/config/breakpoints";
-import { FEATURES_EDGE, FEATURES_PENTAGON } from "./featuresShapes";
+import { useBranch } from "@/branch/useBranch";
+import { FEATURES_EDGE, FEATURES_PENTAGON_BY_BRANCH } from "./featuresShapes";
 
 // ✅ React 19: memo() eliminado - bailout automático mejorado
 export function Features() {
+  const pentagon = FEATURES_PENTAGON_BY_BRANCH[useBranch().branch];
   const siteText = useSiteText();
   // El borde de los dos pentágonos de fondo se dibuja al entrar la sección, solo en escritorio y con movimiento (BR-096):
   // en móvil no suma JavaScript donde el TBT tiene poco margen, y con «reducir movimiento» aparecen dibujados.
@@ -37,10 +39,10 @@ export function Features() {
       decoration={(controls) => (
         <>
           <div className={styles.shapeTop} data-edge-shape aria-hidden="true">
-            <FixedShape shape={FEATURES_PENTAGON} edge={edge(controls, FEATURES_EDGE.top)} />
+            <FixedShape shape={pentagon} edge={edge(controls, FEATURES_EDGE.top)} />
           </div>
           <div className={styles.shapeBottom} data-edge-shape aria-hidden="true">
-            <FixedShape shape={FEATURES_PENTAGON} edge={edge(controls, FEATURES_EDGE.bottom)} />
+            <FixedShape shape={pentagon} edge={edge(controls, FEATURES_EDGE.bottom)} />
           </div>
         </>
       )}

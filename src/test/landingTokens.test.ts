@@ -21,10 +21,17 @@ const STYLESHEETS = readdirSync(src, { recursive: true, encoding: "utf8" })
   .sort();
 
 // Sin comentarios: un hex citado en un comentario no es un color en uso. Las URL de datos (el grano SVG) tampoco.
-const withoutNoise = (text: string) => text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/url\("data:[^"]*"\)/g, "");
+// Tampoco `@media print`: en papel el texto va negro con cualquier tema.
+const withoutNoise = (text: string) =>
+  text
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/url\("data:[^"]*"\)/g, "")
+    .replace(/@media print\s*\{(?:[^{}]|\{[^{}]*\})*\}/g, "");
 const code = (file: string) => withoutNoise(readFileSync(resolve(src, file), "utf8"));
 
-const LITERAL = /#[0-9a-fA-F]{3,8}\b|(?:rgba?|hsla?)\([^)]*\)/g;
+// Un color escrito como palabra (`color: white`) tampoco cambia con el tema; `white-space` y compañía no cuentan.
+const NAMED_COLOR = String.raw`(?:^|[;{\s])(?:color|background(?:-color)?|fill|stroke|border(?:-[a-z]+)*)\s*:\s*[^;{}]*?(?<![-\w])(?:white|black)(?![-\w])`;
+const LITERAL = new RegExp(String.raw`#[0-9a-fA-F]{3,8}\b|(?:rgba?|hsla?)\([^)]*\)|${NAMED_COLOR}`, "g");
 
 describe("BR-022: colores de todo el CSS desde tokens", () => {
   it("encuentra las hojas de estilo de la app (la lista no queda vacía por un cambio de carpeta)", () => {
@@ -42,6 +49,9 @@ describe("BR-022: colores de todo el CSS desde tokens", () => {
     expect(withoutNoise("a{background:rgba(0, 0, 0, .5)}").match(LITERAL)).toEqual(["rgba(0, 0, 0, .5)"]);
     expect(withoutNoise("a{color:hsl(10 20% 30%)}").match(LITERAL)).toEqual(["hsl(10 20% 30%)"]);
     expect(withoutNoise("/* #d52323 */ a{color:var(--color-brand-primary)}").match(LITERAL)).toBeNull();
+    expect(withoutNoise("a{ color: white; }").match(LITERAL)).toHaveLength(1);
+    expect(withoutNoise("a{ white-space: nowrap; background: var(--color-tint) }").match(LITERAL)).toBeNull();
+    expect(withoutNoise("a{ color: var(--color-white); border-color: var(--color-black) }").match(LITERAL)).toBeNull();
   });
 });
 

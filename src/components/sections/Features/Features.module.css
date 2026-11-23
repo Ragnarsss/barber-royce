@@ -173,7 +173,7 @@
   height: 3.5rem;
   padding: 0.75rem;
   background: var(--color-brand-primary);
-  color: var(--color-brand-white);
+  color: var(--color-on-primary);
   clip-path: polygon(
     8px 0,
     100% 0,

@@ -4293,7 +4293,7 @@ Criterios de aceptación:
 #### BR-104 — Tema La Serena en tokens y figuras por sucursal
 
 - Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-022
-- Estado: Propuesta
+- Estado: En curso
 - Historia de usuario: HU-SUC-002 (CA-01 .. CA-03)
 - RF/RNF: `RF-SUC-005`, `RNF-A11Y-004`, `RNF-A11Y-003`, `RNF-MANT-004`
 
@@ -4345,6 +4345,31 @@ Criterios de aceptación:
 > - Framer interpola los puntos solo si ambas figuras tienen la **misma cantidad**; con distinta cantidad salta al
 >   destino sin error (comprobado el 2026-11-23), por eso el test de puntos es obligatorio.
 > - Verificación extra: capturas de cada ruta con La Serena activa, para ver qué queda mal además del contraste.
+
+> **Resultado de la construcción (2026-11-23):**
+> - **Tema:** bloque `:root[data-branch="la-serena"]` en `colors.css` con la paleta, los alias de marca y las escalas que los
+>   módulos usan directamente. Invierte el sitio: el «blanco» de Coquimbo (texto) es espresso y el fondo es hueso, así que cada
+>   par se mantiene junto. Ámbar muestreado de la foto del local: `#DC8018` (2,7:1 sobre el hueso, 5,3:1 sobre el espresso:
+>   solo adorno o sobre fondo oscuro).
+> - **Roles de color nuevos**, con el valor de hoy en Coquimbo: `--color-on-primary` (12 reglas de texto sobre un relleno de
+>   marca), `--color-on-image` (texto sobre fotos con velo), `--color-accent-on-inverse` (acento sobre el botón «blanco»),
+>   `--color-detail` y `--color-hover-text` (el **verde hoja mate** que pidió el usuario para detalles y hovers).
+> - **Figuras:** un mapa por sucursal en las cinco secciones (misma caja y mismos puntos, con test), `SocialProof2` sale a
+>   `sp2Shapes.ts`, `tiltedRect()` para los rectángulos girados de CTA1, y `FixedShape` las transforma al cambiar de
+>   sucursal (inmediato con reducir movimiento).
+> - **`theme-color`** (nuevo en `index.html`, lo ajusta `BranchProvider`) y **loader** oscuro con neón frío por sucursal; un
+>   test compara ambos con los tokens.
+> - **Verificación local:** contraste del tema con 24 pares de texto; capturas de las 8 rutas con La Serena activa a 390 y
+>   1280 px, revisadas a ojo; Coquimbo idéntico píxel a píxel a como quedó tras `BR-022` (ventana normal, 6 de 6; en página
+>   completa 14 de 16, y las 2 restantes son el artefacto ya conocido del logo del footer). El e2e de contraste corre ahora
+>   en las dos sucursales (solo en el CI).
+>
+> **Pendiente, fuera del alcance de este ticket (a decidir con el usuario):**
+> - **Logo:** el de la barra tiene fondo negro (un cuadrado oscuro sobre la barra clara) y el del footer es claro y casi no
+>   se ve. La Serena tiene su propia marca (letrero naranja en las capas): hace falta su logo.
+> - **Formas con `clip-path`** que siguen siendo hexágonos o chaflanes: la tarjeta de testimonio y el fondo de la foto de
+>   `CTA1`, el panal de `/equipo` y `/productos` (`Honeycomb`) y las tarjetas con esquinas cortadas. `BR-107` cubre el equipo.
+> - El `theme-color` y el letrero se ajustan al cargar React, no antes: quien entra por La Serena ve un instante el de Coquimbo.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-104).
 
@@ -4634,7 +4659,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-101 | Canje de la mascarilla con formulario, cupón y registro en la hoja | K | P3 | L | Bloqueado | BR-100 |
 | BR-102 | Poner al día `architecture.md` y las guías con lo que ya existe | A | P2 | S | Propuesta | — |
 | BR-103 | Sucursal activa: `BranchProvider`, rutas y reserva por sucursal | M | P1 | M | En curso | — |
-| BR-104 | Tema La Serena en tokens y figuras por sucursal | M | P1 | M | Propuesta | BR-103, BR-022 |
+| BR-104 | Tema La Serena en tokens y figuras por sucursal | M | P1 | M | En curso | BR-103, BR-022 |
 | BR-105 | Control para cambiar de sucursal, con transición | M | P1 | M | Propuesta | BR-103, BR-104 |
 | BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | Propuesta | BR-103 .. BR-105 |
 | BR-107 | Equipo de La Serena: tarjetas rectangulares en carrusel | M | P2 | M | Propuesta | BR-103, BR-104 |

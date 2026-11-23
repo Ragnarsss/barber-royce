@@ -9,7 +9,7 @@
   --footer-fg-subtle: color-mix(in srgb, var(--footer-fg) 50%, transparent);
   --footer-line: color-mix(in srgb, var(--footer-fg) 10%, transparent);
   --footer-touch: 2.75rem; /* 44 px: área táctil mínima (RNF-A11Y-004) */
-  background: linear-gradient(180deg, var(--color-primary-800) 0%, var(--color-primary-500) 100%);
+  background: linear-gradient(180deg, var(--color-primary-800) 0%, var(--color-brand-background) 100%);
   color: var(--footer-fg);
   padding: 0 0 var(--spacing-6);
   position: relative;
@@ -72,7 +72,7 @@
   min-height: var(--spacing-12);
   padding: var(--spacing-3) var(--spacing-8);
   background: var(--color-brand-white);
-  color: var(--color-brand-primary);
+  color: var(--color-accent-on-inverse);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   letter-spacing: var(--letter-spacing-wider);
@@ -93,7 +93,7 @@
 
 .closingButton:hover {
   background: var(--color-brand-primary);
-  color: var(--color-brand-white);
+  color: var(--color-on-primary);
 }
 
 .closingButton:focus-visible {
@@ -204,7 +204,7 @@
 }
 
 .links a:hover {
-  color: var(--footer-fg);
+  color: var(--color-hover-text);
   transform: translateX(4px);
 }
 
@@ -240,7 +240,7 @@
 }
 
 .contactItem a:hover {
-  color: var(--footer-fg);
+  color: var(--color-hover-text);
 }
 
 .contactIcon {

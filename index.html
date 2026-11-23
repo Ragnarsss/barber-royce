@@ -16,6 +16,8 @@
     <link rel="manifest" href="/site.webmanifest" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Color de la barra del navegador: el de Coquimbo hasta que BranchProvider lo ajusta a la sucursal activa (BR-104). -->
+    <meta name="theme-color" content="#1a1a1a" />
 
     <!-- SEO: Primary Meta Tags -->
     <title>
@@ -192,6 +194,11 @@
       #neon-loader .off{color:#aa3939;opacity:.22}
       #neon-loader .halo{color:#d52323;filter:blur(6px)}
       #neon-loader .core{color:color-mix(in srgb,#d52323 30%,#ffffff);filter:drop-shadow(0 0 2px #d52323) drop-shadow(0 0 8px #d52323) drop-shadow(0 0 18px #d52323)}
+      /* La Serena (BR-104): letrero de neón frío sobre un fondo oscuro; el neón solo luce sobre oscuro. Los valores son los de --color-espresso, --color-bark y --color-neon (un test los compara). */
+      [data-branch="la-serena"] #neon-loader{background:#2b211b}
+      [data-branch="la-serena"] #neon-loader .off{color:#6b5a4c}
+      [data-branch="la-serena"] #neon-loader .halo{color:#eaf4ff}
+      [data-branch="la-serena"] #neon-loader .core{color:#ffffff;filter:drop-shadow(0 0 2px #eaf4ff) drop-shadow(0 0 8px #eaf4ff) drop-shadow(0 0 18px #eaf4ff)}
       #neon-loader .lit{opacity:0;animation:neon-ignite 900ms steps(1,end) 150ms forwards}
       #neon-loader .lit-defect{animation:neon-ignite-defect 1500ms steps(1,end) 150ms forwards}
       #neon-loader[data-state="exiting"] .lit{animation:none;opacity:0;transition:opacity 120ms ease}

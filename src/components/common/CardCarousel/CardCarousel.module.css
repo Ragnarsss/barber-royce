@@ -146,7 +146,7 @@
     width: 2.75rem;
     height: 2.75rem;
     padding: 0;
-    color: var(--color-brand-white);
+    color: var(--color-on-primary);
     background: var(--color-brand-primary);
     border: 0;
     cursor: pointer;
