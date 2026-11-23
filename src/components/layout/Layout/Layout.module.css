@@ -10,3 +10,8 @@
   flex: 1;
   padding-top: 80px; /* Height of navbar */
 }
+
+/* Sin barra de navegación (la portada para elegir sucursal): no hay altura que reservar */
+.bare {
+  padding-top: 0;
+}

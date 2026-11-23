@@ -22,10 +22,27 @@ export const ROUTES: Record<string, RouteConfig> = {
     home: {
         path: "/",
         label: "INICIO",
-        title: "Royce Barbería - Cortes Premium y Estilo Clásico en Coquimbo",
-        description: "Barbería premium en Coquimbo. Cortes clásicos y modernos, afeitado tradicional con toalla caliente. Experiencia y calidad garantizada.",
+        title: "Royce Barbería - Sucursales en Coquimbo y La Serena",
+        description: "Elige tu sucursal de Royce Barbería, en Coquimbo o en La Serena. Cortes clásicos y modernos, afeitado tradicional y reserva de hora en línea.",
         showInNav: false,
         showInFooter: true,
+    },
+    // Una portada por sucursal (ADR-010, BR-106). El footer ya enlaza a `/`, desde donde se elige.
+    coquimbo: {
+        path: "/coquimbo",
+        label: "COQUIMBO",
+        title: "Royce Barbería Coquimbo - Cortes Premium y Estilo Clásico",
+        description: "Barbería premium en Coquimbo. Cortes clásicos y modernos, afeitado tradicional con toalla caliente. Experiencia y calidad garantizada.",
+        showInNav: false,
+        showInFooter: false,
+    },
+    laSerena: {
+        path: "/la-serena",
+        label: "LA SERENA",
+        title: "Royce Barbería La Serena - Cortes y Afeitado en un Espacio Sereno",
+        description: "Barbería en La Serena: cortes clásicos y modernos, afeitado tradicional y una sala de madera, luz y plantas. Reserva tu hora en línea.",
+        showInNav: false,
+        showInFooter: false,
     },
     about: {
         path: "/nosotros",

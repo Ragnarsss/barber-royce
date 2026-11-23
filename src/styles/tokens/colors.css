@@ -87,6 +87,25 @@
   --color-tint: #ffffff;
   --color-shade: #000000;
 
+  /*
+   * Paletas crudas de las dos sucursales (BR-106). Son fijas: no cambian con la sucursal activa, para que la portada
+   * partida de `/` pueda mostrar las dos identidades a la vez. Los alias de marca de arriba sí cambian.
+   */
+  --color-charcoal: #1a1a1a; /* Coquimbo: fondo */
+  --color-ember: #d52323; /* Coquimbo: rojo de marca */
+  /* La Serena (muestreada de las fotos del local) */
+  --color-bone: #f7f3ec; /* blanco hueso: fondo */
+  --color-sand: #ede4d6; /* arena: secciones alternas */
+  --color-line: #ddd3c6; /* bordes y divisores */
+  --color-espresso: #2b211b; /* texto principal; bandas oscuras */
+  --color-bark: #6b5a4c; /* texto secundario */
+  --color-earth: #7a4f2e; /* café tierra: marca */
+  --color-earth-deep: #5e3b22; /* café tierra: hover */
+  --color-wood: #b5824e; /* madera: solo decorativa, no texto (3,0:1 sobre el hueso) */
+  --color-leaf: #4e6347; /* verde hoja */
+  --color-neon: #eaf4ff; /* neón frío: solo luce sobre una banda oscura */
+  --color-amber: #dc8018; /* ámbar del logo de las capas: 2,7:1 sobre el hueso, 5,3:1 sobre el espresso */
+
   /* Gradients */
   --gradient-primary: linear-gradient(
     135deg,
@@ -133,19 +152,6 @@
    se mantiene junto. `:root[data-branch]` gana por especificidad al `:root` de arriba, sin depender del orden.
    ============================================ */
 :root[data-branch="la-serena"] {
-  /* Paleta (muestreada de las fotos del local) */
-  --color-bone: #f7f3ec; /* blanco hueso: fondo */
-  --color-sand: #ede4d6; /* arena: secciones alternas */
-  --color-line: #ddd3c6; /* bordes y divisores */
-  --color-espresso: #2b211b; /* texto principal; bandas oscuras */
-  --color-bark: #6b5a4c; /* texto secundario */
-  --color-earth: #7a4f2e; /* café tierra: marca */
-  --color-earth-deep: #5e3b22; /* café tierra: hover */
-  --color-wood: #b5824e; /* madera: solo decorativa, no texto (3,0:1 sobre el hueso) */
-  --color-leaf: #4e6347; /* verde hoja */
-  --color-neon: #eaf4ff; /* neón frío: solo luce sobre una banda oscura */
-  --color-amber: #dc8018; /* ámbar del logo de las capas: 2,7:1 sobre el hueso, 5,3:1 sobre el espresso */
-
   /* Alias de marca */
   --color-brand-background: var(--color-bone);
   --color-brand-section-bg: var(--color-sand);
