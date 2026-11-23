@@ -667,6 +667,20 @@ Criterios de aceptación:
 > 2. Coquimbo se ve igual: capturas de cada ruta antes y después, con reducir movimiento y a 390 y 1280 px, sin
 >    diferencias.
 > 3. `design-tokens-auditor` sin hallazgos; lint, tipos, tests y build en verde; el e2e de contraste pasa en el CI.
+>
+> **Verificación local (2026-11-23):** capturas de 8 rutas a 390 y 1280 px, con reducir movimiento, antes y después
+> (Chrome real sobre `vite preview`). Dos tandas del mismo build dan 16 de 16 idénticas, salvo el mapa de Google y las
+> fotos de productos en móvil, que se enmascararon por ser contenido externo. Resultado: ninguna diferencia visible;
+> los píxeles distintos son de 1 a 4 niveles por canal (de 255) en capas translúcidas, porque `rgba()` redondea el
+> alfa a 8 bits y `color-mix()` no. En la home, con ventana normal, solo difiere la franja de 4 px de la barra de
+> progreso (1/255); en la captura de página completa, el logo del footer se remuestrea distinto al ser la ventana de
+> ~7.400 px (artefacto de la captura, no se ve con ventana normal).
+>
+> Desviaciones de color, todas en la pantalla de error `CatastrophicError`: `#b91c1c` → mezcla de `--color-error-dark` y
+> `--color-shade`; `#2d2d2d` → mezcla de `--color-brand-background` y `--color-tint`; `#6b7280` →
+> `--color-neutral-500` (`#737373`); `#4b5563` → `--color-neutral-600` (`#525252`); `#332a2b` →
+> `--color-brand-section-bg` (`#332b2b`). No se capturaron `ConsentBanner`, `Loading` ni `CatastrophicError`: salen
+> con analítica activa, durante la carga perezosa o ante un fallo.
 
 #### BR-023 — Retirar Tailwind, shadcn y sus componentes `ui/*`
 
