@@ -28,6 +28,7 @@ su HU y sus criterios de aceptación.
 | CU-OPS-001 | Desplegar un cambio | Desarrollador | HU-OPS-001 | Propuesto |
 | CU-MED-001 | Decidir sobre la medición de mi visita | Cliente | HU-MED-002, HU-MED-003 | Propuesto |
 | CU-CNT-001 | Publicar un cambio de contenido desde la hoja | Dueño | HU-CNT-001, HU-CNT-002 | Propuesto |
+| CU-SUC-001 | Elegir y cambiar de sucursal | Cliente | HU-SUC-001, HU-SUC-002, HU-RES-001 | Propuesto |
 
 ---
 
@@ -294,6 +295,52 @@ en todos los casos.
 
 El sitio publicado refleja la hoja, o la última copia válida, y nunca queda
 con contenido incompleto.
+
+---
+
+## CU-SUC-001 - Elegir y cambiar de sucursal
+
+- Actor: Cliente
+- Historia de usuario relacionada: HU-SUC-001, HU-SUC-002, HU-RES-001
+- Precondición: el cliente abre cualquier URL del sitio.
+
+### Flujo principal
+
+1. El cliente entra a `/`.
+2. El sistema muestra la portada partida: una mitad por sucursal.
+3. El cliente elige una mitad.
+4. El sistema navega a la portada de esa sucursal (`/coquimbo` o
+   `/la-serena`), aplica su tema y guarda la elección en el navegador.
+5. El cliente abre una página común (por ejemplo, `/servicios`); el sistema
+   la muestra con el tema de la sucursal elegida.
+6. El cliente usa el control de sucursal del menú y elige la otra.
+7. El sistema cambia el tema con la transición en diagonal, sin cambiar la
+   URL, y guarda la nueva elección.
+
+### Flujos alternativos
+
+- 1a. El cliente entra directo por una página común (enlace guardado, Google)
+  y tiene una elección guardada: el sistema la aplica desde el primer cuadro
+  y sigue en el paso 5.
+- 1b. El cliente entra directo por una página común sin elección guardada: el
+  sistema aplica Coquimbo y sigue en el paso 5.
+- 1c. El cliente entra por `/la-serena` o `/coquimbo`: esa sucursal pasa a ser
+  la activa y la guardada, aunque hubiera otra guardada; sigue en el paso 5.
+- 1d. El cliente entra por un slug que no es una sucursal: el sistema muestra
+  «no encontrada» (CU-EXP-001).
+- 4a. El navegador bloquea `localStorage`: el sistema aplica la sucursal sin
+  guardarla; en la próxima visita, una página común se ve con Coquimbo.
+- 6a. El cliente está en una portada con prefijo: el sistema navega a la
+  portada de la otra sucursal en lugar de quedarse en la misma URL.
+- 7a. El cliente tiene activado reducir movimiento, o el navegador no
+  soporta la transición: el cambio es inmediato.
+- 7b. El cliente toca «Reservar» después del cambio: se abre la URL de
+  AgendaPro de la sucursal recién elegida (CU-RES-001).
+
+### Postcondición
+
+La sucursal activa es la que el cliente eligió por última vez (o la de la
+URL), el sitio se ve con su tema y «Reservar» lleva a su AgendaPro.
 
 ---
 

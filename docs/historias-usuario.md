@@ -15,7 +15,8 @@ citan.
 - **ID:** `HU-<MOD>-NNN`. Módulos: `RES` (reserva y contacto), `INFO`
   (contenido del negocio), `SEO` (búsqueda local), `EXP` (experiencia:
   rendimiento, accesibilidad, errores), `OPS` (despliegue y calidad),
-  `MED` (medición y privacidad), `CNT` (contenido editable por el dueño).
+  `MED` (medición y privacidad), `CNT` (contenido editable por el dueño),
+  `SUC` (multi-sucursal: elegir sucursal y su identidad visual).
 - **Prioridad:** Alta · Media · Baja.
 - **Estimación:** story points de Fibonacci (1, 2, 3, 5, 8, 13).
 - **Estado:** `Propuesta` · `Aprobada` · `En desarrollo` · `Cerrada`.
@@ -60,6 +61,8 @@ citan.
 | HU-CNT-001 | CNT | Cambiar servicios, productos, equipo y preguntas desde una hoja | Alta | 5 | 8 | HU-INFO-001 | Propuesta |
 | HU-CNT-002 | CNT | Cambiar títulos y textos del sitio desde la misma hoja | Baja | 3 | 5 | HU-CNT-001 | Propuesta |
 | HU-CNT-003 | CNT | Cambiar datos de contacto, sucursales y redes desde la hoja | Alta | 5 | 8 | HU-CNT-001 | Propuesta |
+| HU-SUC-001 | SUC | Elegir mi sucursal y cambiarla cuando quiera | Alta | 5 | 8 | HU-INFO-002, HU-RES-001 | Propuesta |
+| HU-SUC-002 | SUC | Reconocer en el sitio el estilo de mi sucursal | Media | 4 | 13 | HU-SUC-001, HU-EXP-002, HU-EXP-004 | Propuesta |
 
 ## Épicas
 
@@ -72,10 +75,20 @@ citan.
 | Operación | HU-OPS-001 |
 | Medición y privacidad | HU-MED-001, HU-MED-002, HU-MED-003 |
 | Contenido editable | HU-CNT-001, HU-CNT-002, HU-CNT-003 |
+| Multi-sucursal | HU-SUC-001, HU-SUC-002 |
 
 ---
 
 ## HU-RES-001 - Reservar hora desde cualquier página
+
+> Actualizada (2026-11-23, decisión del usuario): se responde la pregunta
+> abierta de RN-02. Cada sucursal tiene su propia URL de AgendaPro: Coquimbo
+> `…/sucursal/400965` y La Serena `…/sucursal/98243`. Todo botón «Reservar»
+> abre la de la **sucursal activa** (HU-SUC-001). Cada URL se edita en una
+> columna nueva `reserva` de la pestaña `sucursales` de la hoja, con respaldo
+> en `src/data/locationsData.ts`; `reservas.url` (pestaña `negocio`) queda
+> como valor por defecto si una sucursal no tiene la suya. Se agrega CA-04.
+> RF nuevos: RF-RES-008, RF-CNT-009.
 
 Como cliente, quiero un botón para reservar mi hora visible en cualquier
 página, para agendar en el momento en que me decido sin buscar cómo
@@ -105,6 +118,10 @@ hacerlo.
   abierto en la pestaña original.
 - CA-03: Given la URL de AgendaPro cambia, When el desarrollador la
   actualiza, Then basta con editar un solo lugar del código.
+- CA-04 (2026-11-23): Given la sucursal activa es La Serena (o Coquimbo),
+  When toco cualquier botón «Reservar», Then se abre la URL de AgendaPro de
+  esa sucursal; si su fila de la hoja no trae `reserva`, se abre
+  `reservas.url`.
 
 ### Reglas de negocio asociadas:
 
@@ -1263,6 +1280,163 @@ un dato de contacto sin pedir un cambio de código.
 - CA-03: Given un valor inválido (enlace sin `https://`, teléfono vacío),
   When se lee la hoja, Then se conserva el dato con el que se construyó el
   sitio y queda un aviso en el registro.
+
+---
+
+## HU-SUC-001 - Elegir mi sucursal y cambiarla cuando quiera
+
+Como cliente, quiero elegir entre la sucursal de Coquimbo y la de La Serena
+al entrar, y cambiar de una a otra desde cualquier página, para ver la
+barbería a la que voy a ir y reservar en ella sin buscar otro sitio.
+
+- Epic: Multi-sucursal
+- Actor / Persona: Cliente
+- Prioridad: Alta
+- Estimación: 8 SP
+- Fuente: pedido del usuario (2026-11-23): «integrar el estilo y contenido
+  de la web de la otra sucursal, la de La Serena […] dejaremos definido y
+  programado el enrutamiento y unas páginas básicas para mostrar la
+  diferencia y un toggle […] todo dentro del dominio barberiaroyce.cl».
+- Dependencias: HU-INFO-002 (datos de cada sucursal), HU-RES-001 (la reserva
+  sigue a la sucursal activa).
+- Riesgo: Alto — un interruptor entre un tema oscuro y uno claro se lee como
+  «modo claro/oscuro», no como «cambiar de sucursal»; y un tema que se pinta
+  tarde muestra la otra sucursal en cada recarga.
+- Decisiones cerradas (2026-11-23, decisión del usuario):
+  - Una sola app y un solo dominio. Las páginas cuyo contenido es el mismo en
+    las dos sucursales (servicios, productos, preguntas, nosotros, equipo,
+    sucursales) tienen **una sola URL sin prefijo**; solo las portadas llevan
+    prefijo: `/coquimbo` y `/la-serena`. `/` es una portada partida para
+    elegir.
+  - La sucursal activa sale de la URL si tiene prefijo; si no, de la última
+    elección guardada en el navegador; si no hay, Coquimbo.
+  - El control para cambiar dice los nombres de las dos sucursales (no es un
+    interruptor mudo) y se anima con una cortina en diagonal; su indicador
+    pasa de hexágono a cuadrado.
+  - Arquitectura en `ADR-010`.
+- RF relacionados: RF-SUC-001, RF-SUC-002, RF-SUC-003, RF-SUC-004.
+- RNF impactados: RNF-PERF-008, RNF-SEG-005, RNF-A11Y-002, RNF-A11Y-003,
+  RNF-SEO-001, RNF-CONF-001.
+- Casos de uso relacionados: CU-SUC-001.
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given entro a `/`, When carga la página, Then veo dos mitades, una
+  por sucursal, cada una con su identidad, y cada una lleva a su portada
+  (`/coquimbo`, `/la-serena`).
+- CA-02: Given entré por `/la-serena`, When abro Servicios desde el menú,
+  Then la URL es `/servicios` y la página se ve con el tema de La Serena.
+- CA-03: Given elegí La Serena en una visita anterior, When vuelvo a entrar
+  por `/servicios` o recargo, Then la página aparece con el tema de La Serena
+  desde el primer cuadro, sin un destello del tema de Coquimbo.
+- CA-04: Given nunca elegí sucursal, When entro por una página sin prefijo,
+  Then se ve con el tema de Coquimbo.
+- CA-05: Given estoy en una página sin prefijo, When cambio de sucursal con
+  el control del menú, Then cambia el tema sin cambiar la URL ni la posición
+  del scroll, y la elección queda guardada.
+- CA-06: Given estoy en `/coquimbo`, When cambio a La Serena, Then el sitio
+  navega a `/la-serena`.
+- CA-07: Given uso teclado o lector de pantalla, When llego al control, Then
+  se anuncia como un grupo de opciones con los nombres de las dos sucursales
+  y la activa marcada, y lo opero con el teclado.
+- CA-08: Given tengo activado reducir movimiento o mi navegador no soporta la
+  transición, When cambio de sucursal, Then el cambio es inmediato y sin
+  animación.
+- CA-09: Given el navegador bloquea `localStorage`, When cambio de sucursal,
+  Then el sitio funciona igual, solo que no recuerda la elección.
+- CA-10: Given escribo `/la-serena-x` o cualquier slug que no es una
+  sucursal, When carga, Then veo la página «no encontrada».
+
+### Reglas de negocio asociadas:
+
+- RN-01: El catálogo (servicios, productos, preguntas) es el mismo en las dos
+  sucursales; solo cambia cómo se ve.
+- RN-02: Elegir una sucursal no es un dato personal (no identifica a nadie),
+  pero `/privacidad` lo menciona junto a los demás datos del navegador.
+
+### Datos:
+
+- Entrada: URL, elección guardada en el navegador, uso del control.
+- Salida: sucursal activa (tema, formas, URL de reserva) y elección guardada.
+
+---
+
+## HU-SUC-002 - Reconocer en el sitio el estilo de mi sucursal
+
+Como cliente de la sucursal de La Serena, quiero que el sitio se vea como el
+local que conozco (blanco, café tierra, madera, plantas y los cuadrados de
+neón del techo), para sentir que es mi barbería y no la de otra ciudad.
+
+- Epic: Multi-sucursal
+- Actor / Persona: Cliente
+- Prioridad: Media
+- Estimación: 13 SP
+- Fuente: pedido del usuario (2026-11-23): «tiene cuadrados neón en lugar de
+  hexágonos, un estilo más clínico […] gobernado por el color blanco y los
+  tonos café tierra, haciendo juego con plantas y muebles de madera, y las
+  capas con diseño de hojas»; la vista del equipo «debería cambiar la shape
+  de las cards a un carrusel bien smooth, moderno y elegante, así super
+  minimalista y con efectos de vidrio semi transparente gris en los botones»;
+  y «colocar algunas plantas en los costados, en algunas secciones, con unas
+  enredaderas».
+- Dependencias: HU-SUC-001, HU-EXP-002 (movimiento y contraste), HU-EXP-004.
+- Riesgo: Medio — un tema claro con neón blanco puede quedar sin contraste,
+  y sumar animaciones y figuras puede empeorar el TBT y el LCP móviles.
+- Decisiones cerradas (2026-11-23, decisión del usuario):
+  - Paleta: hueso, blanco, arena, espresso, corteza, café tierra (color de
+    marca de los botones), madera, verde hoja, neón frío y un acento ámbar
+    tomado del logo de las capas.
+  - Donde Coquimbo tiene hexágonos, La Serena tiene cuadrados o rectángulos
+    de neón solapados; al cambiar de sucursal, cada figura se transforma en
+    la otra.
+  - El equipo de La Serena se ve en un carrusel de tarjetas rectangulares con
+    botones de vidrio gris semitransparente; Coquimbo conserva su grilla.
+  - Enredaderas a los costados de algunas secciones de La Serena, que crecen
+    con el scroll. Primero las dibuja Claude en SVG; después se evalúa
+    rehacerlas en Figma o Illustrator.
+- RF relacionados: RF-SUC-005, RF-SUC-006, RF-SUC-007.
+- RNF impactados: RNF-A11Y-003, RNF-A11Y-004, RNF-A11Y-005, RNF-PERF-001 ..
+  RNF-PERF-003, RNF-PERF-005, RNF-MANT-004.
+- Casos de uso relacionados: Ninguno (no hay decisiones del cliente; el
+  cambio de sucursal está en CU-SUC-001).
+
+### Criterios de aceptación (Given/When/Then)
+
+- CA-01: Given la sucursal activa es La Serena, When recorro cualquier
+  página, Then los fondos son claros (hueso y blanco), los botones de
+  reserva son café tierra y todo texto cumple 4,5:1 (3:1 si es grande).
+- CA-02: Given la sucursal activa es La Serena, When veo una sección que en
+  Coquimbo tiene hexágonos, Then en su lugar hay cuadrados o rectángulos con
+  trazo de neón.
+- CA-03: Given cambio de sucursal en una página con figuras, When ocurre el
+  cambio, Then cada figura se transforma en la de la otra sucursal (con
+  reducir movimiento, cambia de golpe).
+- CA-04: Given entro a `/la-serena`, When carga, Then el hero muestra
+  cuadrados de neón solapados que se dibujan desde cero, hojas y madera, y
+  el bloque de la sucursal con dirección, horario y botón de reserva.
+- CA-05: Given la sucursal activa es La Serena, When abro `/equipo`, Then veo
+  a los barberos en un carrusel que se desliza con el dedo, con el teclado y
+  con botones de vidrio; la tarjeta activa se destaca. Con Coquimbo veo la
+  grilla actual.
+- CA-06: Given la sucursal activa es La Serena, When hago scroll por una
+  sección con enredaderas, Then crecen a los costados sin tapar el contenido;
+  con reducir movimiento aparecen completas.
+- CA-07: Given la sucursal activa es Coquimbo, When cargo cualquier página,
+  Then no se descarga el código propio de La Serena (hero, carrusel del
+  equipo, enredaderas).
+- CA-08: Given abro `/la-serena` en un celular, When mido con Lighthouse
+  móvil, Then LCP, CLS y TBT cumplen RNF-PERF-001 .. RNF-PERF-003.
+
+### Reglas de negocio asociadas:
+
+- RN-01: Ningún color de La Serena se escribe fuera de los tokens
+  (`ADR-002`); la diferencia entre sucursales sigue los cuatro niveles de
+  `ADR-010`.
+
+### Datos:
+
+- Entrada: sucursal activa.
+- Salida: tema, figuras y variantes de la sucursal.
 
 ---
 

@@ -381,6 +381,87 @@ No hay gestor de estado global (ADR-004).
   nuevo. Era más barata, pero dejaba los dos estilos mezclados por tiempo
   indefinido.
 
+### ADR-010 — Multi-sucursal: sucursal activa por ruta y tema por sucursal
+
+> **Estado: decidido por el usuario el 2026-11-23** (`HU-SUC-001`,
+> `HU-SUC-002`; tickets `BR-103` a `BR-108`).
+
+- **Contexto:** el sitio tiene la identidad de Coquimbo (rojo y negro,
+  hexágonos). La Serena tiene otra estética (blanco, café tierra, madera,
+  plantas, cuadrados de neón). Las dos tienen que vivir en
+  `barberiaroyce.cl`, en la misma SPA, con un control para cambiar de una a
+  otra. El catálogo es el mismo en las dos sucursales.
+- **Decisión:**
+  1. **Rutas híbridas.** Las páginas comunes tienen una sola URL sin
+     prefijo (`/servicios`, `/productos`, …). Solo las portadas llevan
+     prefijo: `/coquimbo` y `/la-serena`, declaradas de forma explícita
+     desde `BRANCHES` (no con un `:branch` dinámico), para que un slug
+     inválido caiga en el 404. `/` es una portada partida.
+  2. **Sucursal activa:** prefijo de la URL > elección guardada
+     (`localStorage`, clave `royce:branch`) > Coquimbo. La regla vive en
+     una función pura (`src/branch/resolveBranch.ts`) con su test. Una
+     URL con prefijo también actualiza la elección guardada.
+  3. **`BranchProvider`**, dentro de `<BrowserRouter>`: resuelve la
+     sucursal, la escribe en `<html data-branch>` con `useLayoutEffect` y
+     expone `{ branch, source, setBranch }` con `useBranch()`. `setBranch`
+     navega a la otra portada si la URL tiene prefijo; si no, guarda la
+     elección sin navegar. Es un contexto pequeño, no un gestor de estado
+     (`ADR-004` sigue vigente).
+  4. **El tema lo aplica el CSS, no React.** Los alias de
+     `src/styles/tokens/` (`--color-brand-*`, …) se reasignan bajo
+     `[data-branch="la-serena"]`. Cambiar de sucursal no vuelve a
+     renderizar los componentes que solo cambian de color (`ADR-002`).
+  5. **Cuatro niveles para cualquier diferencia entre sucursales**, siempre
+     el más bajo que alcance:
+     1. Cambia un color, un borde o una sombra → token.
+     2. Cambia un dato (puntos de una figura, URL de reserva, imagen,
+        texto) → un mapa `Record<Branch, …>` con `satisfies`, que se lee
+        con `useBranch()`.
+     3. Cambia la estructura de una sección → variante de componente
+        (`HERO_VARIANTS[branch]`), cada una cargada con `lazy()`.
+     4. Cambia qué secciones hay → composición de página, solo en las
+        portadas con prefijo.
+     Queda prohibido un `branch === "…" ? … : …` suelto en un componente.
+     Un estilo que no es color pero depende de la sucursal se escribe en el
+     CSS Module con `:global([data-branch="la-serena"]) .clase`.
+  6. **Figuras interpolables:** cada figura tiene la misma cantidad de
+     puntos en las dos sucursales (con test), para que framer pueda
+     transformar una en otra al cambiar de sucursal.
+  7. **Sin destello del otro tema:** un script mínimo en el `<head>` de
+     `index.html` fija `data-branch` antes de pintar, con la misma regla que
+     el punto 2. La CSP lo permite **solo por su hash** `sha256` en
+     `script-src` (sin `'unsafe-inline'`). Un test compara el script con
+     `src/config/branches.ts` y recalcula el hash contra `vercel.json`
+     (`RNF-PERF-008`, `RNF-SEG-005`).
+  8. **Transición:** View Transitions API
+     (`document.startViewTransition` + `flushSync`) con una cortina en
+     diagonal por `clip-path`. Sin soporte o con `prefers-reduced-motion`,
+     el cambio es directo.
+  9. **Datos por sucursal:** lo que difiere (hoy, la URL de AgendaPro) va en
+     la fila de la sucursal de la pestaña `sucursales` (`ADR-008`); el dato
+     global de `negocio` queda como valor por defecto.
+- **Por qué:** una sola URL por contenido evita duplicados para Google y
+  conserva el posicionamiento de las rutas actuales sin redirecciones. Los
+  tokens por atributo son el patrón estándar de temas con variables CSS:
+  los componentes no saben que hay sucursales. Y toda la lógica queda en
+  tres lugares fáciles de encontrar: los tokens, los mapas por sucursal y
+  los selectores de variante.
+- **Consecuencia:** un enlace compartido a una página común se ve con la
+  sucursal de quien lo abre (o Coquimbo), no con la de quien lo compartió.
+  Se acepta porque el contenido es el mismo.
+- **Alternativas descartadas (2026-11-23):**
+  - Todo con prefijo (`/:sucursal/*`) y `canonical` en las páginas comunes:
+    duplica URLs y obliga a redirigir las actuales. Se revisa si el
+    catálogo pasa a ser distinto por sucursal.
+  - Parámetro `?sucursal=`, subdominios o dos apps separadas.
+  - `ThemeProvider` de una librería CSS-in-JS, o clases condicionales por
+    sucursal en cada componente: contradicen `ADR-002` y acoplan cada
+    componente a la lista de sucursales.
+  - Script de arranque como archivo aparte en `public/`: suma una petición
+    bloqueante en la ruta crítica; el hash con su test cuesta menos.
+- **Disparador para revisar:** una tercera sucursal, o un catálogo distinto
+  por sucursal.
+
 ## 10. Deuda conocida y diferida
 
 | Tema | Estado | Ticket |
@@ -408,6 +489,7 @@ No hay gestor de estado global (ADR-004).
 | Cambiar un color, espaciado o radio | `src/styles/tokens/` |
 | Adaptar un componente a otro ancho de pantalla | Base móvil y `@media (min-width: …)` con los cortes de `ADR-009`; en TypeScript, `useMediaQuery(MEDIA.…)` de `src/config/breakpoints.ts` |
 | Ajustar una animación de entrada o un parallax | `src/config/animations.config.ts` |
+| Hacer que algo se vea distinto en Coquimbo y La Serena | Los cuatro niveles de `ADR-010`: token bajo `[data-branch]`, mapa `Record<Branch, …>`, variante de componente o composición de la portada |
 | Cambiar cabeceras, redirecciones o caché | `vercel.json` |
 | Proponer trabajo nuevo | skill `nuevo-ticket` o `analisis-requerimientos` |
 | Saber si algo ya está decidido | §9 de este documento |

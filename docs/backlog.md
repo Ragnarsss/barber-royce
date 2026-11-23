@@ -4032,6 +4032,265 @@ recuerdo del canje en el navegador. Fuera de alcance: validar el canje en el loc
 
 Criterios de aceptación: los de HU-RES-004 más el ADR aprobado antes de escribir código.
 
+### Épica M — Multi-sucursal
+
+Coquimbo y La Serena en la misma app y el mismo dominio, cada una con su
+identidad, y un control para cambiar de una a otra (pedido del usuario el
+2026-11-23). Arquitectura en `ADR-010`. Esta etapa deja el mecanismo y
+páginas básicas (`BR-103` a `BR-106`); `BR-107` y `BR-108` empiezan las
+vistas propias de La Serena.
+
+#### BR-103 — Sucursal activa: `BranchProvider`, rutas y reserva por sucursal
+
+- Prioridad: P1 · Esfuerzo: M · Depende de: —
+- Estado: Propuesta
+- Historia de usuario: HU-SUC-001 (CA-02 .. CA-04, CA-09, CA-10), HU-RES-001 (CA-04)
+- RF/RNF: `RF-SUC-001`, `RF-SUC-002`, `RF-RES-008`, `RF-CNT-009`, `RNF-PERF-008`, `RNF-SEG-005`, `RNF-DATOS-001`
+
+**Origen (2026-11-23):** el usuario pidió integrar La Serena en la misma app
+con enrutamiento y un toggle. No existe la noción de sucursal activa: las
+rutas son planas (`src/App.tsx:43-54`) y hay una sola URL de reserva
+(`BOOKING.url` en `src/config/constants.ts:31` y `reservas.url` en la
+pestaña `negocio`), que se usa directo en Navbar, CTA1, CTA2, NotFoundPage,
+WelcomePromo y BarberProfileDialog. El usuario confirmó la URL de La Serena:
+`https://roycespa.site.agendapro.com/cl/sucursal/98243`.
+
+Alcance:
+1. `src/config/branches.ts`: `BRANCHES`, `Branch`, `DEFAULT_BRANCH`,
+   `BRANCH_STORAGE_KEY`, `isBranch` y el mapa slug → id de la fila de
+   `sucursales` (`barberia-royce-coquimbo`, `barberia-royce-la-serena`).
+2. `src/branch/`: `resolveBranch.ts` (`branchFromPath`, `resolveBranch`,
+   `swapBranchInPath`), `branchStorage.ts` (tolerante a `localStorage`
+   bloqueado), `BranchContext.ts`, `BranchProvider.tsx` y `useBranch.ts`,
+   según `ADR-010` puntos 2 y 3.
+3. `BranchProvider` dentro de `<BrowserRouter>` envolviendo `<Routes>`;
+   rutas `coquimbo` y `la-serena` generadas desde `BRANCHES`, por ahora con
+   `HomePage`; entradas en `ROUTES`. `/` no cambia hasta `BR-106`.
+4. Script de arranque en el `<head>` de `index.html` y su hash `sha256` en
+   el `script-src` de `vercel.json`, con un test de paridad contra
+   `branches.ts` y del hash (`ADR-010` punto 7).
+5. Reserva por sucursal: `bookingUrl?` en `Location`, columna opcional
+   `reserva` en `readLocations` (validada `https://`), respaldo en
+   `locationsData.ts` y en el snapshot, y un hook `useBookingUrl()` que
+   reemplaza `business.booking.url` en todos los botones de reserva.
+6. Avisarle al dueño que agregue la columna `reserva` a la pestaña
+   `sucursales` (el sitio funciona sin ella, con el respaldo).
+
+Criterios de aceptación:
+1. `/la-serena` y `/coquimbo` responden 200 al entrar directo y al recargar
+   en el preview; `/la-serena-x` muestra «no encontrada» (HU-SUC-001 CA-10,
+   CP-SUC-002).
+2. La prioridad URL > guardada > Coquimbo se cumple en cada caso de
+   CP-SUC-001, con tests de `resolveBranch` y del provider (HU-SUC-001 CA-02,
+   CA-04).
+3. Con La Serena guardada, recargar `/servicios` no deja ver ni un cuadro con
+   `data-branch="coquimbo"` (HU-SUC-001 CA-03, CP-PERF-008).
+4. La consola del preview no muestra violaciones de CSP y el test del hash
+   pasa (CP-SEG-005).
+5. Con `localStorage` bloqueado el sitio funciona (HU-SUC-001 CA-09).
+6. «Reservar» abre `…/98243` con La Serena y `…/400965` con Coquimbo en
+   todos los botones; sin `reserva` en la fila, abre `reservas.url`
+   (HU-RES-001 CA-04, CP-RES-008, CP-CNT-009).
+7. `datos-negocio-auditor` sin hallazgos (CP-DATOS-001).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-103).
+
+#### BR-104 — Tema La Serena en tokens y figuras por sucursal
+
+- Prioridad: P1 · Esfuerzo: M · Depende de: BR-103
+- Estado: Propuesta
+- Historia de usuario: HU-SUC-002 (CA-01 .. CA-03)
+- RF/RNF: `RF-SUC-005`, `RNF-A11Y-004`, `RNF-A11Y-003`, `RNF-MANT-004`
+
+**Origen (2026-11-23):** el usuario describió La Serena: blanco, café tierra,
+madera, plantas, capas con estampado de árboles y logo ámbar, y cuadrados de
+neón solapados en el techo en lugar de hexágonos. Los colores pasan hoy por
+alias semánticos (`--color-brand-*` en `src/styles/tokens/colors.css`) y las
+figuras son datos (`fixedShape` en `sp1Hexagons.ts`, `ctaShapes.ts`,
+`reviewsShapes.ts` y, dentro del componente, `SocialProof2.tsx:17`) que dibuja
+`<FixedShape>`.
+
+Alcance:
+1. Bloque `[data-branch="la-serena"]` en los tokens con la paleta aprobada
+   (2026-11-23): hueso `#F7F3EC`, blanco `#FFFFFF`, arena `#EDE4D6`, línea
+   `#DDD3C6`, espresso `#2B211B`, corteza `#6B5A4C`, tierra `#7A4F2E` y
+   `#5E3B22` (hover), madera `#B5824E` (solo decorativo), hoja `#4E6347`,
+   neón `#EAF4FF` y un acento ámbar tomado del logo de las capas (valor
+   exacto y uso en texto según su contraste). Reasigna los alias existentes.
+2. El loader de neón de `index.html` y `<meta name="theme-color">` toman el
+   tema por `[data-branch]`.
+3. Mapas `Record<Branch, FixedShapeGeometry>` con `satisfies` en los
+   archivos de figuras; el hexágono de `SocialProof2` sale a su propio
+   archivo. La Serena: cuadrados en los fondos, el octógono de Reviews como
+   cuadrado girado 45° y los hexágonos irregulares de CTA1 como rectángulos
+   solapados y levemente rotados, todos con la misma cantidad de puntos que
+   su par de Coquimbo, y el trazo de neón por tokens.
+4. Interpolación de los puntos al cambiar de sucursal (framer), sin animación
+   con reducir movimiento.
+
+Criterios de aceptación:
+1. Con La Serena activa, todo texto cumple 4,5:1 (3:1 si es grande), con un
+   test de contraste de los pares del tema (HU-SUC-002 CA-01, CP-A11Y-004).
+2. Las cuatro secciones con figuras muestran cuadrados o rectángulos con La
+   Serena, y un test verifica la misma cantidad de puntos por par
+   (HU-SUC-002 CA-02, CP-SUC-005).
+3. Al cambiar de sucursal las figuras se transforman; con
+   `prefers-reduced-motion`, cambian de golpe (HU-SUC-002 CA-03).
+4. `design-tokens-auditor` sin hallazgos: ningún hex fuera de los tokens.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-104).
+
+#### BR-105 — Control para cambiar de sucursal, con transición
+
+- Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-104
+- Estado: Propuesta
+- Historia de usuario: HU-SUC-001 (CA-05 .. CA-08)
+- RF/RNF: `RF-SUC-003`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-PERF-003`
+
+**Origen (2026-11-23):** el usuario quiere un toggle para navegar entre
+sucursales y pidió analizar si se entiende para qué sirve. Un interruptor
+mudo entre un tema oscuro y uno claro se lee como «modo claro/oscuro»; se
+decidió un control con los nombres de las dos sucursales.
+
+Alcance:
+1. `BranchSwitch` en el Navbar (escritorio y menú móvil): `radiogroup`
+   «Coquimbo | La Serena» con un ícono de ubicación; el indicador se
+   transforma de hexágono a cuadrado con framer.
+2. `withBranchTransition` (`ADR-010` punto 8): cortina en diagonal con
+   `clip-path` sobre `::view-transition-new(root)`; sin soporte o con reducir
+   movimiento, el cambio es directo.
+3. Conectar con `setBranch` del `BranchProvider`.
+
+Criterios de aceptación:
+1. En `/servicios`, elegir La Serena cambia el tema sin cambiar la URL ni el
+   scroll y guarda la elección (HU-SUC-001 CA-05, CP-SUC-003).
+2. En `/coquimbo`, elegir La Serena navega a `/la-serena` (HU-SUC-001 CA-06).
+3. El control se anuncia como grupo de opciones con la activa marcada, se
+   opera con teclado y sus objetivos miden al menos 44 px (HU-SUC-001 CA-07);
+   `accesibilidad-auditor` sin hallazgos.
+4. Con `prefers-reduced-motion` o sin View Transitions, no hay animación
+   (HU-SUC-001 CA-08).
+5. El TBT móvil de la home no empeora frente a la línea base (CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-105).
+
+#### BR-106 — Portada partida y portadas básicas de cada sucursal
+
+- Prioridad: P1 · Esfuerzo: M · Depende de: BR-103, BR-104, BR-105
+- Estado: Propuesta
+- Historia de usuario: HU-SUC-001 (CA-01), HU-SUC-002 (CA-04, CA-07, CA-08)
+- RF/RNF: `RF-SUC-002`, `RF-SUC-004`, `RNF-PERF-001` .. `RNF-PERF-003`, `RNF-SEO-001`, `RNF-A11Y-003`, `RNF-A11Y-005`
+
+**Origen (2026-11-23):** en esta etapa no se construyen las vistas completas
+de La Serena; el usuario pidió «unas páginas básicas para mostrar la
+diferencia». Para el hero propuso «jugar con svgs de hojas, madera, cuadrados
+de neón solapados completándose desde cero».
+
+Alcance:
+1. `/` → `BranchPicker`: dos mitades (Coquimbo con hexágonos rojos, La Serena
+   con cuadrados de neón), con enlaces reales a cada portada.
+2. `/coquimbo` → la `HomePage` actual.
+3. `/la-serena` → composición básica: `HeroLaSerena` con cuadrados de neón
+   solapados que se dibujan desde cero (`edgeDraw` / `pathLength`, retraso
+   escalonado, halo al cerrarse), hojas SVG con un balanceo leve, textura de
+   madera en WebP, y el bloque de la sucursal (dirección, horario, reservar).
+   Se sigue la skill `svg-workflow`.
+4. Imagen del local: el original lo pide el usuario al dueño; mientras tanto,
+   la captura de Instagram recortada (sin el avatar) como provisional, por
+   `npm run optimize:images` (`scripts/optimize-images.js`).
+5. SEO: título y descripción de `/`, `/coquimbo` y `/la-serena` en `ROUTES`;
+   `sitemap.xml` con las dos portadas.
+
+Criterios de aceptación:
+1. `/` muestra las dos mitades con enlaces a `/coquimbo` y `/la-serena`, y su
+   título nombra las dos sucursales (HU-SUC-001 CA-01, CP-SUC-004).
+2. El hero de `/la-serena` dibuja los cuadrados desde cero; con reducir
+   movimiento aparecen completos (HU-SUC-002 CA-04, CP-A11Y-003).
+3. Con Coquimbo activo no se descarga el código del hero de La Serena
+   (HU-SUC-002 CA-07).
+4. Lighthouse móvil de `/` y `/la-serena` en el preview cumple LCP, CLS, TBT
+   y SEO ≥ 95 (HU-SUC-002 CA-08, CP-PERF-001 .. CP-PERF-003, CP-SEO-001-N);
+   `seo-performance-auditor` sin hallazgos.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-106).
+
+#### BR-107 — Equipo de La Serena: tarjetas rectangulares en carrusel con botones de vidrio
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-103, BR-104
+- Estado: Propuesta
+- Historia de usuario: HU-SUC-002 (CA-05, CA-07)
+- RF/RNF: `RF-SUC-006`, `RNF-A11Y-002`, `RNF-A11Y-003`, `RNF-PERF-006`
+
+**Origen (2026-11-23):** el usuario quiere que la vista del equipo en La
+Serena cambie «la shape de las cards a un carrusel bien smooth, moderno y
+elegante, así super minimalista y con efectos de vidrio semi transparente
+gris en los botones». Ya existe `CardCarousel`
+(`src/components/common/CardCarousel/`: `scroll-snap`, botones y
+`desktopVisible`, `BR-070` y `BR-073`), que se reutiliza en vez de crear otro.
+
+Alcance:
+1. Variante de nivel 3 (`ADR-010`): `TeamPage` elige la vista por sucursal;
+   Coquimbo conserva la grilla, La Serena usa `TeamCarouselLaSerena`
+   (`lazy()`), construido sobre `CardCarousel`.
+2. Tarjetas de La Serena: rectángulos verticales de esquinas rectas, foto a
+   sangre, nombre y especialidad en una franja inferior, y un borde fino de
+   neón solo en la tarjeta activa.
+3. Tarjeta activa a escala 1 y opacidad 1, vecinas a 0,92 y 0,5, ligadas al
+   scroll con `MotionValue` (sin `setState` por scroll); `data-lenis-prevent`
+   en el eje horizontal.
+4. Botones de vidrio: `backdrop-filter: blur()` sobre un gris translúcido de
+   tokens (`--glass-bg`, `--glass-border`); fondo sólido sin soporte o con
+   `prefers-reduced-transparency`.
+5. `BarberProfileDialog` es el mismo en las dos sucursales.
+6. Fuera de alcance, salvo que el usuario lo pida: filtrar el equipo por
+   sucursal con la columna `sucursal` que ya existe en la pestaña `equipo`
+   (`BR-063`).
+
+Criterios de aceptación:
+1. Con La Serena, `/equipo` muestra el carrusel con «Barbero N de M»,
+   operable con arrastre, teclado y botones; con Coquimbo, la grilla
+   (HU-SUC-002 CA-05, CP-SUC-006).
+2. Con Coquimbo no se descarga el código del carrusel (HU-SUC-002 CA-07).
+3. Ningún re-render por evento de scroll (CP-PERF-006); con reducir
+   movimiento no hay escala animada.
+4. `accesibilidad-auditor` sin hallazgos.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-107).
+
+#### BR-108 — Enredaderas laterales del tema La Serena
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-104
+- Estado: Propuesta
+- Historia de usuario: HU-SUC-002 (CA-06, CA-07)
+- RF/RNF: `RF-SUC-007`, `RNF-A11Y-003`, `RNF-PERF-003`, `RNF-PERF-006`
+
+**Origen (2026-11-23):** el usuario quiere «colocar algunas plantas en los
+costados, en algunas secciones, con unas enredaderas». Decidió que la
+primera versión la dibuje Claude en SVG y después evaluar rehacerla en Figma
+o Illustrator.
+
+Alcance:
+1. `<SideVines side="left|right">` decorativo (`aria-hidden`), registrado en
+   un mapa por sucursal: con Coquimbo no se renderiza ni se descarga.
+2. Tallos con curvas y hojas estilizadas (inspiradas en el estampado de las
+   capas) en los tokens hoja y madera. Las formas van en un archivo de datos
+   aparte, para reemplazarlas por un SVG de Figma o Illustrator sin tocar el
+   componente; la skill `svg-workflow` explica cómo exportarlo.
+3. El tallo crece con `pathLength` ligado al scroll (`MotionValue`) y las
+   hojas aparecen escalonadas; en móvil, una versión reducida u oculta.
+4. Las secciones donde van las elige el usuario al revisar la primera
+   versión.
+
+Criterios de aceptación:
+1. Con La Serena, las enredaderas crecen con el scroll sin tapar contenido
+   ni recibir clics; con reducir movimiento se ven completas y quietas
+   (HU-SUC-002 CA-06, CP-SUC-007).
+2. Con Coquimbo no se renderizan ni se descargan (HU-SUC-002 CA-07).
+3. Ningún re-render por scroll (CP-PERF-006) y el TBT móvil no empeora
+   (CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-108).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -4160,6 +4419,12 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-100 | Modal de bienvenida con una mascarilla facial gratis | K | P3 | M | En curso | BR-037, BR-042 |
 | BR-101 | Canje de la mascarilla con formulario, cupón y registro en la hoja | K | P3 | L | Bloqueado | BR-100 |
 | BR-102 | Poner al día `architecture.md` y las guías con lo que ya existe | A | P2 | S | Propuesta | — |
+| BR-103 | Sucursal activa: `BranchProvider`, rutas y reserva por sucursal | M | P1 | M | Propuesta | — |
+| BR-104 | Tema La Serena en tokens y figuras por sucursal | M | P1 | M | Propuesta | BR-103 |
+| BR-105 | Control para cambiar de sucursal, con transición | M | P1 | M | Propuesta | BR-103, BR-104 |
+| BR-106 | Portada partida y portadas básicas de cada sucursal | M | P1 | M | Propuesta | BR-103 .. BR-105 |
+| BR-107 | Equipo de La Serena: tarjetas rectangulares en carrusel | M | P2 | M | Propuesta | BR-103, BR-104 |
+| BR-108 | Enredaderas laterales del tema La Serena | M | P2 | M | Propuesta | BR-104 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
