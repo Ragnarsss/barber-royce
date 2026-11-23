@@ -4408,15 +4408,14 @@ Criterios de aceptación:
 > **Resultado de la construcción (2026-11-23):**
 > - `BranchSwitch`: `radiogroup` «Sucursal» con dos `radio` (Coquimbo, La Serena), una sola parada de tabulación, flechas con
 >   vuelta y objetivos de 44 px. El indicador de cada opción es la figura del tema (`SP2_HEXAGON_BY_BRANCH`): hexágono en
->   Coquimbo, cuadrado en La Serena, y `FixedShape` lo transforma. Va en la barra (desde 1025 px, compacto) y en el menú móvil
+>   Coquimbo, cuadrado en La Serena, y `FixedShape` lo transforma. Va en la barra (desde 1280 px, compacto) y en el menú móvil
 >   (con el ícono de ubicación).
 > - `withBranchTransition` + `branchTransition.css`: `document.startViewTransition` con una cortina diagonal por `clip-path`
 >   sobre `::view-transition-new(root)`. `BranchProvider.setBranch` devuelve a la transición una promesa que se resuelve cuando la
 >   sucursal nueva ya está en `<html>` (sin `flushSync`: el router navega dentro de `startTransition`). Sin soporte o con reducir
 >   movimiento, el cambio es directo.
-> - **Efecto en la barra de Coquimbo (a confirmar con el usuario):** para que el control quepa junto al botón, de 1025 a 1279 px
->   se ocultan las barras « | » entre enlaces y desde 1280 px los huecos pasan de 32 a 16 px. De 1280 px hacia arriba el resto
->   no cambia.
+> - **Decisión del usuario (2026-11-23):** la barra completa empieza ahora en 1280 px (antes 1025 px, BR-086); de 769 a 1279 px
+>   se mantiene la hamburguesa, con el control de sucursal dentro del menú. A 1280 px los huecos entre enlaces son de 16 px.
 > - Pendiente: verificar la cortina en el preview de Vercel (Chrome; Firefox no tiene View Transitions) y `accesibilidad-auditor`.
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-105).
