@@ -6,13 +6,13 @@ import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
 import { useNavbarScroll } from "@/hooks/useNavbarScroll";
 import { useLenisInstance } from "@/hooks/useLenisContext";
 import { getNavRoutes } from "@/config/routes";
-import { useSiteContent } from "@/content/useSiteContent";
+import { useBookingUrl } from "@/branch/useBookingUrl";
 import { trackReserve } from "@/analytics/track";
 import { SITE } from "@/config/constants";
 import { MEDIA } from "@/config/breakpoints";
 
 export const Navbar = () => {
-  const { business } = useSiteContent();
+  const bookingUrl = useBookingUrl();
   const { isScrolled } = useNavbarScroll();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -94,7 +94,7 @@ export const Navbar = () => {
         <div className={styles.actions}>
           <a
             className={styles.ctaButton}
-            href={business.booking.url}
+            href={bookingUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={trackReserve("navbar")}
@@ -135,7 +135,7 @@ export const Navbar = () => {
           </NavLink>
         ))}
         <a
-          href={business.booking.url}
+          href={bookingUrl}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.ctaButton}

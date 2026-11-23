@@ -220,4 +220,30 @@ describe("pestaña sucursales (BR-048, HU-CNT-003)", () => {
   it("faltan columnas del encabezado", () => {
     expect(readLocations(table("id,nombre\nx,y\n")).issues.map((issue) => issue.field)).toContain("mapa");
   });
+
+  describe("columna opcional reserva (BR-103, RF-CNT-009)", () => {
+    const AGENDA = "https://roycespa.site.agendapro.com/cl/sucursal/98243";
+
+    it("una sucursal con reserva válida la expone como bookingUrl", () => {
+      const { items, issues } = readLocations(table(`${SUC_HEAD},reserva\n${fila({ reserva: AGENDA })}\n`));
+
+      expect(issues).toEqual([]);
+      expect(items[0].bookingUrl).toBe(AGENDA);
+    });
+
+    it("sin la columna, o con la celda vacía, la sucursal no trae bookingUrl", () => {
+      const sinColumna = readLocations(table(`${SUC_HEAD}\n${fila()}\n`));
+      const vacia = readLocations(table(`${SUC_HEAD},reserva\n${fila({ reserva: "" })}\n`));
+
+      expect(sinColumna.items[0]).not.toHaveProperty("bookingUrl");
+      expect(vacia.issues).toEqual([]);
+      expect(vacia.items[0]).not.toHaveProperty("bookingUrl");
+    });
+
+    it("una reserva que no es https:// rechaza la pestaña con su fila y campo", () => {
+      const { issues } = readLocations(table(`${SUC_HEAD},reserva\n${fila({ reserva: "agenda.cl/98243" })}\n`));
+
+      expect(issues.map((issue) => `${issue.row}:${issue.field}`)).toEqual(["2:reserva"]);
+    });
+  });
 });

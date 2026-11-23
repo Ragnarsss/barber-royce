@@ -407,6 +407,8 @@ export function readLocations(table: CsvTable): TabResult<Location> {
         const weekdays = r.text("horario_semana", 40);
         const saturday = r.text("horario_sabado", 40);
         const sunday = r.text("horario_domingo", 40);
+        // Columna opcional (BR-103): vacía o ausente, la sucursal conserva el enlace de respaldo.
+        const bookingUrl = r.optionalUrl("reserva", 500);
         if ([id, name, address, city, phone, email, whatsapp, mapUrl, weekdays, saturday, sunday].some((value) => value === undefined)) return undefined;
         return {
           id: id!,
@@ -417,6 +419,7 @@ export function readLocations(table: CsvTable): TabResult<Location> {
           email: email!,
           whatsapp: whatsapp!,
           mapUrl: mapUrl!,
+          ...(bookingUrl ? { bookingUrl } : {}),
           schedule: [
             { day: "Lunes - Viernes", hours: weekdays! },
             { day: "Sábado", hours: saturday! },

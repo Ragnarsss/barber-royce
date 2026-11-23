@@ -14,7 +14,8 @@ import { edgeDraw, fadeInLeft, fadeInRight, lightBarIgnite } from "@/config/anim
 import { SITE } from "@/config/constants";
 import { Link } from "react-router-dom";
 import { trackReserve } from "@/analytics/track";
-import { useSiteContent, useSiteText } from "@/content/useSiteContent";
+import { useSiteText } from "@/content/useSiteContent";
+import { useBookingUrl } from "@/branch/useBookingUrl";
 import { useMagnetic } from "./magnetic";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MEDIA } from "@/config/breakpoints";
@@ -43,7 +44,7 @@ function splitLead(text: string): { lead: string; rest: string } | null {
 }
 
 export function CTA1() {
-  const { business } = useSiteContent();
+  const bookingUrl = useBookingUrl();
   const siteText = useSiteText();
   const subtitle = siteText("cta1.subtitulo");
   const subtitleParts = splitLead(subtitle);
@@ -192,7 +193,7 @@ export function CTA1() {
             <div className={styles.ctaButtons}>
               {/* El envoltorio se mueve con el cursor y dibuja el foco: el chaflán (clip-path) recortaría el contorno */}
               <motion.span ref={magnetRef} className={styles.magnet} style={{ x: magnet.x, y: magnet.y }}>
-                <a className={styles.ctaButton} href={business.booking.url} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta1")}>
+                <a className={styles.ctaButton} href={bookingUrl} target="_blank" rel="noopener noreferrer" onClick={trackReserve("cta1")}>
                   <Calendar size={20} />
                   Agendar Ahora
                 </a>

@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import { CalendarCheck, Home } from "lucide-react";
 import { SITE } from "@/config/constants";
 import { useSiteContent } from "@/content/useSiteContent";
+import { useBookingUrl } from "@/branch/useBookingUrl";
 import { trackReserve } from "@/analytics/track";
 import styles from "./NotFoundPage.module.css";
 
 export function NotFoundPage() {
   const { business } = useSiteContent();
+  const bookingUrl = useBookingUrl();
   return (
     <section className={styles.container} aria-labelledby="not-found-title">
       <Helmet>
@@ -33,7 +35,7 @@ export function NotFoundPage() {
             Volver al inicio
           </Link>
           <a
-            href={business.booking.url}
+            href={bookingUrl}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.secondaryAction}

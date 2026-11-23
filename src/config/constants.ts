@@ -2,6 +2,7 @@
  * Constantes de configuración de la aplicación
  * Centralizadas para facilitar mantenimiento y evitar duplicación
  */
+import type { Branch } from "./branches";
 
 // Información de contacto
 export const CONTACT = {
@@ -31,6 +32,13 @@ export const BOOKING = {
     url: "https://roycespa.site.agendapro.com/cl/sucursal/400965",
     label: "Reservar hora",
 } as const;
+
+// Reserva de cada sucursal (BR-103, ADR-010). Coquimbo es el enlace de siempre; La Serena tiene el suyo. Son los valores
+// de respaldo de la columna `reserva` de la pestaña `sucursales`; el sitio los lee con `useBookingUrl()`.
+export const BOOKING_URL_BY_BRANCH = {
+    coquimbo: BOOKING.url,
+    "la-serena": "https://roycespa.site.agendapro.com/cl/sucursal/98243",
+} as const satisfies Record<Branch, string>;
 
 // Horarios
 export const SCHEDULE = {

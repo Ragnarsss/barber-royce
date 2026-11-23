@@ -1,3 +1,4 @@
+import type { Location } from "../types/location.types";
 import { parseCsv, toTable } from "./csv";
 import { buildBusiness } from "./business";
 import { readBusiness, readFaq, readLocations, readProducts, readServices, readTeam, readTexts, type TabResult } from "./schemas";
@@ -19,7 +20,7 @@ const APPLY: Record<ContentTab, (content: SiteContent, items: never[]) => void> 
   preguntas: (content, items) => void (content.faq = items),
   textos: (content, items) => void (content.texts = Object.fromEntries(items as [string, string][])),
   negocio: (content, items) => void (content.business = buildBusiness(Object.fromEntries(items as [string, string][]), content.business)),
-  sucursales: (content, items) => void (content.locations = items),
+  sucursales: (content, items) => void (content.locations = withBackupBookingUrls(items as Location[], content.locations)),
 };
 
 /** `content` es lo resuelto hasta ese momento: el equipo valida sus sucursales contra las que usará el sitio. */
@@ -32,6 +33,18 @@ const READERS: Record<ContentTab, (table: ReturnType<typeof toTable>, content: S
   negocio: readBusiness,
   sucursales: readLocations,
 };
+
+/**
+ * La hoja reemplaza la lista de sucursales entera. Si una fila no trae `reserva` (el dueño aún no agregó la columna, o la
+ * dejó vacía), conserva el enlace de reserva de esa sucursal en el respaldo: sin esto, `useBookingUrl` caería en el enlace
+ * general y la reserva de La Serena abriría la de Coquimbo sin avisar (BR-103, RF-CNT-009).
+ */
+function withBackupBookingUrls(fromSheet: Location[], backupLocations: Location[]): Location[] {
+  return fromSheet.map((location) => {
+    const bookingUrl = location.bookingUrl ?? backupLocations.find((candidate) => candidate.id === location.id)?.bookingUrl;
+    return bookingUrl ? { ...location, bookingUrl } : location;
+  });
+}
 
 function backup(tab: ContentTab, reason: string, issues: ContentIssue[] = [], warnings: ContentIssue[] = []): TabReport {
   return { tab, source: "respaldo", reason, issues, warnings };

@@ -167,6 +167,7 @@ pestañas en la página de ubicación. `activo = NO` oculta una sucursal.
 | `email` | Correo de la sucursal |
 | `mapa` | La dirección que da Google Maps en **Compartir → Insertar un mapa** (solo la parte `https://www.google.com/maps/embed?…` del `src`) |
 | `horario_semana`, `horario_sabado`, `horario_domingo` | Por ejemplo `09:00 - 20:00` o `Cerrado` |
+| `reserva` | **Opcional.** El enlace de AgendaPro de esa sucursal (`https://roycespa.site.agendapro.com/cl/sucursal/…`). El botón «Reservar» abre el de la sucursal que el visitante tiene activa. Si la dejas vacía o no agregas la columna, esa sucursal usa el enlace que el sitio ya trae de respaldo |
 
 Si una sola fila tiene un teléfono, un correo o un mapa mal escritos, el sitio ignora
 **toda** la pestaña `sucursales` y sigue con las sucursales anteriores.

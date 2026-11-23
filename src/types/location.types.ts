@@ -18,5 +18,7 @@ export interface Location {
     email: string;
     whatsapp: string;
     mapUrl: string;
+    /** Enlace de AgendaPro de esta sucursal (BR-103). Sin él, el sitio usa el enlace general de reservas. */
+    bookingUrl?: string;
     schedule: ScheduleItem[];
 }
