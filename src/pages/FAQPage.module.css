@@ -121,7 +121,7 @@
 }
 
 .faqCard:hover {
-  border-color: color-mix(in srgb, var(--color-brand-primary) 30%, transparent);
+  border-color: color-mix(in srgb, var(--color-hover-fill) 30%, transparent);
   box-shadow: 0 8px 16px color-mix(in srgb, var(--color-shade) 20%, transparent);
 }
 
@@ -136,7 +136,7 @@
 }
 
 .faqButton:hover {
-  background: color-mix(in srgb, var(--color-brand-primary) 5%, transparent);
+  background: color-mix(in srgb, var(--color-hover-fill) 5%, transparent);
 }
 
 .faqButton:focus {

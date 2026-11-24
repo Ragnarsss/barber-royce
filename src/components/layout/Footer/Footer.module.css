@@ -92,7 +92,7 @@
 }
 
 .closingButton:hover {
-  background: var(--color-brand-primary);
+  background: var(--color-hover-fill);
   color: var(--color-on-primary);
 }
 

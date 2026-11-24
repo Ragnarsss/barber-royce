@@ -66,6 +66,10 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
     ["--color-brand-white", "--color-brand-section-bg", 4.5, "texto principal sobre las secciones alternas"],
     ["--color-on-primary", "--color-brand-primary", 4.5, "texto de un botón"],
     ["--color-on-primary", "--color-brand-primary-hover", 4.5, "texto de un botón en hover"],
+    ["--color-on-primary", "--color-hover-fill", 4.5, "texto sobre el relleno de un elemento en hover (BR-112)"],
+    ["--color-hover-fill", "--color-brand-background", 3, "relleno o contorno en hover sobre el fondo (BR-112)"],
+    ["--color-brand-primary-hover", "--color-brand-background", 3, "hover o contorno como gráfico sobre el fondo (BR-112)"],
+    ["--color-brand-primary-hover", "--color-brand-section-bg", 3, "hover o contorno como gráfico sobre las secciones alternas (BR-112)"],
     ["--color-brand-primary", "--color-brand-background", 4.5, "enlace o acento como texto sobre el fondo"],
     ["--color-brand-primary", "--color-brand-section-bg", 4.5, "enlace o acento como texto sobre las secciones alternas"],
     ["--color-text-secondary", "--color-brand-background", 4.5, "texto secundario sobre el fondo"],
@@ -85,6 +89,14 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
 
   it.each(PAIRS)("CA-01: %s sobre %s llega a %s:1 (%s)", (text, background, minimum) => {
     expect(ratio(colorOf(text, LA_SERENA), colorOf(background, LA_SERENA))).toBeGreaterThanOrEqual(minimum);
+  });
+
+  it("BR-112: el hover y los contornos de La Serena son el verde hoja, no el café; Coquimbo conserva su rojo", () => {
+    expect(colorOf("--color-brand-primary-hover", LA_SERENA)).toBe(colorOf("--color-leaf", LA_SERENA));
+    expect(colorOf("--color-brand-primary-hover", LA_SERENA)).not.toBe(colorOf("--color-earth-deep", LA_SERENA));
+    expect(colorOf("--color-brand-primary-hover", ROOT)).toBe(colorOf("--color-accent-300", ROOT));
+    expect(colorOf("--color-hover-fill", LA_SERENA)).toBe(colorOf("--color-leaf", LA_SERENA));
+    expect(colorOf("--color-hover-fill", ROOT)).toBe(colorOf("--color-brand-primary", ROOT));
   });
 
   it("el ámbar sobre el fondo claro NO sirve como texto (por eso solo va sobre bandas oscuras o como adorno)", () => {

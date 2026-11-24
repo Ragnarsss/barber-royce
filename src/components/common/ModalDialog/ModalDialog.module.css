@@ -71,7 +71,7 @@
 
 .close:hover {
   border-color: var(--color-brand-white);
-  background: var(--color-brand-primary);
+  background: var(--color-hover-fill);
 }
 
 .close:focus-visible {

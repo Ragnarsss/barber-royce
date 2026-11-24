@@ -127,13 +127,13 @@
 .navbar {
   --nav-glow-core: color-mix(in srgb, var(--color-brand-white) 85%, transparent);
   --nav-glow-halo: color-mix(in srgb, var(--color-brand-white) 60%, transparent);
-  --nav-glow-red: color-mix(in srgb, var(--color-brand-primary) 75%, transparent);
+  --nav-glow-red: color-mix(in srgb, var(--color-hover-fill) 75%, transparent);
   --nav-glow: 0 0 3px var(--nav-glow-core), 0 0 10px var(--nav-glow-halo), 0 0 22px var(--nav-glow-red), 0 0 34px var(--nav-glow-red);
   /* Glow del botón de reserva con --color-brand-primary a distintas opacidades */
   --nav-cta-glow:
-    0 0 20px color-mix(in srgb, var(--color-brand-primary) 80%, transparent),
-    0 0 40px color-mix(in srgb, var(--color-brand-primary) 50%, transparent),
-    0 4px 12px color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+    0 0 20px color-mix(in srgb, var(--color-hover-fill) 80%, transparent),
+    0 0 40px color-mix(in srgb, var(--color-hover-fill) 50%, transparent),
+    0 4px 12px color-mix(in srgb, var(--color-hover-fill) 40%, transparent);
 }
 
 .navLink {
@@ -183,7 +183,7 @@
 }
 
 .ctaButton:hover {
-  background-color: var(--color-brand-primary);
+  background-color: var(--color-hover-fill);
   color: var(--color-on-primary);
   transform: translateY(-2px);
   box-shadow: var(--nav-cta-glow);
@@ -359,7 +359,7 @@
   }
 
   .actions .ctaButton:hover {
-    background-color: var(--color-brand-primary);
+    background-color: var(--color-hover-fill);
     color: var(--color-on-primary);
     transform: translateY(-2px);
     box-shadow: var(--nav-cta-glow);

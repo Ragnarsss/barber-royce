@@ -64,6 +64,8 @@
   /* Texto sobre un relleno de marca (botones, chips). No sigue a --color-brand-white: en La Serena ese es oscuro. */
   --color-on-primary: var(--color-brand-white);
 
+  /* Relleno, contorno y brillo de un elemento en hover (BR-112). Coquimbo: el rojo de marca de siempre. La Serena: el verde hoja mate. */
+  --color-hover-fill: var(--color-brand-primary);
   /* Detalles y hovers que no son el botón principal. Coquimbo: su rojo de hover de siempre. La Serena: el verde hoja mate. */
   --color-detail: var(--color-brand-primary-hover);
   /* Texto de un enlace al pasar el cursor (barra y footer). Coquimbo: el blanco de siempre. La Serena: el verde mate. */
@@ -157,8 +159,10 @@
   --color-brand-section-bg: var(--color-sand);
   --color-brand-white: var(--color-espresso); /* "blanco" de Coquimbo = texto principal: aquí es oscuro */
   --color-brand-primary: var(--color-earth);
-  --color-brand-primary-hover: var(--color-earth-deep);
+  /* Hover y contornos con el verde hoja mate (BR-112): botones, bordes en hover y trazos decorativos. El café hondo ya no es el hover */
+  --color-brand-primary-hover: var(--color-leaf);
   --color-on-primary: #ffffff;
+  --color-hover-fill: var(--color-leaf);
   --color-detail: var(--color-leaf);
   --color-hover-text: var(--color-leaf);
   --color-ink: var(--color-espresso);
