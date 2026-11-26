@@ -66,7 +66,6 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
     ["--color-brand-white", "--color-brand-section-bg", 4.5, "texto principal sobre las secciones alternas"],
     ["--color-on-primary", "--color-brand-primary", 4.5, "texto de un botón"],
     ["--color-on-primary", "--color-brand-primary-hover", 4.5, "texto de un botón en hover"],
-    ["--color-cta-hover-text", "--color-cta-hover-bg", 4.5, "texto del botón principal de CTA1 en hover (BR-112)"],
     ["--color-cta-ghost-hover-text", "--color-cta-ghost-hover-bg", 4.5, "texto del botón fantasma de CTA1 en hover (BR-112)"],
     ["--color-bone", "--color-hover-fill", 4.5, "texto hueso sobre el verde de los botones del hero en hover (BR-112)"],
     ["--color-on-primary", "--color-hover-fill", 4.5, "texto sobre el relleno de un elemento en hover (BR-112)"],
@@ -92,6 +91,13 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
 
   it.each(PAIRS)("CA-01: %s sobre %s llega a %s:1 (%s)", (text, background, minimum) => {
     expect(ratio(colorOf(text, LA_SERENA), colorOf(background, LA_SERENA))).toBeGreaterThanOrEqual(minimum);
+  });
+
+  // Decisión del usuario (2026-11-26): el texto «Agendar» en hover es ámbar. Sobre el verde hoja da ~2,2:1, por debajo de los
+  // 4,5:1 de RNF-A11Y-004; se fija aquí el valor medido para que un empeoramiento falle, y queda anotado como excepción.
+  it("BR-112: el texto ámbar de los botones «Agendar» en hover es el ámbar del tema y su contraste (excepción conocida) no baja de 2:1", () => {
+    expect(colorOf("--color-cta-hover-text", LA_SERENA)).toBe(colorOf("--color-amber", LA_SERENA));
+    expect(ratio(colorOf("--color-cta-hover-text", LA_SERENA), colorOf("--color-cta-hover-bg", LA_SERENA))).toBeGreaterThanOrEqual(2);
   });
 
   it("BR-112: los botones de CTA1 en hover son verde hoja con texto hueso en La Serena, y en Coquimbo conservan lo que tenían", () => {

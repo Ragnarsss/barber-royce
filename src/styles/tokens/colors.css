@@ -170,7 +170,8 @@
   --color-on-primary: #ffffff;
   --color-hover-fill: var(--color-leaf);
   --color-cta-hover-bg: var(--color-leaf);
-  --color-cta-hover-text: var(--color-bone);
+  /* Texto ámbar en hover, decisión del usuario (2026-11-26): sobre el verde hoja da 2,2:1, por debajo del 3:1 de WCAG */
+  --color-cta-hover-text: var(--color-amber);
   --color-cta-ghost-hover-bg: var(--color-leaf);
   --color-cta-ghost-hover-border: var(--color-leaf);
   --color-cta-ghost-hover-text: var(--color-bone);

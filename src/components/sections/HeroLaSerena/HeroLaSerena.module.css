@@ -188,7 +188,7 @@
 .primary:hover,
 .primary:focus-visible {
   background-color: var(--color-hover-fill);
-  color: var(--color-bone);
+  color: var(--color-cta-hover-text);
 }
 
 .secondary {
