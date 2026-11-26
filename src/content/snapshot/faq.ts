@@ -15,7 +15,7 @@ export const FAQ_LIST: FAQ[] = [
     {
         category: "Reservas y Horarios",
         question: "¿Cuál es el horario de atención?",
-        answer: "Estamos abiertos de lunes a viernes de 10:00 a 20:00 horas, y los sábados de 10:00 a 18:00 horas. Los domingos permanecemos cerrados."
+        answer: "En Coquimbo y en La Serena atendemos de lunes a viernes de 10:00 a 20:00 horas y los sábados de 09:00 a 20:00 horas. Los domingos permanecemos cerrados."
     },
     {
         category: "Reservas y Horarios",

@@ -253,7 +253,7 @@ Criterios de aceptación:
 #### BR-005 — Datos del negocio con una sola fuente de verdad y valores reales
 
 - Prioridad: P0 · Esfuerzo: M · Depende de: —
-- Estado: Bloqueada (faltan los datos reales del dueño)
+- Estado: En curso (horarios hechos; el resto espera los datos del dueño)
 - Historia de usuario: HU-INFO-002 (CA-02), HU-RES-001 (CA-03), HU-RES-002 (CA-01, CA-02, CA-03)
 - RF/RNF: `RF-RES-001`, `RF-RES-002`, `RF-INFO-003`, `RNF-DATOS-001`
 
@@ -288,11 +288,26 @@ Criterios de aceptación:
 > **Alcance ajustado (2026-11-23, decisión del usuario):** suma los hallazgos de `datos-negocio-auditor` tras la épica M (vienen de `BR-103`):
 > 1. **Contacto por sucursal:** el pie y `CONTACT.whatsapp` no cambian con la sucursal activa; en `/la-serena` se ve el WhatsApp de Coquimbo.
 >    Decidir con el dueño si el pie lee la fila de la sucursal activa (`useSiteContent().locations`).
-> 2. **Mapa de Coquimbo** (`mapUrl` en `src/data/locationsData.ts`): apunta a Bogotá; hace falta el real (así también sale `geo` en el JSON-LD).
+> 2. ~~**Mapa de Coquimbo**~~ (hecho el 2026-11-26) (`mapUrl` en `src/data/locationsData.ts`): apunta a Bogotá; hace falta el real (así también sale `geo` en el JSON-LD).
 > 3. **Correos de sucursal:** `centro@` y `norte@barberroyce.com` frente a `info@barberroyce.com`, con el dominio `barberroyce.com` y no `roycebarber.com`.
 > 4. **Horario en la FAQ** (`src/content/snapshot/faq.ts`): «lunes a viernes de 10:00 a 20:00, sábados de 10:00 a 18:00», frente a los datos por sucursal.
 > 5. `LocationCard` arma `tel:`, `mailto:` y `wa.me` a mano: usar `telLink` y `whatsappLink` de `src/content/business.ts`.
 > Sigue **bloqueado** por los datos del dueño. El detalle está en [`handoff-excepciones-epica-m-2026-11-23.md`](./handoff-excepciones-epica-m-2026-11-23.md).
+
+> **Alcance ajustado (2026-11-26, decisión del usuario):** el ticket avanza **por partes**, como `BR-006`: entra lo que ya
+> tiene datos y lo demás sigue bloqueado. Rama `fix/br-005-horario-coquimbo`.
+> 1. **Horarios (hecho en la rama):** el dueño confirmó el mismo horario para las dos sucursales: lunes a viernes de 10:00 a
+>    20:00, sábado de 09:00 a 20:00 y domingo cerrado. Se actualizan `locationsData.ts` (las dos filas), `SCHEDULE` (pie de
+>    página), la respuesta de la FAQ (punto 4 del ajuste anterior) y las plantillas de `docs/contenido/`. Como el horario es el
+>    mismo, el horario del pie ya no depende de la sucursal activa; el contacto del punto 1 sí sigue pendiente.
+> 2. **Mensaje de WhatsApp:** pasa de «vi tu página de AgendaPro» a «vi tu página de agenda» (`WHATSAPP_DEFAULTS` y
+>    `CONTACT.whatsapp.link`).
+> 3. **Hoja de Google:** el sitio lee primero la hoja, así que estos cambios solo se ven cuando se editan también las pestañas
+>    `sucursales` (`horario_semana` de las dos filas), `negocio` (`horario.sabado`, `horario.resumen`, `whatsapp.mensaje`) y
+>    `preguntas` (`cual-es-el-horario-de-atencion`).
+> 4. **Mapa de Coquimbo (hecho en la rama, 2026-11-26):** el dueño entregó el código de inserción real; reemplaza el de Bogotá en `locationsData.ts` y en la plantilla `sucursales.csv`, y el JSON-LD ya publica `geo` de Coquimbo. En la hoja hay que pegar la misma URL en la columna `mapa` de su fila.
+> 5. **Sigue pendiente:** teléfono real, correos de sucursal, contacto del pie por sucursal y `LocationCard`
+>    con `telLink`/`whatsappLink`.
 
 #### BR-006 — Corregir SEO técnico: JSON-LD, sitemap, `og:locale`, manifest
 
@@ -4750,7 +4765,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-002 | Vercel: rewrite, cabeceras, caché | B | P0 | S | Hecho | — |
 | BR-003 | Página 404 | B | P0 | S | Hecho | BR-030 (test) |
 | BR-004 | Lint sin errores | B | P0 | S | Hecho | BR-001 |
-| BR-005 | Datos del negocio: fuente única y reales | B | P0 | M | Bloqueada | — |
+| BR-005 | Datos del negocio: fuente única y reales | B | P0 | M | En curso (horarios hechos; resto bloqueado) | — |
 | BR-006 | SEO técnico | B | P0 | S | En curso (parte sin dueño) | BR-005 |
 | BR-007 | Enlaces externos seguros | B | P0 | XS | En curso | — |
 | BR-008 | Fotos propias en lugar de Unsplash | B | P0 | M | Bloqueada | — |

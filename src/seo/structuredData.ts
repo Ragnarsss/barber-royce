@@ -92,8 +92,8 @@ const CHILE = { latitude: [-56, -17], longitude: [-76, -66] } as const;
 const MAP_COORDINATES = /!2d(-?\d+(?:\.\d+)?)!3d(-?\d+(?:\.\d+)?)/;
 
 /**
- * Coordenadas de un mapa de Google embebido (`…!2d<longitud>!3d<latitud>…`). Solo si caen en Chile: hoy el mapa de la
- * sucursal de Coquimbo apunta a Bogotá y no debe terminar en los datos que recibe Google.
+ * Coordenadas de un mapa de Google embebido (`…!2d<longitud>!3d<latitud>…`). Solo si caen en Chile: un mapa mal puesto
+ * (como el de Bogotá que tuvo Coquimbo hasta BR-005) no debe terminar en los datos que recibe Google.
  */
 export function geoFromMapUrl(mapUrl: string): { latitude: number; longitude: number } | undefined {
   const match = mapUrl.match(MAP_COORDINATES);

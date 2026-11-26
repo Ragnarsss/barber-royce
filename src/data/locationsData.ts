@@ -12,8 +12,9 @@ export const locationsList: Location[] = [
         whatsapp: "+56 9 2087 2985",
         mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d260.28748127856596!2d-71.25439871893751!3d-29.92929095044256!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9691ca4f834edc25%3A0xfaf18cbab9f18e93!2sLarrain%20Alcalde%203108%2C%201700000%20La%20Serena%2C%20Coquimbo!5e1!3m2!1ses!2scl!4v1772945276663!5m2!1ses!2scl",
         bookingUrl: BOOKING_URL_BY_BRANCH["la-serena"],
+        // Horario confirmado por el dueño (BR-005, 2026-11-26).
         schedule: [
-            { day: "Lunes - Viernes", hours: "09:00 - 20:00" },
+            { day: "Lunes - Viernes", hours: "10:00 - 20:00" },
             { day: "Sábado", hours: "09:00 - 20:00" },
             { day: "Domingo", hours: "Cerrado" },
         ],
@@ -27,10 +28,11 @@ export const locationsList: Location[] = [
         phone: "+56 9 3109 4222",
         email: "norte@barberroyce.com",
         whatsapp: "+56 9 3109 4222",
-        mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.512!2d-74.0719!3d4.6789!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwNDAnNDQuMCJOIDc0wrAwNCcxOC44Ilc!5e0!3m2!1sen!2sco!4v1234567891",
+        mapUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3784.6009207264224!2d-71.2629753!3d-29.9767813!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9691cb94f727a39b%3A0x95c82f78c76d20a6!2sBarber%C3%ADa%20Royce%20Coquimbo!5e1!3m2!1ses!2scl!4v1795736125981!5m2!1ses!2scl",
         bookingUrl: BOOKING_URL_BY_BRANCH.coquimbo,
+        // Horario confirmado por el dueño (BR-005, 2026-11-26).
         schedule: [
-            { day: "Lunes - Viernes", hours: "09:00 - 20:00" },
+            { day: "Lunes - Viernes", hours: "10:00 - 20:00" },
             { day: "Sábado", hours: "09:00 - 20:00" },
             { day: "Domingo", hours: "Cerrado" },
         ],

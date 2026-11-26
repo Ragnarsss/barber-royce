@@ -68,13 +68,14 @@ describe("hairSalonJsonLd (CP-SEO-002-N: el JSON-LD coincide con src/config/)", 
     expect(new Set(urls).size).toBe(locationsList.length);
   });
 
-  it("CA-02: las coordenadas solo salen si el mapa de la sucursal cae en Chile (La Serena sí; el mapa de Coquimbo apunta a Bogotá)", () => {
+  it("CA-02: las coordenadas salen del mapa de cada sucursal, y ambos caen en Chile (BR-005: el de Coquimbo ya es el real)", () => {
     const laSerena = salons[locationsList.findIndex((location) => location.id === "barberia-royce-la-serena")];
     const coquimbo = salons[locationsList.findIndex((location) => location.id === "barberia-royce-coquimbo")];
 
     expect(laSerena.geo?.latitude).toBeCloseTo(-29.929, 2);
     expect(laSerena.geo?.longitude).toBeCloseTo(-71.254, 2);
-    expect(coquimbo).not.toHaveProperty("geo");
+    expect(coquimbo.geo?.latitude).toBeCloseTo(-29.977, 2);
+    expect(coquimbo.geo?.longitude).toBeCloseTo(-71.263, 2);
   });
 
   it("CA-02: el horario de cada sucursal sale de su propia tabla de horarios", () => {
