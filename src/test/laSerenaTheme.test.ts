@@ -66,6 +66,7 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
     ["--color-brand-white", "--color-brand-section-bg", 4.5, "texto principal sobre las secciones alternas"],
     ["--color-on-primary", "--color-brand-primary", 4.5, "texto de un botón"],
     ["--color-on-primary", "--color-brand-primary-hover", 4.5, "texto de un botón en hover"],
+    ["--color-bone", "--color-hover-fill", 4.5, "texto hueso sobre el verde de los botones del hero en hover (BR-112)"],
     ["--color-on-primary", "--color-hover-fill", 4.5, "texto sobre el relleno de un elemento en hover (BR-112)"],
     ["--color-hover-fill", "--color-brand-background", 3, "relleno o contorno en hover sobre el fondo (BR-112)"],
     ["--color-brand-primary-hover", "--color-brand-background", 3, "hover o contorno como gráfico sobre el fondo (BR-112)"],
