@@ -12,7 +12,7 @@ export const CONTACT = {
     },
     whatsapp: {
         display: "+56 9 3109 4222",
-        link: "https://api.whatsapp.com/send/?phone=56931094222&text=%C2%A1Hola%21+vi+tu+p%C3%A1gina+de+AgendaPro+y+me+gustar%C3%ADa+resolver+algunas+dudas&type=phone_number&app_absent=0",
+        link: "https://api.whatsapp.com/send/?phone=56931094222&text=%C2%A1Hola%21+vi+tu+p%C3%A1gina+de+agenda+y+me+gustar%C3%ADa+resolver+algunas+dudas&type=phone_number&app_absent=0",
     },
     email: {
         display: "info@barberroyce.com",
@@ -24,7 +24,7 @@ export const CONTACT = {
 // cambiar uno u otro; lo que no cambie usa estos valores.
 export const WHATSAPP_DEFAULTS = {
     number: "56931094222",
-    message: "¡Hola! vi tu página de AgendaPro y me gustaría resolver algunas dudas",
+    message: "¡Hola! vi tu página de agenda y me gustaría resolver algunas dudas",
 } as const;
 
 // Reserva (AgendaPro, ADR-001). Fuente única: BR-005 migra los demás CTAs aquí.
@@ -40,12 +40,13 @@ export const BOOKING_URL_BY_BRANCH = {
     "la-serena": "https://roycespa.site.agendapro.com/cl/sucursal/98243",
 } as const satisfies Record<Branch, string>;
 
-// Horarios
+// Horarios: los mismos en Coquimbo y La Serena, confirmados por el dueño (BR-005, 2026-11-26). `display` es el que
+// muestra el pie y cabe en los 40 caracteres que admite la hoja.
 export const SCHEDULE = {
     weekdays: "Lun - Vie: 10:00 - 20:00",
-    saturday: "Sáb: 10:00 - 18:00",
+    saturday: "Sáb: 09:00 - 20:00",
     sunday: "Dom: Cerrado",
-    display: "Lun - Sáb: 9:00 - 20:00",
+    display: "Lun-Vie 10:00-20:00 · Sáb 09:00-20:00",
 } as const;
 
 // Redes sociales
