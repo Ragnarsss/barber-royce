@@ -78,7 +78,7 @@ export const ROUTES: Record<string, RouteConfig> = {
     },
     location: {
         path: "/ubicacion",
-        label: "SUCURSALES",
+        label: "UBICACIÓN",
         title: "Ubicación, Horarios y Contacto | Royce Barbería Coquimbo",
         description: "Visítanos en Coquimbo. Horarios, ubicación, mapa y datos de contacto. Agenda tu cita en la mejor barbería de la región.",
         showInNav: true,
