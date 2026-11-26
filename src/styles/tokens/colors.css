@@ -66,6 +66,12 @@
 
   /* Relleno, contorno y brillo de un elemento en hover (BR-112). Coquimbo: el rojo de marca de siempre. La Serena: el verde hoja mate. */
   --color-hover-fill: var(--color-brand-primary);
+  /* Botones de CTA1 en hover (BR-112). Coquimbo: lo que ya tenían (relleno blanco con texto rojo; el fantasma, un velo blanco con texto oscuro). La Serena: verde hoja con texto hueso. */
+  --color-cta-hover-bg: var(--color-brand-white);
+  --color-cta-hover-text: var(--color-brand-primary);
+  --color-cta-ghost-hover-bg: color-mix(in srgb, var(--color-brand-white) 15%, transparent);
+  --color-cta-ghost-hover-border: var(--color-brand-white);
+  --color-cta-ghost-hover-text: var(--color-primary-700);
   /* Detalles y hovers que no son el botón principal. Coquimbo: su rojo de hover de siempre. La Serena: el verde hoja mate. */
   --color-detail: var(--color-brand-primary-hover);
   /* Texto de un enlace al pasar el cursor (barra y footer). Coquimbo: el blanco de siempre. La Serena: el verde mate. */
@@ -163,6 +169,11 @@
   --color-brand-primary-hover: var(--color-leaf);
   --color-on-primary: #ffffff;
   --color-hover-fill: var(--color-leaf);
+  --color-cta-hover-bg: var(--color-leaf);
+  --color-cta-hover-text: var(--color-bone);
+  --color-cta-ghost-hover-bg: var(--color-leaf);
+  --color-cta-ghost-hover-border: var(--color-leaf);
+  --color-cta-ghost-hover-text: var(--color-bone);
   --color-detail: var(--color-leaf);
   --color-hover-text: var(--color-leaf);
   --color-ink: var(--color-espresso);

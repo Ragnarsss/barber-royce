@@ -66,6 +66,8 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
     ["--color-brand-white", "--color-brand-section-bg", 4.5, "texto principal sobre las secciones alternas"],
     ["--color-on-primary", "--color-brand-primary", 4.5, "texto de un botón"],
     ["--color-on-primary", "--color-brand-primary-hover", 4.5, "texto de un botón en hover"],
+    ["--color-cta-hover-text", "--color-cta-hover-bg", 4.5, "texto del botón principal de CTA1 en hover (BR-112)"],
+    ["--color-cta-ghost-hover-text", "--color-cta-ghost-hover-bg", 4.5, "texto del botón fantasma de CTA1 en hover (BR-112)"],
     ["--color-bone", "--color-hover-fill", 4.5, "texto hueso sobre el verde de los botones del hero en hover (BR-112)"],
     ["--color-on-primary", "--color-hover-fill", 4.5, "texto sobre el relleno de un elemento en hover (BR-112)"],
     ["--color-hover-fill", "--color-brand-background", 3, "relleno o contorno en hover sobre el fondo (BR-112)"],
@@ -90,6 +92,14 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
 
   it.each(PAIRS)("CA-01: %s sobre %s llega a %s:1 (%s)", (text, background, minimum) => {
     expect(ratio(colorOf(text, LA_SERENA), colorOf(background, LA_SERENA))).toBeGreaterThanOrEqual(minimum);
+  });
+
+  it("BR-112: los botones de CTA1 en hover son verde hoja con texto hueso en La Serena, y en Coquimbo conservan lo que tenían", () => {
+    expect(colorOf("--color-cta-hover-bg", LA_SERENA)).toBe(colorOf("--color-leaf", LA_SERENA));
+    expect(colorOf("--color-cta-ghost-hover-bg", LA_SERENA)).toBe(colorOf("--color-leaf", LA_SERENA));
+    expect(colorOf("--color-cta-hover-bg", ROOT)).toBe(colorOf("--color-brand-white", ROOT));
+    expect(colorOf("--color-cta-hover-text", ROOT)).toBe(colorOf("--color-brand-primary", ROOT));
+    expect(colorOf("--color-cta-ghost-hover-text", ROOT)).toBe(colorOf("--color-primary-700", ROOT));
   });
 
   it("BR-112: el hover y los contornos de La Serena son el verde hoja, no el café; Coquimbo conserva su rojo", () => {
