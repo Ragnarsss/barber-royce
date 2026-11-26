@@ -64,6 +64,20 @@
   /* Texto sobre un relleno de marca (botones, chips). No sigue a --color-brand-white: en La Serena ese es oscuro. */
   --color-on-primary: var(--color-brand-white);
 
+  /* Relleno, contorno y brillo de un elemento en hover (BR-112). Coquimbo: el rojo de marca de siempre. La Serena: el verde hoja mate. */
+  --color-hover-fill: var(--color-brand-primary);
+  /* Botones de CTA1 en hover (BR-112). Coquimbo: lo que ya tenían (relleno blanco con texto rojo; el fantasma, un velo blanco con texto oscuro). La Serena: verde hoja con texto hueso. */
+  --color-cta-hover-bg: var(--color-brand-white);
+  --color-cta-hover-text: var(--color-brand-primary);
+  --color-cta-ghost-hover-bg: color-mix(in srgb, var(--color-brand-white) 15%, transparent);
+  --color-cta-ghost-hover-border: var(--color-brand-white);
+  --color-cta-ghost-hover-text: var(--color-primary-700);
+  /* Botón principal en hover (CTA2 y el hero de La Serena) y barra de progreso (BR-112). Coquimbo: lo que ya tenían (relleno rojo vivo con texto blanco; barra de rojo a rojo vivo). La Serena: verde hoja oscuro con texto ámbar; barra de verde a ámbar. */
+  --color-btn-hover-bg: var(--color-brand-primary-hover);
+  --color-btn-hover-text: var(--color-on-primary);
+  --color-btn-hover-glow: var(--color-brand-primary);
+  --color-progress-from: var(--color-brand-primary);
+  --color-progress-to: var(--color-brand-primary-hover);
   /* Detalles y hovers que no son el botón principal. Coquimbo: su rojo de hover de siempre. La Serena: el verde hoja mate. */
   --color-detail: var(--color-brand-primary-hover);
   /* Texto de un enlace al pasar el cursor (barra y footer). Coquimbo: el blanco de siempre. La Serena: el verde mate. */
@@ -103,6 +117,7 @@
   --color-earth-deep: #5e3b22; /* café tierra: hover */
   --color-wood: #b5824e; /* madera: solo decorativa, no texto (3,0:1 sobre el hueso) */
   --color-leaf: #4e6347; /* verde hoja */
+  --color-leaf-deep: #283224; /* verde hoja oscuro: relleno de los botones en hover; 4,5:1 con el ámbar y 12:1 con el hueso */
   --color-neon: #eaf4ff; /* neón frío: solo luce sobre una banda oscura */
   --color-amber: #dc8018; /* ámbar del logo de las capas: 2,7:1 sobre el hueso, 5,3:1 sobre el espresso */
 
@@ -157,8 +172,21 @@
   --color-brand-section-bg: var(--color-sand);
   --color-brand-white: var(--color-espresso); /* "blanco" de Coquimbo = texto principal: aquí es oscuro */
   --color-brand-primary: var(--color-earth);
-  --color-brand-primary-hover: var(--color-earth-deep);
+  /* Hover y contornos con el verde hoja mate (BR-112): botones, bordes en hover y trazos decorativos. El café hondo ya no es el hover */
+  --color-brand-primary-hover: var(--color-leaf);
   --color-on-primary: #ffffff;
+  --color-hover-fill: var(--color-leaf);
+  --color-btn-hover-bg: var(--color-leaf-deep);
+  --color-btn-hover-text: var(--color-amber);
+  --color-btn-hover-glow: var(--color-leaf);
+  --color-progress-from: var(--color-leaf);
+  --color-progress-to: var(--color-amber);
+  --color-cta-hover-bg: var(--color-leaf-deep);
+  /* Texto ámbar en hover (decisión del usuario, 2026-11-26) sobre el verde hoja oscuro: 4,5:1 */
+  --color-cta-hover-text: var(--color-amber);
+  --color-cta-ghost-hover-bg: var(--color-leaf-deep);
+  --color-cta-ghost-hover-border: var(--color-leaf-deep);
+  --color-cta-ghost-hover-text: var(--color-bone);
   --color-detail: var(--color-leaf);
   --color-hover-text: var(--color-leaf);
   --color-ink: var(--color-espresso);

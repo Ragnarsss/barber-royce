@@ -173,7 +173,10 @@
   border-radius: var(--radius-md);
   font-weight: var(--font-weight-semibold);
   text-decoration: none;
-  transition: background-color var(--duration-slow) var(--ease-smooth);
+  transition:
+    background-color var(--duration-slow) var(--ease-smooth),
+    border-color var(--duration-slow) var(--ease-smooth),
+    color var(--duration-slow) var(--ease-smooth);
 }
 
 .primary {
@@ -181,8 +184,13 @@
   color: var(--color-espresso);
 }
 
-.primary:hover {
-  background-color: color-mix(in srgb, var(--color-amber) 85%, var(--color-bone));
+/* El hover es el verde hoja con texto hueso. El color del texto se fija porque el a:hover global lo pinta de café, ilegible aquí (BR-112) */
+.primary:hover,
+.primary:focus-visible {
+  background-color: var(--color-btn-hover-bg);
+  color: var(--color-btn-hover-text);
+  /* El verde oscuro casi se funde con la banda espresso: un filo verde hoja lo recorta */
+  box-shadow: inset 0 0 0 1px var(--color-leaf);
 }
 
 .secondary {
@@ -190,8 +198,11 @@
   color: var(--color-bone);
 }
 
-.secondary:hover {
-  background-color: color-mix(in srgb, var(--color-bone) 12%, transparent);
+.secondary:hover,
+.secondary:focus-visible {
+  background-color: var(--color-btn-hover-bg);
+  border-color: var(--color-leaf);
+  color: var(--color-bone);
 }
 
 .primary:focus-visible,

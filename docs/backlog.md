@@ -4688,6 +4688,36 @@ El detalle y las rutas de los archivos están en [`handoff-excepciones-epica-m-2
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-111).
 
+#### BR-112 — Verde hoja mate para los hover y los contornos del tema La Serena
+
+- Prioridad: P2 · Esfuerzo: XS · Depende de: BR-104
+- Estado: En curso
+- Historia de usuario: HU-SUC-002 (CA-01)
+- RF/RNF: `RF-SUC-005`, `RNF-A11Y-004`
+
+**Origen (2026-11-24):** el usuario ya había pedido un verde opaco, como el de las hojas, para algunos detalles (`BR-104` lo aplicó a los
+enlaces de la barra y del pie y al botón fantasma de CTA2). Ahora pide extenderlo a los contornos y a los hover, que le parecen
+más interesantes que el café de hoy (`--color-brand-primary-hover`, el café tierra oscuro).
+
+Alcance:
+1. En `:root[data-branch="la-serena"]`, `--color-brand-primary-hover` pasa de `--color-earth-deep` a `--color-leaf`. Es el alias de todo lo que
+   se enciende o se contornea con el color de hover: fondo de los botones en hover, bordes de la barra, trazos de los hexágonos de CTA1, láseres y
+   destellos de SocialProof1, cola de la barra de progreso y el spinner.
+2. Token nuevo `--color-hover-fill`: en `:root` vale `--color-brand-primary` (Coquimbo no cambia) y en La Serena, el verde hoja. Lo usan los hover que se
+   rellenan o se contornean con el color de marca (botón de la barra y su brillo, pie, diálogo, filtros de vidrio, botones de CTA2, Nosotros y FAQ).
+3. Botones del hero de La Serena y de CTA1 en hover: verde hoja con texto hueso. El `a:hover` global pintaba el texto de café (de ~2:1 sobre el fondo oscuro, y casi invisible en el botón fantasma); ahora el color del texto se fija. En CTA1, tokens `--color-cta-hover-*` y `--color-cta-ghost-hover-*`, que en Coquimbo valen lo que ya tenían.
+4. **Decisión del usuario (2026-11-26):** el texto de los botones «Agendar» en hover es ámbar (`#dc8018`) y su relleno, un **verde hoja oscuro** (`--color-leaf-deep`, `#283224`): sobre el verde hoja el ámbar daba 2,2:1; sobre el oscuro, 4,5:1. El hover del botón principal de CTA2, que no fijaba el color del texto (quedaba café sobre verde), usa los tokens `--color-btn-hover-*`, que en Coquimbo valen lo de siempre.
+5. La barra de progreso va de verde hoja a ámbar en La Serena (tokens `--color-progress-from` y `--color-progress-to`); en Coquimbo, de rojo a rojo vivo como antes.
+6. Los pares de contraste del hover quedan cubiertos en `laSerenaTheme.test.ts`.
+
+Criterios de aceptación:
+1. Con La Serena, el hover de los botones, los bordes en hover y los contornos decorativos usan el verde hoja; con Coquimbo, el rojo de siempre
+   (HU-SUC-002 CA-01).
+2. El texto del botón sobre el verde cumple 4,5:1 y el verde, como contorno o gráfico, 3:1 sobre el fondo y sobre las secciones alternas (RNF-A11Y-004).
+3. `design-tokens-auditor` sin colores fuera de los tokens, y el e2e de contraste pasa en las dos sucursales.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-112).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -4826,6 +4856,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-108 | Enredaderas laterales del tema La Serena | M | P2 | M | Hecho | BR-104 |
 | BR-110 | Textos por sucursal: una pestaña para cada landing | M | P2 | M | En curso | BR-042, BR-106 |
 | BR-111 | Rendimiento y SEO de las portadas: lo que dejó la auditoría de la épica M | M | P2 | M | Propuesta | BR-106 |
+| BR-112 | Verde hoja mate para los hover y los contornos del tema La Serena | M | P2 | XS | En curso | BR-104 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
