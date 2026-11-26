@@ -16,8 +16,8 @@
 
 /* El ancho lo da `scaleX`, ligado al scroll en el componente (MotionValue). */
 .bar {
-  background: linear-gradient(90deg, var(--color-brand-primary) 0%, var(--color-brand-primary-hover) 100%);
+  background: linear-gradient(90deg, var(--color-progress-from) 0%, var(--color-progress-to) 100%);
   transform-origin: 0%;
   z-index: 9999;
-  box-shadow: 0 0 15px color-mix(in srgb, var(--color-brand-primary) 60%, transparent);
+  box-shadow: 0 0 15px color-mix(in srgb, var(--color-progress-from) 60%, transparent);
 }

@@ -4706,7 +4706,9 @@ Alcance:
 2. Token nuevo `--color-hover-fill`: en `:root` vale `--color-brand-primary` (Coquimbo no cambia) y en La Serena, el verde hoja. Lo usan los hover que se
    rellenan o se contornean con el color de marca (botón de la barra y su brillo, pie, diálogo, filtros de vidrio, botones de CTA2, Nosotros y FAQ).
 3. Botones del hero de La Serena y de CTA1 en hover: verde hoja con texto hueso. El `a:hover` global pintaba el texto de café (de ~2:1 sobre el fondo oscuro, y casi invisible en el botón fantasma); ahora el color del texto se fija. En CTA1, tokens `--color-cta-hover-*` y `--color-cta-ghost-hover-*`, que en Coquimbo valen lo que ya tenían.
-4. Los pares de contraste del hover quedan cubiertos en `laSerenaTheme.test.ts`.
+4. **Decisión del usuario (2026-11-26):** el texto de los botones «Agendar» en hover es ámbar (`#dc8018`) y su relleno, un **verde hoja oscuro** (`--color-leaf-deep`, `#283224`): sobre el verde hoja el ámbar daba 2,2:1; sobre el oscuro, 4,5:1. El hover del botón principal de CTA2, que no fijaba el color del texto (quedaba café sobre verde), usa los tokens `--color-btn-hover-*`, que en Coquimbo valen lo de siempre.
+5. La barra de progreso va de verde hoja a ámbar en La Serena (tokens `--color-progress-from` y `--color-progress-to`); en Coquimbo, de rojo a rojo vivo como antes.
+6. Los pares de contraste del hover quedan cubiertos en `laSerenaTheme.test.ts`.
 
 Criterios de aceptación:
 1. Con La Serena, el hover de los botones, los bordes en hover y los contornos decorativos usan el verde hoja; con Coquimbo, el rojo de siempre

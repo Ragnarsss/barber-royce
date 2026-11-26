@@ -66,6 +66,9 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
     ["--color-brand-white", "--color-brand-section-bg", 4.5, "texto principal sobre las secciones alternas"],
     ["--color-on-primary", "--color-brand-primary", 4.5, "texto de un botón"],
     ["--color-on-primary", "--color-brand-primary-hover", 4.5, "texto de un botón en hover"],
+    ["--color-cta-hover-text", "--color-cta-hover-bg", 4.5, "texto ámbar del botón principal de CTA1 en hover (BR-112)"],
+    ["--color-btn-hover-text", "--color-btn-hover-bg", 4.5, "texto ámbar del botón principal de CTA2 y del hero en hover (BR-112)"],
+    ["--color-bone", "--color-btn-hover-bg", 4.5, "texto del botón secundario del hero en hover (BR-112)"],
     ["--color-cta-ghost-hover-text", "--color-cta-ghost-hover-bg", 4.5, "texto del botón fantasma de CTA1 en hover (BR-112)"],
     ["--color-bone", "--color-hover-fill", 4.5, "texto hueso sobre el verde de los botones del hero en hover (BR-112)"],
     ["--color-on-primary", "--color-hover-fill", 4.5, "texto sobre el relleno de un elemento en hover (BR-112)"],
@@ -93,16 +96,23 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
     expect(ratio(colorOf(text, LA_SERENA), colorOf(background, LA_SERENA))).toBeGreaterThanOrEqual(minimum);
   });
 
-  // Decisión del usuario (2026-11-26): el texto «Agendar» en hover es ámbar. Sobre el verde hoja da ~2,2:1, por debajo de los
-  // 4,5:1 de RNF-A11Y-004; se fija aquí el valor medido para que un empeoramiento falle, y queda anotado como excepción.
-  it("BR-112: el texto ámbar de los botones «Agendar» en hover es el ámbar del tema y su contraste (excepción conocida) no baja de 2:1", () => {
-    expect(colorOf("--color-cta-hover-text", LA_SERENA)).toBe(colorOf("--color-amber", LA_SERENA));
-    expect(ratio(colorOf("--color-cta-hover-text", LA_SERENA), colorOf("--color-cta-hover-bg", LA_SERENA))).toBeGreaterThanOrEqual(2);
+  it("BR-112: el botón principal en hover es verde hoja oscuro con texto ámbar en La Serena, y en Coquimbo conserva lo que tenía", () => {
+    expect(colorOf("--color-btn-hover-bg", LA_SERENA)).toBe(colorOf("--color-leaf-deep", LA_SERENA));
+    expect(colorOf("--color-btn-hover-text", LA_SERENA)).toBe(colorOf("--color-amber", LA_SERENA));
+    expect(colorOf("--color-btn-hover-bg", ROOT)).toBe(colorOf("--color-accent-300", ROOT));
+    expect(colorOf("--color-btn-hover-text", ROOT)).toBe(colorOf("--color-on-primary", ROOT));
   });
 
-  it("BR-112: los botones de CTA1 en hover son verde hoja con texto hueso en La Serena, y en Coquimbo conservan lo que tenían", () => {
-    expect(colorOf("--color-cta-hover-bg", LA_SERENA)).toBe(colorOf("--color-leaf", LA_SERENA));
-    expect(colorOf("--color-cta-ghost-hover-bg", LA_SERENA)).toBe(colorOf("--color-leaf", LA_SERENA));
+  it("BR-112: la barra de progreso va de verde hoja a ámbar en La Serena y de rojo a rojo vivo en Coquimbo", () => {
+    expect(colorOf("--color-progress-from", LA_SERENA)).toBe(colorOf("--color-leaf", LA_SERENA));
+    expect(colorOf("--color-progress-to", LA_SERENA)).toBe(colorOf("--color-amber", LA_SERENA));
+    expect(colorOf("--color-progress-from", ROOT)).toBe(colorOf("--color-accent-500", ROOT));
+    expect(colorOf("--color-progress-to", ROOT)).toBe(colorOf("--color-accent-300", ROOT));
+  });
+
+  it("BR-112: los botones de CTA1 en hover son verde hoja oscuro en La Serena, y en Coquimbo conservan lo que tenían", () => {
+    expect(colorOf("--color-cta-hover-bg", LA_SERENA)).toBe(colorOf("--color-leaf-deep", LA_SERENA));
+    expect(colorOf("--color-cta-ghost-hover-bg", LA_SERENA)).toBe(colorOf("--color-leaf-deep", LA_SERENA));
     expect(colorOf("--color-cta-hover-bg", ROOT)).toBe(colorOf("--color-brand-white", ROOT));
     expect(colorOf("--color-cta-hover-text", ROOT)).toBe(colorOf("--color-brand-primary", ROOT));
     expect(colorOf("--color-cta-ghost-hover-text", ROOT)).toBe(colorOf("--color-primary-700", ROOT));
