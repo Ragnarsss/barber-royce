@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import styles from "./Navbar.module.css";
-import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
-import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
+import { BrandMark } from "@/components/common/BrandMark/BrandMark";
 import { useNavbarScroll } from "@/hooks/useNavbarScroll";
 import { useLenisInstance } from "@/hooks/useLenisContext";
 import { getNavRoutes } from "@/config/routes";
@@ -59,13 +58,7 @@ export const Navbar = () => {
     >
       <div className={styles.container}>
         <Link to="/" className={styles.logo} onClick={handleLogoClick} aria-label="Ir a la página de inicio">
-          <picture>
-            <source
-              srcSet={`${logo46w} 1x, ${logo92w} 2x`}
-              type="image/webp"
-            />
-            <img src={logo46w} alt={SITE.name} className={styles.logoImage} width="46" height="56" />
-          </picture>
+          <BrandMark title={SITE.name} className={styles.logoImage} />
           {/* En móvil la marca va en texto, en dos líneas, en vez del logo (BR-061) */}
           <span className={styles.logoWordmark} aria-hidden="true" data-wordmark>
             <span className={styles.logoName}>{SITE.brand.name}</span>

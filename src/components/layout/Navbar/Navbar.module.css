@@ -45,10 +45,12 @@
   margin-right: auto;
 }
 
+/* El monograma BR es un SVG sin color propio (BR-115): toma el color de marca de la sucursal activa */
 .logoImage {
   display: none;
   height: 50px;
   width: auto;
+  color: var(--color-brand-primary);
   transition: var(--transition-transform);
 }
 

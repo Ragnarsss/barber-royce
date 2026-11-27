@@ -4825,6 +4825,34 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-114).
 
+#### BR-115 — Logo BR en SVG en la barra y el pie, con el color de marca de cada sucursal
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-104 (los alias de marca por sucursal)
+- Estado: En curso (rama `feat/br-115-logo-svg`, montada sobre la de BR-114 hasta que se fusionen BR-113 y BR-114)
+- Historia de usuario: HU-SUC-002 (CA-01)
+- RF/RNF: `RF-NAV-001`, `RNF-A11Y-004`
+
+**Origen (2026-11-27, decisión del usuario):** el dueño entregó el monograma BR en vector (`src/assets/logo-RB.svg`, dos trazados
+dorados `#c8a746`). El logo de hoy es un PNG rojo con fondo negro (`royce-barber-logo.png`): en la barra y el pie hay que ocultar su
+recuadro con `mix-blend-mode: lighten`, y sobre el fondo claro y el verde de La Serena queda como un parche. El usuario pidió
+implementar el SVG en la barra y el pie, en las dos sucursales, y **con el color de marca de cada tema** (verde hoja en La Serena, rojo
+en Coquimbo) en vez de su dorado original; el dorado no entra a las paletas.
+
+Alcance:
+1. Componente `BrandMark` (`src/components/common/BrandMark/`): SVG en línea con los dos trazados del archivo de origen, sin color
+   propio (`currentColor`) y con nombre accesible que sale de `SITE.name`.
+2. La barra y el pie lo usan en lugar de las imágenes `royce-barber-logo_*.webp`, con el color `--color-brand-primary`; se quita el
+   `mix-blend-mode`. Las imágenes `.webp` y el PNG se quedan en el repo si algo más los usa (favicon, JSON-LD, manifest, OG).
+3. Un test comprueba que los trazados del componente son los del archivo `src/assets/logo-RB.svg`.
+
+Criterios de aceptación:
+1. En la barra y el pie, el logo se ve con el color de marca de la sucursal activa y sin recuadro (HU-SUC-002 CA-01).
+2. El logo tiene nombre accesible y contraste ≥ 3:1 contra el fondo de la barra y del pie en las dos sucursales (RNF-A11Y-004).
+3. Ningún hex nuevo en componentes ni en CSS (`design-tokens-auditor`), y no se pide ninguna imagen del logo en la barra ni en el pie.
+4. Verificado en el preview de Vercel (DoD).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-115).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -4966,6 +4994,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-112 | Verde hoja mate para los hover y los contornos del tema La Serena | M | P2 | XS | En curso | BR-104 |
 | BR-113 | Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo | M | P2 | M | En curso | BR-104, BR-112 |
 | BR-114 | Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales | M | P2 | L | En curso | BR-113 |
+| BR-115 | Logo BR en SVG en la barra y el pie, con el color de marca de cada sucursal | M | P2 | S | En curso | BR-104 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

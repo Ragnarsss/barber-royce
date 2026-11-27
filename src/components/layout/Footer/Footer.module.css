@@ -150,12 +150,11 @@
   color: var(--footer-fg);
 }
 
-/* El logo trae su fondo negro: `lighten` deja pasar solo lo más claro entre la imagen y el degradado, así el rojo
-   queda y el recuadro no se ve. */
+/* El monograma BR es un SVG sin color propio (BR-115): toma el color de marca de la sucursal activa */
 .logoIcon {
-  width: 48px;
+  width: 44px;
   height: 48px;
-  mix-blend-mode: lighten;
+  color: var(--color-brand-primary);
 }
 
 .description {
