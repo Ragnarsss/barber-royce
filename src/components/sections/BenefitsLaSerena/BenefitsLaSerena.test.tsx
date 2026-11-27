@@ -219,6 +219,17 @@ describe("BenefitsLaSerena (BR-117)", () => {
     expect((options?.threshold as number[]).length).toBeGreaterThan(20);
   });
 
+  it("las tarjetas no llevan la franja de veta de madera al pie (decisión del usuario, 2026-11-27), ni en Beneficios ni en el hero", () => {
+    const hero = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "../HeroLaSerena/HeroLaSerena.module.css"), "utf8");
+
+    for (const [name, source] of [["BenefitsLaSerena", css], ["HeroLaSerena", hero]] as const) {
+      expect(source, `${name}: .card::after`).not.toMatch(/\.card::after/);
+      expect(source, `${name}: relleno extra para la franja`).not.toMatch(/\+\s*4px\)/);
+    }
+    // La veta sigue en lo que no son tarjetas: la marca del hero y el borde del pie (BR-113)
+    expect(hero).toMatch(/\.brand::after[^}]*texture-wood/);
+  });
+
   it("CA-11: las fotos van pegadas, sin separación, sin marco y sin esquinas redondeadas", () => {
     const track = rule(".track") + rule(".photo");
 

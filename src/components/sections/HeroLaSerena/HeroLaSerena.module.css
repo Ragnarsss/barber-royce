@@ -241,7 +241,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  padding: var(--spacing-3) var(--spacing-4) calc(var(--spacing-3) + 4px);
+  padding: var(--spacing-3) var(--spacing-4);
   border: 1px solid color-mix(in srgb, var(--color-brand-white) 10%, transparent);
   border-radius: var(--radius-lg);
   background-color: var(--color-brand-section-bg);
@@ -250,17 +250,6 @@
   line-height: 1.45;
   text-align: left;
   text-wrap: pretty;
-}
-
-/* Filo de veta de madera al pie de cada tarjeta (BR-113) */
-.card::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 4px;
-  background: var(--texture-wood);
 }
 
 /* El número de la tarjeta, en la serif del tema: en el celular, chico en la esquina */
@@ -483,7 +472,7 @@
     align-items: flex-start;
     gap: var(--spacing-4);
     min-height: clamp(14rem, 34vh, 22rem);
-    padding: var(--spacing-6) var(--spacing-6) calc(var(--spacing-6) + 4px);
+    padding: var(--spacing-6);
     font-size: var(--font-size-lg);
     line-height: 1.5;
   }
