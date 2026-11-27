@@ -1466,6 +1466,11 @@ neón del techo), para sentir que es mi barbería y no la de otra ciudad.
   bordes se cierran hacia el centro y aparecen dos carruseles de fotos, uno
   que sube y otro que baja, antes de la siguiente sección. Con reducir
   movimiento, todo aparece completo y quieto.
+- CA-11: Given la sucursal activa es La Serena, When llego a Beneficios,
+  Then veo una franja horizontal de fotos del local que avanza sola y,
+  encima, el título, el texto y las tarjetas de beneficios; puedo pausarla
+  y, con reducir movimiento, queda quieta. Con Coquimbo veo la sección de
+  siempre (decisión del usuario, 2026-11-27, `BR-117`).
 
 ### Reglas de negocio asociadas:
 
