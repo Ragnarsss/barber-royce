@@ -4733,6 +4733,50 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-112).
 
+#### BR-113 — Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-104, BR-112
+- Estado: Hecho (2026-11-27, rama `feat/br-113-tema-la-serena-taller-verde` → master, PR #68)
+- Historia de usuario: HU-SUC-002 (CA-01, CA-09)
+- RF/RNF: `RF-SUC-005`, `RF-SUC-008`, `RNF-A11Y-004`, `RNF-PERF-001` .. `RNF-PERF-003`
+
+**Origen (2026-11-27):** el usuario pidió style tiles para las dos sucursales. El estado actual mostró que La Serena solo se
+diferencia de Coquimbo por el color (misma tipografía Anton + Montserrat). Se compararon cuatro variantes (A «Taller», B «Ámbar
+encendido», C «Jardín luminoso», D «Taller verde») y el usuario eligió **D**: la serif cálida de A con el verde hoja de C como
+marca. Los tiles están en el lienzo «Royce · Style tiles» (variante D).
+
+> **Alcance ajustado (2026-11-27, decisión del usuario):** el color de marca de La Serena pasa de café tierra a verde hoja. Esto
+> reemplaza lo fijado el 2026-11-23 en `HU-SUC-002` («café tierra, color de marca de los botones») y el café tierra deja de ser
+> `--color-brand-primary`. Se mantiene lo decidido el 2026-11-26 en `BR-112`: el hover de «Agendar» es ámbar sobre verde hoja oscuro.
+
+Alcance:
+1. Bajo `:root[data-branch="la-serena"]`: `--color-brand-primary` pasa de `--color-earth` a `--color-leaf` y
+   `--color-brand-primary-hover` pasa de `--color-leaf` a `--color-leaf-deep` (con la marca en verde, el hover no puede seguir
+   siendo el mismo verde). El café tierra queda como alias nuevo de apoyo (etiquetas, subrayado de enlaces y contorno del foco del
+   teclado). Revisar los tokens de `BR-112` que dependían de que la marca fuera café (`--color-hover-fill`, `--color-detail`,
+   `--color-hover-text`, `--color-progress-from`).
+2. Tipografía: `--font-family-display` bajo La Serena pasa a Fraunces, para titulares, títulos de tarjeta y precios (Montserrat sigue
+   en el cuerpo). Coquimbo conserva Anton. La fuente se autoaloja (hoy hay `@fontsource/anton` y `@fontsource-variable/montserrat`):
+   **dependencia nueva `@fontsource-variable/fraunces`, a confirmar con el usuario antes de instalarla**, y debe cargarse solo con
+   La Serena y con una fuente de respaldo de métricas parecidas para no mover el layout.
+3. Esquinas de 4 px en botones y tarjetas de La Serena (los tokens `--radius-*` actuales llegan a 8 y 12 px); Coquimbo no cambia.
+4. Veta de madera como remate fino: token de gradiente CSS (sin imágenes) para el filo de bandas y el pie, solo en La Serena.
+5. Pares de contraste nuevos en `laSerenaTheme.test.ts`, y una prueba de que los tokens de `:root` (Coquimbo) no cambian.
+6. Nota en `ADR-010` con la decisión y la fecha, y actualizar el tile si algún valor cambia al implementar.
+
+Criterios de aceptación:
+1. Con La Serena, el texto blanco sobre el botón de marca (verde hoja) da ≥ 6,6:1; el hover (ámbar sobre verde hoja oscuro), ≥ 4,5:1;
+   el verde hoja como texto da ≥ 5,9:1 sobre el hueso y ≥ 5,2:1 sobre la arena (HU-SUC-002 CA-01, RNF-A11Y-004).
+2. El anillo de foco del teclado en La Serena se ve (≥ 3:1 contra el fondo) en botones y enlaces (RNF-A11Y-004).
+3. Con La Serena, titulares y precios se muestran en Fraunces; con Coquimbo, en Anton, sin cambios visuales (HU-SUC-002 CA-09,
+   `CP-SUC-008`).
+4. Con Coquimbo no se descarga Fraunces, y `/la-serena` en Lighthouse móvil cumple `RNF-PERF-001` .. `RNF-PERF-003` (CLS sin cambio
+   por el cambio de fuente) (HU-SUC-002 CA-07, CA-08).
+5. `design-tokens-auditor` sin colores ni radios fuera de los tokens, y el e2e de contraste pasa en las dos sucursales.
+6. Verificado en el preview de Vercel, no solo en `npm run dev` (DoD, `engineering-guidelines.md` §6).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-113).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -4872,6 +4916,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-110 | Textos por sucursal: una pestaña para cada landing | M | P2 | M | En curso | BR-042, BR-106 |
 | BR-111 | Rendimiento y SEO de las portadas: lo que dejó la auditoría de la épica M | M | P2 | M | Propuesta | BR-106 |
 | BR-112 | Verde hoja mate para los hover y los contornos del tema La Serena | M | P2 | XS | En curso | BR-104 |
+| BR-113 | Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo | M | P2 | M | Hecho | BR-104, BR-112 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

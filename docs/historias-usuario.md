@@ -1415,7 +1415,12 @@ neón del techo), para sentir que es mi barbería y no la de otra ciudad.
   - Enredaderas a los costados de algunas secciones de La Serena, que crecen
     con el scroll. Primero las dibuja Claude en SVG; después se evalúa
     rehacerlas en Figma o Illustrator.
-- RF relacionados: RF-SUC-005, RF-SUC-006, RF-SUC-007.
+- Decisión (2026-11-27, decisión del usuario, `BR-113`): tras comparar
+  cuatro variantes de style tile, el color de marca de La Serena pasa de
+  café tierra a **verde hoja**, el café queda como apoyo, y los titulares y
+  precios van en una serif cálida (Fraunces). Esto reemplaza lo de la
+  paleta del 2026-11-23 respecto del color de los botones.
+- RF relacionados: RF-SUC-005, RF-SUC-006, RF-SUC-007, RF-SUC-008.
 - RNF impactados: RNF-A11Y-003, RNF-A11Y-004, RNF-A11Y-005, RNF-PERF-001 ..
   RNF-PERF-003, RNF-PERF-005, RNF-MANT-004.
 - Casos de uso relacionados: Ninguno (no hay decisiones del cliente; el
@@ -1426,6 +1431,8 @@ neón del techo), para sentir que es mi barbería y no la de otra ciudad.
 - CA-01: Given la sucursal activa es La Serena, When recorro cualquier
   página, Then los fondos son claros (hueso y blanco), los botones de
   reserva son café tierra y todo texto cumple 4,5:1 (3:1 si es grande).
+  > Ajustado (2026-11-27, `BR-113`): los botones de reserva son verde
+  > hoja, no café tierra; el resto del criterio se mantiene.
 - CA-02: Given la sucursal activa es La Serena, When veo una sección que en
   Coquimbo tiene hexágonos, Then en su lugar hay cuadrados o rectángulos con
   trazo de neón.
@@ -1447,6 +1454,10 @@ neón del techo), para sentir que es mi barbería y no la de otra ciudad.
   equipo, enredaderas).
 - CA-08: Given abro `/la-serena` en un celular, When mido con Lighthouse
   móvil, Then LCP, CLS y TBT cumplen RNF-PERF-001 .. RNF-PERF-003.
+- CA-09: Given la sucursal activa es La Serena, When veo los titulares, los
+  títulos de tarjeta y los precios, Then se muestran en una serif cálida y
+  no en la tipografía condensada de Coquimbo, y el cuerpo sigue en
+  Montserrat; con Coquimbo, nada cambia.
 
 ### Reglas de negocio asociadas:
 

@@ -8,6 +8,8 @@ import "@fontsource/montserrat/500.css";
 import "@fontsource/montserrat/600.css";
 import "@fontsource/montserrat/700.css";
 import "@fontsource/anton/400.css";
+// Display de La Serena (BR-113). Solo se descarga si un texto usa la familia: con Coquimbo, no.
+import "@fontsource-variable/fraunces/wght.css";
 
 import App from "./App.tsx";
 import { installChunkRecovery } from "./utils/chunkRecovery";
