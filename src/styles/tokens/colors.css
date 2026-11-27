@@ -89,6 +89,9 @@
   /* Tinta: texto oscuro sobre una foto o un fondo claro. Es oscura en los dos temas (primary-900 pasa a ser una superficie clara en La Serena). */
   --color-ink: var(--color-primary-900);
 
+  /* Contorno del foco del teclado (reset.css, global.css). En Coquimbo conserva el valor de siempre (BR-113 no lo toca). */
+  --color-focus-ring: var(--color-primary-500);
+
   /* Texto de acento sobre un relleno --color-brand-white (el botón «blanco» de Coquimbo; en La Serena, ese relleno es oscuro). */
   --color-accent-on-inverse: var(--color-brand-primary);
   --color-accent-on-inverse-hover: var(--color-brand-primary-hover);
@@ -161,8 +164,8 @@
 }
 
 /* ============================================
-   TEMA LA SERENA (ADR-010, BR-104)
-   Blanco, café tierra y madera. Invierte el sitio: lo que en Coquimbo es texto claro sobre fondo oscuro
+   TEMA LA SERENA (ADR-010, BR-104, BR-113)
+   Hueso, verde hoja (marca), café tierra (apoyo) y madera. Invierte el sitio: lo que en Coquimbo es texto claro sobre fondo oscuro
    (--color-brand-white sobre --color-brand-background) aquí es texto oscuro sobre fondo claro, así que cada par
    se mantiene junto. `:root[data-branch]` gana por especificidad al `:root` de arriba, sin depender del orden.
    ============================================ */
@@ -171,11 +174,17 @@
   --color-brand-background: var(--color-bone);
   --color-brand-section-bg: var(--color-sand);
   --color-brand-white: var(--color-espresso); /* "blanco" de Coquimbo = texto principal: aquí es oscuro */
-  --color-brand-primary: var(--color-earth);
-  /* Hover y contornos con el verde hoja mate (BR-112): botones, bordes en hover y trazos decorativos. El café hondo ya no es el hover */
-  --color-brand-primary-hover: var(--color-leaf);
+  /*
+   * «Taller verde» (BR-113, decisión del usuario 2026-11-27): la marca es el verde hoja y su hover, el verde hoja oscuro
+   * (con la marca en verde, el hover no puede ser el mismo verde). El café tierra pasa a ser de apoyo: etiquetas,
+   * subrayados y el contorno del foco. Antes (BR-104, BR-112): marca café y hover verde hoja.
+   */
+  --color-brand-primary: var(--color-leaf);
+  --color-brand-primary-hover: var(--color-leaf-deep);
+  --color-brand-support: var(--color-earth);
+  --color-focus-ring: var(--color-brand-support); /* 6,4:1 sobre el hueso */
   --color-on-primary: #ffffff;
-  --color-hover-fill: var(--color-leaf);
+  --color-hover-fill: var(--color-leaf-deep);
   --color-btn-hover-bg: var(--color-leaf-deep);
   --color-btn-hover-text: var(--color-amber);
   --color-btn-hover-glow: var(--color-leaf);
@@ -188,7 +197,7 @@
   --color-cta-ghost-hover-border: var(--color-leaf-deep);
   --color-cta-ghost-hover-text: var(--color-bone);
   --color-detail: var(--color-leaf);
-  --color-hover-text: var(--color-leaf);
+  --color-hover-text: var(--color-leaf-deep); /* el enlace ya es verde hoja: con el cursor encima se oscurece */
   --color-ink: var(--color-espresso);
   --color-accent-on-inverse: var(--color-amber); /* ámbar sobre el relleno espresso: 5,3:1 */
   --color-accent-on-inverse-hover: var(--color-amber);
@@ -198,10 +207,13 @@
   --color-shade: var(--color-espresso);
   --color-text-secondary: var(--color-bark);
 
-  /* Escalas que los módulos usan directamente (no pasan por un alias de marca) */
-  --color-accent-300: var(--color-earth-deep);
-  --color-accent-400: var(--color-earth);
-  --color-accent-500: var(--color-earth);
+  /* Veta de madera (BR-113): remate fino de bandas y del pie, solo en La Serena. Gradiente CSS, sin imágenes */
+  --texture-wood: repeating-linear-gradient(90deg, var(--color-earth) 0 5px, var(--color-earth-deep) 5px 7px, var(--color-wood) 7px 9px, var(--color-earth) 9px 14px, var(--color-earth-deep) 14px 15px);
+
+  /* Escalas que los módulos usan directamente (no pasan por un alias de marca): siguen a la marca verde (BR-113) */
+  --color-accent-300: var(--color-leaf-deep);
+  --color-accent-400: var(--color-leaf);
+  --color-accent-500: var(--color-leaf);
   --color-accent-600: var(--color-wood);
   --color-accent-700: var(--color-bark);
   --color-accent-900: var(--color-sand);

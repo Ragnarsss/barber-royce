@@ -124,6 +124,7 @@ Salvo que el CP diga otra cosa:
 | RF-SUC-005 | SUC | Aplicar el tema de La Serena (paleta y figuras cuadradas con trazo de neón en lugar de hexágonos) cuando es la sucursal activa, e interpolar cada figura en la de la otra sucursal al cambiar. | Media | **CP-SUC-005:** con La Serena activa, los fondos de SocialProof1, SocialProof2, CTA1, Reviews y Features muestran cuadrados o rectángulos; cada par de formas tiene la misma cantidad de puntos (test); los colores salen solo de los tokens. | HU-SUC-002 | — | Verificado (`BR-104`, 2026-11-23: contraste del tema, figuras con la misma cantidad de puntos y e2e de contraste en las dos sucursales) |
 | RF-SUC-006 | SUC | Con La Serena activa, mostrar el equipo en un carrusel de tarjetas rectangulares con botones de vidrio, operable con arrastre, teclado y botones; con Coquimbo, la grilla actual. | Media | **CP-SUC-006:** con La Serena, `/equipo` muestra el carrusel con «Barbero N de M», los botones anterior y siguiente y la tarjeta activa destacada; con Coquimbo, la grilla; el código del carrusel no se descarga con Coquimbo. | HU-SUC-002 | — | Verificado (`BR-107`, 2026-11-23: tests de la vista por sucursal, del carrusel y de los botones de vidrio; lo de accesibilidad que queda pasa a `BR-033`) |
 | RF-SUC-007 | SUC | Con La Serena activa, mostrar enredaderas decorativas a los costados de algunas secciones, que crecen con el scroll y no se anuncian a los lectores de pantalla. | Baja | **CP-SUC-007:** con La Serena, las secciones elegidas muestran las enredaderas con `aria-hidden`; con Coquimbo no se renderizan ni se descargan; con `prefers-reduced-motion` se ven completas y quietas. | HU-SUC-002 | — | Verificado (`BR-108`, 2026-11-23: tests, capturas y el código no se descarga con Coquimbo; falta que el usuario elija las secciones) |
+| RF-SUC-008 | SUC | Mostrar los titulares, los títulos de tarjeta y los precios de La Serena en una serif cálida (Fraunces) y los de Coquimbo en la tipografía condensada actual (Anton), cargando solo la fuente de la sucursal activa. | Media | **CP-SUC-008:** con La Serena, el estilo calculado de un titular y de un precio tiene `font-family` Fraunces; con Coquimbo, Anton; con Coquimbo no se descarga el archivo de Fraunces; el CLS de `/la-serena` no sube por el cambio de fuente. | HU-SUC-002 | — | Propuesto (`BR-113`) |
 
 ### 2.2 Notas de trazabilidad
 
@@ -196,6 +197,8 @@ Salvo que el CP diga otra cosa:
 - Los umbrales de rendimiento son los "buenos" de Core Web Vitals. El INP
   real solo se mide con usuarios reales; mientras no haya analítica
   (backlog §4), el TBT de laboratorio es su sustituto.
+- (2026-11-27, `BR-113`, decisión del usuario) `RF-SUC-005`: el color de marca de La Serena es el verde hoja, no el café tierra;
+  la tipografía por sucursal es `RF-SUC-008`.
 - (2026-11-23, `BR-104`) `RF-SUC-005` suma Features (pentágono → cuadrado); los triángulos del Hero los reemplaza
   `HeroLaSerena` (`BR-106`), no se interpolan.
 - (2026-11-23, `ADR-010`) `RNF-SEG-004` admite en `script-src` exactamente un hash `sha256`, el del script de
@@ -233,7 +236,7 @@ Salvo que el CP diga otra cosa:
 | HU-CNT-002 | RF-CNT-005, RF-CNT-010 | RNF-CONF-003, RNF-DATOS-002 |
 | HU-CNT-003 | RF-CNT-007, RF-CNT-009 | RNF-DATOS-001, RNF-CONF-003, RNF-SEG-004 |
 | HU-SUC-001 | RF-SUC-001 .. RF-SUC-004 | RNF-PERF-008, RNF-SEG-005, RNF-A11Y-002, RNF-A11Y-003, RNF-SEO-001, RNF-CONF-001 |
-| HU-SUC-002 | RF-SUC-005, RF-SUC-006, RF-SUC-007 | RNF-PERF-001 .. RNF-PERF-003, RNF-PERF-005, RNF-A11Y-003 .. RNF-A11Y-005, RNF-MANT-004 |
+| HU-SUC-002 | RF-SUC-005, RF-SUC-006, RF-SUC-007, RF-SUC-008 | RNF-PERF-001 .. RNF-PERF-003, RNF-PERF-005, RNF-A11Y-003 .. RNF-A11Y-005, RNF-MANT-004 |
 
 ## 5. Documentos relacionados
 

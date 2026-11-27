@@ -24,6 +24,12 @@
   z-index: 1;
 }
 
+/* La Serena «Taller verde» (BR-113): el borde superior del pie es un filo de veta de madera */
+:global([data-branch="la-serena"]) .divider {
+  height: 6px;
+  background: var(--texture-wood);
+}
+
 /* Franja de cierre (BR-098): las diagonales compactas de las cabeceras con el llamado a agendar */
 .closing {
   position: relative;

@@ -118,11 +118,13 @@ describe('tema de La Serena: [data-branch="la-serena"] (BR-104)', () => {
     expect(colorOf("--color-cta-ghost-hover-text", ROOT)).toBe(colorOf("--color-primary-700", ROOT));
   });
 
-  it("BR-112: el hover y los contornos de La Serena son el verde hoja, no el café; Coquimbo conserva su rojo", () => {
-    expect(colorOf("--color-brand-primary-hover", LA_SERENA)).toBe(colorOf("--color-leaf", LA_SERENA));
+  // BR-113 (decisión del usuario, 2026-11-27): la marca pasa a ser el verde hoja, así que el hover es el verde hoja oscuro
+  // (con el mismo verde, el hover no se distinguiría de la marca). Antes, BR-112: hover = verde hoja.
+  it("BR-113: el hover y los contornos de La Serena son el verde hoja oscuro, no el café; Coquimbo conserva su rojo", () => {
+    expect(colorOf("--color-brand-primary-hover", LA_SERENA)).toBe(colorOf("--color-leaf-deep", LA_SERENA));
     expect(colorOf("--color-brand-primary-hover", LA_SERENA)).not.toBe(colorOf("--color-earth-deep", LA_SERENA));
     expect(colorOf("--color-brand-primary-hover", ROOT)).toBe(colorOf("--color-accent-300", ROOT));
-    expect(colorOf("--color-hover-fill", LA_SERENA)).toBe(colorOf("--color-leaf", LA_SERENA));
+    expect(colorOf("--color-hover-fill", LA_SERENA)).toBe(colorOf("--color-leaf-deep", LA_SERENA));
     expect(colorOf("--color-hover-fill", ROOT)).toBe(colorOf("--color-brand-primary", ROOT));
   });
 

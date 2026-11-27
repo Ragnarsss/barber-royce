@@ -50,3 +50,12 @@
   --letter-spacing-wider: 0.05em;
   --letter-spacing-widest: 0.1em;
 }
+
+/*
+ * La Serena «Taller verde» (BR-113, ADR-010): titulares y precios en una serif cálida. El navegador solo descarga los
+ * archivos de Fraunces cuando un texto usa la familia, así que con Coquimbo no se piden. Georgia es el respaldo mientras
+ * carga (font-display: swap), de métricas parecidas.
+ */
+:root[data-branch="la-serena"] {
+  --font-family-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
+}

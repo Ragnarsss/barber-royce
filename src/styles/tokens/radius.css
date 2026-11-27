@@ -12,3 +12,9 @@
   --radius-2xl: 1.5rem; /* 24px - secciones grandes */
   --radius-full: 9999px; /* Circular - avatares, badges */
 }
+
+/* La Serena «Taller verde» (BR-113): botones y tarjetas con esquina de 4 px, sobria, de taller */
+:root[data-branch="la-serena"] {
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+}

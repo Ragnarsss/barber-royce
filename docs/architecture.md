@@ -452,6 +452,11 @@ No hay gestor de estado global (ADR-004).
 - **Consecuencia:** un enlace compartido a una página común se ve con la
   sucursal de quien lo abre (o Coquimbo), no con la de quien lo compartió.
   Se acepta porque el contenido es el mismo.
+- **Enmienda (2026-11-27, `BR-113`, decisión del usuario):** el tema de La
+  Serena también cambia la tipografía de display (Fraunces, solo bajo
+  `[data-branch="la-serena"]`) y los radios de botones y tarjetas, siempre
+  por token (nivel 1). Su color de marca pasa a ser el verde hoja, con el
+  café tierra de apoyo.
 - **Alternativas descartadas (2026-11-23):**
   - Todo con prefijo (`/:sucursal/*`) y `canonical` en las páginas comunes:
     duplica URLs y obliga a redirigir las actuales. Se revisa si el
