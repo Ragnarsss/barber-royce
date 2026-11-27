@@ -1420,7 +1420,7 @@ neón del techo), para sentir que es mi barbería y no la de otra ciudad.
   café tierra a **verde hoja**, el café queda como apoyo, y los titulares y
   precios van en una serif cálida (Fraunces). Esto reemplaza lo de la
   paleta del 2026-11-23 respecto del color de los botones.
-- RF relacionados: RF-SUC-005, RF-SUC-006, RF-SUC-007, RF-SUC-008.
+- RF relacionados: RF-SUC-005, RF-SUC-006, RF-SUC-007, RF-SUC-008, RF-SUC-009.
 - RNF impactados: RNF-A11Y-003, RNF-A11Y-004, RNF-A11Y-005, RNF-PERF-001 ..
   RNF-PERF-003, RNF-PERF-005, RNF-MANT-004.
 - Casos de uso relacionados: Ninguno (no hay decisiones del cliente; el
@@ -1442,6 +1442,8 @@ neón del techo), para sentir que es mi barbería y no la de otra ciudad.
 - CA-04: Given entro a `/la-serena`, When carga, Then el hero muestra
   cuadrados de neón solapados que se dibujan desde cero, hojas y madera, y
   el bloque de la sucursal con dirección, horario y botón de reserva.
+  > Ajustado (2026-11-27, `BR-114`, decisión del usuario): el hero de
+  > `/la-serena` pasa a ser la secuencia cinematográfica de CA-10.
 - CA-05: Given la sucursal activa es La Serena, When abro `/equipo`, Then veo
   a los barberos en un carrusel que se desliza con el dedo, con el teclado y
   con botones de vidrio; la tarjeta activa se destaca. Con Coquimbo veo la
@@ -1458,6 +1460,12 @@ neón del techo), para sentir que es mi barbería y no la de otra ciudad.
   títulos de tarjeta y los precios, Then se muestran en una serif cálida y
   no en la tipografía condensada de Coquimbo, y el cuerpo sigue en
   Montserrat; con Coquimbo, nada cambia.
+- CA-10: Given entro a `/la-serena`, When carga, Then veo un fondo claro con
+  un indicador de scroll, el título entra desde abajo y se acomoda arriba al
+  centro y el subtítulo aparece letra por letra; When hago scroll, Then los
+  bordes se cierran hacia el centro y aparecen dos carruseles de fotos, uno
+  que sube y otro que baja, antes de la siguiente sección. Con reducir
+  movimiento, todo aparece completo y quieto.
 
 ### Reglas de negocio asociadas:
 

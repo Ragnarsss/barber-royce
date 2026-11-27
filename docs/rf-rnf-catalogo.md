@@ -125,6 +125,7 @@ Salvo que el CP diga otra cosa:
 | RF-SUC-006 | SUC | Con La Serena activa, mostrar el equipo en un carrusel de tarjetas rectangulares con botones de vidrio, operable con arrastre, teclado y botones; con Coquimbo, la grilla actual. | Media | **CP-SUC-006:** con La Serena, `/equipo` muestra el carrusel con «Barbero N de M», los botones anterior y siguiente y la tarjeta activa destacada; con Coquimbo, la grilla; el código del carrusel no se descarga con Coquimbo. | HU-SUC-002 | — | Verificado (`BR-107`, 2026-11-23: tests de la vista por sucursal, del carrusel y de los botones de vidrio; lo de accesibilidad que queda pasa a `BR-033`) |
 | RF-SUC-007 | SUC | Con La Serena activa, mostrar enredaderas decorativas a los costados de algunas secciones, que crecen con el scroll y no se anuncian a los lectores de pantalla. | Baja | **CP-SUC-007:** con La Serena, las secciones elegidas muestran las enredaderas con `aria-hidden`; con Coquimbo no se renderizan ni se descargan; con `prefers-reduced-motion` se ven completas y quietas. | HU-SUC-002 | — | Verificado (`BR-108`, 2026-11-23: tests, capturas y el código no se descarga con Coquimbo; falta que el usuario elija las secciones) |
 | RF-SUC-008 | SUC | Mostrar los titulares, los títulos de tarjeta y los precios de La Serena en una serif cálida (Fraunces) y los de Coquimbo en la tipografía condensada actual (Anton), cargando solo la fuente de la sucursal activa. | Media | **CP-SUC-008:** con La Serena, el estilo calculado de un titular y de un precio tiene `font-family` Fraunces; con Coquimbo, Anton; con Coquimbo no se descarga el archivo de Fraunces; el CLS de `/la-serena` no sube por el cambio de fuente. | HU-SUC-002 | — | Propuesto (`BR-113`) |
+| RF-SUC-009 | SUC | En `/la-serena`, mostrar un hero en secuencia: fondo claro con indicador de scroll, título que entra desde abajo y se fija arriba al centro, subtítulo letra por letra y, con el scroll, dos carruseles laterales de fotos (uno sube y otro baja) que aparecen al cerrarse los bordes; textos editables desde la hoja. | Media | **CP-SUC-009:** sin scroll, el `h1` y el subtítulo están en el DOM y visibles en menos de 1 s; el subtítulo se anuncia completo a los lectores de pantalla; con scroll aparecen los dos carruseles y se pausan con cursor o foco; con `prefers-reduced-motion` todo aparece quieto; con Coquimbo no se descarga el código. | HU-SUC-002 | — | Propuesto (`BR-114`) |
 
 ### 2.2 Notas de trazabilidad
 
@@ -236,7 +237,7 @@ Salvo que el CP diga otra cosa:
 | HU-CNT-002 | RF-CNT-005, RF-CNT-010 | RNF-CONF-003, RNF-DATOS-002 |
 | HU-CNT-003 | RF-CNT-007, RF-CNT-009 | RNF-DATOS-001, RNF-CONF-003, RNF-SEG-004 |
 | HU-SUC-001 | RF-SUC-001 .. RF-SUC-004 | RNF-PERF-008, RNF-SEG-005, RNF-A11Y-002, RNF-A11Y-003, RNF-SEO-001, RNF-CONF-001 |
-| HU-SUC-002 | RF-SUC-005, RF-SUC-006, RF-SUC-007, RF-SUC-008 | RNF-PERF-001 .. RNF-PERF-003, RNF-PERF-005, RNF-A11Y-003 .. RNF-A11Y-005, RNF-MANT-004 |
+| HU-SUC-002 | RF-SUC-005, RF-SUC-006, RF-SUC-007, RF-SUC-008, RF-SUC-009 | RNF-PERF-001 .. RNF-PERF-003, RNF-PERF-005, RNF-A11Y-003 .. RNF-A11Y-005, RNF-MANT-004 |
 
 ## 5. Documentos relacionados
 

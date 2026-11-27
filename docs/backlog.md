@@ -4777,6 +4777,54 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-113).
 
+#### BR-114 — Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales
+
+- Prioridad: P2 · Esfuerzo: L (se propone partir: intro y carruseles) · Depende de: BR-113 (fuente y colores del tema)
+- Estado: Propuesta (los carruseles necesitan fotos de La Serena del dueño; hoy hay una sola en el repo)
+- Historia de usuario: HU-SUC-002 (CA-04 ajustado, CA-08, CA-10)
+- RF/RNF: `RF-SUC-009`, `RNF-PERF-001` .. `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-002`
+
+**Origen (2026-11-27, decisión del usuario):** con dos mockups («Resumen», versión Coquimbo y versión La Serena) el usuario pidió
+para la portada de La Serena un hero «super cinematográfico»: empieza en blanco, con un símbolo que invita a hacer scroll; las
+palabras aparecen con efectos de entrada distintos; el título grande entra desde abajo y se acomoda arriba al centro; el subtítulo
+aparece letra por letra; después los bordes se encogen hacia adentro para dar espacio a dos carruseles laterales de fotos, uno que
+sube y otro que baja solos, con tarjetas que aparecen animadas, y de ahí se pasa a la siguiente sección. Va **solo en `/la-serena`**
+y reemplaza a `HeroLaSerena` (`BR-106`). El subtítulo del mockup («donde la calidad se la roba») se cambia por un texto sin
+chilenismo (decisión del usuario, 2026-11-27).
+
+> **Alcance ajustado (2026-11-27, decisión del usuario):** de las tres direcciones de `diseno-visual` el usuario eligió la A
+> («intro y telón») con dos cambios: (1) la secuencia **entera** depende del scroll, y (2) empieza con **«Barbería Royce»** en grande
+> con el estilo del tema (de `SITE.brand`), que al hacer scroll se deshace en partículas que salen en todas direcciones hasta dejar
+> la pantalla en blanco; recién entonces suben el título, el subtítulo letra por letra, las tarjetas y, al final, los carruseles.
+> La marca es el `h1`: se ve al cargar sin scroll, así que el LCP no depende de la secuencia. El punto 2 del alcance queda así.
+
+Alcance:
+1. Contenido del mockup, editable desde la hoja con `useSiteText()` (claves nuevas con respaldo en `texts.ts`, `ADR-008`): título
+   «Tu estilo, nuestra pasión», subtítulo «En nuestra barbería transformamos tu corte en una expresión personal. Disfruta de un
+   servicio premium y exclusivo, donde la calidad es lo primero.» y tres puntos con ícono (cortes que marcan tendencia, experiencia
+   premium, atención personalizada). Más el botón «Agendar Sesión» con la URL de la sucursal (`useBookingUrl`).
+2. Secuencia: fondo claro con indicador de scroll; título que sube y se fija arriba al centro; subtítulo letra por letra; puntos
+   con entradas distintas. Bordes que se encogen hacia el centro y abren dos carruseles verticales automáticos (uno sube y otro
+   baja) con tarjetas que entran animadas; al terminar, la página sigue a la siguiente sección. El ritmo (qué parte va sola al
+   cargar y qué parte depende del scroll) se elige entre las direcciones que propone la skill `diseno-visual`.
+3. Móvil primero (`ADR-009`): en celular los carruseles van arriba y abajo del texto, o uno solo, en vez de a los costados.
+4. Animación con `MotionValue` (nunca `setState` por scroll), sin leer `window.lenis`; con «reducir movimiento», todo aparece
+   completo y quieto, y los carruseles no se mueven solos.
+5. El código se carga con `lazy()` solo en La Serena (`HERO_VARIANTS`), como el hero actual.
+
+Criterios de aceptación:
+1. Con JavaScript activo o no, y sin hacer scroll, el título y el subtítulo existen en el DOM y quedan visibles en menos de 1 s
+   desde la carga; el `h1` es único (HU-SUC-002 CA-10, `CP-SUC-009`).
+2. El título entra desde abajo y queda arriba al centro; el subtítulo aparece letra por letra, pero un lector de pantalla lo lee
+   entero de una vez (HU-SUC-002 CA-10).
+3. Al hacer scroll, los bordes se cierran y aparecen los dos carruseles, uno subiendo y otro bajando, que se pausan con el
+   cursor encima o con el foco, y se detienen con «reducir movimiento» (`RNF-A11Y-003`).
+4. Sin `setState` por evento de scroll (test), y textos leídos con `useSiteText()` (`RNF-DATOS-002`).
+5. `/la-serena` en Lighthouse móvil: LCP, CLS y TBT no empeoran contra la línea base medida antes del cambio (HU-SUC-002 CA-08).
+6. Con Coquimbo no se descarga el código del hero (HU-SUC-002 CA-07).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-114).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -4916,7 +4964,8 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-110 | Textos por sucursal: una pestaña para cada landing | M | P2 | M | En curso | BR-042, BR-106 |
 | BR-111 | Rendimiento y SEO de las portadas: lo que dejó la auditoría de la épica M | M | P2 | M | Propuesta | BR-106 |
 | BR-112 | Verde hoja mate para los hover y los contornos del tema La Serena | M | P2 | XS | En curso | BR-104 |
-| BR-113 | Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo | M | P2 | M | Propuesta | BR-104, BR-112 |
+| BR-113 | Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo | M | P2 | M | En curso | BR-104, BR-112 |
+| BR-114 | Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales | M | P2 | L | Propuesta | BR-113 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
