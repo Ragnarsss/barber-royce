@@ -111,8 +111,6 @@ export function HeroLaSerena() {
   const railStartX = useTransform(reveal, [0, 1], ["-100%", "0%"]);
   const railEndX = useTransform(reveal, [0, 1], ["100%", "0%"]);
   const railBottomY = useTransform(reveal, [0, 1], ["100%", "0%"]);
-  // La tira de arriba (celular) parte el doble de lejos: si no, asoma bajo la barra de navegación antes de tiempo.
-  const railTopY = useTransform(reveal, [0, 1], ["-200%", "0%"]);
 
   // Los carruseles entran quietos y solo se ponen a andar cuando terminaron de estrechar la zona blanca (reveal = 1). El
   // paso se marca en un atributo del escenario, directo en el DOM, y el CSS enciende la animación: ningún `setState`
@@ -142,7 +140,7 @@ export function HeroLaSerena() {
         >
           {railsReady && <RailTrack direction="forward" paused={paused} />}
         </motion.div>
-        <motion.div className={`${styles.rail} ${styles.railEnd}`} style={animated(desktop ? { x: railEndX } : { y: railTopY })} aria-hidden="true">
+        <motion.div className={`${styles.rail} ${styles.railEnd}`} style={animated({ x: railEndX })} aria-hidden="true">
           {railsReady && <RailTrack direction="backward" paused={paused} />}
         </motion.div>
 
