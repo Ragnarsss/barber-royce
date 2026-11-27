@@ -4,6 +4,10 @@ import { particleAt, sampleParticles, type Particle } from "./brandParticles";
 
 /** Colores de las partículas: los de la paleta de La Serena, leídos de los tokens (nunca un hex en el código). */
 const PARTICLE_TOKENS = ["--color-leaf", "--color-earth", "--color-amber", "--color-wood"] as const;
+/** Las chispas van en ámbar: el índice de `--color-amber` en la lista de arriba. */
+const SPARK_COLOR = PARTICLE_TOKENS.indexOf("--color-amber");
+/** Parte de las partículas que son chispas. */
+const SPARK_RATIO = 0.04;
 
 interface Options {
   stageRef: RefObject<HTMLElement | null>;
@@ -44,7 +48,8 @@ export function useBrandParticles({ stageRef, brandRef, canvasRef, progress, ena
           const { x, y, alpha } = particleAt(particle, t);
           if (alpha <= 0) continue;
           context.globalAlpha = alpha;
-          context.fillRect(x, y, size, size);
+          const side = size * particle.scale;
+          context.fillRect(x - (side - size) / 2, y - (side - size) / 2, side, side);
         }
       });
       context.globalAlpha = 1;
@@ -97,15 +102,16 @@ export function useBrandParticles({ stageRef, brandRef, canvasRef, progress, ena
         ink.restore();
       }
 
-      // Partículas finas y muchas (polvo, no confeti): un punto de 1 a 1,5 px cada 2 o 3 px de tinta.
-      const gap = desktop ? 3 : 2;
+      // Partículas finas y muchas (polvo, no confeti): un punto de 1 a 1,5 px cada 2 px de tinta, más unas pocas chispas ámbar.
+      const gap = 2;
       size = desktop ? 1.5 : 1.2;
       const particles = sampleParticles(ink.getImageData(0, 0, offscreen.width, offscreen.height).data, offscreen.width, offscreen.height, {
         gap,
         colors: colors.length,
         center: { x: brandBox.width / 2, y: brandBox.height / 2 },
         spread: Math.max(width, height) * 0.7,
-        max: desktop ? 9000 : 3500,
+        max: desktop ? 20000 : 3500,
+        sparks: { ratio: SPARK_RATIO, color: SPARK_COLOR },
         random: Math.random,
       }).map((particle) => ({ ...particle, x: particle.x + origin.x, y: particle.y + origin.y }));
       groups = colors.map((_, index) => particles.filter((particle) => particle.color === index));

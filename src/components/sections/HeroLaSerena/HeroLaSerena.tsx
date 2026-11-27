@@ -77,7 +77,7 @@ export function HeroLaSerena() {
   const progress = useMotionValue(scrollYProgress.get());
   useMotionValueEvent(scrollYProgress, "change", (value) => progress.set(value));
   const explode = useTransform(progress, [...T.explode], [0, 1]);
-  const brandOpacity = useTransform(progress, [T.explode[0], T.explode[0] + 0.04], [1, 0]);
+  const brandOpacity = useTransform(progress, [T.explode[0], T.explode[0] + 0.012], [1, 0]);
   const hintOpacity = useTransform(progress, [...T.hint], [1, 0]);
 
   // El título sube desde fuera de la pantalla (el escenario recorta lo que queda abajo): sin desvanecimiento, solo movimiento.

@@ -4740,7 +4740,7 @@ Criterios de aceptación:
 #### BR-113 — Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-104, BR-112
-- Estado: En curso (rama `feat/br-113-tema-la-serena-taller-verde`)
+- Estado: Hecho (2026-11-27, rama `feat/br-113-tema-la-serena-taller-verde` → master, PR #68)
 - Historia de usuario: HU-SUC-002 (CA-01, CA-09)
 - RF/RNF: `RF-SUC-005`, `RF-SUC-008`, `RNF-A11Y-004`, `RNF-PERF-001` .. `RNF-PERF-003`
 
@@ -5134,7 +5134,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-110 | Textos por sucursal: una pestaña para cada landing | M | P2 | M | En curso | BR-042, BR-106 |
 | BR-111 | Rendimiento y SEO de las portadas: lo que dejó la auditoría de la épica M | M | P2 | M | Propuesta | BR-106 |
 | BR-112 | Verde hoja mate para los hover y los contornos del tema La Serena | M | P2 | XS | En curso | BR-104 |
-| BR-113 | Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo | M | P2 | M | En curso | BR-104, BR-112 |
+| BR-113 | Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo | M | P2 | M | Hecho | BR-104, BR-112 |
 | BR-114 | Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales | M | P2 | L | En curso | BR-113 |
 | BR-115 | Logo BR en SVG en la barra y el pie, con el color de marca de cada sucursal | M | P2 | S | En curso | BR-104 |
 | BR-116 | Contraste de «Respaldados por los mejores» y de CTA1 en La Serena | M | P1 | S | En curso | BR-113 |
