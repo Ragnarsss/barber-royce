@@ -7,6 +7,7 @@ import { renderWithProviders } from "@/test/renderWithProviders";
 import { SITE } from "@/config/constants";
 import { TEXTS } from "@/content/texts";
 import { RAIL_IMAGES } from "./heroLaSerenaImages";
+import { ROYCE_PATH, ROYCE_WORDMARK_TEXT } from "./royceWordmark";
 
 const state = vi.hoisted(() => ({ reducedMotion: false }));
 vi.mock("framer-motion", async (importOriginal) => ({
@@ -61,6 +62,30 @@ describe("HeroLaSerena (BR-114)", () => {
     const [h1, ...others] = screen.getAllByRole("heading", { level: 1 });
     expect(others).toHaveLength(0);
     expect(h1.textContent).toBe(`${SITE.brand.prefix} ${SITE.brand.name} en La Serena`);
+  });
+
+  it("la marca grande es un dibujo (SVG decorativo) que dice lo mismo que SITE.brand.name, y el h1 la nombra en texto", () => {
+    const { container } = renderWithProviders(<HeroLaSerena />);
+
+    expect(ROYCE_WORDMARK_TEXT).toBe(SITE.brand.name);
+    const wordmark = container.querySelector("h1 svg[data-particle-path]");
+    expect(wordmark).toHaveAttribute("aria-hidden", "true");
+    expect(wordmark?.querySelector("path")?.getAttribute("d")).toBe(ROYCE_PATH);
+  });
+
+  it("CA-10: el neón del techo, abajo y detrás de las tarjetas, es decorativo: cuatro rectángulos y su copia encendida", () => {
+    const { container } = renderWithProviders(<HeroLaSerena />);
+
+    const neon = container.querySelector("svg[class*='neonField']");
+    expect(neon).toHaveAttribute("aria-hidden", "true");
+    expect(neon?.querySelectorAll("rect")).toHaveLength(8);
+  });
+
+  it("cada tarjeta lleva su número (decorativo: el lector oye solo el texto)", () => {
+    renderWithProviders(<HeroLaSerena />);
+
+    const numbers = screen.getAllByRole("listitem").map((item) => item.querySelector("[aria-hidden='true']")?.textContent);
+    expect(numbers).toEqual(["01", "02", "03"]);
   });
 
   it("CA-10: el título, el subtítulo y las tres tarjetas salen de los textos editables (RNF-DATOS-002)", () => {

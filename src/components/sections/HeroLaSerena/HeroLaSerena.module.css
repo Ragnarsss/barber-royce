@@ -54,9 +54,75 @@
 }
 
 .brandName {
-  font-size: clamp(5rem, 30vw, 16rem);
-  letter-spacing: -0.03em;
+  display: block;
+  line-height: 0;
   color: var(--color-brand-primary);
+}
+
+/* «Royce» dibujado: el alto manda y el ancho sale del viewBox. Trazo y relleno del color de marca. */
+.wordmark {
+  display: block;
+  width: auto;
+  height: clamp(4.5rem, 26vw, 14.5rem);
+  overflow: visible;
+}
+
+.wordmark path {
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 6;
+  stroke-linejoin: round;
+}
+
+/*
+ * ---------- Neón del techo, enmarcando las tarjetas ----------
+ * Un marco más grande que el bloque de tarjetas: los rectángulos asoman por los bordes y entre ellas. Medidas
+ * explícitas: un SVG absoluto no se estira solo entre `left` y `right`, y reset.css le pone max-width: 100%.
+ */
+.cardsWrap {
+  --neon-bleed-x: var(--spacing-3);
+  --neon-bleed-y: var(--spacing-5);
+
+  position: relative;
+  width: 100%;
+  max-width: 36rem;
+  /* Lo que sobresale el marco arriba y abajo: así el neón no cruza el subtítulo ni el botón */
+  margin-block: var(--neon-bleed-y);
+}
+
+.neonField {
+  position: absolute;
+  top: calc(-1 * var(--neon-bleed-y));
+  left: calc(-1 * var(--neon-bleed-x));
+  z-index: 0;
+  width: calc(100% + 2 * var(--neon-bleed-x));
+  max-width: none;
+  height: calc(100% + 2 * var(--neon-bleed-y));
+  overflow: visible;
+  pointer-events: none;
+}
+
+.neonField rect {
+  fill: none;
+  stroke: var(--color-brand-primary);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.3;
+}
+
+@media (min-width: 769px) {
+  .cardsWrap {
+    --neon-bleed-x: var(--spacing-10);
+    --neon-bleed-y: var(--spacing-8);
+  }
+}
+
+/* El brillo al encenderse: una copia del trazo con halo, que aparece de una vez (un solo destello, RNF-A11Y-005) */
+.neonGlow rect {
+  stroke-width: 2;
+  opacity: 0.55;
+  filter: drop-shadow(0 0 3px var(--color-brand-primary)) drop-shadow(0 0 12px var(--color-brand-primary))
+    drop-shadow(0 0 28px color-mix(in srgb, var(--color-brand-primary) 50%, transparent));
 }
 
 .particles {
@@ -122,15 +188,16 @@
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-4);
-  padding: 6rem var(--spacing-5) 6.75rem;
+  padding: 7rem var(--spacing-5) 6.75rem;
   text-align: center;
   pointer-events: none;
 }
 
 .title {
+  position: relative;
   margin: 0;
   font-family: var(--font-family-display);
-  font-size: clamp(2.25rem, 10vw, 4.75rem);
+  font-size: clamp(2.25rem, 10vw, 5.75rem);
   font-weight: 600;
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -160,7 +227,8 @@
   display: grid;
   gap: var(--spacing-2);
   width: 100%;
-  max-width: 36rem;
+  position: relative;
+  z-index: 1;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -168,10 +236,12 @@
 
 /* Tarjeta: icono en un medallón verde tenue y texto equilibrado. Sin borde de color: la jerarquía la da el medallón. */
 .card {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  padding: var(--spacing-3) var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-4) calc(var(--spacing-3) + 4px);
   border: 1px solid color-mix(in srgb, var(--color-brand-white) 10%, transparent);
   border-radius: var(--radius-lg);
   background-color: var(--color-brand-section-bg);
@@ -180,6 +250,29 @@
   line-height: 1.45;
   text-align: left;
   text-wrap: pretty;
+}
+
+/* Filo de veta de madera al pie de cada tarjeta (BR-113) */
+.card::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--texture-wood);
+}
+
+/* El número de la tarjeta, en la serif del tema: en el celular, chico en la esquina */
+.cardNumber {
+  position: absolute;
+  top: var(--spacing-2);
+  right: var(--spacing-3);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-brand-support);
 }
 
 .cardIconWrap {
@@ -329,7 +422,7 @@
   }
 
   .content {
-    padding-top: 11rem;
+    padding-top: 12rem;
   }
 }
 
@@ -339,7 +432,7 @@
   }
 
   .content {
-    padding: 7rem calc(var(--rail-w) + var(--spacing-8)) var(--spacing-8);
+    padding: 8.5rem calc(var(--rail-w) + var(--spacing-8)) var(--spacing-8);
   }
 
   .railStart,
@@ -386,29 +479,49 @@
 }
 
 @media (min-width: 1280px) {
+  .cardsWrap {
+    max-width: none;
+  }
+
   .cards {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    max-width: none;
+    gap: var(--spacing-4);
     align-items: stretch;
   }
 
-  /* Tres columnas: icono arriba y texto debajo, todas del mismo alto */
+  /*
+   * Tres columnas altas que ocupan el espacio libre: medallón arriba, número grande en la esquina y el texto abajo, más
+   * grande. Todas del mismo alto.
+   */
   .card {
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--spacing-3);
-    padding: var(--spacing-5);
-    font-size: var(--font-size-base);
+    gap: var(--spacing-4);
+    min-height: clamp(14rem, 34vh, 22rem);
+    padding: var(--spacing-6) var(--spacing-6) calc(var(--spacing-6) + 4px);
+    font-size: var(--font-size-lg);
+    line-height: 1.5;
+  }
+
+  .cardNumber {
+    top: var(--spacing-5);
+    right: var(--spacing-6);
+    font-size: var(--font-size-5xl);
+    color: color-mix(in srgb, var(--color-brand-primary) 35%, transparent);
+  }
+
+  .cardText {
+    margin-top: auto;
   }
 
   .cardIconWrap {
-    width: 3rem;
-    height: 3rem;
+    width: 3.5rem;
+    height: 3.5rem;
   }
 
   .cardIcon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.75rem;
+    height: 1.75rem;
   }
 }
 
@@ -468,6 +581,7 @@
   aspect-ratio: auto;
 }
 
-.static .pause {
+.static .pause,
+.static .neonField {
   display: none;
 }

@@ -11,12 +11,13 @@ import {
 import { Gem, HeartHandshake, Pause, Play, Star } from "lucide-react";
 import { trackReserve } from "@/analytics/track";
 import { useBookingUrl } from "@/branch/useBookingUrl";
-import { HERO_SERENA_TIMELINE as T } from "@/config/animations.config";
+import { HERO_SERENA_TIMELINE as T, wordmarkDraw } from "@/config/animations.config";
 import { MEDIA } from "@/config/breakpoints";
 import { SITE } from "@/config/constants";
 import { useSiteText } from "@/content/useSiteContent";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { RAIL_IMAGES } from "./heroLaSerenaImages";
+import { ROYCE_PATH, ROYCE_VIEWBOX } from "./royceWordmark";
 import { useBrandParticles } from "./useBrandParticles";
 import styles from "./HeroLaSerena.module.css";
 
@@ -24,6 +25,17 @@ const POINTS = [
   { key: "heroserena.punto1", Icon: Star },
   { key: "heroserena.punto2", Icon: Gem },
   { key: "heroserena.punto3", Icon: HeartHandshake },
+] as const;
+
+/**
+ * Rectángulos de neón encadenados, como los del techo de La Serena, detrás del bloque de tarjetas: el marco es más grande
+ * que el bloque, así que los rectángulos asoman por los bordes y entre las tarjetas. `viewBox` 0 0 1000 400.
+ */
+const NEON_RECTS = [
+  { x: 0, y: 30, width: 380, height: 300 },
+  { x: 310, y: 0, width: 390, height: 250 },
+  { x: 610, y: 90, width: 390, height: 310 },
+  { x: 180, y: 220, width: 420, height: 180 },
 ] as const;
 
 /** Las fotos dos veces seguidas: el carrusel avanza media pista y vuelve al inicio sin salto. */
@@ -72,6 +84,10 @@ export function HeroLaSerena() {
   const titleY = useTransform(progress, [...T.title], ["100vh", "0vh"]);
   const titleScale = useTransform(progress, [...T.title], [1.25, 1]);
 
+  // El neón del techo: se dibuja mientras entran las tarjetas y se enciende (un brillo) cuando terminan.
+  const neonDraw = useTransform(progress, [...T.neon], [0, 1]);
+  const neonGlow = useTransform(progress, [...T.neonOn], [0, 1]);
+
   const subtitle = text("heroserena.subtitulo");
   const typed = useTransform(progress, [...T.subtitle], [0, subtitle.length]);
   const typedText = useTransform(typed, (count) => subtitle.slice(0, Math.round(count)));
@@ -95,7 +111,8 @@ export function HeroLaSerena() {
   const railStartX = useTransform(reveal, [0, 1], ["-100%", "0%"]);
   const railEndX = useTransform(reveal, [0, 1], ["100%", "0%"]);
   const railBottomY = useTransform(reveal, [0, 1], ["100%", "0%"]);
-  const railTopY = useTransform(reveal, [0, 1], ["-100%", "0%"]);
+  // La tira de arriba (celular) parte el doble de lejos: si no, asoma bajo la barra de navegación antes de tiempo.
+  const railTopY = useTransform(reveal, [0, 1], ["-200%", "0%"]);
 
   // Los carruseles entran quietos y solo se ponen a andar cuando terminaron de estrechar la zona blanca (reveal = 1). El
   // paso se marca en un atributo del escenario, directo en el DOM, y el CSS enciende la animación: ningún `setState`
@@ -133,8 +150,17 @@ export function HeroLaSerena() {
           <span data-particle-text className={styles.brandPrefix}>
             {SITE.brand.prefix}
           </span>{" "}
-          <span data-particle-text className={styles.brandName}>
-            {SITE.brand.name}
+          <span className={styles.brandName}>
+            {/* «Royce» dibujado: se traza solo al cargar y se rellena; las partículas salen de este contorno */}
+            <svg data-particle-path className={styles.wordmark} viewBox={ROYCE_VIEWBOX} aria-hidden="true" focusable="false">
+              <motion.path
+                d={ROYCE_PATH}
+                variants={wordmarkDraw}
+                initial={reducedMotion ? false : "hidden"}
+                animate="visible"
+              />
+            </svg>
+            <span className="sr-only">{SITE.brand.name}</span>
           </span>
           <span className="sr-only"> en La Serena</span>
         </motion.h1>
@@ -171,9 +197,24 @@ export function HeroLaSerena() {
             </p>
           )}
 
+          <div className={styles.cardsWrap}>
+          {/* El neón del techo del local enmarca el bloque de tarjetas y asoma por sus bordes. Decorativo. */}
+          <svg className={styles.neonField} viewBox="0 0 1000 400" aria-hidden="true" focusable="false" preserveAspectRatio="none">
+            {NEON_RECTS.map((rect, index) => (
+              <motion.rect key={index} {...rect} style={reducedMotion ? undefined : { pathLength: neonDraw }} />
+            ))}
+            <motion.g className={styles.neonGlow} style={animated({ opacity: neonGlow })}>
+              {NEON_RECTS.map((rect, index) => (
+                <rect key={index} {...rect} />
+              ))}
+            </motion.g>
+          </svg>
           <ul className={styles.cards}>
             {POINTS.map(({ key, Icon }, index) => (
               <motion.li key={key} className={styles.card} style={animated(cardStyles[index])}>
+                <span className={styles.cardNumber} aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
                 <span className={styles.cardIconWrap}>
                   <Icon className={styles.cardIcon} aria-hidden="true" focusable="false" />
                 </span>
@@ -181,6 +222,7 @@ export function HeroLaSerena() {
               </motion.li>
             ))}
           </ul>
+          </div>
 
           <motion.a
             className={styles.cta}

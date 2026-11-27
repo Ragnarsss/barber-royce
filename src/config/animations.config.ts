@@ -391,6 +391,9 @@ export const HERO_SERENA_TIMELINE = {
     hint: [0, 0.05],
     explode: [0.01, 0.2],
     title: [0.2, 0.32],
+    // El neón del techo se dibuja abajo, detrás de las tarjetas, mientras entran, y se enciende cuando terminan
+    neon: [0.46, 0.66],
+    neonOn: [0.66, 0.68],
     subtitle: [0.32, 0.5],
     cards: [
         [0.5, 0.57],
@@ -399,3 +402,19 @@ export const HERO_SERENA_TIMELINE = {
     ],
     rails: [0.68, 0.86],
 } as const satisfies Record<string, readonly [number, number] | ReadonlyArray<readonly [number, number]>>;
+
+/**
+ * La marca «Royce» del hero de La Serena al cargar (BR-114): el contorno se dibuja solo y después se rellena. Es lo único
+ * del hero que no depende del scroll, para que la marca se vea sin bajar. Con «reducir movimiento» aparece completa.
+ */
+export const wordmarkDraw: Variants = {
+    hidden: { pathLength: 0, fillOpacity: 0 },
+    visible: {
+        pathLength: 1,
+        fillOpacity: 1,
+        transition: {
+            pathLength: { duration: 1.4, ease: [0.22, 1, 0.36, 1] },
+            fillOpacity: { duration: 0.5, delay: 1.1, ease: "easeOut" },
+        },
+    },
+};

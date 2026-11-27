@@ -82,6 +82,20 @@ export function useBrandParticles({ stageRef, brandRef, canvasRef, progress, ena
         const label = style.textTransform === "uppercase" ? (part.textContent ?? "").toUpperCase() : (part.textContent ?? "");
         ink.fillText(label, box.left - brandBox.left, box.top - brandBox.top + box.height / 2);
       }
+      // La marca dibujada (SVG): su trazado se rellena con el mismo encaje que el viewBox (centrado, sin deformar).
+      for (const svg of brand.querySelectorAll<SVGSVGElement>("svg[data-particle-path]")) {
+        const d = svg.querySelector("path")?.getAttribute("d");
+        const viewBox = svg.viewBox.baseVal;
+        if (!d || !viewBox || viewBox.width === 0) continue;
+        const box = svg.getBoundingClientRect();
+        const scale = Math.min(box.width / viewBox.width, box.height / viewBox.height);
+        const offsetX = box.left - brandBox.left + (box.width - viewBox.width * scale) / 2 - viewBox.x * scale;
+        const offsetY = box.top - brandBox.top + (box.height - viewBox.height * scale) / 2 - viewBox.y * scale;
+        ink.save();
+        ink.setTransform(scale, 0, 0, scale, offsetX, offsetY);
+        ink.fill(new Path2D(d));
+        ink.restore();
+      }
 
       // Partículas finas y muchas (polvo, no confeti): un punto de 1 a 1,5 px cada 2 o 3 px de tinta.
       const gap = desktop ? 3 : 2;
