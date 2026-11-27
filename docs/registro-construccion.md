@@ -2107,3 +2107,13 @@ Ficha y estado de cada ticket: `BR-022`, `BR-104` y `BR-108` quedaron **Hecho** 
 - Verificado en Chrome real (capturas de la barra y del pie en las dos sucursales). Queda para el preview de Vercel y para el usuario.
 - **Efecto aparte, de BR-113:** en La Serena el título del pie («Royce Barbería») pasa a dos líneas porque Fraunces es más ancha que Anton.
 - Las imágenes `royce-barber-logo_*.webp` ya no las usa ningún componente; el PNG sigue en `scripts/optimize-images.js`. Se pueden retirar en otro ticket, tras revisar favicon, manifest y OG.
+
+<a id="br-057"></a>
+
+## BR-057 — Loader con el letrero real en vector
+
+**Notas de construcción (2026-11-27):**
+- El usuario calcó el letrero de neón real: `src/assets/neon-name.svg`, ocho trazos de una sola línea («Barber», la «R», «oy», «ce», la tijera en dos trazos y las dos esquinas del marco).
+- En `index.html` reemplazan al dibujo provisorio de `BR-054`, con las mismas cinco piezas y la misma secuencia: marco, tijera, «Barber», «Royce» y la pieza con falla, que ahora es «oy» (la «y», como en el letrero de antes). `viewBox` entero (`0 0 204 120`) con la traslación de Inkscape dentro de cada grupo, porque `neonLoaderHtml.test.ts` exige un `viewBox` desde 0.
+- Al ser trazos y no contornos rellenos, los `use` pasan a `fill: none` y `stroke-width` 1,1 (el halo, 2,6). Colores, tiempos, destellos (≤ 3 por segundo), reducir movimiento y la retirada por seguridad no cambian: pasan los tests del loader y del tema.
+- Verificado en Chrome real con el JavaScript bloqueado para dejar el loader encendido: Coquimbo y La Serena, a 1440 y 390 px.
