@@ -10,6 +10,8 @@ import { LenisContext } from "@/contexts/lenisContextValue";
 import { ROUTES } from "@/config/routes";
 // Las secciones de la home de Coquimbo necesitan IntersectionObserver y scroll: aquí solo importa la cabecera de la página.
 vi.mock("../components/sections/Benefits/Benefits", () => ({ Benefits: () => null }));
+// La variante de Beneficios de La Serena (BR-117) la prueba BenefitsLaSerena.test.tsx.
+vi.mock("../components/sections/BenefitsLaSerena/BenefitsLaSerena", () => ({ BenefitsLaSerena: () => null }));
 vi.mock("../components/sections/CTA1/CTA1", () => ({ CTA1: () => null }));
 vi.mock("../components/sections/CTA2/CTA2", () => ({ CTA2: () => null }));
 vi.mock("../components/sections/Features/Features", () => ({ Features: () => null }));

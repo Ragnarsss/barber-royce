@@ -16,7 +16,7 @@ import { MEDIA } from "@/config/breakpoints";
 import { SITE } from "@/config/constants";
 import { useSiteText } from "@/content/useSiteContent";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { RAIL_IMAGES } from "./heroLaSerenaImages";
+import { LA_SERENA_PHOTOS } from "@/data/laSerenaPhotos";
 import { ROYCE_PATH, ROYCE_VIEWBOX } from "./royceWordmark";
 import { useBrandParticles } from "./useBrandParticles";
 import styles from "./HeroLaSerena.module.css";
@@ -39,7 +39,7 @@ const NEON_RECTS = [
 ] as const;
 
 /** Las fotos dos veces seguidas: el carrusel avanza media pista y vuelve al inicio sin salto. */
-const RAIL_LOOP = [...RAIL_IMAGES, ...RAIL_IMAGES];
+const RAIL_LOOP = [...LA_SERENA_PHOTOS, ...LA_SERENA_PHOTOS];
 
 /**
  * Hero de la portada de La Serena (BR-114, HU-SUC-002 CA-10, RF-SUC-009). Una sección alta con un escenario fijo: todo

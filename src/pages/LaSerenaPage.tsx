@@ -6,7 +6,7 @@ import { SITE } from "@/config/constants";
 import { BRANCH_LOCATION_ID } from "@/config/branches";
 import { useSiteContent } from "@/content/useSiteContent";
 import { hairSalonJsonLd } from "@/seo/structuredData";
-import { Benefits } from "../components/sections/Benefits/Benefits";
+import { BenefitsLaSerena } from "../components/sections/BenefitsLaSerena/BenefitsLaSerena";
 import { CTA1 } from "../components/sections/CTA1/CTA1";
 import { CTA2 } from "../components/sections/CTA2/CTA2";
 import { Features } from "../components/sections/Features/Features";
@@ -30,7 +30,7 @@ export function LaSerenaPage() {
       <HeroLaSerena />
       <CTA1 />
       <SocialProof1 />
-      <Benefits />
+      <BenefitsLaSerena />
       <Reviews />
       <BranchVines sides="both">
         <Features />

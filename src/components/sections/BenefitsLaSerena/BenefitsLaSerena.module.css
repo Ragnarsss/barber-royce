@@ -1,0 +1,231 @@
+/*
+ * «Estilo que te acompaña» de La Serena (BR-117). Mobile-first (ADR-009): en el celular las tarjetas se apilan; desde 769 px
+ * van en tres columnas. La franja de fotos llena toda la sección; el velo espresso y las tarjetas sólidas dan el contraste.
+ * Solo se anima transform (la franja) y opacity/transform de las tarjetas.
+ */
+.benefits {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background-color: var(--color-espresso);
+  color: var(--color-bone);
+}
+
+/* ---------- Franja de fotos: pegadas, sin separación, sin marco y sin esquinas redondeadas ---------- */
+.strip {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+}
+
+.photo {
+  flex: 0 0 auto;
+  width: clamp(15rem, 34vw, 26rem);
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@keyframes strip-x {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .track {
+    animation: strip-x 70s linear infinite;
+  }
+
+  .benefits:hover .track,
+  .benefits:focus-within .track,
+  .paused .track {
+    animation-play-state: paused;
+  }
+}
+
+/*
+ * Velo espresso: arriba (donde van el título y el subtítulo) casi opaco, y más tenue hacia abajo, donde las tarjetas llevan
+ * su propio fondo. Con el 70 % de espresso sobre el peor caso (un píxel blanco de la foto), el texto hueso da más de 4,5:1.
+ */
+.veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--color-espresso) 84%, transparent) 0%,
+    color-mix(in srgb, var(--color-espresso) 70%, transparent) 45%,
+    color-mix(in srgb, var(--color-espresso) 30%, transparent) 100%
+  );
+}
+
+/* ---------- Contenido ---------- */
+.content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-5);
+  padding: var(--spacing-16) var(--spacing-5) var(--spacing-12);
+  max-width: 76rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: var(--color-bone);
+}
+
+.subtitle {
+  margin: 0;
+  max-width: 40rem;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-bone);
+}
+
+.cards {
+  display: grid;
+  gap: var(--spacing-4);
+  width: 100%;
+  margin-top: var(--spacing-6);
+}
+
+/* Tarjeta sólida (88 % de espresso): sobre cualquier foto el texto hueso da más de 8:1 */
+.card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-3);
+  padding: var(--spacing-6) var(--spacing-6) calc(var(--spacing-6) + 4px);
+  border: 1px solid color-mix(in srgb, var(--color-bone) 14%, transparent);
+  border-radius: var(--radius-lg);
+  background-color: color-mix(in srgb, var(--color-espresso) 88%, transparent);
+  text-align: left;
+}
+
+/* Filo de veta de madera al pie de cada tarjeta (BR-113) */
+.card::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: var(--texture-wood);
+}
+
+.cardNumber {
+  position: absolute;
+  top: var(--spacing-4);
+  right: var(--spacing-5);
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-3xl);
+  font-weight: 600;
+  line-height: 1;
+  color: color-mix(in srgb, var(--color-amber) 70%, transparent);
+}
+
+.cardIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: var(--radius-full);
+  background-color: color-mix(in srgb, var(--color-amber) 16%, transparent);
+  color: var(--color-amber);
+}
+
+.cardIcon svg {
+  width: 1.625rem;
+  height: 1.625rem;
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--color-bone);
+}
+
+.cardDescription {
+  margin: 0;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--color-bone);
+}
+
+/* En negrita y del mismo hueso: el ámbar sobre la tarjeta daba 3,7:1 en el peor caso (BR-117) */
+.cardDescription strong {
+  font-weight: 700;
+}
+
+/* ---------- Botón de pausa ---------- */
+.pause {
+  position: absolute;
+  right: var(--spacing-3);
+  bottom: var(--spacing-3);
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--color-bone) 40%, transparent);
+  border-radius: var(--radius-md);
+  background-color: var(--color-espresso);
+  color: var(--color-bone);
+  cursor: pointer;
+}
+
+.pause svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+@media (min-width: 769px) {
+  .benefits {
+    min-height: 40rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .content {
+    width: 100%;
+    padding: 5rem var(--spacing-8);
+    gap: var(--spacing-6);
+  }
+
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--spacing-5);
+  }
+}

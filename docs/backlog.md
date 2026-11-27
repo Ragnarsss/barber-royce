@@ -4885,7 +4885,7 @@ Criterios de aceptación:
 #### BR-117 — Beneficios de La Serena: carrusel horizontal automático con tarjetas y textos encima
 
 - Prioridad: P2 · Esfuerzo: M · Depende de: BR-113, BR-121 (fotos; mientras, encuadres de la foto disponible)
-- Estado: Propuesta
+- Estado: En curso (rama `feat/br-117-beneficios-la-serena`; código y tests listos con una dirección elegida por mí, falta que la veas y el preview de Vercel)
 - Historia de usuario: HU-SUC-002 (CA-11)
 - RF/RNF: `RF-SUC-010`, `RNF-A11Y-003`, `RNF-PERF-003`
 
@@ -5130,7 +5130,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-114 | Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales | M | P2 | L | En curso | BR-113 |
 | BR-115 | Logo BR en SVG en la barra y el pie, con el color de marca de cada sucursal | M | P2 | S | En curso | BR-104 |
 | BR-116 | Contraste de «Respaldados por los mejores» y de CTA1 en La Serena | M | P1 | S | En curso | BR-113 |
-| BR-117 | Beneficios de La Serena: carrusel horizontal automático con tarjetas y textos encima | M | P2 | M | Propuesta | BR-113, BR-121 |
+| BR-117 | Beneficios de La Serena: carrusel horizontal automático con tarjetas y textos encima | M | P2 | M | En curso | BR-113, BR-121 |
 | BR-118 | CTA1 de La Serena: variante propia | M | P2 | M | Propuesta | BR-113, BR-116 |
 | BR-119 | «Respaldados por los mejores» (SocialProof1) de La Serena: variante propia | M | P2 | M | Propuesta | BR-113, BR-116 |
 | BR-120 | Features en La Serena: decidir si se mantiene, cambia o se reemplaza | M | P3 | S | Bloqueada | BR-117 |

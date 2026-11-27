@@ -6,7 +6,7 @@ import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/test/renderWithProviders";
 import { SITE } from "@/config/constants";
 import { TEXTS } from "@/content/texts";
-import { RAIL_IMAGES } from "./heroLaSerenaImages";
+import { LA_SERENA_PHOTOS } from "@/data/laSerenaPhotos";
 import { ROYCE_PATH, ROYCE_WORDMARK_TEXT } from "./royceWordmark";
 
 const state = vi.hoisted(() => ({ reducedMotion: false }));
@@ -134,7 +134,7 @@ describe("HeroLaSerena (BR-114)", () => {
     rails.forEach((rail) => {
       expect(rail.closest("[aria-hidden='true']")).not.toBeNull();
       const images = rail.querySelectorAll("img");
-      expect(images).toHaveLength(RAIL_IMAGES.length * 2);
+      expect(images).toHaveLength(LA_SERENA_PHOTOS.length * 2);
       images.forEach((image) => expect(image).toHaveAttribute("alt", ""));
     });
   });

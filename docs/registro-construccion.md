@@ -2128,3 +2128,16 @@ Ficha y estado de cada ticket: `BR-022`, `BR-104` y `BR-108` quedaron **Hecho** 
 - **Arreglo:** CTA1 usa `--color-on-primary` en el título, el subtítulo, el botón secundario y el foco; SocialProof1 deriva el cargo (75 %) y el distintivo (70 %) de `--color-brand-background`. Coquimbo conserva su aspecto (blanco sobre rojo; grises equivalentes sobre la tarjeta blanca).
 - Tests: `laSerenaContrast.test.ts` (13: pares de las dos sucursales, incluido el hexágono translúcido de adelante, y las reglas de los CSS). Se adaptó un test de `BR-062` que exigía el gris fijo. Verificado con capturas de Chrome real.
 - **Falta:** el e2e `contrast.e2e.test.ts` (no corre en Windows) y el preview de Vercel.
+
+<a id="br-117"></a>
+
+## BR-117 — Beneficios de La Serena: franja horizontal de fotos con tarjetas encima
+
+**Notas de construcción (2026-11-27):**
+- **Dirección elegida sin consultar:** el usuario estaba ausente y dijo «avanza con todo lo posible», así que se tomó una sola dirección, la más fiel a su descripción, y no las tres de la skill `diseno-visual`. Está pensada para cambiarse con poco costo; **hay que verla y confirmarla**.
+- `BenefitsLaSerena` reemplaza a `Benefits` solo en `LaSerenaPage` (nivel 4 de `ADR-010`: composición de la portada); Coquimbo conserva su sección. Los textos son los mismos (`benefits.titulo`, `benefitsList`). La sección es un `<section id="benefits">` y no lleva la escena fija de Coquimbo.
+- Fondo: franja de fotos pegadas, sin separación, sin marco y sin esquinas, que avanza sola en horizontal (`strip-x`, 70 s, solo `transform`) y se pausa con el cursor, con el foco y con un botón; con «reducir movimiento» queda quieta y sin botón. Encima, un velo espresso (84 % → 70 % → 30 %) y tarjetas al 88 % de espresso, con ícono dibujado al entrar a la vista, número en Fraunces y filo de madera.
+- **Contraste, peor caso (un píxel blanco de la foto detrás):** hueso sobre el velo al 70 %, 5,3:1; hueso sobre la tarjeta, 9,8:1. El ámbar en las negritas daba 3,7:1, así que quedó hueso en negrita.
+- Las fotos se movieron a `src/data/laSerenaPhotos.ts` (antes en la carpeta del hero) y las usan el hero y esta sección: cuando lleguen las fotos reales (`BR-121`) se cambian en un solo lugar.
+- **Alternativas que quedaron fuera**, por si no convence: (A) franja angosta de fotos entre el título y las tarjetas, sin velo; (B) las tarjetas se desplazan con la franja, como un carrusel de tarjetas sobre las fotos; (C) la franja sube y baja en dos filas contrarias, como el hero.
+- Tests: `BenefitsLaSerena.test.tsx` (11). Verificado con capturas de Chrome real a 1440 y 390 px. Falta el preview de Vercel y medir el TBT de `/la-serena`.
