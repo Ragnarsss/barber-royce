@@ -4894,6 +4894,13 @@ casi lo mismo (hero, Beneficios y Features). El usuario no quiere sacar Benefici
 a Beneficios y a los carruseles del hero, con un **carrusel horizontal automático de fotos y, encima, tarjetas y textos**. Es el
 nivel 3 de `ADR-010` (variante de sección, cargada con `lazy()` solo en La Serena). Coquimbo conserva su Beneficios.
 
+> **Alcance ajustado (2026-11-27, decisión del usuario, tras ver la primera versión):** (1) la sección ocupa el alto del espacio visible
+> (la ventana menos la barra) y la franja de fotos solo empieza a moverse cuando la sección encaja en él, no antes; (2) lleva animaciones
+> con el scroll para que el conjunto sea acorde y deleite, y (3) el scroll deja la vista quieta unos segundos antes de pasar a la
+> siguiente sección. Se resolvió como una escena fija en escritorio (como la de Coquimbo, `usePinnedScene`): el contenedor mide 2,9 pantallas,
+> el scroll arma la escena en la primera mitad (velo, zoom de la franja, título, subtítulo y las tres tarjetas en secuencia) y la segunda
+> mitad asienta la vista con la franja corriendo. En el celular no se fija: las tarjetas entran una vez al llegar a la vista.
+
 Alcance:
 1. Variante de Beneficios para La Serena: una franja de fotos pegadas, sin marco, que avanza sola en horizontal (como los carruseles
    del hero), y sobre ella el título, el texto y las tarjetas de beneficios (los mismos textos editables de hoy).

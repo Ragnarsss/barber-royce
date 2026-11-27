@@ -3,10 +3,20 @@
  * van en tres columnas. La franja de fotos llena toda la sección; el velo espresso y las tarjetas sólidas dan el contraste.
  * Solo se anima transform (la franja) y opacity/transform de las tarjetas.
  */
+/* Contenedor de la escena fija: en el celular y con «reducir movimiento» no hace nada; en escritorio (abajo) es alto */
+.pin {
+  position: relative;
+}
+
 .benefits {
   position: relative;
   overflow: hidden;
   isolation: isolate;
+  /* Ocupa el espacio visible: la ventana menos la barra fija de 80 px (Layout.module.css). Si el contenido es más alto (celular), crece. */
+  min-height: calc(100vh - 80px);
+  min-height: calc(100svh - 80px);
+  display: flex;
+  align-items: center;
   background-color: var(--color-espresso);
   color: var(--color-bone);
 }
@@ -51,6 +61,8 @@
     animation: strip-x 70s linear infinite;
   }
 
+  /* Quieta hasta que la sección encaja en el espacio visible (BenefitsLaSerena.tsx pone data-fitted="1"), con el cursor, con el foco y en pausa */
+  .benefits:not([data-fitted="1"]) .track,
   .benefits:hover .track,
   .benefits:focus-within .track,
   .paused .track {
@@ -83,6 +95,7 @@
   align-items: center;
   gap: var(--spacing-5);
   padding: var(--spacing-16) var(--spacing-5) var(--spacing-12);
+  width: 100%;
   max-width: 76rem;
   margin: 0 auto;
   text-align: center;
@@ -188,9 +201,10 @@
 }
 
 /* ---------- Botón de pausa ---------- */
+/* A la izquierda: la derecha es del botón de volver arriba */
 .pause {
   position: absolute;
-  right: var(--spacing-3);
+  left: var(--spacing-3);
   bottom: var(--spacing-3);
   z-index: 3;
   display: inline-flex;
@@ -211,13 +225,27 @@
   height: 1.125rem;
 }
 
+/*
+ * Escena fija (escritorio, sin reducir movimiento): el contenedor es alto y la sección queda pegada bajo la barra todo ese
+ * recorrido. El scroll arma la escena en la primera mitad y deja la vista quieta unos segundos en la segunda (el alto del
+ * contenedor menos una pantalla es el scroll que dura). La franja corre desde que se pega: ya encaja en el espacio visible.
+ */
 @media (min-width: 769px) {
-  .benefits {
-    min-height: 40rem;
-    display: flex;
-    align-items: center;
+  .pinned {
+    height: 290vh;
+    height: 290svh;
   }
 
+  .pinned > .benefits {
+    position: sticky;
+    top: 80px;
+    height: calc(100vh - 80px);
+    height: calc(100svh - 80px);
+    min-height: 0;
+  }
+}
+
+@media (min-width: 769px) {
   .content {
     width: 100%;
     padding: 5rem var(--spacing-8);

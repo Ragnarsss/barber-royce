@@ -1470,7 +1470,10 @@ neón del techo), para sentir que es mi barbería y no la de otra ciudad.
   Then veo una franja horizontal de fotos del local que avanza sola y,
   encima, el título, el texto y las tarjetas de beneficios; puedo pausarla
   y, con reducir movimiento, queda quieta. Con Coquimbo veo la sección de
-  siempre (decisión del usuario, 2026-11-27, `BR-117`).
+  siempre (decisión del usuario, 2026-11-27, `BR-117`). La sección ocupa el alto
+  visible y, en escritorio, queda fija mientras el scroll arma la escena y
+  deja la vista quieta unos segundos antes de pasar a la siguiente; la franja
+  solo avanza mientras la sección encaja en el espacio visible.
 
 ### Reglas de negocio asociadas:
 

@@ -418,3 +418,21 @@ export const wordmarkDraw: Variants = {
         },
     },
 };
+
+/**
+ * Línea de tiempo de «Estilo que te acompaña» de La Serena (BR-117), de 0 a 1 mientras la sección está fija en escritorio:
+ * el velo se cierra y la franja se aleja, sube el título, aparece el subtítulo y entran las tres tarjetas, una tras otra.
+ * Del 0,5 al 1 no pasa nada nuevo: es el tramo en que la vista se asienta y solo corre la franja de fotos (decisión del
+ * usuario, 2026-11-27: que el scroll deje unos segundos la sección quieta antes de pasar a la siguiente).
+ */
+export const BENEFITS_SERENA_TIMELINE = {
+    veil: [0, 0.18],
+    strip: [0, 0.6],
+    title: [0.02, 0.16],
+    subtitle: [0.12, 0.26],
+    cards: [
+        [0.2, 0.34],
+        [0.28, 0.42],
+        [0.36, 0.5],
+    ],
+} as const satisfies Record<string, readonly [number, number] | ReadonlyArray<readonly [number, number]>>;
