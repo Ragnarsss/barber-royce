@@ -388,19 +388,20 @@ export const parallaxLayers = {
  * el subtítulo aparece letra por letra, entran las tres tarjetas (cada una con su gesto) y al final los carruseles.
  */
 export const HERO_SERENA_TIMELINE = {
-    hint: [0, 0.05],
-    explode: [0.01, 0.15],
-    title: [0.2, 0.32],
+    hint: [0, 0.04],
+    // La explosión dura unas 190 svh de scroll (antes 70): con la sección de 710 svh (escritorio) son unas 8 vueltas de rueda
+    explode: [0, 0.3],
+    title: [0.34, 0.44],
     // El neón del techo se dibuja abajo, detrás de las tarjetas, mientras entran, y se enciende cuando terminan
-    neon: [0.46, 0.66],
-    neonOn: [0.66, 0.68],
-    subtitle: [0.32, 0.5],
+    neon: [0.56, 0.72],
+    neonOn: [0.72, 0.74],
+    subtitle: [0.44, 0.59],
     cards: [
-        [0.5, 0.57],
-        [0.55, 0.62],
-        [0.6, 0.67],
+        [0.59, 0.65],
+        [0.63, 0.69],
+        [0.67, 0.73],
     ],
-    rails: [0.68, 0.86],
+    rails: [0.74, 0.885],
 } as const satisfies Record<string, readonly [number, number] | ReadonlyArray<readonly [number, number]>>;
 
 /**
