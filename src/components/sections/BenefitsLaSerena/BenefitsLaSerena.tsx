@@ -85,8 +85,9 @@ function BenefitCardLaSerena({
  *
  * En escritorio la sección queda fija en pantalla (`usePinnedScene`, como la de Coquimbo) y el scroll arma la escena: el velo
  * se cierra, la franja se aleja, sube el título, aparece el subtítulo y entran las tarjetas; la segunda mitad del recorrido
- * deja la vista quieta unos segundos, con la franja corriendo, antes de pasar a la siguiente sección. La franja solo avanza
- * mientras la sección encaja en el espacio visible. Se pausa con el cursor, con el foco o con el botón; con «reducir
+ * deja la vista quieta unos segundos, con la franja corriendo, antes de pasar a la siguiente sección. La franja empieza a
+ * avanzar cuando la sección encaja en el espacio visible y sigue girando después, aunque se scrollee a otra sección. Se pausa solo con el botón (no con el cursor ni con el foco: la
+ * sección llena la ventana y casi nunca correría); con «reducir
  * movimiento» no hay escena fija: todo queda completo y quieto, y sin botón.
  */
 export function BenefitsLaSerena() {
@@ -109,8 +110,9 @@ export function BenefitsLaSerena() {
   const subtitleY = useTransform(subtitleT, (t) => (1 - t) * 24);
   const scene = pinned && !reducedMotion;
 
-  // La franja solo avanza mientras la sección encaja en el espacio visible. El aviso se escribe directo en el DOM
-  // (`data-fitted`) cuando el observador lo dice, no con un estado de React, y el CSS enciende o pausa la animación.
+  // La franja empieza a avanzar cuando la sección encaja en el espacio visible, y desde entonces no se detiene: sigue
+  // girando aunque el visitante pase a otra sección (decisión del usuario, 2026-11-27). El aviso se escribe directo en el DOM
+  // (`data-fitted`), no con un estado de React, y el CSS enciende la animación. Una vez encendida ya no hace falta observar.
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
@@ -121,8 +123,12 @@ export function BenefitsLaSerena() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         const root = entry.rootBounds?.height ?? window.innerHeight - NAVBAR_PX;
-        const next = fitsViewport(entry.intersectionRect.height, entry.boundingClientRect.height, root) ? "1" : "0";
-        if (section.dataset.fitted !== next) section.dataset.fitted = next;
+        if (fitsViewport(entry.intersectionRect.height, entry.boundingClientRect.height, root)) {
+          section.dataset.fitted = "1";
+          observer.disconnect();
+        } else if (section.dataset.fitted !== "1") {
+          section.dataset.fitted = "0";
+        }
       },
       { rootMargin: `-${NAVBAR_PX}px 0px 0px 0px`, threshold: FIT_THRESHOLDS },
     );

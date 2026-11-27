@@ -134,9 +134,21 @@ describe("BenefitsLaSerena (BR-117)", () => {
     screen.getAllByRole("article").forEach((card) => expect(card).not.toHaveStyle({ opacity: "0" }));
   });
 
-  it("el CSS pausa la franja con el cursor, con el foco y con el botón, y solo la anima si el movimiento está permitido", () => {
+  it("el CSS solo anima la franja si el movimiento está permitido, y la pausa con el botón o mientras la sección no encaja", () => {
     expect(css).toMatch(/@media \(prefers-reduced-motion: no-preference\)\s*\{[^@]*animation:\s*strip-x/);
-    expect(css).toMatch(/\.benefits:hover \.track,\s*\.benefits:focus-within \.track,\s*\.paused \.track\s*\{[^}]*animation-play-state:\s*paused/);
+    expect(css).toMatch(/\.benefits:not\(\[data-fitted="1"\]\) \.track,\s*\.paused \.track\s*\{[^}]*animation-play-state:\s*paused/);
+  });
+
+  // La sección llena la ventana: el puntero casi siempre está encima. Con `:hover` la franja casi nunca corría («solo empieza si
+  // el puntero está fuera de la pantalla»). Y `:focus-within` la dejaba pausada aun después de pulsar «Reanudar», porque el
+  // foco se queda en el botón. La pausa es el botón (WCAG 2.2.2).
+  it("el cursor encima y el foco dentro NO pausan la franja: solo el botón", () => {
+    // Sin los comentarios: el del CSS explica justo por qué no están esas reglas
+    const track = css.slice(css.indexOf("@media (prefers-reduced-motion: no-preference)")).replace(/\/\*[\s\S]*?\*\//g, "");
+
+    expect(track).not.toMatch(/:hover/);
+    expect(track).not.toMatch(/:focus-within/);
+    expect(track).not.toMatch(/:focus-visible/);
   });
 
   it("CA-11: la sección ocupa el espacio visible (la ventana menos la barra de 80 px) y crece si el contenido es más alto", () => {
@@ -144,7 +156,7 @@ describe("BenefitsLaSerena (BR-117)", () => {
     expect(rule(".benefits")).not.toMatch(/[^-]height:\s*calc/);
   });
 
-  it("CA-11: la franja empieza quieta y solo se enciende cuando la sección encaja en el espacio visible", () => {
+  it("CA-11: la franja empieza quieta, se enciende cuando la sección encaja en el espacio visible y NO se vuelve a apagar", () => {
     const { container } = renderWithProviders(<BenefitsLaSerena />);
     const section = container.querySelector("section")!;
 
@@ -155,11 +167,40 @@ describe("BenefitsLaSerena (BR-117)", () => {
     emitFit(120, 640, 820); // asoma por abajo
     expect(section).toHaveAttribute("data-fitted", "0");
 
-    emitFit(640, 640, 820); // se ve entera
+    emitFit(640, 640, 820); // se ve entera: arranca
     expect(section).toHaveAttribute("data-fitted", "1");
 
+    // Decisión del usuario (2026-11-27): al scrollear a otra sección la franja sigue girando. El aviso no vuelve a «0».
     emitFit(400, 640, 820); // se va por arriba
-    expect(section).toHaveAttribute("data-fitted", "0");
+    expect(section).toHaveAttribute("data-fitted", "1");
+    emitFit(0, 640, 820); // ya no se ve
+    expect(section).toHaveAttribute("data-fitted", "1");
+  });
+
+  it("una vez encajada, el componente deja de observar (ya no hace falta)", () => {
+    const disconnect = vi.fn();
+    const Original = globalThis.IntersectionObserver;
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+          observers.push({ callback, options });
+        }
+        observe() {}
+        unobserve() {}
+        disconnect() {
+          disconnect();
+        }
+        takeRecords() {
+          return [];
+        }
+      },
+    );
+    renderWithProviders(<BenefitsLaSerena />);
+
+    emitFit(640, 640, 820);
+    expect(disconnect).toHaveBeenCalled();
+    vi.stubGlobal("IntersectionObserver", Original);
   });
 
   it("CA-11: en el celular, con la sección más alta que la ventana, encaja cuando llena el espacio visible", () => {

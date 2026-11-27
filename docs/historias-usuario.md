@@ -1473,7 +1473,8 @@ neón del techo), para sentir que es mi barbería y no la de otra ciudad.
   siempre (decisión del usuario, 2026-11-27, `BR-117`). La sección ocupa el alto
   visible y, en escritorio, queda fija mientras el scroll arma la escena y
   deja la vista quieta unos segundos antes de pasar a la siguiente; la franja
-  solo avanza mientras la sección encaja en el espacio visible.
+  empieza a avanzar cuando la sección encaja en el espacio visible y sigue
+  girando después, aunque se scrollee a otra sección.
 
 ### Reglas de negocio asociadas:
 

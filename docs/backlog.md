@@ -4895,7 +4895,8 @@ a Beneficios y a los carruseles del hero, con un **carrusel horizontal automáti
 nivel 3 de `ADR-010` (variante de sección, cargada con `lazy()` solo en La Serena). Coquimbo conserva su Beneficios.
 
 > **Alcance ajustado (2026-11-27, decisión del usuario, tras ver la primera versión):** (1) la sección ocupa el alto del espacio visible
-> (la ventana menos la barra) y la franja de fotos solo empieza a moverse cuando la sección encaja en él, no antes; (2) lleva animaciones
+> (la ventana menos la barra) y la franja de fotos solo empieza a moverse cuando la sección encaja en él, no antes, y desde entonces sigue
+> girando aunque se scrollee a otra sección (segundo pedido del mismo día); (2) lleva animaciones
 > con el scroll para que el conjunto sea acorde y deleite, y (3) el scroll deja la vista quieta unos segundos antes de pasar a la
 > siguiente sección. Se resolvió como una escena fija en escritorio (como la de Coquimbo, `usePinnedScene`): el contenedor mide 2,9 pantallas,
 > el scroll arma la escena en la primera mitad (velo, zoom de la franja, título, subtítulo y las tres tarjetas en secuencia) y la segunda
@@ -4904,13 +4905,13 @@ nivel 3 de `ADR-010` (variante de sección, cargada con `lazy()` solo en La Sere
 Alcance:
 1. Variante de Beneficios para La Serena: una franja de fotos pegadas, sin marco, que avanza sola en horizontal (como los carruseles
    del hero), y sobre ella el título, el texto y las tarjetas de beneficios (los mismos textos editables de hoy).
-2. Se pausa con el cursor, con el foco y con un botón; con «reducir movimiento» queda quieta.
+2. Se pausa con un botón; con «reducir movimiento» queda quieta. **No se pausa con el cursor ni con el foco** (corrección del 2026-11-27: la sección llena la ventana, así que el puntero casi siempre está encima y la franja casi nunca corría).
 3. La dirección visual exacta se elige con la skill `diseno-visual` (tres direcciones) antes de escribir código.
 
 Criterios de aceptación:
 1. Con La Serena, Beneficios muestra la franja de fotos en movimiento con las tarjetas encima; con Coquimbo, la sección de siempre, y
    su código no se descarga (HU-SUC-002 CA-11, `CP-SUC-010`).
-2. La franja se puede pausar (cursor, foco y botón) y queda quieta con «reducir movimiento» (`RNF-A11Y-003`).
+2. La franja se puede pausar con el botón y queda quieta con «reducir movimiento» (`RNF-A11Y-003`); el cursor encima no la pausa.
 3. Los textos sobre las fotos cumplen 4,5:1 (`RNF-A11Y-004`), y el TBT de `/la-serena` no empeora (`RNF-PERF-003`).
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-117).

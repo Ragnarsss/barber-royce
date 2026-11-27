@@ -61,10 +61,13 @@
     animation: strip-x 70s linear infinite;
   }
 
-  /* Quieta hasta que la sección encaja en el espacio visible (BenefitsLaSerena.tsx pone data-fitted="1"), con el cursor, con el foco y en pausa */
+  /*
+   * Quieta hasta que la sección encaja en el espacio visible (BenefitsLaSerena.tsx pone data-fitted="1" la primera vez que
+   * encaja y no lo quita: sigue girando aunque se scrollee a otra sección) y mientras esté en pausa con el botón. No se pausa con el cursor encima ni con el foco dentro: la sección llena la ventana, así que el
+   * puntero casi siempre está encima y la franja casi nunca correría; y con `:focus-within` seguía pausada tras «Reanudar»,
+   * porque el foco se queda en el botón. La pausa es el botón (WCAG 2.2.2).
+   */
   .benefits:not([data-fitted="1"]) .track,
-  .benefits:hover .track,
-  .benefits:focus-within .track,
   .paused .track {
     animation-play-state: paused;
   }
