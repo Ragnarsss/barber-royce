@@ -58,4 +58,6 @@
  */
 :root[data-branch="la-serena"] {
   --font-family-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
+  /* Los títulos de sección y del hero usan el token de encabezado, no el de display: sin esto casi nada salía en Fraunces */
+  --font-family-heading: var(--font-family-display);
 }

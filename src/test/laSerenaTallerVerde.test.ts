@@ -47,6 +47,11 @@ describe('BR-113: La Serena «Taller verde» ([data-branch="la-serena"])', () =>
       expect(ROOT.get("--font-family-display")).toMatch(/^"Anton"/);
     });
 
+    it("los títulos de sección (token de encabezado) también van en Fraunces en La Serena, y en Coquimbo siguen en Montserrat", () => {
+      expect(resolveToken("--font-family-heading", LA_SERENA)).toMatch(/^"Fraunces Variable"/);
+      expect(ROOT.get("--font-family-heading")).toMatch(/^"Montserrat"/);
+    });
+
     it("el display de La Serena trae una serif genérica de respaldo para no mover el layout si la fuente tarda", () => {
       expect(LA_SERENA.get("--font-family-display")).toMatch(/\bserif\b/);
     });
