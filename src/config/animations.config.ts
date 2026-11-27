@@ -389,7 +389,7 @@ export const parallaxLayers = {
  */
 export const HERO_SERENA_TIMELINE = {
     hint: [0, 0.05],
-    explode: [0.01, 0.2],
+    explode: [0.01, 0.15],
     title: [0.2, 0.32],
     // El neón del techo se dibuja abajo, detrás de las tarjetas, mientras entran, y se enciende cuando terminan
     neon: [0.46, 0.66],

@@ -78,18 +78,54 @@ describe("partículas de la marca (BR-114)", () => {
   });
 
   it("al empezar están en su origen y visibles; al terminar, desplazadas por completo e invisibles", () => {
-    const particle = { x: 10, y: 20, dx: 30, dy: -40, delay: 0.2, color: 0 };
+    const particle = { x: 10, y: 20, dx: 30, dy: -40, sx: 0, sy: 0, delay: 0.2, scale: 1, spark: false, color: 0 };
 
     expect(particleAt(particle, 0)).toEqual({ x: 10, y: 20, alpha: 1 });
     expect(particleAt(particle, 1)).toEqual({ x: 40, y: -20, alpha: 0 });
   });
 
   it("no se mueve antes de su retraso, y a medio camino ya avanzó más de la mitad (sale rápido y frena)", () => {
-    const particle = { x: 0, y: 0, dx: 100, dy: 0, delay: 0.2, color: 0 };
+    const particle = { x: 0, y: 0, dx: 100, dy: 0, sx: 0, sy: 0, delay: 0.2, scale: 1, spark: false, color: 0 };
 
     expect(particleAt(particle, 0.15).x).toBe(0);
-    const half = particleAt(particle, 0.6);
-    expect(half.x).toBeGreaterThan(50);
-    expect(half.alpha).toBeCloseTo(0.5, 5);
+    expect(particleAt(particle, 0.6).x).toBeGreaterThan(50);
+  });
+
+  it("el polvo se desvanece rápido (a medio camino queda a un cuarto) y la chispa, más despacio (a la mitad)", () => {
+    const dust = { x: 0, y: 0, dx: 100, dy: 0, sx: 0, sy: 0, delay: 0, scale: 1, spark: false, color: 0 };
+    const spark = { ...dust, scale: 2.2, spark: true };
+
+    expect(particleAt(dust, 0.5).alpha).toBeCloseTo(0.25, 5);
+    expect(particleAt(spark, 0.5).alpha).toBeCloseTo(0.5, 5);
+  });
+
+  it("el remolino curva el camino: a medio vuelo se desvía de la recta, y al terminar llega al mismo destino", () => {
+    const swirl = { x: 0, y: 0, dx: 100, dy: 0, sx: 0, sy: 20, delay: 0, scale: 1, spark: false, color: 0 };
+
+    expect(Math.abs(particleAt(swirl, 0.5).y)).toBeGreaterThan(5);
+    expect(particleAt(swirl, 1).y).toBeCloseTo(0, 5);
+    expect(particleAt(swirl, 1).x).toBeCloseTo(100, 5);
+  });
+
+  it("casi todas salen juntas: ninguna espera más del 12 % de la explosión (la silueta no queda de fondo)", () => {
+    const pixels = inked(100, 100, { x0: 0, y0: 0, x1: 100, y1: 100 });
+    const particles = sampleParticles(pixels, 100, 100, options());
+
+    expect(Math.max(...particles.map((p) => p.delay))).toBeLessThanOrEqual(0.12);
+  });
+
+  it("una parte pequeña son chispas: más grandes, del color pedido y con remolino; el resto es polvo", () => {
+    const pixels = inked(100, 100, { x0: 0, y0: 0, x1: 100, y1: 100 });
+    const particles = sampleParticles(pixels, 100, 100, options({ sparks: { ratio: 0.05, color: 2 } }));
+    const sparks = particles.filter((p) => p.spark);
+
+    expect(sparks.length / particles.length).toBeGreaterThan(0.02);
+    expect(sparks.length / particles.length).toBeLessThan(0.09);
+    for (const spark of sparks) {
+      expect(spark.color).toBe(2);
+      expect(spark.scale).toBeGreaterThan(1.5);
+    }
+    for (const dust of particles.filter((p) => !p.spark)) expect(dust.scale).toBe(1);
+    expect(particles.some((p) => p.sx !== 0 || p.sy !== 0)).toBe(true);
   });
 });
