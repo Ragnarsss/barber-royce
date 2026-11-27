@@ -2117,3 +2117,14 @@ Ficha y estado de cada ticket: `BR-022`, `BR-104` y `BR-108` quedaron **Hecho** 
 - En `index.html` reemplazan al dibujo provisorio de `BR-054`, con las mismas cinco piezas y la misma secuencia: marco, tijera, «Barber», «Royce» y la pieza con falla, que ahora es «oy» (la «y», como en el letrero de antes). `viewBox` entero (`0 0 204 120`) con la traslación de Inkscape dentro de cada grupo, porque `neonLoaderHtml.test.ts` exige un `viewBox` desde 0.
 - Al ser trazos y no contornos rellenos, los `use` pasan a `fill: none` y `stroke-width` 1,1 (el halo, 2,6). Colores, tiempos, destellos (≤ 3 por segundo), reducir movimiento y la retirada por seguridad no cambian: pasan los tests del loader y del tema.
 - Verificado en Chrome real con el JavaScript bloqueado para dejar el loader encendido: Coquimbo y La Serena, a 1440 y 390 px.
+
+<a id="br-116"></a>
+
+## BR-116 — Contraste de «Respaldados por los mejores» y de CTA1 en La Serena
+
+**Notas de construcción (2026-11-27):**
+- Un muestreo de píxeles detrás del texto (ocultándolo y leyendo el fondo con `sharp`) no resultó fiable: los textos se animan y el filtro de visibilidad los descartaba. Se dejó el análisis de los tokens y de los CSS, que es determinista y se puede probar.
+- **Causa:** tokens pensados para Coquimbo. En CTA1, desde 769 px el texto va sobre el hexágono de marca pero usaba `--color-brand-white` (espresso en La Serena). En SocialProof1, la tarjeta es `--color-brand-white` y el cargo y «Cliente hace N años» usaban grises fijos para tarjeta blanca. Los dos desajustes aparecieron o se agravaron con el verde de `BR-113`.
+- **Arreglo:** CTA1 usa `--color-on-primary` en el título, el subtítulo, el botón secundario y el foco; SocialProof1 deriva el cargo (75 %) y el distintivo (70 %) de `--color-brand-background`. Coquimbo conserva su aspecto (blanco sobre rojo; grises equivalentes sobre la tarjeta blanca).
+- Tests: `laSerenaContrast.test.ts` (13: pares de las dos sucursales, incluido el hexágono translúcido de adelante, y las reglas de los CSS). Se adaptó un test de `BR-062` que exigía el gris fijo. Verificado con capturas de Chrome real.
+- **Falta:** el e2e `contrast.e2e.test.ts` (no corre en Windows) y el preview de Vercel.

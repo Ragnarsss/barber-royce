@@ -4860,7 +4860,7 @@ Criterios de aceptación:
 #### BR-116 — Contraste de «Respaldados por los mejores» y de CTA1 en La Serena
 
 - Prioridad: P1 · Esfuerzo: S · Depende de: BR-113
-- Estado: Propuesta
+- Estado: En curso (rama `fix/br-116-contraste-la-serena`; código y tests listos, falta verificarlo en el preview de Vercel y cerrar con `cerrar-ticket`)
 - Historia de usuario: HU-SUC-002 (CA-01)
 - RF/RNF: `RNF-A11Y-004`
 
@@ -4868,10 +4868,13 @@ Criterios de aceptación:
 sobre el pentágono oscuro se lee mal y «Artista Urbano Chileno» casi no se ve; en CTA1 el título queda sobre una capa translúcida
 café-oliva que lo ensucia. Es un posible incumplimiento de `RNF-A11Y-004`.
 
-**Causa:** por medir (probablemente texto gris o semitransparente pensado para el fondo de Coquimbo, y una capa con `opacity`
-sobre el verde de marca).
+**Causa:** (confirmada leyendo los CSS) tokens pensados para el fondo de Coquimbo. En CTA1, en escritorio el texto va sobre el hexágono
+de marca pero usa `--color-brand-white`, que en La Serena es espresso: ≈2,4:1 sobre el verde. En SocialProof1, la tarjeta es
+`--color-brand-white` (espresso) y el cargo del autor usa `--color-text-secondary` y «Cliente hace N años», `--color-neutral-600`, grises para
+tarjeta blanca: ≈2:1.
 
-**Arreglo:** medir cada par con `contrast.e2e.test.ts` en las dos sucursales y corregir con tokens bajo `[data-branch="la-serena"]`.
+**Arreglo:** CTA1 usa `--color-on-primary` (el texto sobre un relleno de marca) en escritorio; SocialProof1 deriva el cargo y el distintivo de
+`--color-brand-background` (75 % y 70 %). Coquimbo no cambia de valor. Pares y reglas en `src/test/laSerenaContrast.test.ts`.
 
 Criterios de aceptación:
 1. Todo texto de SocialProof1 y CTA1 cumple 4,5:1 (3:1 si es grande) en las dos sucursales (HU-SUC-002 CA-01, `RNF-A11Y-004`).
@@ -5126,7 +5129,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-113 | Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo | M | P2 | M | En curso | BR-104, BR-112 |
 | BR-114 | Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales | M | P2 | L | En curso | BR-113 |
 | BR-115 | Logo BR en SVG en la barra y el pie, con el color de marca de cada sucursal | M | P2 | S | En curso | BR-104 |
-| BR-116 | Contraste de «Respaldados por los mejores» y de CTA1 en La Serena | M | P1 | S | Propuesta | BR-113 |
+| BR-116 | Contraste de «Respaldados por los mejores» y de CTA1 en La Serena | M | P1 | S | En curso | BR-113 |
 | BR-117 | Beneficios de La Serena: carrusel horizontal automático con tarjetas y textos encima | M | P2 | M | Propuesta | BR-113, BR-121 |
 | BR-118 | CTA1 de La Serena: variante propia | M | P2 | M | Propuesta | BR-113, BR-116 |
 | BR-119 | «Respaldados por los mejores» (SocialProof1) de La Serena: variante propia | M | P2 | M | Propuesta | BR-113, BR-116 |

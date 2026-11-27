@@ -192,14 +192,20 @@
   color: var(--color-brand-background);
 }
 
+/*
+ * El cargo y «Cliente hace N años» derivan del color del texto de la tarjeta (--color-brand-background), no de un gris
+ * fijo: la tarjeta es --color-brand-white, que en Coquimbo es blanco y en La Serena espresso. Con --color-text-secondary y
+ * --color-neutral-600 (grises para tarjeta blanca) el texto daba ≈2:1 sobre el espresso (BR-116). Antes (BR-062) un gris
+ * claro daba 2,8:1 sobre blanco.
+ */
 .author span {
   font-size: clamp(0.8rem, 3.5vw, 0.9rem);
-  color: var(--color-text-secondary);
+  color: color-mix(in srgb, var(--color-brand-background) 75%, transparent);
 }
 
 .clientBadge {
   font-size: clamp(0.75rem, 3vw, 0.85rem);
-  color: var(--color-neutral-600); /* antes un gris claro con 2,8:1 sobre blanco, bajo el mínimo (BR-062) */
+  color: color-mix(in srgb, var(--color-brand-background) 70%, transparent);
   font-style: italic;
 }
 
