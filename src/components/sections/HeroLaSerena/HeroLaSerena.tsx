@@ -70,14 +70,14 @@ export function HeroLaSerena() {
   const brandRef = useRef<HTMLHeadingElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start start", "end end"] });
+  const { scrollYProgress } = useScroll({ target: trackRef, offset: ["start 80px", "end end"] });
   // Copia del avance en un MotionValue propio: framer-motion «acelera» con una línea de tiempo nativa la opacidad atada
   // directo a `useScroll`, y en esta sección alta calculaba mal el tramo (la marca y el título quedaban a medias). Así
   // todo se calcula en JavaScript, en el mismo cuadro, sin `setState`.
   const progress = useMotionValue(scrollYProgress.get());
   useMotionValueEvent(scrollYProgress, "change", (value) => progress.set(value));
   const explode = useTransform(progress, [...T.explode], [0, 1]);
-  const brandOpacity = useTransform(progress, [T.explode[0], T.explode[0] + 0.012], [1, 0]);
+  const brandOpacity = useTransform(progress, [T.explode[0], T.explode[0] + 0.004], [1, 0]);
   const hintOpacity = useTransform(progress, [...T.hint], [1, 0]);
 
   // El título sube desde fuera de la pantalla (el escenario recorta lo que queda abajo): sin desvanecimiento, solo movimiento.

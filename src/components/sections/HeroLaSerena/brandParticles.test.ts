@@ -91,19 +91,23 @@ describe("partículas de la marca (BR-114)", () => {
     expect(particleAt(particle, 0.6).x).toBeGreaterThan(50);
   });
 
-  it("el polvo se desvanece rápido (a medio camino queda a un cuarto) y la chispa, más despacio (a la mitad)", () => {
+  it("el polvo se desvanece antes que una línea recta y la chispa dura más que el polvo", () => {
     const dust = { x: 0, y: 0, dx: 100, dy: 0, sx: 0, sy: 0, delay: 0, scale: 1, spark: false, color: 0 };
     const spark = { ...dust, scale: 2.2, spark: true };
 
-    expect(particleAt(dust, 0.5).alpha).toBeCloseTo(0.25, 5);
-    expect(particleAt(spark, 0.5).alpha).toBeCloseTo(0.5, 5);
+    expect(particleAt(dust, 0.5).alpha).toBeLessThan(0.5);
+    expect(particleAt(dust, 0.5).alpha).toBeGreaterThan(0.3);
+    expect(particleAt(spark, 0.5).alpha).toBeGreaterThan(0.5);
+    expect(particleAt(dust, 1).alpha).toBe(0);
+    expect(particleAt(dust, 0).alpha).toBe(1);
   });
 
-  it("el remolino curva el camino: a medio vuelo se desvía de la recta, y al terminar llega al mismo destino", () => {
+  it("el remolino curva el camino y todas giran hacia el mismo lado: se desvía de la recta y el desvío crece hasta el final", () => {
     const swirl = { x: 0, y: 0, dx: 100, dy: 0, sx: 0, sy: 20, delay: 0, scale: 1, spark: false, color: 0 };
 
-    expect(Math.abs(particleAt(swirl, 0.5).y)).toBeGreaterThan(5);
-    expect(particleAt(swirl, 1).y).toBeCloseTo(0, 5);
+    expect(particleAt(swirl, 0.5).y).toBeGreaterThan(2);
+    expect(particleAt(swirl, 1).y).toBeGreaterThan(particleAt(swirl, 0.5).y);
+    expect(particleAt(swirl, 1).y).toBeCloseTo(20, 5);
     expect(particleAt(swirl, 1).x).toBeCloseTo(100, 5);
   });
 
@@ -127,5 +131,14 @@ describe("partículas de la marca (BR-114)", () => {
     }
     for (const dust of particles.filter((p) => !p.spark)) expect(dust.scale).toBe(1);
     expect(particles.some((p) => p.sx !== 0 || p.sy !== 0)).toBe(true);
+  });
+
+  it("todas las partículas giran al mismo lado (el desvío es siempre el mismo sentido respecto de su salida)", () => {
+    const pixels = inked(100, 100, { x0: 0, y0: 0, x1: 100, y1: 100 });
+    const particles = sampleParticles(pixels, 100, 100, options());
+
+    // Producto cruzado de la salida (dx, dy) con el desvío (sx, sy): su signo es el sentido del giro.
+    const turns = particles.map((p) => Math.sign(p.dx * p.sy - p.dy * p.sx));
+    expect(new Set(turns)).toEqual(new Set([1]));
   });
 });

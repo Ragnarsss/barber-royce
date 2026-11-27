@@ -11,7 +11,7 @@ export interface Particle {
   /** Desplazamiento total al terminar la explosión. */
   dx: number;
   dy: number;
-  /** Desvío lateral máximo del camino (remolino): a medio vuelo se aparta de la recta y al final llega al mismo destino. */
+  /** Desvío lateral al final del camino (remolino): la trayectoria se curva y termina desplazada de lado. */
   sx: number;
   sy: number;
   /** Fracción de la explosión (0..1) en que esta partícula empieza a moverse. */
@@ -46,12 +46,15 @@ const ALPHA_THRESHOLD = 128;
 const JITTER = 0.6;
 /** La última partícula sale como mucho en este punto de la explosión: casi todas salen juntas y la silueta no se queda de fondo. */
 const MAX_DELAY = 0.12;
-/** Cuánto se curva el camino (remolino), como fracción de la distancia recorrida. */
-const SWIRL = 0.35;
+/** Cuánto se curva el camino (remolino), como fracción de la distancia recorrida; todas hacia el mismo lado. */
+const SWIRL = 0.7;
 /** Las chispas son más grandes, llegan más lejos y salen casi de inmediato. */
 const SPARK_SCALE = 2.4;
 const SPARK_REACH = 1.3;
 const SPARK_MAX_DELAY = 0.04;
+/** Exponente del apagado: con 1 es lineal; más de 1, se apaga antes. La chispa dura más que el polvo. */
+const DECAY_DUST = 1.4;
+const DECAY_SPARK = 0.8;
 
 /** Convierte la tinta de una imagen (canal alfa RGBA, `width` x `height`) en partículas. */
 export function sampleParticles(pixels: Uint8ClampedArray, width: number, height: number, options: SampleOptions): Particle[] {
@@ -72,8 +75,9 @@ export function sampleParticles(pixels: Uint8ClampedArray, width: number, height
     const base = Math.atan2(y - center.y, x - center.x);
     const angle = base + (random() * 2 - 1) * JITTER;
     const distance = spread * (0.5 + random()) * (spark ? SPARK_REACH : 1);
-    // El remolino empuja de lado (perpendicular a la salida), hacia un lado u otro al azar.
-    const bow = (random() * 2 - 1) * SWIRL * distance;
+    // El remolino empuja de lado (perpendicular a la salida) y siempre hacia el mismo sentido: así las partículas giran
+    // juntas como un molinete. Con signo al azar se cancelaban y parecía un estallido recto.
+    const bow = (0.5 + random() * 0.5) * SWIRL * distance;
     return {
       x,
       y,
@@ -90,16 +94,17 @@ export function sampleParticles(pixels: Uint8ClampedArray, width: number, height
 }
 
 /**
- * Dónde está una partícula y con qué opacidad, en el punto `t` (0..1) de la explosión. El polvo se apaga rápido (el alfa cae
- * con el cuadrado) para que la silueta de la marca ya no se vea a mitad de la explosión; la chispa se apaga en línea recta.
+ * Dónde está una partícula y con qué opacidad, en el punto `t` (0..1) de la explosión. El polvo se apaga un poco antes que
+ * en línea recta, para que la silueta de la marca no se vea de fondo; la chispa dura más.
  */
 export function particleAt(particle: Particle, t: number): { x: number; y: number; alpha: number } {
   const local = Math.min(1, Math.max(0, (t - particle.delay) / (1 - particle.delay)));
   const eased = 1 - (1 - local) ** 3;
-  const bow = Math.sin(Math.PI * eased);
+  // El desvío crece con el cuadrado del avance: la trayectoria arranca recta y se va curvando hasta terminar de lado.
+  const bow = eased * eased;
   return {
     x: particle.x + particle.dx * eased + particle.sx * bow,
     y: particle.y + particle.dy * eased + particle.sy * bow,
-    alpha: particle.spark ? 1 - local : (1 - local) ** 2,
+    alpha: (1 - local) ** (particle.spark ? DECAY_SPARK : DECAY_DUST),
   };
 }
