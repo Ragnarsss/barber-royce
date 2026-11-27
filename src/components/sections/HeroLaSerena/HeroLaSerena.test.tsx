@@ -114,6 +114,14 @@ describe("HeroLaSerena (BR-114)", () => {
     });
   });
 
+  it("CA-10: los carruseles entran quietos: sin el aviso de que la zona blanca terminó de estrecharse, el CSS los deja en pausa", () => {
+    const { container } = renderWithProviders(<HeroLaSerena />);
+    const css = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), "HeroLaSerena.module.css"), "utf8");
+
+    expect(container.querySelector("[class*='stage']")).not.toHaveAttribute("data-rails-settled", "1");
+    expect(css).toMatch(/\.stage:not\(\[data-rails-settled="1"\]\)\s+\.railTrack/);
+  });
+
   it("RNF-A11Y-003: un botón pausa y reanuda las fotos", async () => {
     const { container } = renderWithProviders(<HeroLaSerena />);
     await waitFor(() => expect(container.querySelectorAll("[class*='railTrack']")).toHaveLength(2), { timeout: 3000 });

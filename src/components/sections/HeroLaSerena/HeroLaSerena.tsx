@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useMotionValue,
@@ -68,9 +68,9 @@ export function HeroLaSerena() {
   const brandOpacity = useTransform(progress, [T.explode[0], T.explode[0] + 0.04], [1, 0]);
   const hintOpacity = useTransform(progress, [...T.hint], [1, 0]);
 
-  const titleY = useTransform(progress, [...T.title], ["40vh", "0vh"]);
+  // El título sube desde fuera de la pantalla (el escenario recorta lo que queda abajo): sin desvanecimiento, solo movimiento.
+  const titleY = useTransform(progress, [...T.title], ["100vh", "0vh"]);
   const titleScale = useTransform(progress, [...T.title], [1.25, 1]);
-  const titleOpacity = useTransform(progress, [T.title[0], T.title[0] + 0.04], [0, 1]);
 
   const subtitle = text("heroserena.subtitulo");
   const typed = useTransform(progress, [...T.subtitle], [0, subtitle.length]);
@@ -91,15 +91,25 @@ export function HeroLaSerena() {
   const cardStyles: MotionStyle[] = [card1, card2, card3];
 
   const reveal = useTransform(progress, [...T.rails], [0, 1]);
+  // Los carruseles entran pegados a los bordes, con las fotos juntas y sin marco: la zona blanca se estrecha hacia el centro.
   const railStartX = useTransform(reveal, [0, 1], ["-100%", "0%"]);
   const railEndX = useTransform(reveal, [0, 1], ["100%", "0%"]);
   const railBottomY = useTransform(reveal, [0, 1], ["100%", "0%"]);
+  const railTopY = useTransform(reveal, [0, 1], ["-100%", "0%"]);
+
+  // Los carruseles entran quietos y solo se ponen a andar cuando terminaron de estrechar la zona blanca (reveal = 1). El
+  // paso se marca en un atributo del escenario, directo en el DOM, y el CSS enciende la animación: ningún `setState`
+  // por scroll. Sin el atributo (o con 0), la animación queda en pausa.
+  useMotionValueEvent(reveal, "change", (value) => {
+    const stage = stageRef.current;
+    const next = value >= 1 ? "1" : "0";
+    if (stage && stage.dataset.railsSettled !== next) stage.dataset.railsSettled = next;
+  });
 
   useBrandParticles({ stageRef, brandRef, canvasRef, progress: explode, enabled: !reducedMotion, desktop });
 
   /** Con «reducir movimiento», ningún estilo atado al scroll: cada elemento queda en su estado final. */
   const animated = (style: MotionStyle): MotionStyle | undefined => (reducedMotion ? undefined : style);
-  const railStyle = (style: MotionStyle) => animated({ ...style, "--reveal": reveal } as MotionStyle);
 
   return (
     <section
@@ -110,12 +120,12 @@ export function HeroLaSerena() {
       <div ref={stageRef} className={styles.stage}>
         <motion.div
           className={`${styles.rail} ${styles.railStart}`}
-          style={railStyle(desktop ? { x: railStartX } : { y: railBottomY })}
+          style={animated(desktop ? { x: railStartX } : { y: railBottomY })}
           aria-hidden="true"
         >
           {railsReady && <RailTrack direction="forward" paused={paused} />}
         </motion.div>
-        <motion.div className={`${styles.rail} ${styles.railEnd}`} style={railStyle({ x: railEndX })} aria-hidden="true">
+        <motion.div className={`${styles.rail} ${styles.railEnd}`} style={animated(desktop ? { x: railEndX } : { y: railTopY })} aria-hidden="true">
           {railsReady && <RailTrack direction="backward" paused={paused} />}
         </motion.div>
 
@@ -142,7 +152,7 @@ export function HeroLaSerena() {
         )}
 
         <div className={styles.content}>
-          <motion.h2 className={styles.title} style={animated({ y: titleY, scale: titleScale, opacity: titleOpacity })}>
+          <motion.h2 className={styles.title} style={animated({ y: titleY, scale: titleScale })}>
             {text("heroserena.titulo")}
           </motion.h2>
 
@@ -164,8 +174,10 @@ export function HeroLaSerena() {
           <ul className={styles.cards}>
             {POINTS.map(({ key, Icon }, index) => (
               <motion.li key={key} className={styles.card} style={animated(cardStyles[index])}>
-                <Icon className={styles.cardIcon} aria-hidden="true" focusable="false" />
-                <span>{text(key)}</span>
+                <span className={styles.cardIconWrap}>
+                  <Icon className={styles.cardIcon} aria-hidden="true" focusable="false" />
+                </span>
+                <span className={styles.cardText}>{text(key)}</span>
               </motion.li>
             ))}
           </ul>
@@ -202,7 +214,7 @@ function RailTrack({ direction, paused }: { direction: "forward" | "backward"; p
   return (
     <div className={`${styles.railTrack} ${direction === "backward" ? styles.backward : ""} ${paused ? styles.paused : ""}`}>
       {RAIL_LOOP.map((image, index) => (
-        <figure key={index} className={styles.railCard} style={{ "--i": index % RAIL_IMAGES.length } as CSSProperties}>
+        <figure key={index} className={styles.railCard}>
           <img src={image.src} alt="" width={874} height={583} loading="lazy" decoding="async" style={{ objectPosition: image.position }} />
         </figure>
       ))}

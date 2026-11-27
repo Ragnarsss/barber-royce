@@ -83,14 +83,15 @@ export function useBrandParticles({ stageRef, brandRef, canvasRef, progress, ena
         ink.fillText(label, box.left - brandBox.left, box.top - brandBox.top + box.height / 2);
       }
 
-      const gap = desktop ? 4 : 3;
-      size = gap * 0.75;
+      // Partículas finas y muchas (polvo, no confeti): un punto de 1 a 1,5 px cada 2 o 3 px de tinta.
+      const gap = desktop ? 3 : 2;
+      size = desktop ? 1.5 : 1.2;
       const particles = sampleParticles(ink.getImageData(0, 0, offscreen.width, offscreen.height).data, offscreen.width, offscreen.height, {
         gap,
         colors: colors.length,
         center: { x: brandBox.width / 2, y: brandBox.height / 2 },
         spread: Math.max(width, height) * 0.7,
-        max: desktop ? 4500 : 1800,
+        max: desktop ? 9000 : 3500,
         random: Math.random,
       }).map((particle) => ({ ...particle, x: particle.x + origin.x, y: particle.y + origin.y }));
       groups = colors.map((_, index) => particles.filter((particle) => particle.color === index));
