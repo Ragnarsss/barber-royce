@@ -381,3 +381,21 @@ export const parallaxLayers = {
         x: ["0%", "-3%"],
     },
 };
+
+/**
+ * Línea de tiempo del hero de La Serena (BR-114): cada tramo es [inicio, fin] del avance del scroll por la sección (0..1).
+ * Todo depende del scroll (decisión del usuario, 2026-11-27): la marca estalla, queda el fondo en blanco, sube el título,
+ * el subtítulo aparece letra por letra, entran las tres tarjetas (cada una con su gesto) y al final los carruseles.
+ */
+export const HERO_SERENA_TIMELINE = {
+    hint: [0, 0.05],
+    explode: [0.01, 0.2],
+    title: [0.2, 0.32],
+    subtitle: [0.32, 0.5],
+    cards: [
+        [0.5, 0.57],
+        [0.55, 0.62],
+        [0.6, 0.67],
+    ],
+    rails: [0.68, 0.86],
+} as const satisfies Record<string, readonly [number, number] | ReadonlyArray<readonly [number, number]>>;

@@ -2082,3 +2082,15 @@ Ficha y estado de cada ticket: `BR-022`, `BR-104` y `BR-108` quedaron **Hecho** 
 - Fuente: `@fontsource-variable/fraunces` (decisión del usuario, 2026-11-27), importada en `main.tsx`. Los `woff2` (latin 37 kB) solo se piden cuando un texto usa la familia.
 - Tests: `laSerenaTallerVerde.test.ts` (16) con el lector `themeTokens.ts`; en `laSerenaTheme.test.ts` el test de hover de BR-112 pasa a verde oscuro. En Windows fallan los tres tests que construyen el sitio, como siempre; lint, tipos y build limpios.
 - **Falta:** verificar en el preview de Vercel (fuente en titulares, que Coquimbo no pida Fraunces, foco visible) y Lighthouse móvil de `/la-serena`.
+
+<a id="br-114"></a>
+
+## BR-114 — Hero cinematográfico de `/la-serena`
+
+**Notas de construcción (2026-11-27):**
+- Dirección elegida por el usuario: la A de `diseno-visual`, con la secuencia entera atada al scroll y la marca «Barbería Royce» (de `SITE.brand`) que se deshace en partículas. La marca es el `h1` y se ve al cargar.
+- Sección alta (520 svh en móvil, 600 svh desde 769 px) con escenario `sticky`. Tramos en `HERO_SERENA_TIMELINE` (`animations.config.ts`). Partículas en un `canvas`: la lógica pura está en `brandParticles.ts` (7 tests) y el dibujo en `useBrandParticles.ts`, atado a un `MotionValue` (sin `setState` por scroll).
+- **Trampa:** con la opacidad atada directo a `useScroll`, framer-motion la «acelera» con una línea de tiempo nativa que en esta sección calculaba mal el tramo (la marca quedaba a 0,08 y el título en 0 a mitad del recorrido). Se copia el avance a un `useMotionValue` propio con `useMotionValueEvent`.
+- Textos nuevos `heroserena.*` en `texts.ts`, la guía del dueño y las plantillas CSV (`textos.csv` y `textos-la-serena.csv`; la de Coquimbo no los lleva).
+- Carruseles: una tira abajo en el celular y una columna a cada lado desde 769 px, con animación CSS y botón para pausar. Se montan con `requestIdleCallback`. **Pendiente del dueño:** fotos del local (hoy, una sola foto con encuadres distintos, en `heroLaSerenaImages.ts`).
+- **Rendimiento, Lighthouse móvil `/la-serena`, mediana de 3:** línea base (BR-113 sin el hero nuevo): rendimiento 70, LCP 5,3 s, TBT 118 ms, CLS 0. Con el hero: 66, LCP 6,8 s, TBT 230 ms, CLS 0. El muestreo de partículas al cargar costaba una tarea de 417 ms: ahora corre al empezar el scroll. **El criterio 5 no se cumple todavía:** el LCP es ahora la marca en Fraunces (la fuente llega tarde) y el render inicial del hero pesa más que el anterior.

@@ -4780,7 +4780,7 @@ Criterios de aceptación:
 #### BR-114 — Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales
 
 - Prioridad: P2 · Esfuerzo: L (se propone partir: intro y carruseles) · Depende de: BR-113 (fuente y colores del tema)
-- Estado: Propuesta (los carruseles necesitan fotos de La Serena del dueño; hoy hay una sola en el repo)
+- Estado: En curso (rama `feat/br-114-hero-cinematografico-la-serena`; faltan las fotos del dueño y recuperar el rendimiento, ver registro)
 - Historia de usuario: HU-SUC-002 (CA-04 ajustado, CA-08, CA-10)
 - RF/RNF: `RF-SUC-009`, `RNF-PERF-001` .. `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-002`
 
@@ -4965,7 +4965,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-111 | Rendimiento y SEO de las portadas: lo que dejó la auditoría de la épica M | M | P2 | M | Propuesta | BR-106 |
 | BR-112 | Verde hoja mate para los hover y los contornos del tema La Serena | M | P2 | XS | En curso | BR-104 |
 | BR-113 | Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo | M | P2 | M | En curso | BR-104, BR-112 |
-| BR-114 | Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales | M | P2 | L | Propuesta | BR-113 |
+| BR-114 | Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales | M | P2 | L | En curso | BR-113 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

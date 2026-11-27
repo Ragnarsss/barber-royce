@@ -1,7 +1,12 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { screen } from "@testing-library/react";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { renderWithProviders } from "@/test/renderWithProviders";
-import { NEON_SQUARES } from "./heroLaSerenaShapes";
+import { SITE } from "@/config/constants";
+import { TEXTS } from "@/content/texts";
+import { RAIL_IMAGES } from "./heroLaSerenaImages";
 
 const state = vi.hoisted(() => ({ reducedMotion: false }));
 vi.mock("framer-motion", async (importOriginal) => ({
@@ -11,47 +16,128 @@ vi.mock("framer-motion", async (importOriginal) => ({
 
 import { HeroLaSerena } from "./HeroLaSerena";
 
-// BR-106 (HU-SUC-002 CA-04, CP-A11Y-003): cuatro cuadrados que se dibujan desde cero; con «reducir movimiento», completos.
-describe("HeroLaSerena (BR-106)", () => {
+/** Lo que oye un lector de pantalla: el texto sin los nodos `aria-hidden`. */
+function audible(container: HTMLElement): string {
+  const clone = container.cloneNode(true) as HTMLElement;
+  clone.querySelectorAll("[aria-hidden='true']").forEach((node) => node.remove());
+  return clone.textContent ?? "";
+}
+
+// BR-114 (HU-SUC-002 CA-10, RF-SUC-009, CP-SUC-009): marca que estalla, título, subtítulo letra por letra, tarjetas y
+// carruseles, todo con el scroll; con «reducir movimiento», todo quieto y completo.
+describe("HeroLaSerena (BR-114)", () => {
+  const getContext = HTMLCanvasElement.prototype.getContext;
+  const animate = Element.prototype.animate;
+
+  beforeAll(() => {
+    // jsdom no dibuja en canvas: sin contexto, las partículas no se montan y el resto del hero funciona igual.
+    HTMLCanvasElement.prototype.getContext = (() => null) as typeof getContext;
+    // framer-motion acelera con la Web Animations API, que jsdom no trae (igual que en Benefits.test.tsx).
+    Element.prototype.animate = vi.fn(() => ({
+      cancel() {},
+      finish() {},
+      play() {},
+      pause() {},
+      commitStyles() {},
+      finished: Promise.resolve(),
+      currentTime: 0,
+      playbackRate: 1,
+      onfinish: null,
+    })) as unknown as Element["animate"];
+  });
+
+  afterAll(() => {
+    HTMLCanvasElement.prototype.getContext = getContext;
+    Element.prototype.animate = animate;
+  });
+
   beforeEach(() => {
     state.reducedMotion = false;
   });
 
-  it("CA-04: dibuja cuatro cuadrados de neón, cada uno con su propio desfase", () => {
-    expect(NEON_SQUARES).toHaveLength(4);
-    expect(new Set(NEON_SQUARES.map((square) => square.delay)).size).toBe(4);
-    expect(NEON_SQUARES.map((square) => square.delay)).toEqual([...NEON_SQUARES.map((square) => square.delay)].sort((a, b) => a - b));
+  it("CP-SUC-009: la marca de SITE.brand es el único h1, y nombra la sucursal", () => {
+    renderWithProviders(<HeroLaSerena />);
+
+    const [h1, ...others] = screen.getAllByRole("heading", { level: 1 });
+    expect(others).toHaveLength(0);
+    expect(h1.textContent).toBe(`${SITE.brand.prefix} ${SITE.brand.name} en La Serena`);
   });
 
-  it("CA-04: con movimiento, el trazo de cada cuadrado arranca sin dibujar (pathLength 0)", () => {
+  it("CA-10: el título, el subtítulo y las tres tarjetas salen de los textos editables (RNF-DATOS-002)", () => {
     const { container } = renderWithProviders(<HeroLaSerena />);
 
-    const squares = container.querySelectorAll("polygon");
-    expect(squares).toHaveLength(4);
-    squares.forEach((polygon) => expect(polygon.getAttribute("stroke-dasharray")).toBe("0 1"));
+    expect(screen.getByRole("heading", { level: 2 }).textContent).toBe(TEXTS["heroserena.titulo"].default);
+    const spoken = audible(container);
+    for (const key of ["heroserena.punto1", "heroserena.punto2", "heroserena.punto3"] as const) expect(spoken).toContain(TEXTS[key].default);
+    expect(screen.getAllByRole("listitem")).toHaveLength(3);
   });
 
-  it("CA-04, CP-A11Y-003: con «reducir movimiento», los cuadrados son polígonos comunes, dibujados completos", () => {
+  it("CA-10: el subtítulo arranca sin letras escritas, pero el lector de pantalla lo oye entero una sola vez", () => {
+    const { container } = renderWithProviders(<HeroLaSerena />);
+    const subtitle = TEXTS["heroserena.subtitulo"].default;
+
+    expect(audible(container).split(subtitle)).toHaveLength(2);
+    const typed = container.querySelector("p [aria-hidden='true']:not([class*='Ghost'])");
+    expect(typed?.textContent).toBe("");
+  });
+
+  it("CA-10: con movimiento hay lienzo de partículas e indicador de scroll, ambos decorativos", () => {
+    const { container } = renderWithProviders(<HeroLaSerena />);
+
+    expect(container.querySelector("canvas")).toHaveAttribute("aria-hidden", "true");
+    expect(container.querySelector("svg rect")?.closest("[aria-hidden='true']")).not.toBeNull();
+  });
+
+  it("CA-10, RNF-A11Y-003: con «reducir movimiento» no hay partículas ni indicador, y el subtítulo está completo", () => {
     state.reducedMotion = true;
     const { container } = renderWithProviders(<HeroLaSerena />);
 
-    const squares = container.querySelectorAll("polygon");
-    expect(squares).toHaveLength(4);
-    squares.forEach((polygon) => expect(polygon.hasAttribute("pathLength")).toBe(false));
+    expect(container.querySelector("canvas")).toBeNull();
+    expect(screen.queryByText("Desliza para descubrir")).toBeNull();
+    expect(screen.getByText(TEXTS["heroserena.subtitulo"].default).tagName).toBe("P");
+    expect(container.querySelector("section")?.className).toMatch(/static/);
   });
 
-  it("el título es el único h1 y el botón de reserva abre AgendaPro de La Serena en otra pestaña", () => {
+  it("los dos carruseles se montan cuando el navegador queda libre, son decorativos y repiten las fotos para dar la vuelta sin salto", async () => {
+    const { container } = renderWithProviders(<HeroLaSerena />);
+
+    // Se montan después de la carga (TBT): al principio no están.
+    expect(container.querySelectorAll("[class*='railTrack']")).toHaveLength(0);
+    await waitFor(() => expect(container.querySelectorAll("[class*='railTrack']")).toHaveLength(2), { timeout: 3000 });
+    const rails = container.querySelectorAll("[class*='railTrack']");
+    expect(rails).toHaveLength(2);
+    rails.forEach((rail) => {
+      expect(rail.closest("[aria-hidden='true']")).not.toBeNull();
+      const images = rail.querySelectorAll("img");
+      expect(images).toHaveLength(RAIL_IMAGES.length * 2);
+      images.forEach((image) => expect(image).toHaveAttribute("alt", ""));
+    });
+  });
+
+  it("RNF-A11Y-003: un botón pausa y reanuda las fotos", async () => {
+    const { container } = renderWithProviders(<HeroLaSerena />);
+    await waitFor(() => expect(container.querySelectorAll("[class*='railTrack']")).toHaveLength(2), { timeout: 3000 });
+
+    const button = screen.getByRole("button", { name: "Pausar las fotos" });
+    fireEvent.click(button);
+    expect(screen.getByRole("button", { name: "Reanudar las fotos" })).toHaveAttribute("aria-pressed", "true");
+    container.querySelectorAll("[class*='railTrack']").forEach((rail) => expect(rail.className).toMatch(/paused/));
+  });
+
+  it("el botón de reserva abre AgendaPro de La Serena en otra pestaña", () => {
     renderWithProviders(<HeroLaSerena />);
 
-    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     const book = screen.getByRole("link", { name: "Agendar Sesión" });
     expect(book).toHaveAttribute("target", "_blank");
     expect(book).toHaveAttribute("rel", "noopener noreferrer");
   });
 
-  it("las hojas y los cuadrados son decorativos", () => {
-    const { container } = renderWithProviders(<HeroLaSerena />);
-
-    container.querySelectorAll("svg").forEach((svg) => expect(svg).toHaveAttribute("aria-hidden", "true"));
+  it("CLAUDE.md regla 6: nada escucha el evento de scroll ni lee window.lenis; el scroll llega como MotionValue", () => {
+    const here = dirname(fileURLToPath(import.meta.url));
+    for (const file of ["HeroLaSerena.tsx", "useBrandParticles.ts"]) {
+      const source = readFileSync(resolve(here, file), "utf8");
+      expect(source, file).not.toMatch(/addEventListener\(\s*["']scroll/);
+      expect(source, file).not.toMatch(/window\.lenis/);
+    }
   });
 });

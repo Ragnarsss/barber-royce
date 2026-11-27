@@ -14,6 +14,8 @@ vi.mock("../components/sections/CTA1/CTA1", () => ({ CTA1: () => null }));
 vi.mock("../components/sections/CTA2/CTA2", () => ({ CTA2: () => null }));
 vi.mock("../components/sections/Features/Features", () => ({ Features: () => null }));
 vi.mock("../components/sections/Hero/Hero", () => ({ Hero: () => null }));
+// El hero de La Serena es una secuencia atada al scroll (BR-114): lo prueba HeroLaSerena.test.tsx.
+vi.mock("../components/sections/HeroLaSerena/HeroLaSerena", () => ({ HeroLaSerena: () => null }));
 vi.mock("../components/sections/Reviews/Reviews", () => ({ Reviews: () => null }));
 vi.mock("../components/sections/SocialProof1/SocialProof1", () => ({ SocialProof1: () => null }));
 vi.mock("../components/sections/SocialProof2/SocialProof2", () => ({ SocialProof2: () => null }));

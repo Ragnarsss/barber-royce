@@ -105,6 +105,9 @@ de siempre. Para un salto de línea dentro de la celda, presiona **Alt + Enter**
 | Clave | Dónde aparece | Máximo |
 |---|---|---|
 | `hero.lema` | Lema bajo el nombre de la portada (el nombre «Barbería Royce» no se edita aquí: es parte del diseño) | 60 |
+| `heroserena.titulo` | Título grande de la portada de La Serena, el que sube al hacer scroll (Alt + Enter para cambiar de línea) | 60 |
+| `heroserena.subtitulo` | Frase de la portada de La Serena que aparece letra por letra | 220 |
+| `heroserena.punto1`, `heroserena.punto2`, `heroserena.punto3` | Las tres tarjetas con ícono de la portada de La Serena (estrella, diamante y manos) | 110 |
 | `cta1.titulo`, `cta1.subtitulo` | Primer bloque de reserva | 120 / 400 |
 | `socialproof1.titulo`, `socialproof1.subtitulo` | «Respaldados por los mejores» | 120 / 400 |
 | `benefits.titulo` | Título de la sección de beneficios | 120 |
