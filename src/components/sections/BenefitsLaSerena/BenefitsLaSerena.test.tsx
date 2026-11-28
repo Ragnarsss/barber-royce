@@ -226,8 +226,9 @@ describe("BenefitsLaSerena (BR-117)", () => {
       expect(source, `${name}: .card::after`).not.toMatch(/\.card::after/);
       expect(source, `${name}: relleno extra para la franja`).not.toMatch(/\+\s*4px\)/);
     }
-    // La veta sigue en lo que no son tarjetas: la marca del hero y el borde del pie (BR-113)
-    expect(hero).toMatch(/\.brand::after[^}]*texture-wood/);
+    // Tampoco bajo el lettering del hero (pedido del usuario, 2026-11-28); la veta queda solo en el borde del pie (BR-113)
+    expect(hero).not.toMatch(/\.brand::after/);
+    expect(hero).not.toMatch(/texture-wood/);
   });
 
   it("CA-11: las fotos van pegadas, sin separación, sin marco y sin esquinas redondeadas", () => {

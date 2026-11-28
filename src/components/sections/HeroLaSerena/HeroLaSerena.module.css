@@ -36,15 +36,6 @@
   line-height: 1;
 }
 
-/* La veta de madera bajo la marca (BR-113): se va con la marca, no se vuelve partícula */
-.brand::after {
-  content: "";
-  width: min(60%, 28rem);
-  height: 6px;
-  margin-top: var(--spacing-4);
-  background: var(--texture-wood);
-}
-
 /* El lettering (BrandLettering): el ancho manda y el alto sale del viewBox. «Barbería» en el café de apoyo y «Royce» en el verde de marca. */
 .lettering {
   --lettering-prefix-color: var(--color-brand-support);
