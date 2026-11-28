@@ -16,6 +16,17 @@ export const TEXTS = {
   // Solo el lema: la marca del hero sale de `SITE.brand` (BR-050).
   "hero.lema": { default: "Profesionalismo, pasión y arte.", max: 60 },
 
+  // Hero cinematográfico de la portada de La Serena (BR-114). La marca grande que estalla en partículas sale de `SITE.brand`.
+  "heroserena.titulo": { default: "Tu estilo,\nnuestra pasión.", max: 60 },
+  "heroserena.subtitulo": {
+    default:
+      "En nuestra barbería transformamos tu corte en una expresión personal. Disfruta de un servicio premium y exclusivo, donde la calidad es lo primero.",
+    max: 220,
+  },
+  "heroserena.punto1": { default: "Cortes de cabello que marcan tendencia, con un profesionalismo inigualable.", max: 110 },
+  "heroserena.punto2": { default: "Una experiencia sorprendente y premium, diseñada para que te sientas exclusivo.", max: 110 },
+  "heroserena.punto3": { default: "Atención personalizada que te asegura un resultado impecable, sin prisas.", max: 110 },
+
   "cta1.titulo": { default: "Reserva tu\nExperiencia\nPremium Hoy.", max: TITLE },
   "cta1.subtitulo": {
     default: "¿Listo para un cambio que te defina? Agenda tu cita y descubre por qué somos la barbería de elección para quienes buscan lo mejor.",

@@ -100,6 +100,17 @@ describe.skipIf(!chromePath)("texto legible en todas las rutas (BR-045, RNF-A11Y
         };
         return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
       };
+      // Fondo declarado: un texto puede ir sobre una figura (un SVG) que no es su ancestro y este recorrido no ve. El
+      // contenedor lo dice con `--contrast-bg` (un color o un token) y se resuelve con un elemento de prueba (BR-116).
+      const probe = document.createElement("div");
+      document.body.appendChild(probe);
+      const declaredBackground = (style: CSSStyleDeclaration): Color | null => {
+        const declared = style.getPropertyValue("--contrast-bg").trim();
+        if (!declared) return null;
+        probe.style.backgroundColor = "";
+        probe.style.backgroundColor = declared;
+        return parse(getComputedStyle(probe).backgroundColor);
+      };
       // Fondo sólido detrás del elemento; null si antes hay una imagen o un degradado.
       const solidBackground = (element: Element): Color | null => {
         for (let node: Element | null = element; node; node = node.parentElement) {
@@ -107,6 +118,8 @@ describe.skipIf(!chromePath)("texto legible en todas las rutas (BR-045, RNF-A11Y
           if (style.backgroundImage !== "none") return null;
           const color = parse(style.backgroundColor);
           if (color && color.a > 0.9) return color;
+          const declared = declaredBackground(style);
+          if (declared) return declared;
         }
         return { r: 255, g: 255, b: 255, a: 1 };
       };
@@ -132,6 +145,7 @@ describe.skipIf(!chromePath)("texto legible en todas las rutas (BR-045, RNF-A11Y
         const ratio = (lighter + 0.05) / (darker + 0.05);
         if (ratio < minContrast) found.push({ tag: element.tagName, text: text.slice(0, 40), ratio: Math.round(ratio * 100) / 100 });
       }
+      probe.remove();
       return found;
     }, MIN_CONTRAST);
 

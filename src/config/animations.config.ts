@@ -381,3 +381,60 @@ export const parallaxLayers = {
         x: ["0%", "-3%"],
     },
 };
+
+/**
+ * Línea de tiempo del hero de La Serena (BR-114): cada tramo es [inicio, fin] del avance del scroll por la sección (0..1).
+ * Todo depende del scroll (decisión del usuario, 2026-11-27): la marca estalla, queda el fondo en blanco, sube el título,
+ * el subtítulo aparece letra por letra, entran las tres tarjetas (cada una con su gesto) y al final los carruseles.
+ */
+export const HERO_SERENA_TIMELINE = {
+    hint: [0, 0.04],
+    // La explosión dura unas 190 svh de scroll (antes 70): con la sección de 710 svh (escritorio) son unas 8 vueltas de rueda
+    explode: [0, 0.3],
+    title: [0.34, 0.44],
+    // El neón del techo se dibuja abajo, detrás de las tarjetas, mientras entran, y se enciende cuando terminan
+    neon: [0.56, 0.72],
+    neonOn: [0.72, 0.74],
+    subtitle: [0.44, 0.59],
+    cards: [
+        [0.59, 0.65],
+        [0.63, 0.69],
+        [0.67, 0.73],
+    ],
+    rails: [0.74, 0.885],
+} as const satisfies Record<string, readonly [number, number] | ReadonlyArray<readonly [number, number]>>;
+
+/**
+ * La marca «Royce» del hero de La Serena al cargar (BR-114): el contorno se dibuja solo y después se rellena. Es lo único
+ * del hero que no depende del scroll, para que la marca se vea sin bajar. Con «reducir movimiento» aparece completa.
+ */
+export const wordmarkDraw: Variants = {
+    hidden: { pathLength: 0, fillOpacity: 0 },
+    // `custom` es el número de la letra: cada una entra un poco después que la anterior
+    visible: (letter: number = 0) => ({
+        pathLength: 1,
+        fillOpacity: 1,
+        transition: {
+            pathLength: { duration: 1.2, delay: letter * 0.07, ease: [0.22, 1, 0.36, 1] },
+            fillOpacity: { duration: 0.5, delay: 0.9 + letter * 0.07, ease: "easeOut" },
+        },
+    }),
+};
+
+/**
+ * Línea de tiempo de «Estilo que te acompaña» de La Serena (BR-117), de 0 a 1 mientras la sección está fija en escritorio:
+ * el velo se cierra y la franja se aleja, sube el título, aparece el subtítulo y entran las tres tarjetas, una tras otra.
+ * Del 0,5 al 1 no pasa nada nuevo: es el tramo en que la vista se asienta y solo corre la franja de fotos (decisión del
+ * usuario, 2026-11-27: que el scroll deje unos segundos la sección quieta antes de pasar a la siguiente).
+ */
+export const BENEFITS_SERENA_TIMELINE = {
+    veil: [0, 0.18],
+    strip: [0, 0.6],
+    title: [0.02, 0.16],
+    subtitle: [0.12, 0.26],
+    cards: [
+        [0.2, 0.34],
+        [0.28, 0.42],
+        [0.36, 0.5],
+    ],
+} as const satisfies Record<string, readonly [number, number] | ReadonlyArray<readonly [number, number]>>;

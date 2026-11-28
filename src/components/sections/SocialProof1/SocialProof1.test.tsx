@@ -102,10 +102,13 @@ describe("SocialProof1: corte láser (BR-062, HU-EXP-004 CA-14)", () => {
     expect(css).not.toMatch(/will-change\s*:/);
   });
 
-  it("CP-A11Y-004: el distintivo de la tarjeta ya no usa un gris claro sin contraste", () => {
+  // BR-062 lo pasó de un gris claro (2,8:1) a --color-neutral-600; BR-116 lo deriva del color del texto de la tarjeta, porque
+  // ese gris fijo daba ≈2:1 sobre la tarjeta espresso de La Serena. Los pares de las dos sucursales los prueba laSerenaContrast.test.ts.
+  it("CP-A11Y-004: el distintivo de la tarjeta no usa un gris claro sin contraste: sale del color del texto de la tarjeta", () => {
     const rule = css.match(/\n\.clientBadge\s*\{([^}]*)\}/)?.[1] ?? "";
 
-    expect(rule).toMatch(/color:\s*var\(--color-neutral-600\)/);
+    expect(rule).toMatch(/color:\s*color-mix\(in srgb,\s*var\(--color-brand-background\)/);
+    expect(rule).not.toMatch(/neutral-|#[0-9a-f]{3,6}/i);
   });
 });
 

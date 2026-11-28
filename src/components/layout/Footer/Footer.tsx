@@ -15,8 +15,7 @@ import { useBookingUrl } from "@/branch/useBookingUrl";
 import { branchFromPath } from "@/branch/resolveBranch";
 import { PrivacyPreferencesButton } from "@/analytics/PrivacyPreferencesButton";
 import { trackPhone, trackReserve, trackWhatsApp } from "@/analytics/track";
-import logo46w from "@/assets/optimized/royce-barber-logo_46w.webp";
-import logo92w from "@/assets/optimized/royce-barber-logo_92w.webp";
+import { BrandMark } from "@/components/common/BrandMark/BrandMark";
 
 /**
  * Pie de página (BR-084, BR-098): divisoria roja, franja de cierre con el llamado a agendar (en todas las rutas salvo
@@ -59,15 +58,7 @@ export const Footer = () => {
           {/* Columna principal */}
           <div className={`${styles.column} ${styles.columnWide}`}>
             <div className={styles.brand}>
-              <img
-                src={logo46w}
-                srcSet={`${logo46w} 1x, ${logo92w} 2x`}
-                alt={`Logo de ${SITE.name}`}
-                className={styles.logoIcon}
-                width="48"
-                height="48"
-                loading="lazy"
-              />
+              <BrandMark title={`Logo de ${SITE.name}`} className={styles.logoIcon} />
               <h3 className={styles.title}>{SITE.name}</h3>
             </div>
             <p className={styles.description}>

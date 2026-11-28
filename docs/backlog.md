@@ -2319,12 +2319,16 @@ Criterios de aceptación:
 #### BR-057 — Loader con el letrero real en vector
 
 - Prioridad: P3 · Esfuerzo: S · Depende de: BR-054
-- Estado: Bloqueada (falta el «RR» en vector: hoy solo hay `royce-barber-logo.png` y un `favicon.svg` de 130 KB trazado de un raster)
+- Estado: En curso (rama `feat/br-057-loader-letrero-real`; desbloqueado el 2026-11-27, ver abajo)
 - Historia de usuario: HU-EXP-004 (CA-06)
 - RF/RNF: `RNF-PERF-001`, `RNF-A11Y-005`
 
 **Origen (2026-10-14):** el usuario intentará conseguir el monograma «RR» en
 vector; mientras tanto el loader usa «ROYCE» (`BR-054`).
+
+> **Desbloqueado (2026-11-27):** el usuario entregó el letrero real calcado a mano, `src/assets/neon-name.svg`: «Barber», «Royce», la
+> tijera y las dos esquinas del marco, como trazos de una sola línea (los tubos). Reemplaza al dibujo provisorio de `BR-054` en el
+> loader de `index.html`, con la misma secuencia, duración y protecciones. El monograma BR en vector llegó por otro lado (`BR-115`).
 
 > **Alcance ajustado (2026-10-14, decisión del usuario):** el loader de `BR-054`
 > se inspira en el letrero de neón real («Barber Royce» manuscrito, tijera y
@@ -4777,6 +4781,220 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-113).
 
+#### BR-114 — Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales
+
+- Prioridad: P2 · Esfuerzo: L (se propone partir: intro y carruseles) · Depende de: BR-113 (fuente y colores del tema)
+- Estado: En curso (rama `feat/br-114-hero-cinematografico-la-serena`; faltan las fotos del dueño y recuperar el rendimiento, ver registro)
+- Historia de usuario: HU-SUC-002 (CA-04 ajustado, CA-08, CA-10)
+- RF/RNF: `RF-SUC-009`, `RNF-PERF-001` .. `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-004`, `RNF-DATOS-002`
+
+**Origen (2026-11-27, decisión del usuario):** con dos mockups («Resumen», versión Coquimbo y versión La Serena) el usuario pidió
+para la portada de La Serena un hero «super cinematográfico»: empieza en blanco, con un símbolo que invita a hacer scroll; las
+palabras aparecen con efectos de entrada distintos; el título grande entra desde abajo y se acomoda arriba al centro; el subtítulo
+aparece letra por letra; después los bordes se encogen hacia adentro para dar espacio a dos carruseles laterales de fotos, uno que
+sube y otro que baja solos, con tarjetas que aparecen animadas, y de ahí se pasa a la siguiente sección. Va **solo en `/la-serena`**
+y reemplaza a `HeroLaSerena` (`BR-106`). El subtítulo del mockup («donde la calidad se la roba») se cambia por un texto sin
+chilenismo (decisión del usuario, 2026-11-27).
+
+> **Alcance ajustado (2026-11-27, decisión del usuario):** de las tres direcciones de `diseno-visual` el usuario eligió la A
+> («intro y telón») con dos cambios: (1) la secuencia **entera** depende del scroll, y (2) empieza con **«Barbería Royce»** en grande
+> con el estilo del tema (de `SITE.brand`), que al hacer scroll se deshace en partículas que salen en todas direcciones hasta dejar
+> la pantalla en blanco; recién entonces suben el título, el subtítulo letra por letra, las tarjetas y, al final, los carruseles.
+> La marca es el `h1`: se ve al cargar sin scroll, así que el LCP no depende de la secuencia. El punto 2 del alcance queda así.
+
+Alcance:
+1. Contenido del mockup, editable desde la hoja con `useSiteText()` (claves nuevas con respaldo en `texts.ts`, `ADR-008`): título
+   «Tu estilo, nuestra pasión», subtítulo «En nuestra barbería transformamos tu corte en una expresión personal. Disfruta de un
+   servicio premium y exclusivo, donde la calidad es lo primero.» y tres puntos con ícono (cortes que marcan tendencia, experiencia
+   premium, atención personalizada). Más el botón «Agendar Sesión» con la URL de la sucursal (`useBookingUrl`).
+2. Secuencia: fondo claro con indicador de scroll; título que sube y se fija arriba al centro; subtítulo letra por letra; puntos
+   con entradas distintas. Bordes que se encogen hacia el centro y abren dos carruseles verticales automáticos (uno sube y otro
+   baja) con tarjetas que entran animadas; al terminar, la página sigue a la siguiente sección. El ritmo (qué parte va sola al
+   cargar y qué parte depende del scroll) se elige entre las direcciones que propone la skill `diseno-visual`.
+3. Móvil primero (`ADR-009`): en celular los carruseles van arriba y abajo del texto, o uno solo, en vez de a los costados.
+4. Animación con `MotionValue` (nunca `setState` por scroll), sin leer `window.lenis`; con «reducir movimiento», todo aparece
+   completo y quieto, y los carruseles no se mueven solos.
+5. El código se carga con `lazy()` solo en La Serena (`HERO_VARIANTS`), como el hero actual.
+
+Criterios de aceptación:
+1. Con JavaScript activo o no, y sin hacer scroll, el título y el subtítulo existen en el DOM y quedan visibles en menos de 1 s
+   desde la carga; el `h1` es único (HU-SUC-002 CA-10, `CP-SUC-009`).
+2. El título entra desde abajo y queda arriba al centro; el subtítulo aparece letra por letra, pero un lector de pantalla lo lee
+   entero de una vez (HU-SUC-002 CA-10).
+3. Al hacer scroll, los bordes se cierran y aparecen los dos carruseles, uno subiendo y otro bajando, que se pausan con el
+   cursor encima o con el foco, y se detienen con «reducir movimiento» (`RNF-A11Y-003`).
+4. Sin `setState` por evento de scroll (test), y textos leídos con `useSiteText()` (`RNF-DATOS-002`).
+5. `/la-serena` en Lighthouse móvil: LCP, CLS y TBT no empeoran contra la línea base medida antes del cambio (HU-SUC-002 CA-08).
+6. Con Coquimbo no se descarga el código del hero (HU-SUC-002 CA-07).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-114).
+
+#### BR-115 — Logo BR en SVG en la barra y el pie, con el color de marca de cada sucursal
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-104 (los alias de marca por sucursal)
+- Estado: En curso (rama `feat/br-115-logo-svg`, montada sobre la de BR-114 hasta que se fusionen BR-113 y BR-114)
+- Historia de usuario: HU-SUC-002 (CA-01)
+- RF/RNF: `RF-NAV-001`, `RNF-A11Y-004`
+
+**Origen (2026-11-27, decisión del usuario):** el dueño entregó el monograma BR en vector (`src/assets/logo-RB.svg`, dos trazados
+dorados `#c8a746`). El logo de hoy es un PNG rojo con fondo negro (`royce-barber-logo.png`): en la barra y el pie hay que ocultar su
+recuadro con `mix-blend-mode: lighten`, y sobre el fondo claro y el verde de La Serena queda como un parche. El usuario pidió
+implementar el SVG en la barra y el pie, en las dos sucursales, y **con el color de marca de cada tema** (verde hoja en La Serena, rojo
+en Coquimbo) en vez de su dorado original; el dorado no entra a las paletas.
+
+Alcance:
+1. Componente `BrandMark` (`src/components/common/BrandMark/`): SVG en línea con los dos trazados del archivo de origen, sin color
+   propio (`currentColor`) y con nombre accesible que sale de `SITE.name`.
+2. La barra y el pie lo usan en lugar de las imágenes `royce-barber-logo_*.webp`, con el color `--color-brand-primary`; se quita el
+   `mix-blend-mode`. Las imágenes `.webp` y el PNG se quedan en el repo si algo más los usa (favicon, JSON-LD, manifest, OG).
+3. Un test comprueba que los trazados del componente son los del archivo `src/assets/logo-RB.svg`.
+
+Criterios de aceptación:
+1. En la barra y el pie, el logo se ve con el color de marca de la sucursal activa y sin recuadro (HU-SUC-002 CA-01).
+2. El logo tiene nombre accesible y contraste ≥ 3:1 contra el fondo de la barra y del pie en las dos sucursales (RNF-A11Y-004).
+3. Ningún hex nuevo en componentes ni en CSS (`design-tokens-auditor`), y no se pide ninguna imagen del logo en la barra ni en el pie.
+4. Verificado en el preview de Vercel (DoD).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-115).
+
+#### BR-116 — Contraste de «Respaldados por los mejores» y de CTA1 en La Serena
+
+- Prioridad: P1 · Esfuerzo: S · Depende de: BR-113
+- Estado: En curso (rama `fix/br-116-contraste-la-serena`; código y tests listos, falta verificarlo en el preview de Vercel y cerrar con `cerrar-ticket`)
+- Historia de usuario: HU-SUC-002 (CA-01)
+- RF/RNF: `RNF-A11Y-004`
+
+**Origen (2026-11-27):** revisión visual de `/la-serena` sección por sección (capturas a 1440 px). En SocialProof1 el testimonio
+sobre el pentágono oscuro se lee mal y «Artista Urbano Chileno» casi no se ve; en CTA1 el título queda sobre una capa translúcida
+café-oliva que lo ensucia. Es un posible incumplimiento de `RNF-A11Y-004`.
+
+**Causa:** (confirmada leyendo los CSS) tokens pensados para el fondo de Coquimbo. En CTA1, en escritorio el texto va sobre el hexágono
+de marca pero usa `--color-brand-white`, que en La Serena es espresso: ≈2,4:1 sobre el verde. En SocialProof1, la tarjeta es
+`--color-brand-white` (espresso) y el cargo del autor usa `--color-text-secondary` y «Cliente hace N años», `--color-neutral-600`, grises para
+tarjeta blanca: ≈2:1.
+
+**Arreglo:** CTA1 usa `--color-on-primary` (el texto sobre un relleno de marca) en escritorio; SocialProof1 deriva el cargo y el distintivo de
+`--color-brand-background` (75 % y 70 %). Coquimbo no cambia de valor. Pares y reglas en `src/test/laSerenaContrast.test.ts`.
+
+Criterios de aceptación:
+1. Todo texto de SocialProof1 y CTA1 cumple 4,5:1 (3:1 si es grande) en las dos sucursales (HU-SUC-002 CA-01, `RNF-A11Y-004`).
+2. El e2e de contraste cubre esas dos secciones con La Serena activa.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-116).
+
+#### BR-117 — Beneficios de La Serena: carrusel horizontal automático con tarjetas y textos encima
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-113, BR-121 (fotos; mientras, encuadres de la foto disponible)
+- Estado: En curso (rama `feat/br-117-beneficios-la-serena`; código y tests listos con una dirección elegida por mí, falta que la veas y el preview de Vercel)
+- Historia de usuario: HU-SUC-002 (CA-11)
+- RF/RNF: `RF-SUC-010`, `RNF-A11Y-003`, `RNF-PERF-003`
+
+**Origen (2026-11-27, decisión del usuario):** después del hero, `/la-serena` repite las secciones de Coquimbo y tres de ellas dicen
+casi lo mismo (hero, Beneficios y Features). El usuario no quiere sacar Beneficios: quiere una **variante para La Serena**, parecida
+a Beneficios y a los carruseles del hero, con un **carrusel horizontal automático de fotos y, encima, tarjetas y textos**. Es el
+nivel 3 de `ADR-010` (variante de sección, cargada con `lazy()` solo en La Serena). Coquimbo conserva su Beneficios.
+
+> **Alcance ajustado (2026-11-27, decisión del usuario, tras ver la primera versión):** (1) la sección ocupa el alto del espacio visible
+> (la ventana menos la barra) y la franja de fotos solo empieza a moverse cuando la sección encaja en él, no antes, y desde entonces sigue
+> girando aunque se scrollee a otra sección (segundo pedido del mismo día); (2) lleva animaciones
+> con el scroll para que el conjunto sea acorde y deleite, y (3) el scroll deja la vista quieta unos segundos antes de pasar a la
+> siguiente sección. Se resolvió como una escena fija en escritorio (como la de Coquimbo, `usePinnedScene`): el contenedor mide 2,9 pantallas,
+> el scroll arma la escena en la primera mitad (velo, zoom de la franja, título, subtítulo y las tres tarjetas en secuencia) y la segunda
+> mitad asienta la vista con la franja corriendo. En el celular no se fija: las tarjetas entran una vez al llegar a la vista.
+
+Alcance:
+1. Variante de Beneficios para La Serena: una franja de fotos pegadas, sin marco, que avanza sola en horizontal (como los carruseles
+   del hero), y sobre ella el título, el texto y las tarjetas de beneficios (los mismos textos editables de hoy).
+2. Se pausa con un botón; con «reducir movimiento» queda quieta. **No se pausa con el cursor ni con el foco** (corrección del 2026-11-27: la sección llena la ventana, así que el puntero casi siempre está encima y la franja casi nunca corría).
+3. La dirección visual exacta se elige con la skill `diseno-visual` (tres direcciones) antes de escribir código.
+
+Criterios de aceptación:
+1. Con La Serena, Beneficios muestra la franja de fotos en movimiento con las tarjetas encima; con Coquimbo, la sección de siempre, y
+   su código no se descarga (HU-SUC-002 CA-11, `CP-SUC-010`).
+2. La franja se puede pausar con el botón y queda quieta con «reducir movimiento» (`RNF-A11Y-003`); el cursor encima no la pausa.
+3. Los textos sobre las fotos cumplen 4,5:1 (`RNF-A11Y-004`), y el TBT de `/la-serena` no empeora (`RNF-PERF-003`).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-117).
+
+#### BR-118 — CTA1 de La Serena: variante propia
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-113, BR-116
+- Estado: Propuesta
+- Historia de usuario: HU-SUC-002 (CA-01, CA-02)
+- RF/RNF: `RF-SUC-005`, `RNF-A11Y-004`
+
+**Origen (2026-11-27):** revisión de `/la-serena`: CTA1 es el de Coquimbo recoloreado, con la foto de un cliente de Coquimbo y
+cuadrados verdes y oliva superpuestos. Es lo primero que se ve después del hero.
+
+Alcance:
+1. Rediseño con la skill `diseno-visual` (tres direcciones), usando el lenguaje del hero (neón de rectángulos, Fraunces, filo de
+   madera, fotos pegadas a los bordes).
+2. Foto del local de La Serena cuando llegue (`BR-121`).
+
+Criterios de aceptación:
+1. Con La Serena, CTA1 tiene una composición propia, distinta de la de Coquimbo; con Coquimbo no cambia (HU-SUC-002 CA-02).
+2. Contraste según `RNF-A11Y-004` y botón de reserva con la URL de la sucursal.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-118).
+
+#### BR-119 — «Respaldados por los mejores» (SocialProof1) de La Serena: variante propia
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-113, BR-116
+- Estado: Propuesta
+- Historia de usuario: HU-SUC-002 (CA-01, CA-02)
+- RF/RNF: `RF-SUC-005`, `RNF-A11Y-004`
+
+**Origen (2026-11-27):** revisión de `/la-serena`: la escena fija de SocialProof1 es la de Coquimbo con un pentágono oscuro y cuadrados
+tenues; el testimonio es el de Coquimbo.
+
+Alcance:
+1. Rediseño con la skill `diseno-visual` (tres direcciones), con el lenguaje del hero.
+2. Testimonios de clientes de La Serena cuando el dueño los entregue (pestaña `textos-la-serena` o la de opiniones).
+
+Criterios de aceptación:
+1. Con La Serena, la sección tiene una composición propia; con Coquimbo no cambia (HU-SUC-002 CA-02).
+2. Contraste según `RNF-A11Y-004`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-119).
+
+#### BR-120 — Features en La Serena: decidir si se mantiene, cambia o se reemplaza
+
+- Prioridad: P3 · Esfuerzo: S · Depende de: BR-117
+- Estado: Bloqueada (decisión del usuario)
+- Historia de usuario: HU-SUC-002 (CA-02)
+- RF/RNF: `RF-SUC-005`
+
+**Origen (2026-11-27):** «Innovación y calidad en cada detalle» repite lo que ya dicen el hero y Beneficios, y sus textos son de
+relleno («Masajes relajantes», «Atención de chef»). El usuario prefirió no sacar secciones por ahora (2026-11-27).
+
+Alcance:
+1. Con Beneficios ya rehecho (`BR-117`), decidir con el usuario si Features se queda, cambia de forma o se reemplaza en `/la-serena`
+   por otra sección (servicios destacados con precio, ubicación y horario, o galería del local).
+
+Criterios de aceptación:
+1. La decisión queda registrada con fecha en esta ficha y, si hay cambio, en un ticket propio.
+
+#### BR-121 — Fotos y textos propios de La Serena
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-110
+- Estado: Bloqueada (fotos y textos del dueño)
+- Historia de usuario: HU-SUC-002 (CA-01), HU-CNT-002 (CA-04 .. CA-06)
+- RF/RNF: `RF-CNT-010`, `RNF-PERF-004`
+
+**Origen (2026-11-27):** `/la-serena` usa fotos de Coquimbo (CTA1, SocialProof2, CTA2) y una sola foto del local repetida en los
+carruseles del hero (`heroLaSerenaImages.ts`). Sin contenido propio, ningún rediseño evita que parezca la otra sucursal.
+
+Alcance:
+1. Recibir del dueño de 8 a 12 fotos del local de La Serena y algunas del equipo, optimizarlas (`npm run optimize:images`) y usarlas en
+   el hero, CTA1, SocialProof2, CTA2 y la variante de Beneficios (`BR-117`), por sucursal (nivel 2 de `ADR-010`).
+2. Textos de La Serena en la pestaña `textos-la-serena` de la hoja (`BR-110`).
+
+Criterios de aceptación:
+1. Con La Serena no se ve ninguna foto del local de Coquimbo (HU-SUC-002 CA-01).
+2. Las fotos nuevas cumplen el peso y las dimensiones de `RNF-PERF-004`.
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-121).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -4861,7 +5079,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-054 | Loader de neón (letrero «Barber Royce») | K | P3 | M | Hecho | BR-050, BR-053 |
 | BR-055 | Hero: fondos con profundidad | K | P3 | M | Hecho | BR-050 |
 | BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Hecho | BR-050, BR-055 |
-| BR-057 | Loader con el letrero real en vector | K | P3 | S | Bloqueada | BR-054 |
+| BR-057 | Loader con el letrero real en vector | K | P3 | S | En curso | BR-054 |
 | BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | Hecho | BR-054, BR-056 |
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | Hecho | BR-058 |
 | BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | Hecho | BR-058 |
@@ -4917,6 +5135,14 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-111 | Rendimiento y SEO de las portadas: lo que dejó la auditoría de la épica M | M | P2 | M | Propuesta | BR-106 |
 | BR-112 | Verde hoja mate para los hover y los contornos del tema La Serena | M | P2 | XS | En curso | BR-104 |
 | BR-113 | Tema La Serena «Taller verde»: serif de display, verde hoja como marca y café de apoyo | M | P2 | M | Hecho | BR-104, BR-112 |
+| BR-114 | Hero cinematográfico de `/la-serena`: título que sube, subtítulo letra por letra y carruseles laterales | M | P2 | L | En curso | BR-113 |
+| BR-115 | Logo BR en SVG en la barra y el pie, con el color de marca de cada sucursal | M | P2 | S | En curso | BR-104 |
+| BR-116 | Contraste de «Respaldados por los mejores» y de CTA1 en La Serena | M | P1 | S | En curso | BR-113 |
+| BR-117 | Beneficios de La Serena: carrusel horizontal automático con tarjetas y textos encima | M | P2 | M | En curso | BR-113, BR-121 |
+| BR-118 | CTA1 de La Serena: variante propia | M | P2 | M | Propuesta | BR-113, BR-116 |
+| BR-119 | «Respaldados por los mejores» (SocialProof1) de La Serena: variante propia | M | P2 | M | Propuesta | BR-113, BR-116 |
+| BR-120 | Features en La Serena: decidir si se mantiene, cambia o se reemplaza | M | P3 | S | Bloqueada | BR-117 |
+| BR-121 | Fotos y textos propios de La Serena | M | P2 | S | Bloqueada | BR-110 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

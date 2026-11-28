@@ -32,8 +32,9 @@ import { Reviews } from "@/components/sections/Reviews/Reviews";
 import { SocialProof1 } from "@/components/sections/SocialProof1/SocialProof1";
 import { SocialProof2 } from "@/components/sections/SocialProof2/SocialProof2";
 
-// Los textos del modal de bienvenida (`promo.*`) no están en la home: los prueban `src/promo/*.test.tsx` (BR-100).
-const keys = (Object.keys(TEXTS) as TextKey[]).filter((key) => !key.startsWith("promo."));
+// Los textos del modal de bienvenida (`promo.*`) no están en la home: los prueban `src/promo/*.test.tsx` (BR-100). Los
+// del hero de La Serena (`heroserena.*`) están en su portada: los prueba `HeroLaSerena.test.tsx` (BR-114).
+const keys = (Object.keys(TEXTS) as TextKey[]).filter((key) => !key.startsWith("promo.") && !key.startsWith("heroserena."));
 const marker = (key: string) => `TEXTO-DE-LA-HOJA[${key}]`;
 const occurrences = (text: string, part: string) => text.split(part).length - 1;
 

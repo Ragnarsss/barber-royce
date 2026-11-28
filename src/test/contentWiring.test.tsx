@@ -183,7 +183,9 @@ describe("plantillas CSV de docs/contenido (BR-041, HU-CNT-001)", () => {
 
   it.each(["coquimbo", "la-serena"] as const)("BR-110: la plantilla de textos de %s trae las claves de la landing con el texto de siempre como borrador", (branch) => {
     const { content } = resolveContent(sheet, emptyFallback);
-    const landing = Object.fromEntries(Object.entries(TEXTS).filter(([key]) => !key.startsWith("promo.")).map(([key, { default: text }]) => [key, text]));
+    // Los textos del hero de La Serena (`heroserena.*`, BR-114) solo van en su plantilla: Coquimbo no tiene ese hero.
+    const ownsKey = (key: string) => !key.startsWith("promo.") && (branch === "la-serena" || !key.startsWith("heroserena."));
+    const landing = Object.fromEntries(Object.entries(TEXTS).filter(([key]) => ownsKey(key)).map(([key, { default: text }]) => [key, text]));
 
     expect(content.textsByBranch[branch]).toEqual(landing);
   });

@@ -420,6 +420,8 @@
   }
 
   .textContent {
+    /* El texto va sobre el hexágono de marca (un SVG que no es su ancestro): se lo dice a la prueba de contraste (BR-116) */
+    --contrast-bg: var(--color-brand-primary);
     gap: 16px;
     max-width: var(--cta-text-max);
     padding-left: 20px;
@@ -427,10 +429,20 @@
     text-align: inherit;
   }
 
+  /*
+   * Desde aquí el texto va sobre el hexágono de marca, no sobre el fondo de la sección: usa --color-on-primary (el texto
+   * sobre un relleno de marca). `--color-brand-white` es el «blanco» del tema y en La Serena es espresso: sobre el verde
+   * daba 2,4:1 (BR-116).
+   */
   .title {
     font-size: clamp(32px, 4vw, 48px);
     font-weight: 800;
     line-height: 1.1;
+    color: var(--color-on-primary);
+  }
+
+  .magnet:has(:focus-visible) {
+    outline-color: var(--color-on-primary);
   }
 
   .title::after {
@@ -440,7 +452,7 @@
   .subtitle {
     font-size: 14px;
     line-height: 1.7;
-    color: color-mix(in srgb, var(--color-brand-white) 90%, transparent);
+    color: color-mix(in srgb, var(--color-on-primary) 90%, transparent);
     font-style: italic;
   }
 
@@ -477,6 +489,8 @@
     padding: 13px 32px;
     font-size: 16px;
     min-width: 200px;
+    color: var(--color-on-primary);
+    border-color: var(--color-on-primary);
   }
 
   .imageHexagon {

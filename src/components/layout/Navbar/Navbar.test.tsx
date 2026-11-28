@@ -42,10 +42,10 @@ describe("Navbar: menú móvil (BR-085, RNF-A11Y-002)", () => {
     expect(getMobileMenu()).not.toHaveAttribute("role", "menu");
   });
 
-  it("el alt del logo sale de SITE.name (RNF-DATOS-001)", () => {
+  it("el nombre accesible del logo (SVG) sale de SITE.name (RNF-DATOS-001, BR-115)", () => {
     renderNavbar();
 
-    expect(screen.getByAltText(SITE.name)).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: SITE.name })).toBeInTheDocument();
   });
 });
 
