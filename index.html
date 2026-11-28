@@ -186,32 +186,82 @@
       imagesrcset="/src/assets/optimized/hero_model_left_profile_842w.webp 842w, /src/assets/optimized/hero_model_left_profile_1060w.webp 1060w, /src/assets/optimized/hero_model_left_profile_1684w.webp 1684w"
       imagesizes="(max-width: 1400px) 50vw, 842px"
     />
-    <!-- Letrero de neón de entrada (BR-054): se pinta antes del JavaScript; src/loader/neonLoader.ts lo apaga.
-         El SVG es provisorio (fuente Sacramento, tijera de lucide); el definitivo es BR-057. -->
+    <!-- Letrero de neón de entrada (BR-054, BR-057, BR-123): se pinta antes del JavaScript, colgado sobre una pared de
+         ladrillo; src/loader/neonLoader.ts lo apaga cuando la primera página ya está pintada. Los trazados son los de
+         src/assets/neon-name.svg (un test exige que coincidan). Sin scripts en línea: la CSP solo permite estilos. -->
     <style id="neon-loader-css">
-      #neon-loader{--neon-min:1200ms;--neon-exit:450ms;--neon-max:8000ms;position:fixed;inset:0;z-index:10001;display:grid;place-items:center;padding:24px;background:#1a1a1a;animation:neon-failsafe var(--neon-exit) ease var(--neon-max) forwards}
-      #neon-loader[data-state="exiting"]{opacity:0;pointer-events:none;transition:opacity var(--neon-exit) ease}
-      #neon-loader svg{width:min(560px,calc(100vw - 48px));height:auto;overflow:visible}
-      #neon-loader use{fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round}
-      #neon-loader .off{color:#aa3939;opacity:.22}
-      #neon-loader .halo{color:#d52323;stroke-width:2.6;filter:blur(6px)}
-      #neon-loader .core{color:color-mix(in srgb,#d52323 30%,#ffffff);filter:drop-shadow(0 0 2px #d52323) drop-shadow(0 0 8px #d52323) drop-shadow(0 0 18px #d52323)}
-      /* La Serena (BR-104): letrero de neón frío sobre un fondo oscuro; el neón solo luce sobre oscuro. Los valores son los de --color-espresso, --color-bark y --color-neon (un test los compara). */
-      [data-branch="la-serena"] #neon-loader{background:#2b211b}
+      /* Tiempos: copia de NEON_LOADER en neonLoader.ts (un test los compara). Colores: valores de los tokens. */
+      #neon-loader {
+        --neon-min:2200ms; --neon-exit:600ms; --neon-max:8000ms;
+        --brick:#2c1b18; --mortar:#0f0c0b; --glow:#d52323;
+        --bw:64px; --bh:24px;
+        position:fixed; inset:0; z-index:10001; display:grid; place-items:center; padding:24px;
+        overflow:hidden; isolation:isolate; background:#1a1a1a;
+        animation:neon-failsafe var(--neon-exit) ease var(--neon-max) forwards;
+      }
+      /* Pared: juntas horizontales cada --bh y verticales desfasadas media pieza por hilada, todo con gradientes. */
+      #neon-loader::before {
+        content:""; position:absolute; inset:0; z-index:-2;
+        background:
+          conic-gradient(at 2px var(--bh), transparent 75%, var(--mortar) 0) 0 0 / var(--bw) calc(var(--bh) * 2),
+          conic-gradient(at 2px var(--bh), transparent 75%, var(--mortar) 0) calc(var(--bw) / 2) var(--bh) / var(--bw) calc(var(--bh) * 2),
+          repeating-linear-gradient(var(--mortar) 0 2px, transparent 2px var(--bh)),
+          var(--brick);
+      }
+      /* Viñeta: la pared se pierde en la oscuridad y el letrero queda al centro. */
+      #neon-loader::after {
+        content:""; position:absolute; inset:0; z-index:-1;
+        background:radial-gradient(ellipse 75% 65% at 50% 50%, transparent 20%, color-mix(in srgb, var(--mortar) 94%, transparent) 100%);
+      }
+      /* Luz del letrero sobre la pared: crece con cada pieza que se enciende y tiembla con la letra defectuosa. */
+      #neon-loader .wall-glow {
+        position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:0;
+        background:radial-gradient(ellipse 55% 42% at 50% 50%, color-mix(in srgb, var(--glow) 30%, transparent), transparent 72%);
+        animation:neon-wall 1620ms steps(1,end) 100ms forwards;
+      }
+      #neon-loader svg { width:min(560px, calc(100vw - 48px)); height:auto; overflow:visible; }
+      #neon-loader use { fill:none; stroke:currentColor; stroke-width:1.1; stroke-linecap:round; stroke-linejoin:round; }
+      #neon-loader .off { color:#aa3939; opacity:.22; }
+      #neon-loader .halo { color:#d52323; stroke-width:2.6; filter:blur(6px); }
+      #neon-loader .core { color:color-mix(in srgb, #d52323 30%, #ffffff); filter:drop-shadow(0 0 2px #d52323) drop-shadow(0 0 8px #d52323) drop-shadow(0 0 18px #d52323); }
+      @media (min-width: 769px) { #neon-loader { --bw:88px; --bh:32px; } }
+      /* La Serena (BR-104): neón frío; el neón solo luce sobre oscuro. Valores de --color-espresso, --color-bark, --color-neon,
+         --color-brick-serena y --color-mortar-serena (los tests los comparan; estas reglas van compactas por esos tests). */
+      [data-branch="la-serena"] #neon-loader{background:#2b211b;--brick:#3a2a20;--mortar:#17110d;--glow:#eaf4ff}
       [data-branch="la-serena"] #neon-loader .off{color:#6b5a4c}
       [data-branch="la-serena"] #neon-loader .halo{color:#eaf4ff}
       [data-branch="la-serena"] #neon-loader .core{color:#ffffff;filter:drop-shadow(0 0 2px #eaf4ff) drop-shadow(0 0 8px #eaf4ff) drop-shadow(0 0 18px #eaf4ff)}
-      #neon-loader .lit{opacity:0;animation:neon-ignite 900ms steps(1,end) 150ms forwards}
-      #neon-loader .lit-defect{animation:neon-ignite-defect 1500ms steps(1,end) 150ms forwards}
-      #neon-loader[data-state="exiting"] .lit{animation:none;opacity:0;transition:opacity 120ms ease}
-      @keyframes neon-ignite{0%{opacity:0}30%{opacity:1}42%{opacity:.15}55%{opacity:1}64%{opacity:.25}75%,100%{opacity:1}}
-      @keyframes neon-ignite-defect{0%{opacity:0}45%{opacity:1}52%{opacity:.1}70%{opacity:1}76%{opacity:.2}88%,100%{opacity:1}}
+      /* Encendido por piezas: marco, «Barber», «Royce», tijera y, al final, la letra defectuosa. */
+      #neon-loader .lit { opacity:0; animation:neon-ignite 600ms steps(1,end) var(--lit-delay) forwards; }
+      #neon-loader .lit-1 { --lit-delay:100ms; }
+      #neon-loader .lit-2 { --lit-delay:280ms; }
+      #neon-loader .lit-3 { --lit-delay:460ms; }
+      #neon-loader .lit-4 { --lit-delay:640ms; }
+      #neon-loader .lit-5 { --lit-delay:820ms; }
+      #neon-loader .lit-defect { animation:neon-ignite-defect 900ms steps(1,end) var(--lit-delay) forwards; }
+      /* Salida: el letrero y su luz se apagan en seco, y después la pared se desvanece. */
+      #neon-loader[data-state="exiting"] { opacity:0; pointer-events:none; transition:opacity calc(var(--neon-exit) - 150ms) ease 150ms; }
+      #neon-loader[data-state="exiting"] .lit,
+      #neon-loader[data-state="exiting"] .wall-glow { animation:none; opacity:0; transition:opacity 90ms ease; }
+      @keyframes neon-ignite{0%{opacity:0}20%{opacity:1}35%{opacity:.15}50%,100%{opacity:1}}
+      @keyframes neon-ignite-defect{0%{opacity:0}15%{opacity:1}28%{opacity:.1}45%{opacity:1}62%{opacity:.2}75%,100%{opacity:1}}
+      @keyframes neon-wall{0%{opacity:0}7%{opacity:.3}12%{opacity:.1}16%{opacity:.4}22%{opacity:.55}33%{opacity:.7}44%{opacity:.8}60%{opacity:.62}68%{opacity:.85}78%{opacity:.66}86%,100%{opacity:1}}
       @keyframes neon-failsafe{to{opacity:0;visibility:hidden}}
-      @media (prefers-reduced-motion: reduce){#neon-loader .lit,#neon-loader .lit-defect{animation:none;opacity:1}}
+      @media (prefers-reduced-motion: reduce) {
+        #neon-loader .lit, #neon-loader .lit-defect, #neon-loader .wall-glow { animation:none; opacity:1; }
+      }
     </style>
+    <!-- Sin JavaScript (BR-123): el letrero se queda encendido con un aviso, en vez de retirarse y dejar la página vacía. -->
+    <noscript>
+      <style>
+        #neon-loader { animation:none; }
+        .neon-nojs { position:fixed; z-index:10002; left:24px; right:24px; bottom:32px; margin:0; text-align:center; font:500 16px/1.5 system-ui, sans-serif; color:#ffffff; }
+      </style>
+    </noscript>
   </head>
   <body>
-    <div id="neon-loader" aria-hidden="true"><svg viewBox="0 0 204 120" aria-hidden="true"><defs><g id="n-frame" transform="translate(-3.6974 -91.512)"><path d="m18.322 154.32v25.069s-0.33073 4.101 2.6458 3.175c2.9766-0.92604 23.879 0.19844 23.879 0.19844l27.914-0.19844"/><path d="m165.57 113.75 31.899-0.28063s2.0899 4e-3 2.8175 1.6245c0.7276 1.6206 0.82682 3.5388 0.82682 3.5388v42.499"/></g><g id="n-scissors" transform="translate(-3.6974 -91.512)"><path d="m82.815 192.48c0.26458-31.221 0.26458-31.353 0.26458-31.353s-1.4617-6.9234 3.2155-6.9234 3.9756 4.8175 3.9756 4.8175-0.51449 4.5837-7.0158 2.2451"/><path d="m94.886 182.79s-18.289-20.538-18.488-22.126c-0.19844-1.5875-2.4474-1.8521-2.4474-1.8521s-5.4901 0.99219-3.3073 5.8208c2.1828 4.8286 7.8714-0.99219 7.8714-0.99219"/></g><g id="n-barber" transform="translate(-3.6974 -91.512)"><path d="m18.455 91.877-8.1359 32.808c5.0128-10.19 9.4129-21.004 17.056-29.567 3.5152-6.0294 13.954-2.9862 10.232 4.3298-2.3129 6.0235-7.1151 10.998-13.372 12.859 7.1293-0.34318 14.983 4.6126 15.182 12.274 0.92643 6.437-2.3597 13.314-8.4858 15.881-7.0963 3.997-16.773 6.9882-24.076 1.9373-5.5491-4.6038-1.9329-12.583 3.6335-15.278 11.278-7.4884 25.443-5.501 38.175-4.68 3.4387 0.38743 6.8895 0.64118 10.338 0.92046-3.9806-3.9424-10.609 2.3034-10.043 6.893 2.7492 6.6205 9.6886-2.0362 10.05-6.3529-0.73732 0.71588-2.1548 12.674 4.6117 7.8226 3.3455-2.734 7.3848-4.9505 10.452-7.882 1.042-3.2481 3.1952-3.8904 3.0977 0.34951 0.0779 6.2762-4.0952 4.9332-0.55333 9.7973 2.7179 3.6736 5.1704-0.72064 10.562-5.3321 2.9509-2.4428 8.6093-3.2337 9.5504-7.737 2.3993-6.7867 4.7986-13.573 7.1979-20.36-2.991 8.9758-6.25 17.862-9.0738 26.894-0.30363 3.1526-3.2106 9.04 0.41656 4.2876 1.5129-4.6269 8.4639-17.286 12.964-5.2202 0.55291 2.6146-2.923 8.1039-5.8528 12.6-2.5995 4.1663-13.594 4.4273-9.192-2.3801 2.8124-4.9396 11.238-3.5353 15.58-6.8451 3.4755-1.9784 10.816-3.3276 14.895-4.9832 9.3201-3.1658 4.9895-5.2736-2.4139-3.5198-6.3869 2.0571-7.9588 16.656 1.5985 12.959 5.7045-2.9877 10.04-7.6628 14.336-12.522 5.4956 5.3742-1.8843 9.8954 0.50714 15.753 5.6381 6.7144 11.826-4.8642 16.434-8.7703 1.0993-1.2821 2.1952-2.5673 3.3095-3.8365"/></g><g id="n-royce" transform="translate(-3.6974 -91.512)"><path d="m119.99 143.4c-4.9389 16.448-9.8778 32.897-14.817 49.345 2.6916-8.6116 4.5041-17.541 7.7916-25.939 3.6985-6.0229 6.6151-12.603 10.968-18.178 4.0926-4.0701 10.638-6.5766 16.163-3.9908 4.0954 4.4149 0.0817 10.37-1.8655 14.83-3.2039 6.4814-8.6215 13.326-16.448 13.656-2.3936 0.33264-8.3181-2.2012-8.4581-0.6212 6.931 5.5427 9.0527 15.827 17.744 19.411 2.5562 1.0982 5.5586 1.3986 8.1696 0.30207"/><path d="m172.44 174.23c-3.2039 3.4786-2.7563 13.559 3.7384 9.4381 4.6607-2.9265 9.1556-6.7583 14.902-7.1173 4.4201 0.75567 7.0483-7.2386 1.4626-6.2121-4.487 1.8307-8.334 8.5357-4.8529 12.827 3.556 2.8335 7.5705-1.0928 10.672-2.8666 3.1035-2.1794 5.9434-4.7042 8.7384-7.2593"/></g><g id="n-defect" transform="translate(-3.6974 -91.512)"><path d="m180.38 174.69 0.59294-0.78377c4.9736-4.2576-2.513-8.306-5.5975-3.7142-2.7557 4.1844-6.6466 7.4574-10.824 10.168-8.3379 4.7919-17.738 11.377-20.304 19.695-1.3748 4.0553-2.7878 11.042 3.2792 10.342 4.6919-1.3472 7.2272-6.2917 8.901-10.526 2.5463-8.1155 5.5352-16.186 6.2289-24.736-2.3351-0.43046-3.8153 9.7241-9.1179 9.0251-6.7168-1.3479 3.6287-9.1676-1.4314-10.466-3.9928 1.7978-8.605 0.26319-12.53 1.2076-6.2433 1.1342-0.98006 11.069 3.5821 6.2344 2.97-2.901 1.2076-10.27-3.7238-8.7619 0 0-2.8443-0.39687-2.7781 5.9531"/></g></defs><use href="#n-frame" class="off"/><g class="lit"><use href="#n-frame" class="halo"/><use href="#n-frame" class="core"/></g><use href="#n-scissors" class="off"/><g class="lit"><use href="#n-scissors" class="halo"/><use href="#n-scissors" class="core"/></g><use href="#n-barber" class="off"/><g class="lit"><use href="#n-barber" class="halo"/><use href="#n-barber" class="core"/></g><use href="#n-royce" class="off"/><g class="lit"><use href="#n-royce" class="halo"/><use href="#n-royce" class="core"/></g><use href="#n-defect" class="off"/><g class="lit lit-defect"><use href="#n-defect" class="halo"/><use href="#n-defect" class="core"/></g></svg></div>
+    <div id="neon-loader" aria-hidden="true"><div class="wall-glow"></div><svg viewBox="0 0 204 120" aria-hidden="true"><defs><g id="n-frame" transform="translate(-3.6974 -91.512)"><path d="m18.322 154.32v25.069s-0.33073 4.101 2.6458 3.175c2.9766-0.92604 23.879 0.19844 23.879 0.19844l27.914-0.19844"/><path d="m165.57 113.75 31.899-0.28063s2.0899 4e-3 2.8175 1.6245c0.7276 1.6206 0.82682 3.5388 0.82682 3.5388v42.499"/></g><g id="n-scissors" transform="translate(-3.6974 -91.512)"><path d="m82.815 192.48c0.26458-31.221 0.26458-31.353 0.26458-31.353s-1.4617-6.9234 3.2155-6.9234 3.9756 4.8175 3.9756 4.8175-0.51449 4.5837-7.0158 2.2451"/><path d="m94.886 182.79s-18.289-20.538-18.488-22.126c-0.19844-1.5875-2.4474-1.8521-2.4474-1.8521s-5.4901 0.99219-3.3073 5.8208c2.1828 4.8286 7.8714-0.99219 7.8714-0.99219"/></g><g id="n-barber" transform="translate(-3.6974 -91.512)"><path d="m18.455 91.877-8.1359 32.808c5.0128-10.19 9.4129-21.004 17.056-29.567 3.5152-6.0294 13.954-2.9862 10.232 4.3298-2.3129 6.0235-7.1151 10.998-13.372 12.859 7.1293-0.34318 14.983 4.6126 15.182 12.274 0.92643 6.437-2.3597 13.314-8.4858 15.881-7.0963 3.997-16.773 6.9882-24.076 1.9373-5.5491-4.6038-1.9329-12.583 3.6335-15.278 11.278-7.4884 25.443-5.501 38.175-4.68 3.4387 0.38743 6.8895 0.64118 10.338 0.92046-3.9806-3.9424-10.609 2.3034-10.043 6.893 2.7492 6.6205 9.6886-2.0362 10.05-6.3529-0.73732 0.71588-2.1548 12.674 4.6117 7.8226 3.3455-2.734 7.3848-4.9505 10.452-7.882 1.042-3.2481 3.1952-3.8904 3.0977 0.34951 0.0779 6.2762-4.0952 4.9332-0.55333 9.7973 2.7179 3.6736 5.1704-0.72064 10.562-5.3321 2.9509-2.4428 8.6093-3.2337 9.5504-7.737 2.3993-6.7867 4.7986-13.573 7.1979-20.36-2.991 8.9758-6.25 17.862-9.0738 26.894-0.30363 3.1526-3.2106 9.04 0.41656 4.2876 1.5129-4.6269 8.4639-17.286 12.964-5.2202 0.55291 2.6146-2.923 8.1039-5.8528 12.6-2.5995 4.1663-13.594 4.4273-9.192-2.3801 2.8124-4.9396 11.238-3.5353 15.58-6.8451 3.4755-1.9784 10.816-3.3276 14.895-4.9832 9.3201-3.1658 4.9895-5.2736-2.4139-3.5198-6.3869 2.0571-7.9588 16.656 1.5985 12.959 5.7045-2.9877 10.04-7.6628 14.336-12.522 5.4956 5.3742-1.8843 9.8954 0.50714 15.753 5.6381 6.7144 11.826-4.8642 16.434-8.7703 1.0993-1.2821 2.1952-2.5673 3.3095-3.8365"/></g><g id="n-royce" transform="translate(-3.6974 -91.512)"><path d="m119.99 143.4c-4.9389 16.448-9.8778 32.897-14.817 49.345 2.6916-8.6116 4.5041-17.541 7.7916-25.939 3.6985-6.0229 6.6151-12.603 10.968-18.178 4.0926-4.0701 10.638-6.5766 16.163-3.9908 4.0954 4.4149 0.0817 10.37-1.8655 14.83-3.2039 6.4814-8.6215 13.326-16.448 13.656-2.3936 0.33264-8.3181-2.2012-8.4581-0.6212 6.931 5.5427 9.0527 15.827 17.744 19.411 2.5562 1.0982 5.5586 1.3986 8.1696 0.30207"/><path d="m172.44 174.23c-3.2039 3.4786-2.7563 13.559 3.7384 9.4381 4.6607-2.9265 9.1556-6.7583 14.902-7.1173 4.4201 0.75567 7.0483-7.2386 1.4626-6.2121-4.487 1.8307-8.334 8.5357-4.8529 12.827 3.556 2.8335 7.5705-1.0928 10.672-2.8666 3.1035-2.1794 5.9434-4.7042 8.7384-7.2593"/></g><g id="n-defect" transform="translate(-3.6974 -91.512)"><path d="m180.38 174.69 0.59294-0.78377c4.9736-4.2576-2.513-8.306-5.5975-3.7142-2.7557 4.1844-6.6466 7.4574-10.824 10.168-8.3379 4.7919-17.738 11.377-20.304 19.695-1.3748 4.0553-2.7878 11.042 3.2792 10.342 4.6919-1.3472 7.2272-6.2917 8.901-10.526 2.5463-8.1155 5.5352-16.186 6.2289-24.736-2.3351-0.43046-3.8153 9.7241-9.1179 9.0251-6.7168-1.3479 3.6287-9.1676-1.4314-10.466-3.9928 1.7978-8.605 0.26319-12.53 1.2076-6.2433 1.1342-0.98006 11.069 3.5821 6.2344 2.97-2.901 1.2076-10.27-3.7238-8.7619 0 0-2.8443-0.39687-2.7781 5.9531"/></g></defs><use href="#n-frame" class="off"/><g class="lit lit-1"><use href="#n-frame" class="halo"/><use href="#n-frame" class="core"/></g><use href="#n-barber" class="off"/><g class="lit lit-2"><use href="#n-barber" class="halo"/><use href="#n-barber" class="core"/></g><use href="#n-royce" class="off"/><g class="lit lit-3"><use href="#n-royce" class="halo"/><use href="#n-royce" class="core"/></g><use href="#n-scissors" class="off"/><g class="lit lit-4"><use href="#n-scissors" class="halo"/><use href="#n-scissors" class="core"/></g><use href="#n-defect" class="off"/><g class="lit lit-5 lit-defect"><use href="#n-defect" class="halo"/><use href="#n-defect" class="core"/></g></svg></div>
+    <noscript><p class="neon-nojs">Este sitio necesita JavaScript para mostrarse. Actívalo en tu navegador y vuelve a cargar la página.</p></noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

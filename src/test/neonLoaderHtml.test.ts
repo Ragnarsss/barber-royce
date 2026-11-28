@@ -92,3 +92,55 @@ describe("letrero de neón en index.html (BR-054)", () => {
     expect(svg).not.toMatch(/(fill|stroke)="#/);
   });
 });
+
+describe("escena de ladrillo y encendido por piezas (BR-123)", () => {
+  const svg = loaderMarkup.match(/<svg[\s\S]*<\/svg>/)?.[0] ?? "";
+  const sourceSvg = readFileSync(resolve(root, "src/assets/neon-name.svg"), "utf8");
+  const pathData = (markup: string) => [...markup.matchAll(/<path[^>]*\sd="([^"]*)"/g)].map((m) => m[1]).sort();
+  /** Retraso del encendido de la pieza n (`.lit-n`), en ms. */
+  const pieceDelay = (n: number) => Number(loaderCss.match(new RegExp(`\\.lit-${n}\\s*\\{[^}]*--lit-delay:\\s*(\\d+)ms`))?.[1]);
+
+  it("una sola fuente: los trazados de index.html son los de src/assets/neon-name.svg", () => {
+    expect(pathData(svg)).toEqual(pathData(sourceSvg));
+  });
+
+  it("CA-41: la pared de ladrillo es CSS en línea, sin peticiones de red antes del JavaScript", () => {
+    expect(loaderCss).toMatch(/#neon-loader::before\s*\{[^}]*repeating-linear-gradient/);
+    expect(loaderCss).not.toMatch(/url\(/);
+  });
+
+  it("CA-41: las piezas se encienden en orden: marco, «Barber», «Royce», tijera y la letra defectuosa", () => {
+    const order = ["n-frame", "n-barber", "n-royce", "n-scissors", "n-defect"];
+    order.forEach((id, i) => {
+      const group = svg.match(new RegExp(`<g class="lit lit-${i + 1}[^"]*">([\\s\\S]*?)</g>`))?.[1] ?? "";
+      expect(group, id).toContain(`#${id}`);
+    });
+    const delays = order.map((_, i) => pieceDelay(i + 1));
+    for (let i = 1; i < delays.length; i++) expect(delays[i], `pieza ${i + 1}`).toBeGreaterThan(delays[i - 1]);
+  });
+
+  it("CA-41: la luz sobre la pared acompaña al letrero y solo anima la opacidad", () => {
+    expect(loaderMarkup).toMatch(/class="wall-glow"/);
+    const body = loaderCss.match(/@keyframes neon-wall\s*\{([\s\S]*?)\}\s*\}/)?.[1] ?? "";
+    expect(body).toMatch(/opacity/);
+    expect(body.replace(/opacity:\s*[\d.]+/g, "")).not.toMatch(/[a-z-]+\s*:/);
+  });
+
+  it("CP-A11Y-005: la luz de la pared tampoco pasa de 3 destellos por segundo", () => {
+    const steps = keyframeSteps("neon-wall");
+    const duration = Number(loaderCss.match(/animation:\s*neon-wall\s+(\d+)ms/)?.[1]) / 1000;
+
+    expect(steps.length).toBeGreaterThan(2);
+    expect(flashes(steps) / Math.max(duration, 1)).toBeLessThanOrEqual(3);
+  });
+
+  it("CP-A11Y-003: con reducir movimiento la pared queda iluminada y quieta", () => {
+    const reduced = loaderCss.match(/@media \(prefers-reduced-motion: reduce\)\s*\{([\s\S]*?)\}\s*\}/)?.[1] ?? "";
+
+    expect(reduced).toMatch(/\.wall-glow/);
+  });
+
+  it("sin JavaScript hay un aviso en lugar de la página vacía", () => {
+    expect(html).toMatch(/<noscript>[\s\S]*?<\/noscript>/);
+  });
+});

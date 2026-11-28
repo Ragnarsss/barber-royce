@@ -123,6 +123,12 @@
   --color-leaf-deep: #283224; /* verde hoja oscuro: relleno de los botones en hover; 4,5:1 con el ámbar y 12:1 con el hueso */
   --color-neon: #eaf4ff; /* neón frío: solo luce sobre una banda oscura */
   --color-amber: #dc8018; /* ámbar del logo de las capas: 2,7:1 sobre el hueso, 5,3:1 sobre el espresso */
+  /* Pared de ladrillo del loader de neón (BR-123): solo decorativa, siempre en penumbra bajo el letrero. index.html
+     copia estos valores (se pinta antes que los tokens) y neonLoaderHtml.test.ts exige que existan aquí. */
+  --color-brick: #2c1b18; /* Coquimbo: ladrillo */
+  --color-mortar: #0f0c0b; /* Coquimbo: junta y viñeta */
+  --color-brick-serena: #3a2a20; /* La Serena: ladrillo */
+  --color-mortar-serena: #17110d; /* La Serena: junta y viñeta */
 
   /* Gradients */
   --gradient-primary: linear-gradient(

@@ -64,9 +64,11 @@ describe.skipIf(!chromePath)("texto legible en todas las rutas (BR-045, RNF-A11Y
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
     await page.emulateMediaFeatures([{ name: "prefers-color-scheme", value: "dark" }]);
-    // El modal de bienvenida (BR-100) cuenta como ya cerrado: este test mide la página en reposo.
+    // El modal de bienvenida (BR-100) cuenta como ya cerrado y el letrero de neón como ya visto en la sesión (sin su
+    // mínimo de 2,2 s, BR-123): este test mide la página en reposo, no la entrada.
     await page.evaluateOnNewDocument((selected) => {
       window.localStorage.setItem("barber-royce:promo-dismissed", "1");
+      window.sessionStorage.setItem("neon-loader-seen", "1");
       window.localStorage.setItem("royce:branch", selected);
     }, branch);
     await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle0" });
