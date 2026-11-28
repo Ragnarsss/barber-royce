@@ -4995,6 +4995,38 @@ Criterios de aceptación:
 
 **Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-121).
 
+#### BR-122 — El lettering del dueño en el hero de Coquimbo y en el pie de página
+
+- Prioridad: P2 · Esfuerzo: S · Depende de: BR-114
+- Estado: En curso (rama `feat/br-122-lettering-coquimbo-y-pie`)
+- Historia de usuario: HU-SUC-002 (CA-12)
+- RF/RNF: `RF-SUC-011`, `RNF-A11Y-003`, `RNF-PERF-002`
+
+**Origen (2026-11-28):** el dueño entregó el lettering «Barbería Royce» (`src/assets/lettering.svg`) y `BR-114` ya lo usa en el
+hero de La Serena (`letteringWordmark.ts`). El usuario pidió usarlo también en el hero de Coquimbo, que sigue con «BARBERÍA ROYCE»
+en texto Anton (`Hero.tsx`), y en el pie, que muestra «ROYCE BARBERÍA» en texto y en La Serena parte el nombre en dos líneas.
+
+> **Alcance ajustado (2026-11-28, decisión del usuario):** esto reemplaza lo fijado en `BR-113` («Coquimbo conserva Anton, sin
+> cambios visuales») solo para la marca del hero y del pie; los titulares y precios de Coquimbo siguen en Anton.
+
+Alcance:
+1. Hero de Coquimbo: reemplazar el texto «BARBERÍA» + «ROYCE» por el lettering (un SVG con un trazado por letra), con el color de
+   marca de Coquimbo (blanco sobre el fondo oscuro, rojo de apoyo).
+2. Pie de página: reemplazar el texto «ROYCE BARBERÍA» junto al monograma por el lettering, en las dos sucursales, con el color de
+   marca de cada una; que no parta el nombre en dos líneas en el celular.
+3. Compartir los trazados con `HeroLaSerena` (hoy en `letteringWordmark.ts`, dentro de su carpeta): moverlos a un componente común
+   (por ejemplo `BrandLettering`) que el hero de La Serena también use, sin duplicar los datos.
+4. El texto «Barbería Royce» sigue accesible (`sr-only`) y los datos de la marca siguen saliendo de `SITE.brand`.
+5. Fuera de alcance: la barra de navegación (queda el monograma y el texto) y las partículas de Coquimbo.
+
+Criterios de aceptación:
+1. En el hero de Coquimbo y en el pie de ambas sucursales la marca es un SVG decorativo (`aria-hidden`) con un trazado por letra, y el
+   nombre queda en texto para lectores de pantalla (HU-SUC-002 CA-12, `CP-SUC-011`).
+2. En el celular el pie no parte la marca en dos líneas (HU-SUC-002 CA-12).
+3. Con `prefers-reduced-motion` la marca aparece completa y sin animación (RNF-A11Y-003).
+4. El CLS de las portadas no sube (RNF-PERF-002) y Coquimbo no pide ningún archivo de fuente nuevo por la marca.
+5. Verificado en el preview de Vercel, no solo en `npm run dev` (DoD, `engineering-guidelines.md` §6).
+
 ---
 
 ## 4. Diferido — no forma parte del despliegue
@@ -5143,6 +5175,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-119 | «Respaldados por los mejores» (SocialProof1) de La Serena: variante propia | M | P2 | M | Propuesta | BR-113, BR-116 |
 | BR-120 | Features en La Serena: decidir si se mantiene, cambia o se reemplaza | M | P3 | S | Bloqueada | BR-117 |
 | BR-121 | Fotos y textos propios de La Serena | M | P2 | S | Bloqueada | BR-110 |
+| BR-122 | El lettering del dueño en el hero de Coquimbo y en el pie de página | M | P2 | S | En curso | BR-114 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.
