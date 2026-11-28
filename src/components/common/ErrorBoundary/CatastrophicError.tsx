@@ -1,4 +1,5 @@
 import { AlertTriangle } from "lucide-react";
+import { useReleaseNeonLoader } from "@/loader/neonLoader";
 import styles from "./CatastrophicError.module.css";
 
 /**
@@ -12,6 +13,8 @@ import styles from "./CatastrophicError.module.css";
  * Diseño minimalista porque no podemos confiar en nada del sistema.
  */
 export function CatastrophicError() {
+    // El letrero de neón no puede quedar tapando este aviso hasta el máximo (BR-123).
+    useReleaseNeonLoader();
     const handleReload = () => {
         window.location.href = "/";
     };

@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 /**
  * Letrero de neón de entrada (BR-054, HU-EXP-004 CA-06 y CA-07).
@@ -7,8 +7,11 @@ import { useSyncExternalStore } from "react";
  * vacía mientras carga (en un celular simulado aparece a los ~0,4 s; el sitio, a los ~0,75 s). El CSS que bloquea
  * el render lo frena igual que al resto, así que no adelanta el primer pintado. La CSP permite estilos en línea
  * pero no scripts: el encendido y el parpadeo son CSS y este módulo solo decide cuándo apagarlo:
+ *  - nunca antes de que la primera página esté pintada: lo pide `useReleaseNeonLoader()` desde dentro del
+ *    `Suspense` de las páginas (BR-123), no `main.tsx` al llamar a `render()`;
  *  - la primera vez de la sesión espera al menos `MIN_MS` desde el inicio de la navegación, para que se lea el
- *    encendido; las siguientes salen en cuanto React monta (`sessionStorage`, decisión del 2026-10-14);
+ *    encendido por piezas (2,2 s, decisión del 2026-11-28); las siguientes salen en cuanto la página está lista
+ *    (`sessionStorage`, decisión del 2026-10-14);
  *  - cualquier interacción lo acorta (incluido `Tab`: nadie queda tabulando contra una capa opaca);
  *  - al salir avisa a los suscriptores (el hero arranca su entrada mientras el letrero se desvanece).
  * Si el JavaScript nunca llega, el CSS lo retira solo a los `MAX_MS`.
@@ -17,8 +20,8 @@ import { useSyncExternalStore } from "react";
  * que coincidan.
  */
 export const NEON_LOADER = {
-  MIN_MS: 1200,
-  EXIT_MS: 450,
+  MIN_MS: 2200,
+  EXIT_MS: 600,
   MAX_MS: 8000,
   /** Clave de `sessionStorage` que marca que el letrero ya se vio en esta sesión. */
   SEEN_KEY: "neon-loader-seen",
@@ -103,6 +106,27 @@ export function dismissNeonLoader(doc: Document = document, elapsedMs: number = 
     window.clearTimeout(removeTimer);
     removeSkipListeners();
   };
+}
+
+let released = false;
+
+/**
+ * Apaga el letrero una sola vez por carga de página (BR-123, HU-EXP-004 CA-42). La llaman quienes saben que la
+ * primera página ya está pintada; las llamadas siguientes (otras rutas, StrictMode, HMR) no hacen nada.
+ */
+export function releaseNeonLoader(): void {
+  if (released) return;
+  released = true;
+  dismissNeonLoader();
+}
+
+/**
+ * Apaga el letrero cuando monta el componente que lo llama. Va dentro del `Suspense` de las páginas: con una página
+ * `lazy()` pendiente el componente no monta, y el letrero sigue tapando en vez de dejar ver el fallback. También la
+ * llaman las pantallas de error, para no quedar tapadas hasta el máximo.
+ */
+export function useReleaseNeonLoader(): void {
+  useEffect(releaseNeonLoader, []);
 }
 
 /** `true` cuando el letrero ya salió (o nunca hubo): el hero espera esto para empezar su entrada. */

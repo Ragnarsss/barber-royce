@@ -13,7 +13,6 @@ import "@fontsource-variable/fraunces/wght.css";
 
 import App from "./App.tsx";
 import { installChunkRecovery } from "./utils/chunkRecovery";
-import { dismissNeonLoader } from "./loader/neonLoader";
 
 // Recarga una vez si un chunk ya no existe tras un despliegue (BR-020).
 installChunkRecovery();
@@ -31,5 +30,4 @@ createRoot(document.getElementById("root")!).render(
   </StrictMode>
 );
 
-// El letrero de neón de index.html se apaga cuando React ya montó (BR-054).
-dismissNeonLoader();
+// El letrero de neón de index.html lo apaga la primera página al pintarse (useReleaseNeonLoader, BR-123).
