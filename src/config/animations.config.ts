@@ -410,14 +410,15 @@ export const HERO_SERENA_TIMELINE = {
  */
 export const wordmarkDraw: Variants = {
     hidden: { pathLength: 0, fillOpacity: 0 },
-    visible: {
+    // `custom` es el número de la letra: cada una entra un poco después que la anterior
+    visible: (letter: number = 0) => ({
         pathLength: 1,
         fillOpacity: 1,
         transition: {
-            pathLength: { duration: 1.4, ease: [0.22, 1, 0.36, 1] },
-            fillOpacity: { duration: 0.5, delay: 1.1, ease: "easeOut" },
+            pathLength: { duration: 1.2, delay: letter * 0.07, ease: [0.22, 1, 0.36, 1] },
+            fillOpacity: { duration: 0.5, delay: 0.9 + letter * 0.07, ease: "easeOut" },
         },
-    },
+    }),
 };
 
 /**

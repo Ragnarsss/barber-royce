@@ -17,7 +17,7 @@ import { SITE } from "@/config/constants";
 import { useSiteText } from "@/content/useSiteContent";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { LA_SERENA_PHOTOS } from "@/data/laSerenaPhotos";
-import { ROYCE_PATH, ROYCE_VIEWBOX } from "./royceWordmark";
+import { LETTERING_NAME_PATHS, LETTERING_PREFIX_PATHS, LETTERING_VIEWBOX } from "./letteringWordmark";
 import { useBrandParticles } from "./useBrandParticles";
 import styles from "./HeroLaSerena.module.css";
 
@@ -145,20 +145,35 @@ export function HeroLaSerena() {
         </motion.div>
 
         <motion.h1 ref={brandRef} id="hero-la-serena-title" className={styles.brand} style={animated({ opacity: brandOpacity })}>
-          <span data-particle-text className={styles.brandPrefix}>
-            {SITE.brand.prefix}
-          </span>{" "}
-          <span className={styles.brandName}>
-            {/* «Royce» dibujado: se traza solo al cargar y se rellena; las partículas salen de este contorno */}
-            <svg data-particle-path className={styles.wordmark} viewBox={ROYCE_VIEWBOX} aria-hidden="true" focusable="false">
-              <motion.path
-                d={ROYCE_PATH}
-                variants={wordmarkDraw}
-                initial={reducedMotion ? false : "hidden"}
-                animate="visible"
-              />
-            </svg>
-            <span className="sr-only">{SITE.brand.name}</span>
+          {/* El lettering del dueño dibujado: se traza solo al cargar y se rellena; las partículas salen de sus contornos */}
+          <svg data-particle-path className={styles.lettering} viewBox={LETTERING_VIEWBOX} aria-hidden="true" focusable="false">
+            <g className={styles.letteringPrefix}>
+              {LETTERING_PREFIX_PATHS.map((d, index) => (
+                <motion.path
+                  key={index}
+                  d={d}
+                  custom={index}
+                  variants={wordmarkDraw}
+                  initial={reducedMotion ? false : "hidden"}
+                  animate="visible"
+                />
+              ))}
+            </g>
+            <g className={styles.letteringName}>
+              {LETTERING_NAME_PATHS.map((d, index) => (
+                <motion.path
+                  key={index}
+                  d={d}
+                  custom={LETTERING_PREFIX_PATHS.length + index}
+                  variants={wordmarkDraw}
+                  initial={reducedMotion ? false : "hidden"}
+                  animate="visible"
+                />
+              ))}
+            </g>
+          </svg>
+          <span className="sr-only">
+            {SITE.brand.prefix} {SITE.brand.name}
           </span>
           <span className="sr-only"> en La Serena</span>
         </motion.h1>
