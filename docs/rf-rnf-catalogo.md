@@ -127,6 +127,7 @@ Salvo que el CP diga otra cosa:
 | RF-SUC-008 | SUC | Mostrar los titulares, los títulos de tarjeta y los precios de La Serena en una serif cálida (Fraunces) y los de Coquimbo en la tipografía condensada actual (Anton), cargando solo la fuente de la sucursal activa. | Media | **CP-SUC-008:** con La Serena, el estilo calculado de un titular y de un precio tiene `font-family` Fraunces; con Coquimbo, Anton; con Coquimbo no se descarga el archivo de Fraunces; el CLS de `/la-serena` no sube por el cambio de fuente. | HU-SUC-002 | — | Verificado (`BR-113`, 2026-11-27) |
 | RF-SUC-009 | SUC | En `/la-serena`, mostrar un hero en secuencia: fondo claro con indicador de scroll, título que entra desde abajo y se fija arriba al centro, subtítulo letra por letra y, con el scroll, dos carruseles laterales de fotos (uno sube y otro baja) que aparecen al cerrarse los bordes; textos editables desde la hoja. | Media | **CP-SUC-009:** sin scroll, el `h1` y el subtítulo están en el DOM y visibles en menos de 1 s; el subtítulo se anuncia completo a los lectores de pantalla; con scroll aparecen los dos carruseles y se pausan con cursor o foco; con `prefers-reduced-motion` todo aparece quieto; con Coquimbo no se descarga el código. | HU-SUC-002 | — | Propuesto (`BR-114`) |
 | RF-SUC-010 | SUC | Con La Serena activa, mostrar Beneficios como una franja horizontal de fotos que empieza a avanzar sola cuando la sección encaja en el espacio visible, y sigue girando después, con el título, el texto y las tarjetas encima, pausable; con Coquimbo, la sección actual. | Media | **CP-SUC-010:** con La Serena, Beneficios muestra la franja en movimiento y las tarjetas encima; se pausa con el botón (el cursor encima no la pausa: la sección llena la ventana); con `prefers-reduced-motion` queda quieta; con Coquimbo se ve la sección de siempre y no se descarga el código de la variante. | HU-SUC-002 | — | Propuesto (`BR-117`) |
+| RF-SUC-011 | SUC | Mostrar la marca «Barbería Royce» como el lettering del dueño dibujado en vector, en el hero de Coquimbo y en el pie de las dos sucursales, con el color de marca de cada sucursal; con `prefers-reduced-motion` aparece completo. | Media | **CP-SUC-011:** en el hero de Coquimbo y en el pie de ambas sucursales hay un SVG decorativo (`aria-hidden`) con un trazado por letra y el texto «Barbería Royce» queda accesible para lectores de pantalla; el pie no parte la marca en dos líneas en el celular; la marca no se pide como fuente (sin archivos `woff2` de la marca en la carga de Coquimbo). | HU-SUC-002 | — | Propuesto (`BR-122`) |
 
 ### 2.2 Notas de trazabilidad
 
@@ -238,7 +239,7 @@ Salvo que el CP diga otra cosa:
 | HU-CNT-002 | RF-CNT-005, RF-CNT-010 | RNF-CONF-003, RNF-DATOS-002 |
 | HU-CNT-003 | RF-CNT-007, RF-CNT-009 | RNF-DATOS-001, RNF-CONF-003, RNF-SEG-004 |
 | HU-SUC-001 | RF-SUC-001 .. RF-SUC-004 | RNF-PERF-008, RNF-SEG-005, RNF-A11Y-002, RNF-A11Y-003, RNF-SEO-001, RNF-CONF-001 |
-| HU-SUC-002 | RF-SUC-005, RF-SUC-006, RF-SUC-007, RF-SUC-008, RF-SUC-009, RF-SUC-010 | RNF-PERF-001 .. RNF-PERF-003, RNF-PERF-005, RNF-A11Y-003 .. RNF-A11Y-005, RNF-MANT-004 |
+| HU-SUC-002 | RF-SUC-005, RF-SUC-006, RF-SUC-007, RF-SUC-008, RF-SUC-009, RF-SUC-010, RF-SUC-011 | RNF-PERF-001 .. RNF-PERF-003, RNF-PERF-005, RNF-A11Y-003 .. RNF-A11Y-005, RNF-MANT-004 |
 
 ## 5. Documentos relacionados
 

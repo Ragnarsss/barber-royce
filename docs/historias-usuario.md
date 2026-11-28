@@ -1475,6 +1475,12 @@ neón del techo), para sentir que es mi barbería y no la de otra ciudad.
   deja la vista quieta unos segundos antes de pasar a la siguiente; la franja
   empieza a avanzar cuando la sección encaja en el espacio visible y sigue
   girando después, aunque se scrollee a otra sección.
+- CA-12 (2026-11-28, `BR-122`): Given entro a la portada de cualquiera de las
+  dos sucursales o llego al pie de página, When veo la marca, Then es el
+  lettering «Barbería Royce» del dueño dibujado en vector (no el texto en una
+  fuente), con el color de marca de la sucursal activa. Decisión del usuario
+  (2026-11-28): reemplaza lo fijado en `BR-113` («Coquimbo no cambia») solo para
+  la marca del hero y del pie.
 
 ### Reglas de negocio asociadas:
 

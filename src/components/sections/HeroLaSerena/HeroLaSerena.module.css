@@ -45,27 +45,12 @@
   background: var(--texture-wood);
 }
 
-/* El lettering: el ancho manda y el alto sale del viewBox. «Barbería» en el café de apoyo y «Royce» en el verde de marca. */
+/* El lettering (BrandLettering): el ancho manda y el alto sale del viewBox. «Barbería» en el café de apoyo y «Royce» en el verde de marca. */
 .lettering {
-  display: block;
+  --lettering-prefix-color: var(--color-brand-support);
+  --lettering-name-color: var(--color-brand-primary);
+
   width: clamp(16rem, 80vw, 40rem);
-  height: auto;
-  overflow: visible;
-}
-
-.lettering path {
-  fill: currentColor;
-  stroke: currentColor;
-  stroke-width: 0.5;
-  stroke-linejoin: round;
-}
-
-.letteringPrefix {
-  color: var(--color-brand-support);
-}
-
-.letteringName {
-  color: var(--color-brand-primary);
 }
 
 /*

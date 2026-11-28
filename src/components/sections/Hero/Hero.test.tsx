@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { cleanup } from "@testing-library/react";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { LenisContext } from "@/contexts/lenisContextValue";
+import { LETTERING_NAME_PATHS, LETTERING_PREFIX_PATHS } from "@/components/common/BrandLettering/letteringPaths";
 import { SITE } from "@/config/constants";
 import { TEXTS } from "@/content/texts";
 import { renderWithProviders } from "@/test/renderWithProviders";
@@ -80,12 +81,13 @@ describe("Hero: tipografía de marca (BR-050, HU-EXP-004)", () => {
     expect(accessibleText(h1)).toBe(`${SITE.brand.prefix} ${SITE.brand.name} ${TEXTS["hero.lema"].default}`);
   });
 
-  it("CA-01: la marca se dibuja letra por letra, cada letra marcada para que no la lea el lector de pantalla", () => {
+  it("CA-01 (BR-122): la marca es el lettering del dueño dibujado, un trazado por letra y fuera del lector de pantalla", () => {
     const h1 = renderHero();
 
-    const letters = [...h1.querySelectorAll("[data-letter]")];
-    expect(letters.map((l) => l.textContent).join("")).toBe(SITE.brand.name);
-    for (const letter of letters) expect(letter.closest("[aria-hidden='true']")).not.toBeNull();
+    const lettering = h1.querySelector("svg");
+    expect(lettering).toHaveAttribute("aria-hidden", "true");
+    expect(lettering?.querySelectorAll("svg > g:not([data-shine]) path")).toHaveLength(LETTERING_PREFIX_PATHS.length + LETTERING_NAME_PATHS.length);
+    expect(h1.querySelector("[data-letter]")).toBeNull();
   });
 
   it("CA-04: el lema de la hoja cambia solo el lema; la marca no depende de la hoja", () => {
@@ -115,19 +117,19 @@ describe("Hero: tipografía de marca (BR-050, HU-EXP-004)", () => {
     expect(rule).not.toMatch(/text-transform:\s*capitalize/);
   });
 
-  it("CA-03: con reducir movimiento las letras salen sin estado inicial de animación y sin destello", () => {
+  it("CA-03: con reducir movimiento las letras salen completas, sin estado inicial de animación", () => {
     state.reducedMotion = true;
 
     const h1 = renderHero();
 
-    for (const letter of h1.querySelectorAll<HTMLElement>("[data-letter]")) {
-      expect(letter.getAttribute("style") ?? "").not.toMatch(/opacity|transform/);
-    }
+    for (const path of h1.querySelectorAll("svg path")) expect(path.getAttribute("style") ?? "").not.toMatch(/opacity|transform|stroke-dash/);
     expect(h1.querySelector("[data-shine]")).toBeNull();
   });
 
-  it("CA-03: el destello se apaga también por CSS cuando el sistema pide reducir el movimiento", () => {
-    expect(heroCss).toMatch(/@media \(prefers-reduced-motion: reduce\)[^{]*\{[^@]*\.shine[^{]*\{[^}]*animation:\s*none/);
+  it("CA-01: con movimiento normal, el destello cruza «Royce» (se conserva el de BR-050)", () => {
+    const h1 = renderHero();
+
+    expect(h1.querySelector("[data-shine]")).not.toBeNull();
   });
 
   it("RNF-DATOS-001: el nombre de la marca no está escrito como literal en el componente ni en su CSS", () => {

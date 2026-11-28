@@ -7,7 +7,7 @@ import { renderWithProviders } from "@/test/renderWithProviders";
 import { SITE } from "@/config/constants";
 import { TEXTS } from "@/content/texts";
 import { LA_SERENA_PHOTOS } from "@/data/laSerenaPhotos";
-import { LETTERING_NAME_PATHS, LETTERING_NAME_TEXT, LETTERING_PREFIX_PATHS, LETTERING_PREFIX_TEXT, LETTERING_VIEWBOX } from "./letteringWordmark";
+import { LETTERING_NAME_PATHS, LETTERING_NAME_TEXT, LETTERING_PREFIX_PATHS, LETTERING_PREFIX_TEXT, LETTERING_VIEWBOX } from "@/components/common/BrandLettering/letteringPaths";
 
 const state = vi.hoisted(() => ({ reducedMotion: false }));
 vi.mock("framer-motion", async (importOriginal) => ({

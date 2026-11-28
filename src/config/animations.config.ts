@@ -66,28 +66,6 @@ export const fadeInUp: Variants = {
 };
 
 /**
- * Contenedor de una palabra cuyas letras suben una a una (BR-050).
- * Hereda `hidden`/`visible` del padre; solo reparte el retraso entre las letras.
- */
-export const letterStagger: Variants = {
-    hidden: {},
-    visible: {
-        transition: { staggerChildren: 0.07, delayChildren: 0.1 }
-    }
-};
-
-/**
- * Una letra que sube desde detrás de una máscara (el padre recorta con `overflow: hidden`).
- */
-export const letterRise: Variants = {
-    hidden: { y: "110%" },
-    visible: {
-        y: "0%",
-        transition: { type: "tween", duration: 0.7, ease: [0.22, 1, 0.36, 1] }
-    }
-};
-
-/**
  * Barras de luz hexagonales que se encienden una vez (BR-058), como las del techo de la barbería: apagadas, un
  * parpadeo corto y encendidas. Con 2,5 destellos en 0,9 s queda bajo el límite de 3 por segundo (WCAG 2.3.1).
  * Con «reducir movimiento» el componente no usa esta variante: las barras aparecen encendidas.
