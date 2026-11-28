@@ -78,27 +78,20 @@ export function useBrandParticles({ stageRef, brandRef, canvasRef, progress, ena
       offscreen.height = Math.max(1, Math.round(brandBox.height));
       const ink = offscreen.getContext("2d", { willReadFrequently: true });
       if (!ink) return;
-      ink.textBaseline = "middle";
-      for (const part of brand.querySelectorAll<HTMLElement>("[data-particle-text]")) {
-        const style = getComputedStyle(part);
-        const box = part.getBoundingClientRect();
-        ink.font = `${style.fontStyle} ${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-        if ("letterSpacing" in ink) ink.letterSpacing = style.letterSpacing === "normal" ? "0px" : style.letterSpacing;
-        const label = style.textTransform === "uppercase" ? (part.textContent ?? "").toUpperCase() : (part.textContent ?? "");
-        ink.fillText(label, box.left - brandBox.left, box.top - brandBox.top + box.height / 2);
-      }
-      // La marca dibujada (SVG): su trazado se rellena con el mismo encaje que el viewBox (centrado, sin deformar).
+      // La marca dibujada (SVG): sus trazados se rellenan con el mismo encaje que el viewBox (centrado, sin deformar).
       for (const svg of brand.querySelectorAll<SVGSVGElement>("svg[data-particle-path]")) {
-        const d = svg.querySelector("path")?.getAttribute("d");
         const viewBox = svg.viewBox.baseVal;
-        if (!d || !viewBox || viewBox.width === 0) continue;
+        if (!viewBox || viewBox.width === 0) continue;
         const box = svg.getBoundingClientRect();
         const scale = Math.min(box.width / viewBox.width, box.height / viewBox.height);
         const offsetX = box.left - brandBox.left + (box.width - viewBox.width * scale) / 2 - viewBox.x * scale;
         const offsetY = box.top - brandBox.top + (box.height - viewBox.height * scale) / 2 - viewBox.y * scale;
         ink.save();
         ink.setTransform(scale, 0, 0, scale, offsetX, offsetY);
-        ink.fill(new Path2D(d));
+        for (const path of svg.querySelectorAll("path")) {
+          const d = path.getAttribute("d");
+          if (d) ink.fill(new Path2D(d));
+        }
         ink.restore();
       }
 

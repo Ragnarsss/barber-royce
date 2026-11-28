@@ -45,34 +45,27 @@
   background: var(--texture-wood);
 }
 
-.brandPrefix {
-  font-family: var(--font-family-primary);
-  font-size: clamp(1rem, 5vw, 2.25rem);
-  font-weight: 600;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--color-brand-support);
-}
-
-.brandName {
+/* El lettering: el ancho manda y el alto sale del viewBox. «Barbería» en el café de apoyo y «Royce» en el verde de marca. */
+.lettering {
   display: block;
-  line-height: 0;
-  color: var(--color-brand-primary);
-}
-
-/* «Royce» dibujado: el alto manda y el ancho sale del viewBox. Trazo y relleno del color de marca. */
-.wordmark {
-  display: block;
-  width: auto;
-  height: clamp(4.5rem, 26vw, 14.5rem);
+  width: clamp(16rem, 80vw, 40rem);
+  height: auto;
   overflow: visible;
 }
 
-.wordmark path {
+.lettering path {
   fill: currentColor;
   stroke: currentColor;
-  stroke-width: 6;
+  stroke-width: 0.5;
   stroke-linejoin: round;
+}
+
+.letteringPrefix {
+  color: var(--color-brand-support);
+}
+
+.letteringName {
+  color: var(--color-brand-primary);
 }
 
 /*

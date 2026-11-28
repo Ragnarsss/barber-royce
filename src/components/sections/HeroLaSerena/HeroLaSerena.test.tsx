@@ -7,7 +7,7 @@ import { renderWithProviders } from "@/test/renderWithProviders";
 import { SITE } from "@/config/constants";
 import { TEXTS } from "@/content/texts";
 import { RAIL_IMAGES } from "./heroLaSerenaImages";
-import { ROYCE_PATH, ROYCE_WORDMARK_TEXT } from "./royceWordmark";
+import { LETTERING_NAME_PATHS, LETTERING_NAME_TEXT, LETTERING_PREFIX_PATHS, LETTERING_PREFIX_TEXT, LETTERING_VIEWBOX } from "./letteringWordmark";
 
 const state = vi.hoisted(() => ({ reducedMotion: false }));
 vi.mock("framer-motion", async (importOriginal) => ({
@@ -64,13 +64,19 @@ describe("HeroLaSerena (BR-114)", () => {
     expect(h1.textContent).toBe(`${SITE.brand.prefix} ${SITE.brand.name} en La Serena`);
   });
 
-  it("la marca grande es un dibujo (SVG decorativo) que dice lo mismo que SITE.brand.name, y el h1 la nombra en texto", () => {
+  it("la marca grande es el lettering del dueño dibujado (SVG decorativo, un trazado por letra) y dice lo mismo que SITE.brand; el h1 la nombra en texto", () => {
     const { container } = renderWithProviders(<HeroLaSerena />);
 
-    expect(ROYCE_WORDMARK_TEXT).toBe(SITE.brand.name);
+    expect(LETTERING_PREFIX_TEXT).toBe(SITE.brand.prefix);
+    expect(LETTERING_NAME_TEXT).toBe(SITE.brand.name);
     const wordmark = container.querySelector("h1 svg[data-particle-path]");
     expect(wordmark).toHaveAttribute("aria-hidden", "true");
-    expect(wordmark?.querySelector("path")?.getAttribute("d")).toBe(ROYCE_PATH);
+    expect(wordmark).toHaveAttribute("viewBox", LETTERING_VIEWBOX);
+    // Un trazado por letra: unidos en uno solo, las curvas relativas se arrastran de una letra a la siguiente
+    const paths = [...(wordmark?.querySelectorAll("path") ?? [])].map((path) => path.getAttribute("d"));
+    expect(paths).toEqual([...LETTERING_PREFIX_PATHS, ...LETTERING_NAME_PATHS]);
+    expect(LETTERING_PREFIX_PATHS).toHaveLength(9);
+    for (const d of paths) expect(d?.length).toBeGreaterThan(30);
   });
 
   it("CA-10: el neón del techo, abajo y detrás de las tarjetas, es decorativo: cuatro rectángulos y su copia encendida", () => {
