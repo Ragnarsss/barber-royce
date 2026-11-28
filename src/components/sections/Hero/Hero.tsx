@@ -11,7 +11,7 @@ import heroMobile1170w from "@/assets/optimized/hero_mobile_1170w.webp";
 import { useParallaxProgress, useBackgroundLayer, useMiddleLayer, useForegroundLayer, useFastLayer } from "@/hooks/useParallaxLayers";
 import { useLenisReady, useRefreshLenis } from "@/hooks/useLenisContext";
 import { useLenisScrollActive } from "@/hooks/useScrollActive";
-import { staggerContainer, fadeInUp, letterRise, letterStagger, edgeDraw } from "@/config/animations.config";
+import { staggerContainer, fadeInUp, edgeDraw } from "@/config/animations.config";
 import { SITE } from "@/config/constants";
 import { useSiteText } from "@/content/useSiteContent";
 import { useNeonLoaderDone } from "@/loader/neonLoader";
@@ -19,6 +19,7 @@ import { SPOTLIGHT_SIZE, usePointerSpotlight } from "./spotlight";
 import { BenefitCard } from "./BenefitCard";
 import { HERO_DIAGONAL, HERO_SHAPES } from "./heroShapes";
 import { FixedShape } from "@/components/common/FixedShape/FixedShape";
+import { BrandLettering } from "@/components/common/BrandLettering/BrandLettering";
 import { HERO_ZOOM, HERO_ZOOM_ORIGIN } from "./heroZoom";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { MEDIA } from "@/config/breakpoints";
@@ -194,30 +195,9 @@ export function Hero() {
       <div className={styles.container}>
         <div className={styles.content}>
           <h1 className={styles.title}>
-            <motion.span className={styles.prefix} variants={fadeInUp}>
-              {SITE.brand.prefix}
-            </motion.span>{" "}
-            <span className={styles.wordmark}>
-              {/* Las letras se separan solo para animarlas: el lector de pantalla lee la palabra entera */}
-              <span className={styles.srOnly}>{SITE.brand.name}</span>
-              <motion.span className={styles.letters} aria-hidden="true" variants={letterStagger}>
-                {[...SITE.brand.name].map((letter, index) =>
-                  reducedMotion ? (
-                    <span key={index} className={styles.letterMask}>
-                      <span className={styles.letter} data-letter>{letter}</span>
-                    </span>
-                  ) : (
-                    <span key={index} className={styles.letterMask}>
-                      <motion.span className={styles.letter} variants={letterRise} data-letter>{letter}</motion.span>
-                    </span>
-                  ),
-                )}
-              </motion.span>
-              {!reducedMotion && (
-                <span className={styles.shine} aria-hidden="true" data-shine>
-                  {SITE.brand.name}
-                </span>
-              )}
+            <BrandLettering className={styles.lettering} animation={reducedMotion ? "none" : "inherit"} shine={!reducedMotion} />
+            <span className={styles.srOnly}>
+              {SITE.brand.prefix} {SITE.brand.name}
             </span>{" "}
             <motion.span className={styles.tagline} variants={fadeInUp}>
               {siteText("hero.lema")}

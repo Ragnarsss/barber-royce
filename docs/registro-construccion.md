@@ -2156,3 +2156,16 @@ Ficha y estado de cada ticket: `BR-022`, `BR-104` y `BR-108` quedaron **Hecho** 
   - «Después de scrollear a otra sección también debería quedar girando»: `data-fitted` pasa a ser de una sola vía. La primera vez que la sección encaja se pone en `"1"` y se deja de observar; ya no vuelve a `"0"`. Verificado en Chrome real con la sección fuera de la vista (y = −1.220 y y = −4.037): la franja sigue avanzando.
   - Un falso positivo mío al verificar: `page.click` de Puppeteer sobre el botón de pausa (en el borde inferior de una sección `sticky`) lo «trae a la vista» con un scroll de 5.000 px y saca la sección de la pantalla; parecía que «Reanudar» no funcionaba. Se verifica con un clic por coordenadas.
 - **Tarjetas sin la franja de madera (2026-11-27, pedido del usuario):** se quitó el filo de veta de madera (`.card::after` con `--texture-wood`) y el relleno extra de 4 px que le reservaba espacio, en las tarjetas de Beneficios (`BR-117`) y en las tres del hero (`BR-114`), que llevaban la misma decoración. La veta sigue donde no hay tarjetas: bajo «Royce» en el hero y en el borde superior del pie (`BR-113`). Un test lo fija.
+
+<a id="br-122"></a>
+
+## BR-122 — El lettering del dueño en el hero de Coquimbo y en el pie de página
+
+**Notas de construcción (2026-11-28):**
+- Origen: el usuario pidió usar el lettering también en Coquimbo y en el pie. Reemplaza lo fijado en `BR-113` («Coquimbo no cambia») solo para la marca del hero y del pie.
+- Componente común `BrandLettering` (`src/components/common/BrandLettering/`): los trazados salen de `letteringPaths.ts` (movido desde `HeroLaSerena/letteringWordmark.ts`, sin duplicarlos) y el color de cada uso entra por `--lettering-prefix-color` y `--lettering-name-color`. Tres modos de animación: `none` (el pie y «reducir movimiento»), `play` (se traza solo, La Serena) e `inherit` (usa `hidden`/`visible` del ancestro, así el hero de Coquimbo espera al loader como antes).
+- Hero de Coquimbo: el texto «BARBERÍA» + «ROYCE» en Anton y su entrada letra por letra se reemplazan por el lettering en blanco con el resplandor de la marca. **El destello rojo que cruza «Royce» se conserva** (pedido del usuario): ahora es un degradado dentro de un `clipPath` con las formas de «Royce», que se mueve una vez (`shineSweep`, 1,1 s con 1,4 s de espera) y se apaga con `prefers-reduced-motion`. Se quitan `letterRise` y `letterStagger`, que ya nadie usaba.
+- Pie: el lettering (7 rem de ancho) junto al monograma, en las dos sucursales; el nombre sigue en texto para el lector de pantalla. En La Serena ya no se parte en dos líneas (112 x 67 px a 390 px de ancho).
+- Tests: `BrandLettering.test.tsx` (nuevo, siete casos: SVG decorativo, un trazado por letra, texto de `SITE.brand`, atributos que pasan al SVG, destello opcional y su apagado por CSS, colores sin literales) y adaptados los de `Hero` y `HeroLaSerena`. Hecho test primero para el componente nuevo; en Windows siguen fallando los tres tests que construyen el sitio.
+- Verificado en Chrome real contra el build local: hero de Coquimbo en escritorio y móvil, destello a mitad de recorrido, y pie de las dos sucursales.
+- **Falta:** verificar en el preview de Vercel y el cierre formal con `cerrar-ticket`.

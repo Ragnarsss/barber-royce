@@ -11,13 +11,13 @@ import {
 import { Gem, HeartHandshake, Pause, Play, Star } from "lucide-react";
 import { trackReserve } from "@/analytics/track";
 import { useBookingUrl } from "@/branch/useBookingUrl";
-import { HERO_SERENA_TIMELINE as T, wordmarkDraw } from "@/config/animations.config";
+import { HERO_SERENA_TIMELINE as T } from "@/config/animations.config";
 import { MEDIA } from "@/config/breakpoints";
 import { SITE } from "@/config/constants";
 import { useSiteText } from "@/content/useSiteContent";
+import { BrandLettering } from "@/components/common/BrandLettering/BrandLettering";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { LA_SERENA_PHOTOS } from "@/data/laSerenaPhotos";
-import { LETTERING_NAME_PATHS, LETTERING_PREFIX_PATHS, LETTERING_VIEWBOX } from "./letteringWordmark";
 import { useBrandParticles } from "./useBrandParticles";
 import styles from "./HeroLaSerena.module.css";
 
@@ -146,32 +146,7 @@ export function HeroLaSerena() {
 
         <motion.h1 ref={brandRef} id="hero-la-serena-title" className={styles.brand} style={animated({ opacity: brandOpacity })}>
           {/* El lettering del dueño dibujado: se traza solo al cargar y se rellena; las partículas salen de sus contornos */}
-          <svg data-particle-path className={styles.lettering} viewBox={LETTERING_VIEWBOX} aria-hidden="true" focusable="false">
-            <g className={styles.letteringPrefix}>
-              {LETTERING_PREFIX_PATHS.map((d, index) => (
-                <motion.path
-                  key={index}
-                  d={d}
-                  custom={index}
-                  variants={wordmarkDraw}
-                  initial={reducedMotion ? false : "hidden"}
-                  animate="visible"
-                />
-              ))}
-            </g>
-            <g className={styles.letteringName}>
-              {LETTERING_NAME_PATHS.map((d, index) => (
-                <motion.path
-                  key={index}
-                  d={d}
-                  custom={LETTERING_PREFIX_PATHS.length + index}
-                  variants={wordmarkDraw}
-                  initial={reducedMotion ? false : "hidden"}
-                  animate="visible"
-                />
-              ))}
-            </g>
-          </svg>
+          <BrandLettering data-particle-path className={styles.lettering} animation={reducedMotion ? "none" : "play"} />
           <span className="sr-only">
             {SITE.brand.prefix} {SITE.brand.name}
           </span>

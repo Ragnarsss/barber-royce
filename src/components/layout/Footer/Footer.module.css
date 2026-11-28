@@ -150,6 +150,14 @@
   color: var(--footer-fg);
 }
 
+/* El lettering del dueño en lugar del nombre en texto (BR-122): sin partirse en dos líneas en el celular */
+.lettering {
+  --lettering-prefix-color: var(--color-brand-support, var(--footer-fg));
+  --lettering-name-color: var(--color-brand-primary);
+
+  width: 7rem;
+}
+
 /* El monograma BR es un SVG sin color propio (BR-115): toma el color de marca de la sucursal activa */
 .logoIcon {
   width: 44px;

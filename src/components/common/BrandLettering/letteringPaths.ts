@@ -1,5 +1,5 @@
 /**
- * El lettering «Barbería Royce» del dueño, como trazados vectoriales para el hero de La Serena (BR-114). Sale de
+ * El lettering «Barbería Royce» del dueño, como trazados vectoriales para el hero de las dos sucursales y el pie (BR-114, BR-122). Sale de
  * `src/assets/lettering.svg` (Inkscape): un trazado por letra, tal como viene, sin los trazos rojos ni la opacidad de calco,
  * con el origen movido al `viewBox` (el archivo traía un `translate`) y recortado al contorno de las letras. Cada letra va
  * en su propio `<path>` (las curvas son relativas: unidas en uno solo se arrastran de una letra a la siguiente). Al ser un

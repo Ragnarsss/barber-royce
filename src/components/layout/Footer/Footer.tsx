@@ -15,6 +15,7 @@ import { useBookingUrl } from "@/branch/useBookingUrl";
 import { branchFromPath } from "@/branch/resolveBranch";
 import { PrivacyPreferencesButton } from "@/analytics/PrivacyPreferencesButton";
 import { trackPhone, trackReserve, trackWhatsApp } from "@/analytics/track";
+import { BrandLettering } from "@/components/common/BrandLettering/BrandLettering";
 import { BrandMark } from "@/components/common/BrandMark/BrandMark";
 
 /**
@@ -59,7 +60,11 @@ export const Footer = () => {
           <div className={`${styles.column} ${styles.columnWide}`}>
             <div className={styles.brand}>
               <BrandMark title={`Logo de ${SITE.name}`} className={styles.logoIcon} />
-              <h3 className={styles.title}>{SITE.name}</h3>
+              <h3 className={styles.title}>
+                {/* El lettering del dueño (BR-122): dibujo decorativo; el nombre queda en texto para el lector de pantalla */}
+                <BrandLettering className={styles.lettering} />
+                <span className="sr-only">{SITE.name}</span>
+              </h3>
             </div>
             <p className={styles.description}>
               Estilo y elegancia para el hombre moderno. Más de 10 años de experiencia creando los mejores looks.
