@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { AlertCircle, Home, RefreshCw } from "lucide-react";
 import type { FallbackProps } from "react-error-boundary";
+import { useReleaseNeonLoader } from "@/loader/neonLoader";
 import styles from "./PageError.module.css";
 
 /**
@@ -10,6 +11,8 @@ import styles from "./PageError.module.css";
  * Nunca muestra el mensaje técnico del error (engineering-guidelines §15).
  */
 export function PageError({ resetErrorBoundary }: FallbackProps) {
+  // Si la primera página falla, el letrero de neón sale para dejar ver este aviso (BR-123).
+  useReleaseNeonLoader();
   return (
     <section className={styles.container} role="alert" aria-labelledby="page-error-title">
       <div className={styles.content}>

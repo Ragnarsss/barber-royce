@@ -10,6 +10,13 @@ const mountLoader = () => {
   return el;
 };
 
+describe("tiempos del letrero (BR-123)", () => {
+  it("HU-EXP-004 CA-06 (nota 2026-11-28): la primera visita de la sesión dura al menos 2,2 s", () => {
+    expect(NEON_LOADER.MIN_MS).toBe(2200);
+    expect(NEON_LOADER.MIN_MS).toBeLessThan(NEON_LOADER.MAX_MS);
+  });
+});
+
 describe("remainingMs: cuánto falta para el mínimo (BR-054)", () => {
   it("al cargar en el instante 0 espera el mínimo completo", () => {
     expect(remainingMs(0)).toBe(NEON_LOADER.MIN_MS);

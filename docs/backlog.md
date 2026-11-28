@@ -2319,7 +2319,7 @@ Criterios de aceptación:
 #### BR-057 — Loader con el letrero real en vector
 
 - Prioridad: P3 · Esfuerzo: S · Depende de: BR-054
-- Estado: En curso (rama `feat/br-057-loader-letrero-real`; desbloqueado el 2026-11-27, ver abajo)
+- Estado: Hecho (2026-11-28, rama `feat/br-057-loader-letrero-real`, integrada con `feat/br-114-117-portada-la-serena` → master, PR #74)
 - Historia de usuario: HU-EXP-004 (CA-06)
 - RF/RNF: `RNF-PERF-001`, `RNF-A11Y-005`
 
@@ -4249,6 +4249,65 @@ recuerdo del canje en el navegador. Fuera de alcance: validar el canje en el loc
 
 Criterios de aceptación: los de HU-RES-004 más el ADR aprobado antes de escribir código.
 
+
+#### BR-123 — Loader de neón: pared de ladrillo, encendido por piezas y salida con la página ya pintada
+
+- Prioridad: P2 · Esfuerzo: M · Depende de: BR-054, BR-057
+- Estado: En curso (rama `feat/br-123-loader-ladrillo`)
+- Historia de usuario: HU-EXP-004 (CA-06 con la nota del 2026-11-28, CA-07, CA-41, CA-42)
+- RF/RNF: `RNF-CONF-004` (nuevo), `RNF-PERF-001`, `RNF-PERF-002`, `RNF-PERF-003`, `RNF-A11Y-003`, `RNF-A11Y-005`
+
+**Origen (2026-11-28):** con el letrero real ya en vector (`BR-057`), el usuario pidió auditar el loader en tres
+frentes: impacto visual, implementación y mantenibilidad. También pidió evitar pantallas en blanco, alargarlo un poco y
+probar un fondo de ladrillo. La auditoría con la skill `diseno-visual` encontró esto:
+1. **Sale antes de que la página esté lista.** `dismissNeonLoader()` corre justo después de `render()`
+   (`src/main.tsx:34`), antes de que React pinte. Con una portada que se carga aparte (`/la-serena`, `src/App.tsx:23`) o
+   con un enlace directo (`/servicios`), en una recarga de la sesión o con red lenta el letrero sale y queda a la vista
+   `Loading` (`src/components/common/Loading/Loading.tsx`): un spinner genérico con una barra de progreso inventada
+   que hace `setState` cada 200 ms.
+2. **Sin JavaScript queda la página vacía** cuando el failsafe retira el letrero a los 8 s.
+3. **Los trazados están dos veces:** en `index.html` y en `src/assets/neon-name.svg`, copiados a mano y sin un test que
+   compare las dos copias. Además, el comentario de `index.html` todavía dice que el SVG es provisorio.
+4. **Visual:** todo se enciende a la vez sobre un fondo plano y la salida es un simple fundido.
+
+> **Decisión del usuario (2026-11-28):** de tres direcciones (A: solo arreglos; B: arreglos y escena de ladrillo;
+> C: B y el letrero como transición entre rutas), eligió la **B**. El mínimo de la primera visita de la sesión pasa de
+> 1,2 s a **2,2 s**. Las visitas siguientes no cambian: el letrero sale en cuanto la página está lista. Queda advertido
+> el costo: en `BR-054`, 1,2 s llevaron el LCP móvil de laboratorio de 5,0 s a 6,5 s, y Lighthouse siempre mide una
+> primera visita.
+
+Alcance:
+1. **Salida con la página ya pintada:** el letrero se apaga cuando la ruta de entrada ya montó, también tras un
+   `lazy()`, no al llamar a `render()`. Se mantienen el mínimo, el atajo por interacción y el failsafe por CSS.
+2. **Fallback de rutas con la marca:** `Loading` deja el spinner y la barra inventada y pasa a un indicador de neón
+   sobrio con CSS, sin `setState` por intervalo.
+3. **Una sola fuente del SVG:** los trazados de `index.html` salen de `src/assets/neon-name.svg` en el build (con un
+   plugin de Vite) o un test exige que las dos copias coincidan. Se elige al implementar y se anota aquí. Se corrige el
+   comentario viejo. **Elegido (2026-11-28): el test**, porque un plugin que transforma `index.html` choca con el
+   proxy de CSS inline de Vite que ya falla en los builds de Windows.
+4. **Escena:** pared de ladrillo dibujada con gradientes CSS en línea (sin descargar nada y antes del JavaScript), viñeta
+   oscura y luz del letrero sobre la pared que se enciende y parpadea con los tubos (solo `opacity`). En La Serena, la
+   versión fría con los tokens de su tema.
+5. **Encendido por piezas:** marco, «Barber», «Royce», tijera y la letra defectuosa al final. **Salida:** el letrero se
+   apaga en seco y después la pared se desvanece.
+6. Tiempos nuevos (`MIN_MS` = 2200) en `neonLoader.ts` y en las variables `--neon-*`, iguales entre sí como hoy.
+7. Sin JavaScript, al vencer el failsafe se ve un aviso mínimo en lugar de la página vacía (`<noscript>`).
+
+Criterios de aceptación:
+1. Escena de ladrillo, encendido por piezas y luz sobre la pared en Coquimbo y en La Serena (HU-EXP-004 CA-41).
+2. La primera visita de la sesión dura al menos 2,2 s y nunca más que el máximo; cualquier interacción la salta; las
+   recargas de la sesión salen en cuanto la página está lista (HU-EXP-004 CA-06).
+3. Al entrar directo a `/coquimbo`, `/la-serena` y `/servicios`, en la primera carga y en una recarga, no se ve una
+   pantalla vacía ni el indicador genérico entre el letrero y la página (HU-EXP-004 CA-42, CP-CONF-004).
+4. Con reducir movimiento, el letrero y la pared aparecen encendidos y quietos, y el letrero sale sin parpadeo; en
+   ninguna secuencia hay más de 3 destellos por segundo (HU-EXP-004 CA-07, CP-A11Y-003, CP-A11Y-005).
+5. Los colores de la escena son tokens (el test de `neonLoaderHtml.test.ts` sigue en verde), sin peticiones de red
+   nuevas antes del JavaScript.
+6. Lighthouse móvil de `/coquimbo`, mediana de 3, contra la línea base de `master`: CLS sigue en 0, TBT sin regresión,
+   y la diferencia de LCP queda anotada (CP-PERF-001 a CP-PERF-003).
+
+**Notas de construcción:** ver [`registro-construccion.md`](./registro-construccion.md#br-123).
+
 ### Épica M — Multi-sucursal
 
 Coquimbo y La Serena en la misma app y el mismo dominio, cada una con su
@@ -5111,7 +5170,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-054 | Loader de neón (letrero «Barber Royce») | K | P3 | M | Hecho | BR-050, BR-053 |
 | BR-055 | Hero: fondos con profundidad | K | P3 | M | Hecho | BR-050 |
 | BR-056 | Hero: tarjetas de beneficios (vidrio con esquinas cortadas) | K | P3 | M | Hecho | BR-050, BR-055 |
-| BR-057 | Loader con el letrero real en vector | K | P3 | S | En curso | BR-054 |
+| BR-057 | Loader con el letrero real en vector | K | P3 | S | Hecho | BR-054 |
 | BR-058 | CTA1: barras de luz hexagonales, foto enmarcada y botón de reserva | K | P3 | M | Hecho | BR-054, BR-056 |
 | BR-059 | Navbar: resplandor de neón blanco al pasar el cursor | K | P3 | XS | Hecho | BR-058 |
 | BR-060 | Equipo: panal de hexágonos con el líder destacado | K | P3 | M | Hecho | BR-058 |
@@ -5176,6 +5235,7 @@ Orden sugerido: P0 de la épica B → P1 → P2 → P3.
 | BR-120 | Features en La Serena: decidir si se mantiene, cambia o se reemplaza | M | P3 | S | Bloqueada | BR-117 |
 | BR-121 | Fotos y textos propios de La Serena | M | P2 | S | Bloqueada | BR-110 |
 | BR-122 | El lettering del dueño en el hero de Coquimbo y en el pie de página | M | P2 | S | En curso | BR-114 |
+| BR-123 | Loader de neón: pared de ladrillo, encendido por piezas y salida con la página ya pintada | K | P2 | M | En curso | BR-054, BR-057 |
 
 Los IDs `BR-011` a `BR-034` no siguen el orden de las épicas porque se
 asignaron en el orden en que se detectaron; nunca se renumeran.

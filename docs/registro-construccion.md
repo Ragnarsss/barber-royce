@@ -2122,6 +2122,12 @@ Ficha y estado de cada ticket: `BR-022`, `BR-104` y `BR-108` quedaron **Hecho** 
 - Al ser trazos y no contornos rellenos, los `use` pasan a `fill: none` y `stroke-width` 1,1 (el halo, 2,6). Colores, tiempos, destellos (≤ 3 por segundo), reducir movimiento y la retirada por seguridad no cambian: pasan los tests del loader y del tema.
 - Verificado en Chrome real con el JavaScript bloqueado para dejar el loader encendido: Coquimbo y La Serena, a 1440 y 390 px.
 
+**Cierre (2026-11-28):**
+- El criterio de la ficha («muestra el RR») quedó reemplazado por el desbloqueo del 2026-11-27: se verifica como «el letrero real, con los criterios de `BR-054`, sin cambiar su duración ni sus protecciones».
+- Integrado en `master` con el PR #74 (junto a `BR-114` a `BR-117`): check del CI (lint, tipos, tests y build) y despliegue de Vercel en verde.
+- Producción (`barber-royce.vercel.app`): `/coquimbo` y `/la-serena` sirven `#neon-loader` con los trazados de `neon-name.svg`. Tests del loader y del tema: 64 en verde.
+- Sin Lighthouse propio: solo se cambiaron trazados por otros de tamaño parecido, con la misma secuencia y los mismos tiempos. La medición del loader queda en `BR-123`, que lo modifica.
+
 <a id="br-116"></a>
 
 ## BR-116 — Contraste de «Respaldados por los mejores» y de CTA1 en La Serena
@@ -2171,3 +2177,20 @@ Ficha y estado de cada ticket: `BR-022`, `BR-104` y `BR-108` quedaron **Hecho** 
 - **Falta:** verificar en el preview de Vercel y el cierre formal con `cerrar-ticket`.
 - **El SVG es la única fuente (2026-11-28, el dueño modificó el lettering y el sitio no lo reflejaba):** en la primera entrega copié los trazados de `lettering.svg` a un archivo de código, así que cambiar el SVG no cambiaba nada. Ahora `letteringPaths.ts` importa `src/assets/lettering.svg?raw` y saca de él las letras (un `<path>` por letra, en dos capas) y el `viewBox` (la página de Inkscape con el origen que dice el `translate` de la capa). Para cambiar el lettering basta reemplazar el archivo. Debe conservar la estructura de Inkscape: dos capas `<g>` («Barbería» y «Royce») con un `<path>` por letra; un test lo comprueba contra el archivo. El SVG pasa a estar en el repo.
 - **Sin la franja bajo el lettering (2026-11-28, pedido del usuario):** se quita la veta de madera (`.brand::after`) bajo la marca del hero de La Serena, y el lettering queda centrado en la pantalla. La veta (`--texture-wood`) queda solo en el borde superior del pie; el test de BR-117 que la fijaba bajo la marca ahora exige que no esté.
+
+<a id="br-123"></a>
+
+## BR-123 — Loader de neón: pared de ladrillo, encendido por piezas y salida con la página ya pintada
+
+**Notas de construcción (2026-11-28):**
+- Test primero: `routeReady.test.tsx` (3 casos de CA-42: página normal, página `lazy()` pendiente y página que falla), 7 casos nuevos en `neonLoaderHtml.test.ts` (una sola fuente del SVG, pared sin `url(`, orden de encendido, luz de la pared solo con `opacity`, destellos, reducir movimiento y `<noscript>`) y `MIN_MS` = 2200 en `neonLoader.test.ts`. Todos en rojo antes de implementar, salvo el de la fuente única, que ya coincidía y queda como guardia. `Loading.test.tsx` (4) se escribió después.
+- **Salida con la página pintada:** `main.tsx` ya no llama a `dismissNeonLoader()` justo después de `render()`. `RouteErrorBoundary` envuelve la página en `PageReady`, que llama a `useReleaseNeonLoader()`. Al estar dentro del `Suspense`, no monta mientras una página `lazy()` (`/la-serena`, `/servicios`…) sigue pendiente, así que el letrero tapa la espera en vez de dejar ver el fallback. `PageError` y `CatastrophicError` también lo apagan. `releaseNeonLoader()` actúa una sola vez por carga (StrictMode, HMR y otras rutas no hacen nada).
+- **Escena en `index.html`:** pared con `conic-gradient` (juntas verticales desfasadas por hilada) y `repeating-linear-gradient` (juntas horizontales) en `#neon-loader::before`; viñeta en `::after`; `.wall-glow` con un radial del color del neón que sigue el encendido (`neon-wall`, un solo cruce del 50 %). Ladrillos de 64 x 24 px en el móvil y de 88 x 32 px desde 769 px. Tokens nuevos: `--color-brick`, `--color-mortar` y sus variantes `-serena`. El CSS pasó de una línea por regla a un bloque legible; las reglas de La Serena siguen compactas porque `laSerenaTheme.test.ts` las lee así.
+- **Encendido por piezas:** `lit-1` a `lit-5` (marco, «Barber», «Royce», tijera, «oy» con falla) con retrasos de 100 a 820 ms. Cada pieza parpadea una vez (600 ms); la defectuosa, dos (900 ms). Todo termina a ~1,7 s del primer pintado, dentro del mínimo de 2,2 s. **Salida:** el letrero y su luz se apagan en 90 ms y la pared se funde después (`EXIT_MS` 450 → 600).
+- **Sin JavaScript:** `<noscript>` anula el failsafe y muestra un aviso bajo el letrero, en lugar de retirarlo y dejar la página vacía. El aviso va fuera de `#neon-loader`, que es `aria-hidden`.
+- **`Loading`:** tijera de lucide con resplandor que respira (1,6 s, gradual), `role="status"`, aparece a los 300 ms y no tiene estado. Se borró `src/components/ui/progress.tsx`, que solo usaba el spinner anterior.
+- **Una sola fuente del SVG:** se eligió el test que compara los trazados con `neon-name.svg`, en lugar de un plugin de Vite (ver la ficha).
+- `contrast.e2e.test.ts` marca el letrero como ya visto, igual que el modal de bienvenida: mide la página en reposo. En la suite completa en Windows, el caso `coquimbo · /` falló dos veces por «Agendar Sesión» con razón 1 (una transición de color de la barra con la CPU saturada); solo, y con el proyecto e2e completo, pasan 22 de 22 y 36 de 36. Se confirma en el CI.
+- **Verificado:** tests (1.423 en verde, más el e2e de arriba), lint sin avisos, tipos y build. Capturas en Chrome real del HTML del build sin su script (el letrero queda encendido): Coquimbo y La Serena a 1440 px y a 390 px (`iframe`), más un cuadro a mitad del encendido con «oy» todavía apagado.
+- **Lighthouse móvil** (alternando las corridas de `master` y de la rama, mediana de 3): `/coquimbo` LCP 6727 → 6552 ms, TBT 176 → 150 ms, CLS 0 → 0; `/la-serena` LCP 6571 → 6867 ms, TBT 310 → 382 ms (rango de la rama: 249 a 458), CLS 0 → 0. La simulación de Lighthouse no refleja la espera del mínimo, que va por temporizador: el visitante nuevo sí ve la portada ~1 s más tarde que antes, como se advirtió al elegir los 2,2 s.
+- **Falta (DoD):** CP-CONF-004 en el preview de Vercel (panel Performance con CPU 4x y 4G lenta en `/coquimbo`, `/la-serena` y `/servicios`, primera carga y recarga), la animación en movimiento (la mira el usuario) y el CI.

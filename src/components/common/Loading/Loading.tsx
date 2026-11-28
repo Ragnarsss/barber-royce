@@ -1,42 +1,18 @@
-import { useState, useEffect } from "react";
-import { Progress } from "@/components/ui/progress";
+import { Scissors } from "lucide-react";
 import styles from "./Loading.module.css";
 
-// ✅ React 19: memo() eliminado - componente simple sin props
+/**
+ * Espera de una página que todavía se descarga (fallback del Suspense de las rutas).
+ *
+ * BR-123: en la primera carga lo tapa el letrero de neón de index.html, así que solo se ve al navegar a una página
+ * que aún no se descargó. Es una tijera de neón que respira, con el lenguaje del letrero y no un spinner genérico.
+ * Aparece con un retraso, para no destellar cuando la página llega enseguida, y no cambia de estado mientras espera.
+ */
 export function Loading() {
-    const [progress, setProgress] = useState(0);
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setProgress((oldProgress) => {
-                if (oldProgress === 100) {
-                    return 0;
-                }
-                const diff = Math.random() * 10;
-                return Math.min(oldProgress + diff, 100);
-            });
-        }, 200);
-
-        return () => {
-            clearInterval(timer);
-        };
-    }, []);
-
-    return (
-        <div className={styles.loadingContainer}>
-            <div className={styles.logoContainer}>
-                <div className={styles.spinner}>
-                    <div className={styles.spinnerRing}></div>
-                    <div className={styles.spinnerRing}></div>
-                    <div className={styles.spinnerRing}></div>
-                </div>
-            </div>
-            <div className={styles.progressContainer}>
-                <Progress value={progress} className={styles.progressBar} />
-                <p className={styles.loadingText}>Cargando...</p>
-            </div>
-        </div>
-    );
+  return (
+    <div className={styles.loadingContainer} role="status">
+      <Scissors className={styles.icon} size={48} strokeWidth={1.25} aria-hidden="true" />
+      <p className={styles.loadingText}>Cargando…</p>
+    </div>
+  );
 }
-
-Loading.displayName = "Loading";

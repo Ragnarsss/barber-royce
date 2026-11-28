@@ -947,6 +947,15 @@ y confiar en que el servicio está a la altura.
   lenguaje que el resto del sitio (divisoria roja, marca en Anton, redes de vidrio con chaflán), me ofrece agendar
   con una franja de cierre (en todas las páginas salvo la portada, que ya termina con su propio llamado) y en
   móvil cabe en menos de una pantalla con enlaces de al menos 44 px; con reducir movimiento no hay transiciones.
+- CA-06 (nota 2026-11-28, `BR-123`, decisión del usuario): la entrada de marca de la primera visita de la sesión dura
+  al menos 2,2 s (antes, «no más de 2 s»); el resto del criterio no cambia.
+- CA-41 (2026-11-28, `BR-123`): Given abro el sitio por primera vez en la sesión, When aparece el letrero de neón,
+  Then está colgado sobre una pared de ladrillo en penumbra, sus piezas se encienden en orden (marco, «Barber»,
+  «Royce», tijera y la letra defectuosa al final) y su luz ilumina la pared al encenderse y parpadear; con reducir
+  movimiento el letrero y la pared aparecen encendidos y quietos.
+- CA-42 (2026-11-28, `BR-123`): Given entro directo a cualquier ruta (incluida `/la-serena`) o recargo en la misma
+  sesión, When el letrero sale, Then debajo ya está la página pintada, sin pantalla vacía ni un indicador de carga
+  genérico entre el letrero y la página (`RNF-CONF-004`).
 
 ---
 
