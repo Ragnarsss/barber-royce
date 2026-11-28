@@ -420,6 +420,8 @@
   }
 
   .textContent {
+    /* El texto va sobre el hexágono de marca (un SVG que no es su ancestro): se lo dice a la prueba de contraste (BR-116) */
+    --contrast-bg: var(--color-brand-primary);
     gap: 16px;
     max-width: var(--cta-text-max);
     padding-left: 20px;
